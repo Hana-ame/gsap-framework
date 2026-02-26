@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PixiExample } from './pixijs/PixiExample';
 import { webSocketDataSource } from './websocket/webSocketDataSource';
 import { TestDataSource } from './test/testDataSource';
-import { DataSource } from './pixijs/dataSource';
+import type{ DataSource } from './pixijs/dataSource';
 
 function App() {
   const [useTest, setUseTest] = useState(false);

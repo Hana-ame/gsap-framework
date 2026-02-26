@@ -1,4 +1,4 @@
-import { DataSource } from '../pixijs/dataSource';
+import type { DataSource } from '../pixijs/dataSource';
 
 export class TestDataSource implements DataSource {
   private _isConnected = true;

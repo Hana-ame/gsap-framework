@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { DataSource } from './dataSource';
+import type { DataSource } from './dataSource';
 import { webSocketDataSource } from '../websocket/webSocketDataSource';
 
 interface PixiExampleProps {

@@ -1,5 +1,5 @@
 import { wsService } from './websocket.service';
-import { DataSource } from '../pixijs/dataSource';
+import type { DataSource } from '../pixijs/dataSource';
 
 class WebSocketDataSource implements DataSource {
   get isConnected(): boolean {
