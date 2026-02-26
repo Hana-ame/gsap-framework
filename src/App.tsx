@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
 import { PixiExample } from './pixijs/PixiExample';
 import { webSocketDataSource } from './websocket/webSocketDataSource';
 import { TestDataSource } from './test/testDataSource';
@@ -21,12 +22,12 @@ function App() {
   }, [useTest]);
 
   return (
-    <div>
+    <ErrorBoundary>
       <button onClick={() => setUseTest(!useTest)}>
         切换到 {useTest ? 'WebSocket' : '测试'} 数据源
       </button>
       <PixiExample dataSource={dataSource} />
-    </div>
+    </ErrorBoundary>
   );
 }
 
