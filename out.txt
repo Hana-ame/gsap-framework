@@ -1,0 +1,1387 @@
+# prompt
+
+使用了 PixiJS v8
+
+## 输出要求
+
+应该添加完整的注释.在注释中清晰写明自身用途。并且应该置于什么上下文。
+并且在开头列出本文件内部的处理逻辑,处理要点,处理过程，以及使用方法,加上简短注意事项。
+帮助准确便利且快速理解代码做了什么.
+遇到需要给出代码的场合,给出完整的,整个文件的代码.
+代码段的边界应清晰可见，最好是用特殊符号进行分割。
+如果太长,则需要拆分为多个文件.
+输出时注释和代码都需要完整.注释除了当前版本进行了什么样的修改,还需要写明白整个文件在这个版本一共有什么功能(继承了而保留的功能和添加了的功能)
+代码当中的函数,需要标明输入param的含义,并且在注释中简要说明function的目的.与文件开头的注释不冲突
+修改后请给出测试意见:即如何操作和预期结果.
+并且列出在已经列出的测试中,有哪些需要删除的.
+
+## 全局目的(SYSTEM PROMPT)
+
+是一个pixi.js的测试项目。
+作为框架,能够便利地在react框架下对pixi.js进行操作.
+最终能成为一个互动游戏.
+
+## 当前轮次的目的(USER PROMPT)
+
+目前所有功能都很成功.
+
+现在,添加这样的功能:
+在canvas,随着鼠标的移动,follow鼠标,有烟花的效果.
+
+注意,目前写出的plugins的目的是为了指导之后的plugins如何写,因此请加上详细的说明.
+使得用户可以熟悉api.
+
+## 当前目录树
+
+`tree`
+
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   │   └── react.svg
+│   ├── components
+│   │   └── PixiCanvas.tsx
+│   ├── controllers
+│   │   └── PixiController.ts
+│   ├── main.tsx
+│   ├── pixijs
+│   │   ├── PixiExample.tsx
+│   ├── plugins
+│   │   ├── circle.plugin.ts
+│   │   ├── clear.plugin.ts
+│   │   ├── index.ts
+│   │   ├── plugin.types.ts
+│   │   └── rectangle.plugin.ts
+│   ├── styles.css
+│   ├── vite-env.d.ts
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.js
+└── vite.config.ts
+
+## 重要代码(不一定是最新的,因为github有缓存.)
+
+这些是核心逻辑.
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/components/PixiCanvas.tsx
+// 用途: PixiJS 画布 React 组件，管理 Pixi 应用生命周期，
+//       监听画布上的鼠标/触摸事件，并通过 Controller 发送带时间戳的消息。
+//       初始化完成后通过 onAppInit 回调将 app 实例传出。
+// 上下文: 应在 React 应用中使用，作为画布容器。接收 PixiController 实例，
+//        并将用户交互转换为统一格式的消息发送给 Controller。
+//
+// 版本: 2.1.0 (修复销毁错误)
+//    - 添加 isMounted 标志，防止在卸载后执行初始化回调
+//    - 在清理时先停止 ticker，再用 try-catch 包裹 destroy，避免未捕获异常
+//    - 在 then 回调中也检查挂载状态，确保只有挂载时才操作 DOM 和回调
+//
+// Outline:
+// 1. 导入依赖与类型定义
+// 2. PixiCanvasProps 接口定义
+// 3. PixiCanvas 组件
+//    a. 状态管理 (containerRef, appRef)
+//    b. 初始化 Pixi 应用与事件绑定 (useEffect)
+//    c. 组件卸载清理
+//    d. 渲染容器 div
+// 4. 辅助函数: 生成带时间戳的事件对象
+// ============================================================
+
+// ============================================================
+// 文件: src/components/PixiCanvas.tsx
+// 用途: PixiJS 画布 React 组件，管理 Pixi 应用生命周期，
+//       监听画布上的鼠标/触摸事件，并通过 Controller 发送带时间戳的消息。
+// 版本: 2.2.0
+//    - 修复剧烈闪烁和绘图失效问题
+//    - 添加挂载状态和 app 引用检查，防止异步竞态
+//    - 确保每次重建前彻底清理旧 canvas
+//    - 使用 useCallback 稳定回调函数
+// ============================================================
+
+import React, { useEffect, useRef, useCallback } from 'react';
+import * as PIXI from 'pixi.js';
+import { PixiController } from '../controllers/PixiController';
+
+interface PixiCanvasProps {
+  controller: PixiController;
+  width?: number;
+  height?: number;
+  backgroundColor?: number;
+  onAppInit?: (app: PIXI.Application) => void;
+}
+
+export const PixiCanvas: React.FC<PixiCanvasProps> = ({
+  controller,
+  width = 800,
+  height = 600,
+  backgroundColor = 0x1099bb,
+  onAppInit,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const appRef = useRef<PIXI.Application | null>(null);
+  const isMountedRef = useRef(true);
+
+  // 稳定 onAppInit 回调，避免因父组件重传新函数导致重建
+  const handleAppInit = useCallback((app: PIXI.Application) => {
+    onAppInit?.(app);
+  }, [onAppInit]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    const container = containerRef.current;
+    if (!container) return;
+
+    // 彻底清理容器内残留的 canvas（防止多个 canvas 叠加）
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+
+    // 销毁已有的 Pixi 应用（如果有）
+    if (appRef.current) {
+      try {
+        appRef.current.ticker?.stop();
+        appRef.current.destroy(true);
+      } catch (e) {
+        console.warn('销毁旧 Pixi 应用时出错:', e);
+      } finally {
+        appRef.current = null;
+      }
+    }
+
+    // 创建新应用
+    const app = new PIXI.Application();
+    appRef.current = app;
+
+    app.init({
+      width,
+      height,
+      backgroundColor,
+      antialias: true,
+      resolution: window.devicePixelRatio || 1,
+      autoDensity: true,
+    })
+      .then(() => {
+        // 如果组件已卸载，直接销毁并返回
+        if (!isMountedRef.current) {
+          app.destroy(true);
+          return;
+        }
+
+        // 检查 appRef.current 是否还是当前这个 app
+        // 如果不是，说明在异步过程中已经被新 app 替代，当前 app 应废弃
+        if (appRef.current !== app) {
+          app.destroy(true);
+          return;
+        }
+
+        if (container && app.canvas) {
+          container.appendChild(app.canvas);
+          handleAppInit(app);
+
+          // 事件处理函数（使用 app 闭包，确保始终操作当前 app）
+          const handlePointerEvent = (eventType: string) => (event: MouseEvent | TouchEvent) => {
+            event.preventDefault();
+
+            let clientX = 0, clientY = 0;
+            if (event instanceof MouseEvent) {
+              clientX = event.clientX;
+              clientY = event.clientY;
+            } else if (event instanceof TouchEvent && event.touches.length > 0) {
+              clientX = event.touches[0].clientX;
+              clientY = event.touches[0].clientY;
+            }
+
+            const canvas = app.canvas;
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            const message = {
+              type: eventType,
+              x: Math.max(0, Math.min(x, canvas.width)),
+              y: Math.max(0, Math.min(y, canvas.height)),
+              timestamp: Date.now(),
+              originalEvent: event,
+            };
+
+            controller.sendToParent(message);
+          };
+
+          // 绑定事件
+          app.canvas.addEventListener('mousedown', handlePointerEvent('pointerdown'));
+          app.canvas.addEventListener('mousemove', handlePointerEvent('pointermove'));
+          app.canvas.addEventListener('mouseup', handlePointerEvent('pointerup'));
+          app.canvas.addEventListener('mouseleave', handlePointerEvent('pointerleave'));
+          app.canvas.addEventListener('touchstart', handlePointerEvent('pointerdown'), { passive: false });
+          app.canvas.addEventListener('touchmove', handlePointerEvent('pointermove'), { passive: false });
+          app.canvas.addEventListener('touchend', handlePointerEvent('pointerup'));
+          app.canvas.addEventListener('touchcancel', handlePointerEvent('pointerleave'));
+          app.canvas.addEventListener('click', handlePointerEvent('click'));
+        }
+      })
+      .catch(error => {
+        console.error('PixiJS 初始化失败:', error);
+      });
+
+    // 清理函数
+    return () => {
+      isMountedRef.current = false;
+
+      // 销毁当前 app
+      if (appRef.current) {
+        try {
+          appRef.current.ticker?.stop();
+          appRef.current.destroy(true);
+        } catch (e) {
+          console.warn('销毁 Pixi 应用时出错:', e);
+        } finally {
+          appRef.current = null;
+        }
+      }
+
+      // 再次确保容器内无残留 canvas
+      if (container) {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+      }
+    };
+  }, [controller, width, height, backgroundColor, handleAppInit]);
+
+  return <div ref={containerRef} style={{ width, height }} />;
+};
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/controllers/PixiController.ts
+// 用途: Pixi 控制器，作为消息中枢。管理插件、分发绘图消息，
+//       并负责将画布事件（带时间戳）发送给 React 父组件。
+// 上下文: 被 PixiCanvas 和 React 组件使用。它不依赖具体渲染逻辑，
+//        只负责消息路由。
+//
+// Outline:
+// 1. 导入插件类型
+// 2. PixiController 类定义
+//    a. 私有属性: plugins, parentMessageHandler, app
+//    b. 构造函数
+//    c. 注册插件方法: registerPlugin (接受符合 PixiPlugin 接口的对象)
+//    d. 设置应用实例: setApp
+//    e. 发送消息到 Pixi (绘图): sendToPixi
+//    f. 发送消息到父组件: sendToParent
+//    g. 监听来自父组件的消息: onMessageFromParent
+//
+// 注意事项:
+//   - 插件可以是对象字面量或类实例，只需包含 messageTypes 和 execute。
+//   - 调用 sendToPixi 前必须通过 setApp 设置 Pixi 应用实例。
+// ============================================================
+
+import { PixiPlugin } from '../plugins/plugin.types';
+import * as PIXI from 'pixi.js';
+
+export class PixiController {
+  private plugins: PixiPlugin[] = [];
+  private parentMessageHandler?: (message: any) => void;
+  private app: PIXI.Application | null = null;
+
+  constructor() {}
+
+  /**
+   * 设置 Pixi 应用实例，供插件执行时使用
+   * @param app Pixi Application 实例
+   */
+  setApp(app: PIXI.Application): void {
+    this.app = app;
+  }
+
+  /**
+   * 注册一个插件（支持对象字面量或类实例）
+   * @param plugin 符合 PixiPlugin 接口的插件对象
+   */
+  registerPlugin(plugin: PixiPlugin): void {
+    this.plugins.push(plugin);
+    console.log(`[Controller] 插件已注册: ${plugin.name || '未命名插件'}`);
+  }
+
+  /**
+   * 向 Pixi 发送消息（通常用于绘图指令）
+   * 该方法会被 React 组件调用，自动寻找匹配的插件执行
+   * @param message 消息对象，应包含 type 字段
+   */
+  sendToPixi(message: any): void {
+    if (!this.app) {
+      console.warn('[Controller] Pixi 应用实例未设置，无法执行插件');
+      return;
+    }
+
+    console.log(`[Controller] 收到消息发往 Pixi:`, message);
+
+    const handled = this.plugins.some(plugin => {
+      if (plugin.messageTypes.includes(message.type)) {
+        try {
+          plugin.execute(message, this.app!);
+          return true;
+        } catch (error) {
+          console.error(`[Controller] 插件 ${plugin.name || '未知'} 执行失败:`, error);
+          return false;
+        }
+      }
+      return false;
+    });
+
+    if (!handled) {
+      console.log(`[Controller] 没有插件处理消息类型: ${message.type}`);
+    }
+  }
+
+  /**
+   * 向父组件 (通常是 React 组件) 发送消息
+   * 此方法由 PixiCanvas 调用，传递用户交互事件
+   * @param message 消息对象，包含 timestamp 字段
+   */
+  sendToParent(message: any): void {
+    if (this.parentMessageHandler) {
+      this.parentMessageHandler(message);
+    } else {
+      console.warn('[Controller] 父组件消息处理器未设置，消息被丢弃:', message);
+    }
+  }
+
+  /**
+   * 设置来自父组件的消息监听器
+   * @param handler 处理函数
+   */
+  onMessageFromParent(handler: (message: any) => void): void {
+    this.parentMessageHandler = handler;
+  }
+
+  /**
+   * 获取当前注册的插件列表 (用于调试)
+   */
+  getPlugins(): PixiPlugin[] {
+    return this.plugins;
+  }
+}
+
+export type { PixiPlugin };
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/App.tsx
+// 用途: 主应用测试界面。展示画布、工具栏，并实时显示来自画布的事件日志。
+//       新增 DVD 屏保反弹动画功能，通过插件实现。
+// 上下文: React 根组件，用于演示 PixiCanvas 和 PixiController 的集成，
+//        以及函数式插件的注册与使用。
+//
+// 版本: 2.2.0
+//    - 新增 bouncePlugin，实现反弹图片动画。
+//    - 在画布初始化后自动发送 startDVD 消息启动动画。
+//    - 更新日志和按钮以支持新功能。
+//
+// Outline:
+// 1. 导入依赖、组件、控制器和插件（包括新 bouncePlugin）
+// 2. App 函数组件
+//    a. 状态: 事件日志列表
+//    b. 初始化控制器并注册所有插件
+//    c. 处理来自控制器的消息，更新日志
+//    d. 发送绘图指令的函数（使用 controller.sendToPixi）
+//    e. 在 handleAppInit 中发送 startDVD 消息
+//    f. 渲染 UI: 标题、按钮、画布、日志显示区
+// 3. 辅助函数: 格式化时间戳
+//
+// 注意事项:
+//   - 插件是直接导入的对象，无需实例化。
+//   - 在 PixiCanvas 初始化后通过 onAppInit 回调设置 controller 的 app 实例，
+//     并发送 startDVD 启动动画。
+//   - 点击“清除”按钮会同时触发 clearPlugin 和 bouncePlugin 的清理逻辑，
+//     但 bouncePlugin 会在收到 clear 消息后停止动画，然后 clearPlugin 清空舞台。
+// ============================================================
+
+import React, { useState, useRef, useCallback } from "react";
+import * as PIXI from "pixi.js";
+import { PixiCanvas } from "./components/PixiCanvas";
+import { PixiController } from "./controllers/PixiController";
+// 导入所有插件
+import { circlePlugin } from "./plugins/circle.plugin";
+import { rectanglePlugin } from "./plugins/rectangle.plugin";
+import { clearPlugin } from "./plugins/clear.plugin";
+import { bouncePlugin } from "./plugins/bounce.plugin"; // 新增
+import "./App.css";
+
+const formatTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+};
+
+function App() {
+  const [eventLogs, setEventLogs] = useState<string[]>([]);
+  const appRef = useRef<PIXI.Application | null>(null);
+  const controllerRef = useRef<PixiController | null>(null);
+
+  // 初始化控制器并注册插件（只执行一次）
+  if (!controllerRef.current) {
+    const controller = new PixiController();
+
+    // 注册所有插件
+    controller.registerPlugin(circlePlugin);
+    controller.registerPlugin(rectanglePlugin);
+    controller.registerPlugin(clearPlugin);
+    controller.registerPlugin(bouncePlugin); // 新增
+
+    // 设置父组件消息处理器（接收画布事件）
+    controller.onMessageFromParent((message) => {
+      const timeStr = message.timestamp
+        ? formatTimestamp(message.timestamp)
+        : "未知时间";
+
+      let logEntry = `[${timeStr}] 事件: ${message.type}`;
+      if (message.x !== undefined && message.y !== undefined) {
+        logEntry += ` 坐标: (${message.x.toFixed(2)}, ${message.y.toFixed(2)})`;
+      }
+      setEventLogs((prev) => [logEntry, ...prev.slice(0, 49)]);
+    });
+
+    controllerRef.current = controller;
+  }
+
+  // 当 PixiCanvas 初始化完成时，将 app 实例设置到控制器，并启动 DVD 动画
+  const handleAppInit = useCallback((app: PIXI.Application) => {
+    appRef.current = app;
+    controllerRef.current?.setApp(app);
+    // 发送启动 DVD 反弹动画的消息
+    controllerRef.current?.sendToPixi({ type: 'startDVD' });
+    // 记录日志
+    const timeStr = new Date().toLocaleTimeString("zh-CN", {
+      hour12: false,
+      fractionalSecondDigits: 3,
+    });
+    setEventLogs((prev) => [
+      `[${timeStr}] 启动 DVD 反弹动画`,
+      ...prev.slice(0, 49),
+    ]);
+  }, []);
+
+  // 发送绘图指令
+  const sendDrawCommand = (type: string) => {
+    if (!controllerRef.current) return;
+
+    const message = {
+      type,
+      timestamp: Date.now(),
+      x: Math.random() * 400 + 200,
+      y: Math.random() * 300 + 150,
+      radius: 30,
+      width: 60,
+      height: 40,
+      color: Math.random() * 0xffffff,
+    };
+
+    // 通过控制器发送，它会自动调用匹配的插件
+    controllerRef.current.sendToPixi(message);
+
+    // 记录指令日志
+    const timeStr = new Date().toLocaleTimeString("zh-CN", {
+      hour12: false,
+      fractionalSecondDigits: 3,
+    });
+    setEventLogs((prev) => [
+      `[${timeStr}] 发送绘图指令: ${type}`,
+      ...prev.slice(0, 49),
+    ]);
+  };
+
+  const clearLogs = () => setEventLogs([]);
+
+  return (
+    <div className="App">
+      <h1>PixiJS v8 事件测试 (DVD 屏保动画)</h1>
+      <div className="toolbar">
+        <button onClick={() => sendDrawCommand("drawCircle")}>画圆</button>
+        <button onClick={() => sendDrawCommand("drawRectangle")}>画矩形</button>
+        <button onClick={() => sendDrawCommand("clear")}>清除</button>
+        <button onClick={clearLogs}>清除日志</button>
+      </div>
+      <div className="canvas-container">
+        <PixiCanvas
+          controller={controllerRef.current}
+          width={800}
+          height={600}
+          backgroundColor={0x1099bb}
+          onAppInit={handleAppInit}
+        />
+      </div>
+      <div className="event-log">
+        <h3>事件日志 (带时间戳)</h3>
+        <ul>
+          {eventLogs.map((log, index) => (
+            <li key={index}>{log}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/main.tsx?proxy_host=raw.githubusercontent.com]
+
+```
+// src/index.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+
+这些是plugins,也请阅读以下
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/plugin.types.ts
+// 用途: 定义 Pixi 插件的标准接口。所有绘图插件必须符合此接口。
+//       插件可以是对象字面量（推荐）或类实例，只需包含 messageTypes 和 execute。
+// 上下文: 被 PixiController 和各个具体插件引用。
+//
+// Outline:
+// 1. 导入 PIXI 类型
+// 2. 定义 PixiPlugin 接口
+//    - messageTypes: 插件能处理的消息类型列表
+//    - execute: 执行绘图逻辑的函数
+//    - name: (可选) 插件名称，用于日志和调试
+//
+// 使用方法:
+//   export const myPlugin: PixiPlugin = {
+//     name: 'MyPlugin',
+//     messageTypes: ['drawSomething'],
+//     execute: (message, app) => { ... }
+//   };
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+
+export interface PixiPlugin {
+  /** 此插件能够处理的消息类型列表 */
+  messageTypes: string[];
+
+  /** 执行绘图逻辑。若消息类型不匹配或参数错误，应抛出错误。 */
+  execute(message: any, app: PIXI.Application): void;
+
+  /** 插件名称（可选），用于日志和调试 */
+  name?: string;
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/bounce.plugin.ts
+// 用途: 实现DVD屏保风格的反弹图片动画，每次撞击边界随机变色并改变方向。
+//       当收到 'startDVD' 消息时，加载SVG图片并开始在画布内移动反弹；
+//       当收到 'clear' 消息时，停止动画并销毁图片。
+// 上下文: 注册到 PixiController 中，由消息触发。支持持续动画。
+//
+// 版本: 1.1.0
+//    - 新增每次撞击时随机改变精灵颜色 (sprite.tint)
+//    - 新增每次撞击时随机生成新速度向量（方向随机，大小不变），取代镜面反射
+//    - 初始化时随机设置初始颜色
+//
+// Outline:
+// 1. 导入依赖与类型
+// 2. 定义插件内部状态 (sprite, velocity, tickerCallback, isAnimating)
+// 3. 导出插件对象，包含 messageTypes 和 execute 方法
+// 4. execute 方法根据消息类型分发：
+//    - 'startDVD': 启动动画（如果尚未启动，则加载SVG并开始移动）
+//    - 'clear': 停止动画并清理资源
+// 5. 辅助函数：loadSvg, startAnimation, stopAnimation, updatePosition
+//
+// 使用方法:
+//   import { bouncePlugin } from './plugins/bounce.plugin';
+//   controller.registerPlugin(bouncePlugin);
+//   // 发送启动消息
+//   controller.sendToPixi({ type: 'startDVD' });
+//
+// 注意事项:
+//   - SVG 加载是异步的，动画会在加载完成后自动开始。
+//   - 多次发送 'startDVD' 不会重复创建动画，会先停止旧动画。
+//   - 收到 'clear' 消息时，会停止动画并销毁精灵，但不清除其他图形（由 clear.plugin 负责）。
+//   - 需要确保 app 实例已设置，否则消息会被忽略。
+//   - 颜色通过 sprite.tint 改变，会影响整个精灵的色调，包括白色文字。
+// ============================================================
+
+import { PixiPlugin } from './plugin.types';
+import * as PIXI from 'pixi.js';
+
+const svgUrl = new URL('../assets/dvd-logo.svg', import.meta.url).href;
+
+export const bouncePlugin: PixiPlugin = {
+  name: 'BouncePlugin',
+  messageTypes: ['startDVD', 'clear'],
+
+  execute(message: any, app: PIXI.Application): void {
+    if (!app) {
+      console.warn('[BouncePlugin] 未提供 Pixi 应用实例');
+      return;
+    }
+
+    if (message.type === 'startDVD') {
+      startBounce(app);
+    } else if (message.type === 'clear') {
+      stopBounce(app);
+    }
+  }
+};
+
+const appState = new WeakMap<PIXI.Application, {
+  sprite: PIXI.Sprite | null;
+  velocity: { x: number; y: number };
+  tickerCallback: (() => void) | null;
+  isAnimating: boolean;
+}>();
+
+async function startBounce(app: PIXI.Application) {
+  let state = appState.get(app);
+  if (!state) {
+    state = {
+      sprite: null,
+      velocity: { x: 0, y: 0 },
+      tickerCallback: null,
+      isAnimating: false,
+    };
+    appState.set(app, state);
+  }
+
+  // 如果已有动画，先停止
+  if (state.isAnimating) {
+    stopBounce(app);
+  }
+
+  try {
+    let texture: PIXI.Texture;
+    if (PIXI.Assets.cache.has(svgUrl)) {
+      texture = PIXI.Assets.get(svgUrl);
+    } else {
+      texture = await PIXI.Assets.load(svgUrl);
+    }
+
+    const sprite = new PIXI.Sprite(texture);
+    sprite.anchor.set(0.5);
+    sprite.label = 'bouncingDVD';
+
+    // 随机初始颜色
+    sprite.tint = Math.random() * 0xffffff;
+
+    // 随机初始位置（确保完全在画布内）
+    const maxX = app.screen.width - sprite.width / 2;
+    const minX = sprite.width / 2;
+    const maxY = app.screen.height - sprite.height / 2;
+    const minY = sprite.height / 2;
+    sprite.x = Math.random() * (maxX - minX) + minX;
+    sprite.y = Math.random() * (maxY - minY) + minY;
+
+    // 随机初始速度（方向随机，大小固定）
+    const speed = 3;
+    const angle = Math.random() * Math.PI * 2;
+    state.velocity = {
+      x: Math.cos(angle) * speed,
+      y: Math.sin(angle) * speed,
+    };
+
+    app.stage.addChild(sprite);
+    state.sprite = sprite;
+
+    const update = () => {
+      if (!state.sprite || !state.sprite.parent) {
+        stopBounce(app);
+        return;
+      }
+
+      const sprite = state.sprite;
+      const halfWidth = sprite.width / 2;
+      const halfHeight = sprite.height / 2;
+      let collided = false;
+
+      // 更新位置
+      sprite.x += state.velocity.x;
+      sprite.y += state.velocity.y;
+
+      // 边界检测与修正
+      if (sprite.x - halfWidth < 0) {
+        sprite.x = halfWidth;
+        collided = true;
+      } else if (sprite.x + halfWidth > app.screen.width) {
+        sprite.x = app.screen.width - halfWidth;
+        collided = true;
+      }
+
+      if (sprite.y - halfHeight < 0) {
+        sprite.y = halfHeight;
+        collided = true;
+      } else if (sprite.y + halfHeight > app.screen.height) {
+        sprite.y = app.screen.height - halfHeight;
+        collided = true;
+      }
+
+      if (collided) {
+        // 撞击时随机变色
+        sprite.tint = Math.random() * 0xffffff;
+
+        // 随机新方向（速度大小保持不变）
+        const currentSpeed = Math.hypot(state.velocity.x, state.velocity.y);
+        const newAngle = Math.random() * Math.PI * 2;
+        state.velocity.x = currentSpeed * Math.cos(newAngle);
+        state.velocity.y = currentSpeed * Math.sin(newAngle);
+      }
+    };
+
+    app.ticker.add(update);
+    state.tickerCallback = update;
+    state.isAnimating = true;
+
+    console.log('[BouncePlugin] 反弹动画已启动，撞击时将随机变色并改变方向');
+  } catch (error) {
+    console.error('[BouncePlugin] 加载 SVG 失败:', error);
+  }
+}
+
+function stopBounce(app: PIXI.Application) {
+  const state = appState.get(app);
+  if (!state) return;
+
+  if (state.tickerCallback) {
+    app.ticker.remove(state.tickerCallback);
+    state.tickerCallback = null;
+  }
+
+  if (state.sprite && state.sprite.parent) {
+    state.sprite.destroy();
+  }
+  state.sprite = null;
+  state.isAnimating = false;
+  console.log('[BouncePlugin] 反弹动画已停止');
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/clear.plugin.ts
+// 用途: 清空画布的插件（对象字面量形式）
+// 上下文: 被 PixiController 注册，处理 'clear' 类型的消息。
+//
+// Outline:
+// 1. 导入插件类型和 PIXI
+// 2. 定义插件对象，包含 name、messageTypes、execute
+// 3. 导出插件对象
+//
+// 使用方法:
+//   import { clearPlugin } from './plugins/clear.plugin';
+//   controller.registerPlugin(clearPlugin);
+// ============================================================
+
+import { PixiPlugin } from './plugin.types';
+import * as PIXI from 'pixi.js';
+
+export const clearPlugin: PixiPlugin = {
+  name: 'ClearPlugin',
+  messageTypes: ['clear'],
+
+  /**
+   * 清空画布（移除舞台上所有子对象）
+   * @param message 无需特定参数
+   * @param app Pixi Application 实例
+   */
+  execute(message: any, app: PIXI.Application): void {
+    app.stage.removeChildren();
+  }
+};
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/circle.plugin.ts
+// 用途: 绘制圆形的插件（对象字面量形式）
+// 上下文: 被 PixiController 注册，处理 'drawCircle' 类型的消息。
+//
+// Outline:
+// 1. 导入插件类型和 PIXI
+// 2. 定义插件对象，包含 name、messageTypes、execute
+// 3. 导出插件对象
+//
+// 使用方法:
+//   import { circlePlugin } from './plugins/circle.plugin';
+//   controller.registerPlugin(circlePlugin);
+// ============================================================
+
+import { PixiPlugin } from './plugin.types';
+import * as PIXI from 'pixi.js';
+
+export const circlePlugin: PixiPlugin = {
+  name: 'CirclePlugin',
+  messageTypes: ['drawCircle'],
+
+  /**
+   * 绘制圆形
+   * @param message 应包含 x, y, radius, color
+   * @param app Pixi Application 实例
+   */
+  execute(message: any, app: PIXI.Application): void {
+    const { x, y, radius = 30, color = 0xff0000 } = message;
+    const circle = new PIXI.Graphics();
+    circle.circle(x, y, radius);
+    circle.fill(color);
+    app.stage.addChild(circle);
+  }
+};
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/rectangle.plugin.ts
+// 用途: 绘制矩形的插件（对象字面量形式）
+// 上下文: 被 PixiController 注册，处理 'drawRectangle' 类型的消息。
+//
+// Outline:
+// 1. 导入插件类型和 PIXI
+// 2. 定义插件对象，包含 name、messageTypes、execute
+// 3. 导出插件对象
+//
+// 使用方法:
+//   import { rectanglePlugin } from './plugins/rectangle.plugin';
+//   controller.registerPlugin(rectanglePlugin);
+// ============================================================
+
+import { PixiPlugin } from './plugin.types';
+import * as PIXI from 'pixi.js';
+
+export const rectanglePlugin: PixiPlugin = {
+  name: 'RectanglePlugin',
+  messageTypes: ['drawRectangle'],
+
+  /**
+   * 绘制矩形
+   * @param message 应包含 x, y, width, height, color
+   * @param app Pixi Application 实例
+   */
+  execute(message: any, app: PIXI.Application): void {
+    const { x, y, width = 60, height = 40, color = 0x00ff00 } = message;
+    const rect = new PIXI.Graphics();
+    rect.rect(x - width / 2, y - height / 2, width, height); // 以(x,y)为中心
+    rect.fill(color);
+    app.stage.addChild(rect);
+  }
+};
+```
+
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// not used
+
+import { circlePlugin } from './circle.plugin';
+import { rectanglePlugin } from './rectangle.plugin';
+import { clearPlugin } from './clear.plugin';
+
+export const plugins = [circlePlugin, rectanglePlugin, clearPlugin];
+```
+
+
+
+## 其他补充
+
+### README.md
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com]
+
+```
+# Pixi.js React 测试项目 (带时间戳事件日志)
+
+## 一、项目概述与上下文
+
+本项目是一个基于 **PixiJS v8** 和 **React** 的测试框架，采用**解耦的控制器-插件架构**。主要目标是通过 React 组件方便地控制 Pixi 画布进行绘图，并实时接收画布上的用户交互事件（带时间戳），以便调试和分析。
+
+### 核心架构
+
+- **`PixiController`**：消息中枢。负责管理插件、分发绘图指令，并将画布事件（如点击、移动）传递给 React 父组件。所有消息均包含时间戳。
+- **`PixiCanvas`**：React 组件。封装 Pixi 应用的生命周期（初始化、销毁），监听画布上的鼠标/触摸事件，并通过 Controller 发送带时间戳的事件。
+- **插件系统**：独立的绘图插件（对象字面量形式），每个插件声明自己能处理的消息类型，并包含具体的绘图逻辑。插件是函数式的，无需实例化。
+
+## 二、技术指南：逻辑流程
+
+### 1. 初始化阶段
+
+- `App.tsx` 创建 `PixiController` 实例。
+- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象（如 `circlePlugin`）。
+- 设置父组件消息处理器：`controller.onMessageFromParent(handler)`，该处理器负责将画布事件显示在 UI 日志中。
+- 渲染 `PixiCanvas` 组件，传入 `controller` 和 `onAppInit` 回调。
+
+### 2. 画布初始化
+
+- `PixiCanvas` 内部创建 `PIXI.Application` 并异步初始化。
+- 初始化完成后，将 `app` 实例通过 `onAppInit` 回调传回 `App.tsx`。
+- `App.tsx` 调用 `controller.setApp(app)`，使控制器持有 `app` 引用，以便后续插件执行绘图。
+
+### 3. 用户交互事件流
+
+- 用户在画布上操作（鼠标/触摸），`PixiCanvas` 监听相应事件（`pointerdown`、`pointermove` 等）。
+- 事件处理器构造消息对象：包含 `type`、坐标 `x`/`y`、`timestamp`（`Date.now()`）等。
+- 调用 `controller.sendToParent(message)` 将消息发送给父组件。
+- 父组件的处理器格式化日志并更新 UI。
+
+### 4. 绘图指令流
+
+- 用户点击 UI 按钮（如“画圆”），`App.tsx` 调用 `sendDrawCommand('drawCircle')`。
+- 构造绘图消息对象，包含 `type`、随机坐标、颜色等。
+- 调用 `controller.sendToPixi(message)`。
+- 控制器遍历已注册插件，寻找 `messageTypes` 包含该 `type` 的插件。
+- 找到后调用插件的 `execute(message, app)` 方法，在画布上绘制图形。
+- 若没有插件处理该类型，控制台输出警告。
+
+### 5. 清理阶段
+
+- `PixiCanvas` 组件卸载时，自动销毁 `PIXI.Application` 实例，释放资源。
+
+## 三、当前版本功能 (Version 2.2.0)
+
+### ✨ 新增功能
+
+1. **DVD屏保风格反弹动画**：画布启动后自动出现一个彩色DVD标志，在画布内匀速移动并触碰边界反弹。动画通过 `bounce.plugin.ts` 插件实现。
+2. **插件支持持续性动画**：首次在插件中引入状态管理和 `PIXI.Ticker`，为后续复杂动画提供范例。
+3. **增强的插件协作**：`bouncePlugin` 同时监听 `clear` 消息，在画布清除时自动停止动画，避免资源泄露。
+
+### ✅ 继承保留的功能
+
+- 插件注册与消息分发机制。
+- 通过按钮发送绘图指令（画圆、矩形、清除）。
+- 画布生命周期管理。
+- 带时间戳的事件日志。
+
+## 四、使用方法
+
+1. **安装依赖**:
+   ```bash
+   npm install pixi.js@8.x react react-dom
+   ```
+
+```
+
+
+如有需要.请将README.md的版本也更新未最新版本
+除非在对话中说明需要更新 Readme.md(一般在对话的最后,比version.md稍前),否则不要更新.
+如果更新,直接在对话中输出 Readme.md 的内容,不要使用markdown codeblock包裹.  
+
+### VERSION.md
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com]
+
+```
+# 版本更新与开发日志 (VERSION.md)
+
+## 文件说明
+
+### 用途
+
+本文档用于记录本项目（Pixi.js React 测试框架）的所有重要变更、开发过程中遇到的困难、解决方案以及每个版本的功能状态。它是项目的“活历史”，帮助开发者理解设计决策和演进脉络。
+
+### 结构
+
+- **版本条目**：按时间倒序排列，每个版本包含版本号、发布日期、更新内容、困难与修正、功能列表、测试验证和待办事项。
+- **困难与修正**：详细描述开发中遇到的典型问题（技术难点、设计缺陷等）以及最终的解决方案，为后续类似问题提供参考。
+
+### 使用方法
+
+- 每次完成一个功能迭代或修复重要问题后，在此文件的顶部（`Unreleased` 区域或新版本）添加变更记录。
+- 描述更新内容时，应清晰区分“新增”、“修改”、“修复”、“移除”等类型。
+- “困难与修正”部分应包含问题背景、尝试的解决方案、最终选定的方案及其理由。
+
+### 注意事项
+
+- 版本号遵循 [语义化版本 2.0.0](https://semver.org/lang/zh-CN/)。
+- 所有日期采用 ISO 格式（YYYY-MM-DD）。
+- 保持语言简洁、客观，避免主观评价。
+
+---
+
+## [Unreleased]
+
+### 计划中功能
+
+- **WebSocket 自动消息映射**：将 WebSocket 接收到的消息直接路由到对应插件，无需手动调用 `controller.sendToPixi`。
+- **插件热加载**：允许在运行时动态注册/注销插件（需评估 Pixi 应用状态管理）。
+- **更多图形插件**：如文本、线条、图片插件，丰富绘图能力。
+- **单元测试**：为核心控制器和插件编写 Jest 测试用例。
+
+---
+
+## [0.4.0] - 2025-02-27
+
+### 核心更新
+
+- **增强反弹插件**：`bounce.plugin.ts` 升级至 v1.1.0，实现撞击时随机变色与随机方向。
+- **交互趣味性**：每次碰撞边界，DVD标志随机改变颜色（通过 `sprite.tint`）且运动方向完全随机（速度大小不变），使动画更富变化。
+- **文档同步**：更新 README.md 和 VERSION.md 以反映新特性。
+
+### 困难与修正过程
+
+#### 困难 1：如何实现“随机向量”而非镜面反射
+
+- **问题**：原逻辑采用简单的速度分量取反，不符合“随机选取向量”的要求。
+- **解决**：在碰撞检测触发时，基于当前速度大小重新生成一个随机角度，并计算新速度分量。同时保留速度大小，确保运动速度恒定。
+
+```typescript
+if (collided) {
+  const currentSpeed = Math.hypot(state.velocity.x, state.velocity.y);
+  const newAngle = Math.random() * Math.PI * 2;
+  state.velocity.x = currentSpeed * Math.cos(newAngle);
+  state.velocity.y = currentSpeed * Math.sin(newAngle);
+}
+```
+
+#### 困难 2：颜色变化需明显且不影响性能
+
+- **问题**：需要每次碰撞改变颜色，且不影响动画流畅度。
+- **尝试**：考虑更换纹理，但开销较大且复杂。
+- **解决**：采用 `sprite.tint` 属性，只需在碰撞时设置一个随机颜色值，性能极佳，且效果直观（整个精灵色调改变）。
+
+#### 困难 3：避免连续碰撞导致多次变色
+
+- **问题**：当精灵恰好卡在角落时，可能在一次 tick 中同时触发 x 和 y 边界碰撞，导致颜色变化两次。
+- **解决**：使用一个 `collided` 布尔标志，只要任一方向碰撞，就只执行一次随机变色和方向重置，避免重复。
+
+### 当前功能列表
+
+- **PixiController**：管理插件注册、消息分发、事件回调。
+- **PixiCanvas**：封装 Pixi 应用生命周期，捕获用户事件并抛出。
+- **插件系统**：
+  - `clear.plugin.ts`：清空画布。
+  - `circle.plugin.ts`：绘制圆形。
+  - `rectangle.plugin.ts`：绘制矩形。
+  - **`bounce.plugin.ts`**（增强版）：DVD 反弹动画，每次撞击随机变色、随机方向。
+- **WebSocket 基础**：提供连接管理与消息接收（需手动桥接至控制器）。
+- **测试界面**：按钮触发绘图，实时显示事件日志，自动启动 DVD 动画。
+
+### 测试验证
+
+#### 测试 1：撞击变色
+
+- **操作**：启动应用，观察 DVD 标志撞击边界。
+- **预期结果**：每次撞击瞬间标志颜色改变（不同撞击颜色不同）。
+- **实际结果**：✅ 通过。
+
+#### 测试 2：随机方向
+
+- **操作**：观察多次撞击后的运动轨迹。
+- **预期结果**：方向无规律，不是简单的镜面反弹。
+- **实际结果**：✅ 通过。
+
+#### 测试 3：颜色变化频率
+
+- **操作**：让标志快速连续撞击（例如靠近角落）。
+- **预期结果**：每次撞击只改变一次颜色，不会在一次 tick 中改变多次。
+- **实际结果**：✅ 通过。
+
+#### 测试 4：清除后重新启动（通过刷新）
+
+- **操作**：刷新页面。
+- **预期结果**：动画重新开始，初始颜色随机。
+- **实际结果**：✅ 通过。
+
+#### 🗑️ 待移除内容
+
+- **`src/components/TestJSX.jsx`**：计划在下一个版本中删除。
+
+---
+
+## [0.3.0] - 2025-02-27
+
+### 核心更新
+
+- **新增 DVD 屏保风格反弹动画**：通过 `bounce.plugin.ts` 插件实现，画布初始化后自动启动一个彩色“DVD”标志，在画布内匀速移动并边界反弹。
+- **插件支持持续性动画**：首次在插件中引入状态管理（使用 `WeakMap` 存储每个 `app` 实例的精灵、速度、ticker 回调），并利用 `PIXI.Ticker` 实现连续更新。
+- **插件间协作**：`bouncePlugin` 同时监听 `clear` 消息，在画布被清除时主动停止动画、销毁精灵，避免资源泄露和无效更新。
+- **新增 SVG 资源**：在 `src/assets/dvd-logo.svg` 中添加测试用的 DVD 标志图片。
+- **更新测试界面**：`App.tsx` 在 `handleAppInit` 中自动发送 `startDVD` 消息，日志记录启动动作。
+
+### 困难与修正过程
+
+#### 困难 1：如何在现有插件架构中实现持续性动画
+
+- **问题**：原插件系统设计为一次性的消息响应（`execute` 方法执行一次绘图），无法直接支持需要持续运行的动画。
+- **尝试**：
+  - 在插件外部（如 `App.tsx`）直接使用 `app.ticker` 管理动画，但这样会破坏插件的封装性，且无法利用插件系统的消息分发优势。
+  - 在插件内部使用全局变量存储状态，但多个 `app` 实例（如热重载）会导致状态混乱。
+- **解决**：采用 `WeakMap` 以 `app` 实例为键存储每个画布独立的动画状态。插件通过 `messageTypes` 监听 `startDVD` 和 `clear` 消息，在 `execute` 中根据消息类型调用对应的启动/停止函数。启动函数中创建精灵、设置速度，并将更新函数添加到 `app.ticker`；停止函数则移除 ticker 并销毁精灵。这样既保持了插件的独立性，又支持了持续性行为。
+
+```typescript
+const appState = new WeakMap<
+  PIXI.Application,
+  {
+    sprite: PIXI.Sprite | null;
+    velocity: { x: number; y: number };
+    tickerCallback: (() => void) | null;
+    isAnimating: boolean;
+  }
+>();
+```
+
+#### 困难 2：清除画布时动画未停止导致报错
+
+- **问题**：当用户点击“清除”按钮时，`clear.plugin.ts` 会移除舞台上所有子对象，包括 DVD 精灵。但动画的 ticker 回调仍在运行，尝试访问已被销毁的精灵导致报错。
+- **尝试**：在 `clear.plugin` 中通知 `bouncePlugin`，但插件之间不应直接耦合。
+- **解决**：让 `bouncePlugin` 也监听 `clear` 消息。当收到 `clear` 时，主动停止动画（移除 ticker 并销毁精灵）。由于控制器会遍历所有插件执行，`clearPlugin` 和 `bouncePlugin` 都会收到消息，且执行顺序无关紧要（`bouncePlugin` 提前停止动画，`clearPlugin` 移除所有子对象时精灵已不存在，安全）。
+
+#### 困难 3：SVG 异步加载与动画启动时机
+
+- **问题**：`PIXI.Assets.load` 是异步的，如果在加载完成前用户执行了清除或其他操作，可能导致动画状态不一致。
+- **解决**：在 `startBounce` 函数中使用 `async/await`，加载完成后才创建精灵并添加到舞台。加载期间如果收到 `clear`，则 `stopBounce` 会清除状态，加载完成后检测到 `isAnimating` 为 `false` 则不会继续。同时，在加载失败时输出错误，避免静默失败。
+
+#### 困难 4：多次启动导致多个精灵重叠
+
+- **问题**：如果多次发送 `startDVD` 消息，`execute` 会再次调用 `startBounce`，可能创建多个精灵。
+- **解决**：在 `startBounce` 开头先调用 `stopBounce` 清理已有动画，确保每次启动都是全新的。同时，通过 `isAnimating` 标志防止重复启动。
+
+### 当前功能列表
+
+- **PixiController**：管理插件注册、消息分发、事件回调。
+- **PixiCanvas**：封装 Pixi 应用生命周期，捕获用户事件并抛出。
+- **插件系统**：
+  - `clear.plugin.ts`：清空画布。
+  - `circle.plugin.ts`：绘制圆形。
+  - `rectangle.plugin.ts`：绘制矩形。
+  - **`bounce.plugin.ts`**：DVD 反弹动画（新增）。
+- **WebSocket 基础**：提供连接管理与消息接收（需手动桥接至控制器）。
+- **测试界面**：按钮触发绘图，实时显示事件日志，自动启动 DVD 动画。
+
+### 测试验证
+
+#### 测试 1：DVD 动画自动启动
+
+- **操作**：启动应用。
+- **预期结果**：画布上出现彩色“DVD”标志，并开始匀速移动，碰到边界反弹。日志区显示“启动 DVD 反弹动画”。
+- **实际结果**：✅ 通过。
+
+#### 测试 2：动画与绘图共存
+
+- **操作**：点击“画圆”按钮。
+- **预期结果**：画布上出现圆形，DVD 动画继续不受影响。
+- **实际结果**：✅ 通过。
+
+#### 测试 3：清除画布停止动画
+
+- **操作**：点击“清除”按钮。
+- **预期结果**：画布上所有图形（包括 DVD 标志）消失，动画停止。控制台无报错。
+- **实际结果**：✅ 通过。
+
+#### 测试 4：清除后再绘图
+
+- **操作**：清除后点击“画圆”。
+- **预期结果**：画布上出现圆形，但 DVD 标志不出现（因为动画已停止且未重启）。
+- **实际结果**：✅ 通过。
+
+#### 测试 5：点击画布事件
+
+- **操作**：点击画布任意位置。
+- **预期结果**：日志显示点击事件和坐标。
+- **实际结果**：✅ 通过。
+
+#### 🗑️ 待移除内容
+
+- **`src/components/TestJSX.jsx`**：计划在下一个版本中删除。
+
+---
+
+## [0.2.0] - 2025-02-27
+
+### 核心更新
+
+- **完全模块化的插件系统**：所有绘图指令从 `PixiCanvas` 组件中剥离，拆分为独立插件（`clear.plugin.ts`、`circle.plugin.ts`、`rectangle.plugin.ts`）。
+- **标准化插件接口**：定义 `PixiPlugin` 类型（`messageTypes` + `execute`），控制器按消息类型分发。
+- **WebSocket 服务基础**：创建 `websocket.service.ts` 和 `useWebsocket.ts`，提供 WebSocket 连接管理与消息接收能力。
+- **双向通信增强**：`PixiController` 支持 `sendToParent` 和 `onMessageFromPixi`，实现 React 组件与 Pixi 画布的事件互传。
+- **错误处理机制**：控制器捕获插件执行中的异常，并通过 `sendToParent` 上报错误，避免应用崩溃。
+- **测试界面优化**：`App.tsx` 显示事件日志，集成错误边界组件。
+
+### 困难与修正过程
+
+#### 困难 1：如何设计插件接口以实现消息路由
+
+- **问题**：0.1.0 版本将所有绘图逻辑硬编码在 `PixiCanvas` 的一个函数中，新增指令必须修改组件内部代码，扩展性差。
+- **尝试**：最初尝试让每个插件接收整个消息对象，并在插件内部通过 `switch` 判断类型，但导致插件间职责重叠。
+- **解决**：定义插件接口，要求每个插件声明自己能处理的 `messageTypes` 列表。控制器遍历插件，找到第一个匹配 `message.type` 的插件，调用其 `execute` 方法。这样职责单一，新增插件只需注册即可。
+
+```typescript
+// plugin.types.ts
+export interface PixiPlugin {
+  messageTypes: string[];
+  execute(message: any, app: PIXI.Application): void;
+}
+```
+
+#### 困难 2：PixiJS v8 的异步初始化与 React 生命周期的协调
+
+- **问题**：PixiJS v8 的 `Application.init()` 是异步的，如果在组件渲染过程中多次触发初始化，会导致内存泄漏和应用状态混乱。
+- **尝试**：使用 `useEffect` 的空依赖数组（`[]`）确保只初始化一次，但组件卸载时需清理。最初未正确清理事件监听器，导致切换路由后画布仍占用资源。
+- **解决**：在 `useEffect` 的清理函数中调用 `app.destroy(true)`，并移除所有通过 `app.stage.eventMode` 添加的监听器。同时使用 `useRef` 存储 app 实例，避免异步过程中状态丢失。
+
+```tsx
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      const app = new PIXI.Application();
+      await app.init({ ... });
+      if (!isMounted) { app.destroy(); return; }
+      // 存储 app 实例...
+    })();
+    return () => { isMounted = false; appRef.current?.destroy(true); };
+  }, []);
+```
+
+#### 困难 3：WebSocket 消息如何触发插件执行而不产生循环依赖
+
+- **问题**：WebSocket 服务需要调用 `PixiController` 的 `sendToPixi` 方法，但控制器又可能依赖 WebSocket 服务（例如通过插件发送消息出去）。直接引入会造成循环依赖。
+- **尝试**：最初在 `websocket.service.ts` 中导入 `PixiController`，但在大型项目中会导致依赖混乱。
+- **解决**：采用依赖注入方式：在 `useWebsocket` 钩子中接收一个 `onMessage` 回调，由上层组件（如 `App.tsx`）将 `controller.sendToPixi` 作为回调传入。这样 WebSocket 服务只负责解析消息，不直接依赖控制器。
+
+```tsx
+  // useWebsocket.ts
+  export const useWebsocket = (url: string, onMessage: (data: any) => void) => { ... }
+  // App.tsx
+  useWebsocket('ws://localhost:8080', controller.sendToPixi);
+```
+
+#### 困难 4：用户点击画布需要同时生成两个点（红色固定、蓝色随机）
+
+- **问题**：这个需求看似简单，但涉及事件坐标转换（canvas 坐标系到 Pixi 坐标系）和随机逻辑的复用。
+- **尝试**：在 `PixiCanvas` 中直接计算点击坐标并发送消息，但随机点逻辑如果放在组件内会破坏插件独立性。
+- **解决**：由插件系统处理：点击事件触发 `canvasClick` 消息，`circle.plugin.ts` 同时监听 `drawCircle` 和 `canvasClick` 两种类型，在 `execute` 中根据消息类型决定绘制红色点（使用消息中的坐标）还是生成随机蓝色点。这样保持了插件的内聚性。
+
+### 当前功能列表
+
+- **PixiController**：管理插件注册、消息分发、事件回调。
+- **PixiCanvas**：封装 Pixi 应用生命周期，捕获用户事件并抛出。
+- **插件系统**：
+  - `clear.plugin.ts`：清空画布。
+  - `circle.plugin.ts`：绘制圆形（支持固定坐标和随机生成）。
+  - `rectangle.plugin.ts`：绘制矩形（支持边框和填充）。
+- **WebSocket 基础**：提供连接管理与消息接收（需手动桥接至控制器）。
+- **测试界面**：按钮触发绘图，实时显示事件日志。
+
+### 测试验证
+
+#### 测试 1：点击 Canvas 交互
+
+- **操作**：在画布任意位置点击。
+- **预期结果**：
+  - 点击位置出现一个红色圆点。
+  - 画布随机位置出现一个蓝色圆点。
+- **实际结果**：✅ 通过。
+
+#### 测试 2：按钮触发绘图
+
+- **操作**：点击“绘制矩形”和“绘制圆形”按钮。
+- **预期结果**：画布上分别绘制一个矩形（黑色边框）和一个圆形（蓝色填充）。
+- **实际结果**：✅ 通过。
+
+#### 测试 3：错误边界触发
+
+- **操作**：在插件中故意抛出错误（如修改 `circle.plugin.ts` 使其崩溃）。
+- **预期结果**：错误被控制器捕获，并通过 `sendToParent` 发送，界面显示错误提示，但画布其他功能正常。
+- **实际结果**：✅ 通过。
+
+#### 🗑️ 待移除内容
+
+- **`src/components/TestJSX.jsx`**：这是一个早期测试组件，功能已被 `App.tsx` 覆盖，计划在下一个版本中删除。
+
+---
+
+## [0.1.0] - 2025-02-20
+
+### 初始功能
+
+- 搭建 React + TypeScript + PixiJS v8 项目基础结构。
+- 创建 `PixiController` 作为简单消息中枢，支持注册单一插件（函数式）。
+- 创建 `PixiCanvas` 组件，实现 Pixi 应用的初始化和销毁。
+- 在 `App.tsx` 中提供测试按钮，直接调用硬编码的绘图函数（`drawCircle`、`drawRectangle`、`clear`）。
+- 点击画布时在点击位置绘制红色点，并随机生成蓝色点（逻辑混合在组件中）。
+
+### 困难与修正过程
+
+#### 困难 1：PixiJS v8 与 React 的首次集成
+
+- **问题**：对 PixiJS v8 的异步 API 不熟悉，导致应用初始化时机错误，有时画布空白。
+- **解决**：查阅官方文档，确认 v8 的 `init` 方法返回 Promise，必须在异步函数中调用。使用 `useEffect` 和 `async/await` 确保初始化完成后再挂载视图。
+
+#### 困难 2：事件监听器清理
+
+- **问题**：在组件卸载时未移除 Pixi 的事件监听器，导致多次进入页面后监听器重复累积。
+- **解决**：在 `useEffect` 清理函数中调用 `app.stage.removeAllListeners()` 并销毁应用。
+
+#### 困难 3：代码组织混乱
+
+- **问题**：所有绘图逻辑堆砌在 `PixiCanvas` 的 `messagePlugin` 函数中，难以维护和扩展。
+- **解决**：此版本未解决，仅作为快速原型，为后续重构提供基础。
+
+### 功能列表
+
+- 基础画布渲染。
+- 按钮触发简单绘图。
+- 点击画布显示坐标点。
+
+### 测试验证
+
+- **测试**：点击画布和按钮，功能基本正常，但代码质量低，扩展困难。
+
+### 待办事项（当时）
+
+- 重构插件系统，实现模块化。
+- 添加 WebSocket 支持。
+
+---
+
+## 版本对比摘要
+
+| 版本  | 插件系统       | 事件通信              | WebSocket  | 错误处理 | 代码维护性 |
+| ----- | -------------- | --------------------- | ---------- | -------- | ---------- |
+| 0.1.0 | 硬编码         | 单向（React -> Pixi） | 无         | 无       | 低         |
+| 0.2.0 | 模块化、接口化 | 双向                  | 基础服务层 | 有       | 高         |
+| 0.3.0 | + 持续性动画   | 双向                  | 基础服务层 | 有       | 高         |
+| 0.4.0 | + 增强反弹效果 | 双向                  | 基础服务层 | 有       | 高         |
+
+```
+
+
+VERSION.md是记录每一次都更新了些什么的文件
+除非在对话中说明需要更新Version.md(一般在对话的最后),否则不要更新.
+如果更新,直接在对话中输出Version.md的内容,不要使用markdown codeblock包裹.  

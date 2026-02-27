@@ -25,11 +25,11 @@
 
 目前所有功能都很成功.
 
-现在,添加这样的功能:类似于DVD屏保一样在canvas中反弹移动的图片.图片暂时以一个svg文件代替,需要给出svg文件.
+现在,添加这样的功能:
+在canvas,随着鼠标的移动,follow鼠标,有烟花的效果.
 
-## 已经列出的测试和其测试结果
-
-都通过了.
+注意,目前写出的plugins的目的是为了指导之后的plugins如何写,因此请加上详细的说明.
+使得用户可以熟悉api.
 
 ## 当前目录树
 
@@ -41,16 +41,12 @@
 │   ├── assets
 │   │   └── react.svg
 │   ├── components
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── PixiCanvas.tsx
-│   │   └── TestJSX.jsx
+│   │   └── PixiCanvas.tsx
 │   ├── controllers
 │   │   └── PixiController.ts
 │   ├── main.tsx
 │   ├── pixijs
-│   │   ├── dataSource.ts
 │   │   ├── PixiExample.tsx
-│   │   └── README.md
 │   ├── plugins
 │   │   ├── circle.plugin.ts
 │   │   ├── clear.plugin.ts
@@ -58,13 +54,7 @@
 │   │   ├── plugin.types.ts
 │   │   └── rectangle.plugin.ts
 │   ├── styles.css
-│   ├── test
-│   │   └── testDataSource.ts
 │   ├── vite-env.d.ts
-│   └── websocket
-│       ├── useWebsocket.ts
-│       ├── webSocketDataSource.ts
-│       └── websocket.service.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
@@ -75,26 +65,27 @@
 
 这些是核心逻辑.
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com&v=2602271852]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/main.tsx?proxy_host=raw.githubusercontent.com]
 
 这些是plugins,也请阅读以下
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
 
 
 ## 其他补充
 
 ### README.md
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com]
 
 如有需要.请将README.md的版本也更新未最新版本
 除非在对话中说明需要更新 Readme.md(一般在对话的最后,比version.md稍前),否则不要更新.
@@ -102,7 +93,7 @@
 
 ### VERSION.md
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com]
 
 VERSION.md是记录每一次都更新了些什么的文件
 除非在对话中说明需要更新Version.md(一般在对话的最后),否则不要更新.

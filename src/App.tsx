@@ -33,11 +33,16 @@ import React, { useState, useRef, useCallback } from "react";
 import * as PIXI from "pixi.js";
 import { PixiCanvas } from "./components/PixiCanvas";
 import { PixiController } from "./controllers/PixiController";
+
+// 导入插件数组
+import { plugins } from "./plugins";
+
 // 导入所有插件
 import { circlePlugin } from "./plugins/circle.plugin";
 import { rectanglePlugin } from "./plugins/rectangle.plugin";
 import { clearPlugin } from "./plugins/clear.plugin";
 import { bouncePlugin } from "./plugins/bounce.plugin"; // 新增
+import { fireworksPlugin } from "./plugins/fireworks.plugin";
 import "./App.css";
 
 const formatTimestamp = (timestamp: number) => {
@@ -59,11 +64,8 @@ function App() {
   if (!controllerRef.current) {
     const controller = new PixiController();
 
-    // 注册所有插件
-    controller.registerPlugin(circlePlugin);
-    controller.registerPlugin(rectanglePlugin);
-    controller.registerPlugin(clearPlugin);
-    controller.registerPlugin(bouncePlugin); // 新增
+    // 批量注册所有插件
+    plugins.forEach((plugin) => controller.registerPlugin(plugin));
 
     // 设置父组件消息处理器（接收画布事件）
     controller.onMessageFromParent((message) => {
@@ -86,7 +88,8 @@ function App() {
     appRef.current = app;
     controllerRef.current?.setApp(app);
     // 发送启动 DVD 反弹动画的消息
-    controllerRef.current?.sendToPixi({ type: 'startDVD' });
+    controllerRef.current?.sendToPixi({ type: "startDVD" });
+    controllerRef.current?.sendToPixi({ type: 'startFireworks' });
     // 记录日志
     const timeStr = new Date().toLocaleTimeString("zh-CN", {
       hour12: false,
