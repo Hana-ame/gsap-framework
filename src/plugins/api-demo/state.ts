@@ -14,8 +14,8 @@
 //   - 每个演示容器固定在舞台左上角 (50,50)，尺寸 400x250，带半透明背景。
 // ============================================================
 
-import * as PIXI from 'pixi.js';
-import { AppState } from './types';
+import * as PIXI from "pixi.js";
+import { AppState } from "./types";
 
 // 使用 WeakMap 存储每个 app 的状态，避免内存泄漏
 export const appStates = new WeakMap<PIXI.Application, AppState>();
@@ -27,10 +27,18 @@ export const appStates = new WeakMap<PIXI.Application, AppState>();
  */
 export function getDemoContainer(app: PIXI.Application): PIXI.Container {
   let state = appStates.get(app);
+  if (state) {
+    // 检查容器是否在舞台上
+    if (!state.container.parent) {
+      // 容器已被移除，销毁并重建
+      state.container.destroy({ children: true });
+      state = undefined; // 触发重新创建
+    }
+  }
   if (!state) {
     // 创建新的容器
     const container = new PIXI.Container();
-    container.label = 'apiDemoContainer';
+    container.label = "apiDemoContainer";
     container.position.set(50, 50); // 固定在左上角，留出边距
     app.stage.addChild(container);
 
@@ -44,6 +52,7 @@ export function getDemoContainer(app: PIXI.Application): PIXI.Container {
     state = { container };
     appStates.set(app, state);
   }
+
   return state.container;
 }
 
@@ -63,7 +72,7 @@ export function clearDemo(app: PIXI.Application) {
 
   // 移除之前的交互对象（如果有）
   if (state.interactiveObjects) {
-    state.interactiveObjects.forEach(obj => {
+    state.interactiveObjects.forEach((obj) => {
       obj.removeAllListeners(); // 移除所有事件监听
     });
     state.interactiveObjects = undefined;
