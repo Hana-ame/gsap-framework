@@ -15,7 +15,7 @@
 ### 1. 初始化阶段
 
 - `App.tsx` 创建 `PixiController` 实例。
-- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象（如 `circlePlugin`）。
+- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象（如 `circlePlugin`）。所有插件通过 `src/plugins/index.ts` 统一导入并循环注册。
 - 设置父组件消息处理器：`controller.onMessageFromParent(handler)`，该处理器负责将画布事件显示在 UI 日志中。
 - 渲染 `PixiCanvas` 组件，传入 `controller` 和 `onAppInit` 回调。
 
@@ -44,25 +44,65 @@
 ### 5. 清理阶段
 
 - `PixiCanvas` 组件卸载时，自动销毁 `PIXI.Application` 实例，释放资源。
+- 插件通过监听 `clear` 消息等方式自行清理状态（如 API 演示插件会销毁其容器）。
 
-## 三、当前版本功能 (Version 2.2.0)
+## 三、当前版本功能 (Version 2.3.0)
 
 ### ✨ 新增功能
 
-1. **DVD屏保风格反弹动画**：画布启动后自动出现一个彩色DVD标志，在画布内匀速移动并触碰边界反弹。动画通过 `bounce.plugin.ts` 插件实现。
-2. **插件支持持续性动画**：首次在插件中引入状态管理和 `PIXI.Ticker`，为后续复杂动画提供范例。
-3. **增强的插件协作**：`bouncePlugin` 同时监听 `clear` 消息，在画布清除时自动停止动画，避免资源泄露。
+1. **API 教学演示插件**：新增 `apiDemoPlugin`，以一系列从简单到复杂的示例展示 PixiJS v8 的核心 API 使用。每个示例都配有详细的注释和说明，可作为插件开发的参考典范。
+   - 包含八个独立演示：基础图形、文本样式、精灵、动画、滤镜、交互事件、容器层级、粒子系统。
+   - 演示区域固定在画布左上角（50,50），尺寸 400x250，带半透明背景。
+   - 通过发送 `apiDemo/basicShapes`、`apiDemo/text` 等消息触发对应演示。
+2. **插件代码拆分**：将 `apiDemoPlugin` 拆分为多个文件（`types.ts`、`state.ts`、`utils.ts` 及独立演示模块），便于维护和扩展。
 
 ### ✅ 继承保留的功能
 
 - 插件注册与消息分发机制。
 - 通过按钮发送绘图指令（画圆、矩形、清除）。
-- 画布生命周期管理。
+- DVD 屏保反弹动画（`bouncePlugin`），每次撞击随机变色、随机方向。
+- 鼠标跟随烟花效果（`fireworksPlugin`）。
+- 画布生命周期管理，严格模式下的安全销毁。
 - 带时间戳的事件日志。
 
 ## 四、使用方法
 
-1. **安装依赖**:
-   ```bash
-   npm install pixi.js@8.x react react-dom
-   ```
+### 1. 安装依赖
+
+```bash
+npm install pixi.js@8.x react react-dom
+```
+
+### 2. 运行项目
+
+```bash
+npm run dev
+```
+
+### 3. 测试 API 演示
+
+在 `App.tsx` 中添加以下按钮（或直接发送消息）：
+
+```tsx
+<button onClick={() => sendDrawCommand('apiDemo/basicShapes')}>API: 基础图形</button>
+<button onClick={() => sendDrawCommand('apiDemo/text')}>API: 文本</button>
+<button onClick={() => sendDrawCommand('apiDemo/sprite')}>API: 精灵</button>
+<button onClick={() => sendDrawCommand('apiDemo/animation')}>API: 动画</button>
+<button onClick={() => sendDrawCommand('apiDemo/filter')}>API: 滤镜</button>
+<button onClick={() => sendDrawCommand('apiDemo/interaction')}>API: 交互</button>
+<button onClick={() => sendDrawCommand('apiDemo/container')}>API: 容器</button>
+<button onClick={() => sendDrawCommand('apiDemo/particles')}>API: 粒子</button>
+```
+
+点击后，画布左上角将显示对应的演示内容，并带有标题和说明文字。
+
+### 4. 编写新插件
+
+参考 `api-demo` 目录下的代码结构，创建新的插件文件并遵循 `PixiPlugin` 接口。在 `src/plugins/index.ts` 中导入并加入 `plugins` 数组即可自动注册。
+
+## 五、注意事项
+
+- API 演示插件监听了 `clear` 消息，当点击“清除”按钮时会自动销毁其容器并重置状态，确保后续演示正常显示。
+- 所有演示内容都放在一个固定容器中，不会影响舞台上其他图形（如 DVD 动画、烟花）。
+- 粒子演示使用了 `ParticleContainer` 优化性能，展示了大量粒子的动画效果。
+- 如果需要在 React 组件中直接触发演示，只需调用 `controller.sendToPixi({ type: 'apiDemo/xxx' })` 即可。

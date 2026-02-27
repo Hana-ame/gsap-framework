@@ -34,43 +34,392 @@
 ## 当前目录树
 
 `tree`
-
 ├── src
 │   ├── App.css
 │   ├── App.tsx
 │   ├── assets
+│   │   ├── dvd-logo.svg
 │   │   └── react.svg
 │   ├── components
 │   │   └── PixiCanvas.tsx
 │   ├── controllers
 │   │   └── PixiController.ts
 │   ├── main.tsx
-│   ├── pixijs
-│   │   ├── PixiExample.tsx
 │   ├── plugins
+│   │   ├── api-demo
+│   │   │   ├── demos
+│   │   │   │   ├── animation.ts
+│   │   │   │   ├── basicShapes.ts
+│   │   │   │   ├── container.ts
+│   │   │   │   ├── filter.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── interaction.ts
+│   │   │   │   ├── particles.ts
+│   │   │   │   ├── sprite.ts
+│   │   │   │   └── text.ts
+│   │   │   ├── index.ts
+│   │   │   ├── state.ts
+│   │   │   ├── types.ts
+│   │   │   └── utils.ts
+│   │   ├── apiDemo.plugin.ts
+│   │   ├── bounce.plugin.ts
 │   │   ├── circle.plugin.ts
 │   │   ├── clear.plugin.ts
+│   │   ├── fireworks.plugin.ts
 │   │   ├── index.ts
 │   │   ├── plugin.types.ts
 │   │   └── rectangle.plugin.ts
 │   ├── styles.css
-│   ├── vite-env.d.ts
+│   └── vite-env.d.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
+├── VERSION.md
 ├── vite.config.js
 └── vite.config.ts
 
-## 重要代码(不一定是最新的,因为github有缓存.)
+## 代码
 
-这些是核心逻辑.
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.css?proxy_host=raw.githubusercontent.com]
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
+```
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
 
 ```
 
-> [错误：无法获取内容 - HTTPSConnectionPool(host='proxy.moonchan.xyz', port=443): Read timed out. (read timeout=15)]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/styles.css?proxy_host=raw.githubusercontent.com]
 
+```
+/* src/styles.css */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.app {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.toolbar {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toolbar button {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.toolbar button:hover {
+  background-color: #e0e0e0;
+}
+
+.canvas-container {
+  border: 2px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.message-log {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.message-log ul {
+  list-style: none;
+  padding: 0;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.message-log li {
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.hint {
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/App.tsx
+// 用途: 主应用测试界面。展示画布、工具栏，并实时显示来自画布的事件日志。
+//       新增 DVD 屏保反弹动画功能，通过插件实现。
+// 上下文: React 根组件，用于演示 PixiCanvas 和 PixiController 的集成，
+//        以及函数式插件的注册与使用。
+//
+// 版本: 2.2.0
+//    - 新增 bouncePlugin，实现反弹图片动画。
+//    - 在画布初始化后自动发送 startDVD 消息启动动画。
+//    - 更新日志和按钮以支持新功能。
+//
+// Outline:
+// 1. 导入依赖、组件、控制器和插件（包括新 bouncePlugin）
+// 2. App 函数组件
+//    a. 状态: 事件日志列表
+//    b. 初始化控制器并注册所有插件
+//    c. 处理来自控制器的消息，更新日志
+//    d. 发送绘图指令的函数（使用 controller.sendToPixi）
+//    e. 在 handleAppInit 中发送 startDVD 消息
+//    f. 渲染 UI: 标题、按钮、画布、日志显示区
+// 3. 辅助函数: 格式化时间戳
+//
+// 注意事项:
+//   - 插件是直接导入的对象，无需实例化。
+//   - 在 PixiCanvas 初始化后通过 onAppInit 回调设置 controller 的 app 实例，
+//     并发送 startDVD 启动动画。
+//   - 点击“清除”按钮会同时触发 clearPlugin 和 bouncePlugin 的清理逻辑，
+//     但 bouncePlugin 会在收到 clear 消息后停止动画，然后 clearPlugin 清空舞台。
+// ============================================================
+
+import React, { useState, useRef, useCallback } from "react";
+import * as PIXI from "pixi.js";
+import { PixiCanvas } from "./components/PixiCanvas";
+import { PixiController } from "./controllers/PixiController";
+// 导入插件数组
+import { plugins } from "./plugins";
+
+import "./App.css";
+
+const formatTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+};
+
+function App() {
+  const [eventLogs, setEventLogs] = useState<string[]>([]);
+  const appRef = useRef<PIXI.Application | null>(null);
+  const controllerRef = useRef<PixiController | null>(null);
+
+  // 初始化控制器并注册插件（只执行一次）
+  if (!controllerRef.current) {
+    const controller = new PixiController();
+
+    // 批量注册所有插件
+    plugins.forEach((plugin) => controller.registerPlugin(plugin));
+
+    // 设置父组件消息处理器（接收画布事件）
+    controller.onMessageFromParent((message) => {
+      const timeStr = message.timestamp
+        ? formatTimestamp(message.timestamp)
+        : "未知时间";
+
+      let logEntry = `[${timeStr}] 事件: ${message.type}`;
+      if (message.x !== undefined && message.y !== undefined) {
+        logEntry += ` 坐标: (${message.x.toFixed(2)}, ${message.y.toFixed(2)})`;
+      }
+      setEventLogs((prev) => [logEntry, ...prev.slice(0, 49)]);
+    });
+
+    controllerRef.current = controller;
+  }
+
+  // 当 PixiCanvas 初始化完成时，将 app 实例设置到控制器，并启动 DVD 动画
+  const handleAppInit = useCallback((app: PIXI.Application) => {
+    appRef.current = app;
+    controllerRef.current?.setApp(app);
+    // 发送启动 DVD 反弹动画的消息
+    controllerRef.current?.sendToPixi({ type: "startDVD" });
+    controllerRef.current?.sendToPixi({ type: "startFireworks" });
+    // 记录日志
+    const timeStr = new Date().toLocaleTimeString("zh-CN", {
+      hour12: false,
+      fractionalSecondDigits: 3,
+    });
+    setEventLogs((prev) => [
+      `[${timeStr}] 启动 DVD 反弹动画`,
+      ...prev.slice(0, 49),
+    ]);
+  }, []);
+
+  // 发送绘图指令
+  const sendDrawCommand = (type: string) => {
+    if (!controllerRef.current) return;
+
+    const message = {
+      type,
+      timestamp: Date.now(),
+      x: Math.random() * 400 + 200,
+      y: Math.random() * 300 + 150,
+      radius: 30,
+      width: 60,
+      height: 40,
+      color: Math.random() * 0xffffff,
+    };
+
+    // 通过控制器发送，它会自动调用匹配的插件
+    controllerRef.current.sendToPixi(message);
+
+    // 记录指令日志
+    const timeStr = new Date().toLocaleTimeString("zh-CN", {
+      hour12: false,
+      fractionalSecondDigits: 3,
+    });
+    setEventLogs((prev) => [
+      `[${timeStr}] 发送绘图指令: ${type}`,
+      ...prev.slice(0, 49),
+    ]);
+  };
+
+  const clearLogs = () => setEventLogs([]);
+
+  return (
+    <div className="App">
+      <h1>PixiJS v8 事件测试 (DVD 屏保动画)</h1>
+      <div className="toolbar">
+        <button onClick={() => sendDrawCommand("drawCircle")}>画圆</button>
+        <button onClick={() => sendDrawCommand("drawRectangle")}>画矩形</button>
+        <button onClick={() => sendDrawCommand("clear")}>清除</button>
+        <button onClick={() => sendDrawCommand("apiDemo/basicShapes")}>
+          API: 基础图形
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/text")}>
+          API: 文本
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/sprite")}>
+          API: 精灵
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/animation")}>
+          API: 动画
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/filter")}>
+          API: 滤镜
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/interaction")}>
+          API: 交互
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/container")}>
+          API: 容器
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/particles")}>
+          API: 粒子
+        </button>
+        <button onClick={clearLogs}>清除日志</button>
+      </div>
+      <div className="canvas-container">
+        <PixiCanvas
+          controller={controllerRef.current}
+          width={800}
+          height={600}
+          backgroundColor={0x1099bb}
+          onAppInit={handleAppInit}
+        />
+      </div>
+      <div className="event-log">
+        <h3>事件日志 (带时间戳)</h3>
+        <ul>
+          {eventLogs.map((log, index) => (
+            <li key={index}>{log}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/main.tsx?proxy_host=raw.githubusercontent.com]
+
+```
+// src/index.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  // <React.StrictMode>
+    <App />
+  // </React.StrictMode>
+);
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/vite-env.d.ts?proxy_host=raw.githubusercontent.com]
+
+```
+/// <reference types="vite/client" />
+
+// 声明 .jsx 文件模块
+declare module '*.jsx' {
+  const value: any
+  export default value
+}
+
+// 如果需要更精确的类型，可以这样写：
+declare module '*.jsx' {
+  import { ComponentType } from 'react'
+  const Component: ComponentType<any>
+  export default Component
+}
 ```
 
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com]
@@ -261,232 +610,97 @@ export class PixiController {
 export type { PixiPlugin };
 ```
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/assets/react.svg?proxy_host=raw.githubusercontent.com]
+
+```
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="35.93" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 228"><path fill="#00D8FF" d="M210.483 73.824a171.49 171.49 0 0 0-8.24-2.597c.465-1.9.893-3.777 1.273-5.621c6.238-30.281 2.16-54.676-11.769-62.708c-13.355-7.7-35.196.329-57.254 19.526a171.23 171.23 0 0 0-6.375 5.848a155.866 155.866 0 0 0-4.241-3.917C100.759 3.829 77.587-4.822 63.673 3.233C50.33 10.957 46.379 33.89 51.995 62.588a170.974 170.974 0 0 0 1.892 8.48c-3.28.932-6.445 1.924-9.474 2.98C17.309 83.498 0 98.307 0 113.668c0 15.865 18.582 31.778 46.812 41.427a145.52 145.52 0 0 0 6.921 2.165a167.467 167.467 0 0 0-2.01 9.138c-5.354 28.2-1.173 50.591 12.134 58.266c13.744 7.926 36.812-.22 59.273-19.855a145.567 145.567 0 0 0 5.342-4.923a168.064 168.064 0 0 0 6.92 6.314c21.758 18.722 43.246 26.282 56.54 18.586c13.731-7.949 18.194-32.003 12.4-61.268a145.016 145.016 0 0 0-1.535-6.842c1.62-.48 3.21-.974 4.76-1.488c29.348-9.723 48.443-25.443 48.443-41.52c0-15.417-17.868-30.326-45.517-39.844Zm-6.365 70.984c-1.4.463-2.836.91-4.3 1.345c-3.24-10.257-7.612-21.163-12.963-32.432c5.106-11 9.31-21.767 12.459-31.957c2.619.758 5.16 1.557 7.61 2.4c23.69 8.156 38.14 20.213 38.14 29.504c0 9.896-15.606 22.743-40.946 31.14Zm-10.514 20.834c2.562 12.94 2.927 24.64 1.23 33.787c-1.524 8.219-4.59 13.698-8.382 15.893c-8.067 4.67-25.32-1.4-43.927-17.412a156.726 156.726 0 0 1-6.437-5.87c7.214-7.889 14.423-17.06 21.459-27.246c12.376-1.098 24.068-2.894 34.671-5.345a134.17 134.17 0 0 1 1.386 6.193ZM87.276 214.515c-7.882 2.783-14.16 2.863-17.955.675c-8.075-4.657-11.432-22.636-6.853-46.752a156.923 156.923 0 0 1 1.869-8.499c10.486 2.32 22.093 3.988 34.498 4.994c7.084 9.967 14.501 19.128 21.976 27.15a134.668 134.668 0 0 1-4.877 4.492c-9.933 8.682-19.886 14.842-28.658 17.94ZM50.35 144.747c-12.483-4.267-22.792-9.812-29.858-15.863c-6.35-5.437-9.555-10.836-9.555-15.216c0-9.322 13.897-21.212 37.076-29.293c2.813-.98 5.757-1.905 8.812-2.773c3.204 10.42 7.406 21.315 12.477 32.332c-5.137 11.18-9.399 22.249-12.634 32.792a134.718 134.718 0 0 1-6.318-1.979Zm12.378-84.26c-4.811-24.587-1.616-43.134 6.425-47.789c8.564-4.958 27.502 2.111 47.463 19.835a144.318 144.318 0 0 1 3.841 3.545c-7.438 7.987-14.787 17.08-21.808 26.988c-12.04 1.116-23.565 2.908-34.161 5.309a160.342 160.342 0 0 1-1.76-7.887Zm110.427 27.268a347.8 347.8 0 0 0-7.785-12.803c8.168 1.033 15.994 2.404 23.343 4.08c-2.206 7.072-4.956 14.465-8.193 22.045a381.151 381.151 0 0 0-7.365-13.322Zm-45.032-43.861c5.044 5.465 10.096 11.566 15.065 18.186a322.04 322.04 0 0 0-30.257-.006c4.974-6.559 10.069-12.652 15.192-18.18ZM82.802 87.83a323.167 323.167 0 0 0-7.227 13.238c-3.184-7.553-5.909-14.98-8.134-22.152c7.304-1.634 15.093-2.97 23.209-3.984a321.524 321.524 0 0 0-7.848 12.897Zm8.081 65.352c-8.385-.936-16.291-2.203-23.593-3.793c2.26-7.3 5.045-14.885 8.298-22.6a321.187 321.187 0 0 0 7.257 13.246c2.594 4.48 5.28 8.868 8.038 13.147Zm37.542 31.03c-5.184-5.592-10.354-11.779-15.403-18.433c4.902.192 9.899.29 14.978.29c5.218 0 10.376-.117 15.453-.343c-4.985 6.774-10.018 12.97-15.028 18.486Zm52.198-57.817c3.422 7.8 6.306 15.345 8.596 22.52c-7.422 1.694-15.436 3.058-23.88 4.071a382.417 382.417 0 0 0 7.859-13.026a347.403 347.403 0 0 0 7.425-13.565Zm-16.898 8.101a358.557 358.557 0 0 1-12.281 19.815a329.4 329.4 0 0 1-23.444.823c-7.967 0-15.716-.248-23.178-.732a310.202 310.202 0 0 1-12.513-19.846h.001a307.41 307.41 0 0 1-10.923-20.627a310.278 310.278 0 0 1 10.89-20.637l-.001.001a307.318 307.318 0 0 1 12.413-19.761c7.613-.576 15.42-.876 23.31-.876H128c7.926 0 15.743.303 23.354.883a329.357 329.357 0 0 1 12.335 19.695a358.489 358.489 0 0 1 11.036 20.54a329.472 329.472 0 0 1-11 20.722Zm22.56-122.124c8.572 4.944 11.906 24.881 6.52 51.026c-.344 1.668-.73 3.367-1.15 5.09c-10.622-2.452-22.155-4.275-34.23-5.408c-7.034-10.017-14.323-19.124-21.64-27.008a160.789 160.789 0 0 1 5.888-5.4c18.9-16.447 36.564-22.941 44.612-18.3ZM128 90.808c12.625 0 22.86 10.235 22.86 22.86s-10.235 22.86-22.86 22.86s-22.86-10.235-22.86-22.86s10.235-22.86 22.86-22.86Z"></path></svg>
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/assets/dvd-logo.svg?proxy_host=raw.githubusercontent.com]
+
+```
+<!-- ============================================================
+     文件: src/assets/dvd-logo.svg
+     用途: 更美观的DVD屏保测试图片，包含彩虹渐变背景和带描边的DVD文字。
+           在PixiJS中作为纹理加载，用于反弹动画。
+     上下文: 被 bounce.plugin.ts 加载并创建精灵。
+     
+     Outline:
+     - 使用SVG格式，包含一个圆角矩形背景，填充彩虹对角线渐变。
+     - 添加阴影滤镜增强立体感。
+     - 白色DVD文字加黑色描边，确保在各种背景下清晰可见。
+     - 尺寸保持200x100，兼容现有碰撞检测逻辑。
+     
+     使用方法:
+       在PixiJS中通过 PIXI.Assets.load 加载此SVG，生成纹理。
+     
+     注意事项:
+       确保SVG文件路径正确，PixiJS会自动将其转换为纹理。
+       此版本比之前的渐变更鲜艳，视觉效果更佳。
+     ============================================================ -->
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 彩虹对角线渐变 -->
+    <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff0000" />
+      <stop offset="16%" stop-color="#ff7f00" />
+      <stop offset="33%" stop-color="#ffff00" />
+      <stop offset="50%" stop-color="#00ff00" />
+      <stop offset="66%" stop-color="#0000ff" />
+      <stop offset="83%" stop-color="#4b0082" />
+      <stop offset="100%" stop-color="#9400d3" />
+    </linearGradient>
+    <!-- 阴影滤镜 -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  <!-- 圆角矩形背景，应用彩虹渐变和阴影 -->
+  <rect width="200" height="100" rx="20" ry="20" fill="url(#rainbow)" filter="url(#shadow)" />
+  <!-- DVD文字，白色填充，黑色描边 -->
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="48" font-family="Arial, sans-serif" font-weight="bold" fill="white" stroke="black" stroke-width="2">DVD</text>
+</svg>
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
 
 ```
 // ============================================================
-// 文件: src/App.tsx
-// 用途: 主应用测试界面。展示画布、工具栏，并实时显示来自画布的事件日志。
-//       新增 DVD 屏保反弹动画功能，通过插件实现。
-// 上下文: React 根组件，用于演示 PixiCanvas 和 PixiController 的集成，
-//        以及函数式插件的注册与使用。
+// 文件: src/plugins/index.ts
+// 用途: 插件统一导出入口，方便批量注册。
+// 上下文: 被 App.tsx 或其他初始化代码使用，通过循环注册所有插件。
 //
-// 版本: 2.2.0
-//    - 新增 bouncePlugin，实现反弹图片动画。
-//    - 在画布初始化后自动发送 startDVD 消息启动动画。
-//    - 更新日志和按钮以支持新功能。
-//
-// Outline:
-// 1. 导入依赖、组件、控制器和插件（包括新 bouncePlugin）
-// 2. App 函数组件
-//    a. 状态: 事件日志列表
-//    b. 初始化控制器并注册所有插件
-//    c. 处理来自控制器的消息，更新日志
-//    d. 发送绘图指令的函数（使用 controller.sendToPixi）
-//    e. 在 handleAppInit 中发送 startDVD 消息
-//    f. 渲染 UI: 标题、按钮、画布、日志显示区
-// 3. 辅助函数: 格式化时间戳
-//
-// 注意事项:
-//   - 插件是直接导入的对象，无需实例化。
-//   - 在 PixiCanvas 初始化后通过 onAppInit 回调设置 controller 的 app 实例，
-//     并发送 startDVD 启动动画。
-//   - 点击“清除”按钮会同时触发 clearPlugin 和 bouncePlugin 的清理逻辑，
-//     但 bouncePlugin 会在收到 clear 消息后停止动画，然后 clearPlugin 清空舞台。
+// 版本: 1.1.0
+//    - 新增导出 fireworksPlugin，并整合所有插件到 plugins 数组。
 // ============================================================
 
-import React, { useState, useRef, useCallback } from "react";
-import * as PIXI from "pixi.js";
-import { PixiCanvas } from "./components/PixiCanvas";
-import { PixiController } from "./controllers/PixiController";
+import { circlePlugin } from './circle.plugin';
+import { rectanglePlugin } from './rectangle.plugin';
+import { clearPlugin } from './clear.plugin';
+import { bouncePlugin } from './bounce.plugin';
+import { fireworksPlugin } from './fireworks.plugin';
+import { apiDemoPlugin } from './api-demo'; // 注意路径
 
-// 导入插件数组
-import { plugins } from "./plugins";
 
-// 导入所有插件
-import { circlePlugin } from "./plugins/circle.plugin";
-import { rectanglePlugin } from "./plugins/rectangle.plugin";
-import { clearPlugin } from "./plugins/clear.plugin";
-import { bouncePlugin } from "./plugins/bounce.plugin"; // 新增
-import { fireworksPlugin } from "./plugins/fireworks.plugin";
-import "./App.css";
+// 所有插件列表，按需添加
+export const plugins = [
+  circlePlugin,
+  rectanglePlugin,
+  clearPlugin,
+  bouncePlugin,
+  fireworksPlugin,
+  apiDemoPlugin, // 添加到数组
+];
 
-const formatTimestamp = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  const seconds = pad(date.getSeconds());
-  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
-  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+// 也可以单独导出每个插件，供需要单独使用的场景
+export {
+  circlePlugin,
+  rectanglePlugin,
+  clearPlugin,
+  bouncePlugin,
+  fireworksPlugin,
+  apiDemoPlugin, // 添加到数组
 };
-
-function App() {
-  const [eventLogs, setEventLogs] = useState<string[]>([]);
-  const appRef = useRef<PIXI.Application | null>(null);
-  const controllerRef = useRef<PixiController | null>(null);
-
-  // 初始化控制器并注册插件（只执行一次）
-  if (!controllerRef.current) {
-    const controller = new PixiController();
-
-    // 批量注册所有插件
-    plugins.forEach((plugin) => controller.registerPlugin(plugin));
-
-    // 设置父组件消息处理器（接收画布事件）
-    controller.onMessageFromParent((message) => {
-      const timeStr = message.timestamp
-        ? formatTimestamp(message.timestamp)
-        : "未知时间";
-
-      let logEntry = `[${timeStr}] 事件: ${message.type}`;
-      if (message.x !== undefined && message.y !== undefined) {
-        logEntry += ` 坐标: (${message.x.toFixed(2)}, ${message.y.toFixed(2)})`;
-      }
-      setEventLogs((prev) => [logEntry, ...prev.slice(0, 49)]);
-    });
-
-    controllerRef.current = controller;
-  }
-
-  // 当 PixiCanvas 初始化完成时，将 app 实例设置到控制器，并启动 DVD 动画
-  const handleAppInit = useCallback((app: PIXI.Application) => {
-    appRef.current = app;
-    controllerRef.current?.setApp(app);
-    // 发送启动 DVD 反弹动画的消息
-    controllerRef.current?.sendToPixi({ type: "startDVD" });
-    controllerRef.current?.sendToPixi({ type: 'startFireworks' });
-    // 记录日志
-    const timeStr = new Date().toLocaleTimeString("zh-CN", {
-      hour12: false,
-      fractionalSecondDigits: 3,
-    });
-    setEventLogs((prev) => [
-      `[${timeStr}] 启动 DVD 反弹动画`,
-      ...prev.slice(0, 49),
-    ]);
-  }, []);
-
-  // 发送绘图指令
-  const sendDrawCommand = (type: string) => {
-    if (!controllerRef.current) return;
-
-    const message = {
-      type,
-      timestamp: Date.now(),
-      x: Math.random() * 400 + 200,
-      y: Math.random() * 300 + 150,
-      radius: 30,
-      width: 60,
-      height: 40,
-      color: Math.random() * 0xffffff,
-    };
-
-    // 通过控制器发送，它会自动调用匹配的插件
-    controllerRef.current.sendToPixi(message);
-
-    // 记录指令日志
-    const timeStr = new Date().toLocaleTimeString("zh-CN", {
-      hour12: false,
-      fractionalSecondDigits: 3,
-    });
-    setEventLogs((prev) => [
-      `[${timeStr}] 发送绘图指令: ${type}`,
-      ...prev.slice(0, 49),
-    ]);
-  };
-
-  const clearLogs = () => setEventLogs([]);
-
-  return (
-    <div className="App">
-      <h1>PixiJS v8 事件测试 (DVD 屏保动画)</h1>
-      <div className="toolbar">
-        <button onClick={() => sendDrawCommand("drawCircle")}>画圆</button>
-        <button onClick={() => sendDrawCommand("drawRectangle")}>画矩形</button>
-        <button onClick={() => sendDrawCommand("clear")}>清除</button>
-        <button onClick={clearLogs}>清除日志</button>
-      </div>
-      <div className="canvas-container">
-        <PixiCanvas
-          controller={controllerRef.current}
-          width={800}
-          height={600}
-          backgroundColor={0x1099bb}
-          onAppInit={handleAppInit}
-        />
-      </div>
-      <div className="event-log">
-        <h3>事件日志 (带时间戳)</h3>
-        <ul>
-          {eventLogs.map((log, index) => (
-            <li key={index}>{log}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-export default App;
-
-```
-
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/main.tsx?proxy_host=raw.githubusercontent.com]
-
-```
-// src/index.tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(
-  // <React.StrictMode>
-    <App />
-  // </React.StrictMode>
-);
-```
-
-
-这些是plugins,也请阅读以下
-
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
-
-```
-// ============================================================
-// 文件: src/plugins/plugin.types.ts
-// 用途: 定义 Pixi 插件的标准接口。所有绘图插件必须符合此接口。
-//       插件可以是对象字面量（推荐）或类实例，只需包含 messageTypes 和 execute。
-// 上下文: 被 PixiController 和各个具体插件引用。
-//
-// Outline:
-// 1. 导入 PIXI 类型
-// 2. 定义 PixiPlugin 接口
-//    - messageTypes: 插件能处理的消息类型列表
-//    - execute: 执行绘图逻辑的函数
-//    - name: (可选) 插件名称，用于日志和调试
-//
-// 使用方法:
-//   export const myPlugin: PixiPlugin = {
-//     name: 'MyPlugin',
-//     messageTypes: ['drawSomething'],
-//     execute: (message, app) => { ... }
-//   };
-// ============================================================
-
-import * as PIXI from 'pixi.js';
-
-export interface PixiPlugin {
-  /** 此插件能够处理的消息类型列表 */
-  messageTypes: string[];
-
-  /** 执行绘图逻辑。若消息类型不匹配或参数错误，应抛出错误。 */
-  execute(message: any, app: PIXI.Application): void;
-
-  /** 插件名称（可选），用于日志和调试 */
-  name?: string;
-}
 ```
 
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com]
@@ -680,6 +894,44 @@ function stopBounce(app: PIXI.Application) {
 }
 ```
 
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/plugin.types.ts
+// 用途: 定义 Pixi 插件的标准接口。所有绘图插件必须符合此接口。
+//       插件可以是对象字面量（推荐）或类实例，只需包含 messageTypes 和 execute。
+// 上下文: 被 PixiController 和各个具体插件引用。
+//
+// Outline:
+// 1. 导入 PIXI 类型
+// 2. 定义 PixiPlugin 接口
+//    - messageTypes: 插件能处理的消息类型列表
+//    - execute: 执行绘图逻辑的函数
+//    - name: (可选) 插件名称，用于日志和调试
+//
+// 使用方法:
+//   export const myPlugin: PixiPlugin = {
+//     name: 'MyPlugin',
+//     messageTypes: ['drawSomething'],
+//     execute: (message, app) => { ... }
+//   };
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+
+export interface PixiPlugin {
+  /** 此插件能够处理的消息类型列表 */
+  messageTypes: string[];
+
+  /** 执行绘图逻辑。若消息类型不匹配或参数错误，应抛出错误。 */
+  execute(message: any, app: PIXI.Application): void;
+
+  /** 插件名称（可选），用于日志和调试 */
+  name?: string;
+}
+```
+
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
 
 ```
@@ -712,6 +964,1007 @@ export const clearPlugin: PixiPlugin = {
    */
   execute(message: any, app: PIXI.Application): void {
     app.stage.removeChildren();
+  }
+};
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/fireworks.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/fireworks.plugin.ts
+// 用途: 实现鼠标跟随烟花效果。当启动后，在画布上移动鼠标时，
+//       会在鼠标位置生成彩色粒子，粒子向外扩散并逐渐淡出消失，
+//       产生类似烟花尾迹的效果。
+// 上下文: 注册到 PixiController 中，由消息触发。需要 Pixi 应用实例。
+//
+// 版本: 1.0.0
+//    - 初始版本，提供鼠标跟随烟花效果
+//
+// 处理逻辑:
+// 1. 插件监听 'startFireworks', 'stopFireworks', 'clear' 三种消息类型。
+// 2. 使用 WeakMap 以 app 实例为键存储每个画布的状态：
+//    - particles: 当前活跃粒子数组
+//    - maxParticles: 最大粒子数（默认200）
+//    - listener: mousemove 事件监听函数
+//    - tickerCallback: ticker 更新函数
+//    - active: 标记是否已启动
+// 3. 收到 'startFireworks' 时启动效果：
+//    - 若已激活则先停止（stopFireworks）
+//    - 在 app.canvas 上添加 mousemove 监听，根据鼠标坐标生成新粒子
+//    - 将更新函数添加到 app.ticker，每帧更新粒子位置、透明度、大小，并移除消亡的粒子
+// 4. 收到 'stopFireworks' 或 'clear' 时停止效果：
+//    - 移除事件监听和 ticker 回调
+//    - 销毁所有粒子并清空数组
+//    - 标记为未激活
+//
+// 使用方法:
+//   import { fireworksPlugin } from './plugins/fireworks.plugin';
+//   controller.registerPlugin(fireworksPlugin);
+//
+//   // 启动烟花效果
+//   controller.sendToPixi({ type: 'startFireworks' });
+//
+//   // 停止烟花效果
+//   controller.sendToPixi({ type: 'stopFireworks' });
+//
+//   // 清除画布（会同时停止烟花）
+//   controller.sendToPixi({ type: 'clear' });
+//
+// 注意事项:
+//   - 需要确保 app 实例已通过 controller.setApp() 设置。
+//   - 粒子数量受 maxParticles 限制，超出时会自动移除最早生成的粒子。
+//   - 停止效果后，已生成的粒子会被立即销毁，不会残留。
+//   - 与 clear.plugin 配合：clear 消息会同时触发本插件的停止逻辑，避免动画冲突。
+// ============================================================
+
+import { PixiPlugin } from './plugin.types';
+import * as PIXI from 'pixi.js';
+
+/** 粒子数据结构 */
+interface Particle {
+  graphics: PIXI.Graphics;   // 粒子图形
+  vx: number;                // 水平速度
+  vy: number;                // 垂直速度
+  life: number;              // 当前生命值 (0-1)，控制透明度和大小
+  decay: number;             // 每帧衰减量
+}
+
+/** 每个 app 实例对应的状态 */
+interface FireworksState {
+  particles: Particle[];
+  maxParticles: number;
+  listener: (event: MouseEvent) => void;
+  tickerCallback: () => void;
+  active: boolean;
+}
+
+// 使用 WeakMap 存储每个 app 实例的状态，避免全局污染
+const appState = new WeakMap<PIXI.Application, FireworksState>();
+
+export const fireworksPlugin: PixiPlugin = {
+  name: 'FireworksPlugin',
+  messageTypes: ['startFireworks', 'stopFireworks', 'clear'],
+
+  /**
+   * 插件执行入口，根据消息类型分发
+   * @param message 消息对象，应包含 type 字段
+   * @param app Pixi Application 实例
+   */
+  execute(message: any, app: PIXI.Application): void {
+    if (!app) {
+      console.warn('[FireworksPlugin] 未提供 Pixi 应用实例');
+      return;
+    }
+
+    switch (message.type) {
+      case 'startFireworks':
+        startFireworks(app);
+        break;
+      case 'stopFireworks':
+      case 'clear':   // 收到 clear 时同样停止效果，与 clearPlugin 协作
+        stopFireworks(app);
+        break;
+      default:
+        // 不会发生，因为 messageTypes 已限定
+        break;
+    }
+  }
+};
+
+/**
+ * 启动鼠标跟随烟花效果
+ * @param app Pixi Application 实例
+ */
+function startFireworks(app: PIXI.Application): void {
+  let state = appState.get(app);
+  if (!state) {
+    // 初始化状态
+    state = {
+      particles: [],
+      maxParticles: 200,
+      listener: createMouseListener(app),
+      tickerCallback: createTickerCallback(app),
+      active: false,
+    };
+    appState.set(app, state);
+  }
+
+  // 如果已经激活，先停止，确保重新启动时干净
+  if (state.active) {
+    stopFireworks(app);
+    // 重新获取 state（stopFireworks 可能重置了状态）
+    state = appState.get(app)!;
+  }
+
+  // 绑定事件监听
+  app.canvas.addEventListener('mousemove', state.listener);
+  // 添加到 ticker
+  app.ticker.add(state.tickerCallback);
+  state.active = true;
+
+  console.log('[FireworksPlugin] 鼠标跟随烟花效果已启动');
+}
+
+/**
+ * 停止烟花效果，清理资源
+ * @param app Pixi Application 实例
+ */
+function stopFireworks(app: PIXI.Application): void {
+  const state = appState.get(app);
+  if (!state || !state.active) return;
+
+  // 移除事件监听
+  app.canvas.removeEventListener('mousemove', state.listener);
+  // 移除 ticker 回调
+  app.ticker.remove(state.tickerCallback);
+
+  // 销毁所有粒子
+  state.particles.forEach(p => p.graphics.destroy());
+  state.particles = [];
+
+  state.active = false;
+  console.log('[FireworksPlugin] 鼠标跟随烟花效果已停止');
+}
+
+/**
+ * 创建 mousemove 事件监听函数
+ * @param app Pixi Application 实例
+ * @returns 监听函数
+ */
+function createMouseListener(app: PIXI.Application): (event: MouseEvent) => void {
+  return (event: MouseEvent) => {
+    const state = appState.get(app);
+    if (!state || !state.active) return;
+
+    // 获取鼠标在 canvas 上的坐标
+    const rect = app.canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // 边界检查（防止超出画布）
+    if (x < 0 || x > app.screen.width || y < 0 || y > app.screen.height) return;
+
+    // 生成新粒子
+    createParticle(app, x, y);
+  };
+}
+
+/**
+ * 创建 ticker 更新函数
+ * @param app Pixi Application 实例
+ * @returns 更新函数
+ */
+function createTickerCallback(app: PIXI.Application): () => void {
+  return () => {
+    const state = appState.get(app);
+    if (!state || !state.active) return;
+
+    const { particles } = state;
+    // 倒序遍历，以便安全删除
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      // 更新位置
+      p.graphics.x += p.vx;
+      p.graphics.y += p.vy;
+      // 更新生命值
+      p.life -= p.decay;
+      if (p.life <= 0) {
+        // 粒子消亡，移除并销毁
+        p.graphics.destroy();
+        particles.splice(i, 1);
+        continue;
+      }
+      // 根据生命值调整透明度和缩放
+      p.graphics.alpha = p.life;
+      p.graphics.scale.set(p.life); // 缩放随生命减小
+    }
+  };
+}
+
+/**
+ * 在指定坐标生成一个新粒子
+ * @param app Pixi Application 实例
+ * @param x 生成位置的 x 坐标
+ * @param y 生成位置的 y 坐标
+ */
+function createParticle(app: PIXI.Application, x: number, y: number): void {
+  const state = appState.get(app);
+  if (!state || !state.active) return;
+
+  // 控制粒子总数
+  if (state.particles.length >= state.maxParticles) {
+    // 移除最早的一个粒子（数组头部）
+    const oldest = state.particles.shift();
+    if (oldest) oldest.graphics.destroy();
+  }
+
+  // 随机颜色
+  const color = Math.random() * 0xffffff;
+
+  // 创建圆形粒子
+  const graphics = new PIXI.Graphics();
+  graphics.circle(0, 0, 3); // 半径为3
+  graphics.fill(color);
+  graphics.x = x;
+  graphics.y = y;
+  graphics.alpha = 1;
+  graphics.scale.set(1);
+
+  // 添加到舞台
+  app.stage.addChild(graphics);
+
+  // 随机速度（-1.5 到 1.5）
+  const vx = (Math.random() - 0.5) * 3;
+  const vy = (Math.random() - 0.5) * 3;
+  // 随机衰减速率（0.01 到 0.03），生命约 33~100 帧
+  const decay = 0.01 + Math.random() * 0.02;
+
+  state.particles.push({
+    graphics,
+    vx,
+    vy,
+    life: 1,
+    decay,
+  });
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/apiDemo.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/apiDemo.plugin.ts
+// 用途: PixiJS v8 API 教学演示插件。提供一系列从简单到复杂的示例，
+//       展示 PixiJS 的核心功能：图形绘制、文本样式、精灵加载、
+//       动画系统、滤镜应用、交互事件、容器层级以及简单粒子系统。
+// 上下文: 注册到 PixiController，通过发送特定消息类型触发不同演示。
+//        每个演示都会在一个固定区域（舞台左上角）展示，并带有说明文本。
+//        插件内部使用 WeakMap 管理每个 app 实例的独立状态，确保多画布安全。
+//
+// 处理逻辑:
+//   1. 插件通过 messageTypes 声明自己能处理的所有演示消息类型。
+//   2. execute 方法根据 message.type 调用对应的演示函数。
+//   3. 每个演示函数接收 app 和消息参数，首先获取/创建该 app 专用的演示容器，
+//      然后清除容器内旧内容并停止任何正在运行的动画，最后构建新的演示内容。
+//   4. 演示区域固定为从 (50, 50) 开始、宽度 400 高度 250 的矩形，并添加半透明背景。
+//   5. 所有演示示例都带有标题和简要说明，方便理解。
+//
+// 使用方法:
+//   // 在 App.tsx 中注册插件
+//   import { apiDemoPlugin } from './plugins/apiDemo.plugin';
+//   controller.registerPlugin(apiDemoPlugin);
+//
+//   // 发送消息触发演示
+//   controller.sendToPixi({ type: 'apiDemo/basicShapes' });
+//   controller.sendToPixi({ type: 'apiDemo/text' });
+//   controller.sendToPixi({ type: 'apiDemo/sprite' });
+//   controller.sendToPixi({ type: 'apiDemo/animation' });
+//   controller.sendToPixi({ type: 'apiDemo/filter' });
+//   controller.sendToPixi({ type: 'apiDemo/interaction' });
+//   controller.sendToPixi({ type: 'apiDemo/container' });
+//   controller.sendToPixi({ type: 'apiDemo/particles' });
+//
+// 注意事项:
+//   - 每个演示都会完全替换之前的内容，动画和交互会被正确清理。
+//   - 演示容器被固定在舞台左上角，不会影响舞台上其他已有图形。
+//   - 为了教学清晰，所有示例代码都带有详细注释，并尽可能使用最新的 PixiJS v8 API。
+//   - 精灵示例使用内置生成的纹理，避免依赖外部图片。
+//   - 粒子示例使用 ParticleContainer 优化性能，展示简单粒子系统。
+// ============================================================
+
+import { PixiPlugin } from "./plugin.types";
+import * as PIXI from "pixi.js";
+
+// ============================================================
+// 类型定义与状态管理
+// ============================================================
+
+/**
+ * 每个应用实例的私有状态
+ */
+interface AppState {
+  /** 用于放置所有演示内容的容器 */
+  container: PIXI.Container;
+  /** 当前正在运行的动画 ticker 回调（如果有），切换演示时需要移除 */
+  tickerCallback?: () => void;
+  /** 当前正在运行的交互对象（如可点击的图形），切换演示时需要清理事件监听 */
+  interactiveObjects?: PIXI.Graphics[];
+}
+
+/**
+ * 使用 WeakMap 存储每个 app 的状态，避免内存泄漏
+ * WeakMap 的键是 app 对象本身，当 app 被销毁时，对应的状态会自动垃圾回收
+ */
+const appStates = new WeakMap<PIXI.Application, AppState>();
+
+// ============================================================
+// 辅助函数：获取或创建演示容器
+// ============================================================
+
+/**
+ * 获取指定 app 的演示容器，如果不存在则创建并初始化
+ * @param app - PIXI.Application 实例
+ * @returns 该 app 对应的演示容器
+ */
+function getDemoContainer(app: PIXI.Application): PIXI.Container {
+  let state = appStates.get(app);
+  if (!state) {
+    // 创建新的容器
+    const container = new PIXI.Container();
+    container.label = "apiDemoContainer";
+    container.position.set(50, 50); // 固定在左上角，留出边距
+    app.stage.addChild(container);
+
+    // 添加一个半透明的背景矩形，使演示内容更清晰
+    const bg = new PIXI.Graphics();
+    bg.rect(0, 0, 400, 250);
+    bg.fill({ color: 0x000000, alpha: 0.3 });
+    bg.stroke({ width: 2, color: 0xffffff, alpha: 0.5 });
+    container.addChild(bg);
+
+    state = { container };
+    appStates.set(app, state);
+  }
+  return state.container;
+}
+
+/**
+ * 清除当前演示内容，并停止任何正在运行的动画
+ * @param app - PIXI.Application 实例
+ */
+function clearDemo(app: PIXI.Application) {
+  const state = appStates.get(app);
+  if (!state) return;
+
+  // 移除之前添加的 ticker 回调
+  if (state.tickerCallback) {
+    app.ticker.remove(state.tickerCallback);
+    state.tickerCallback = undefined;
+  }
+
+  // 移除之前的交互对象（如果有）
+  if (state.interactiveObjects) {
+    state.interactiveObjects.forEach((obj) => {
+      obj.removeAllListeners(); // 移除所有事件监听
+    });
+    state.interactiveObjects = undefined;
+  }
+
+  // 清空容器，但保留背景（索引0）
+  const container = state.container;
+  while (container.children.length > 1) {
+    container.removeChildAt(1).destroy({ children: true });
+  }
+}
+
+/**
+ * 在演示容器中添加一个标题文本
+ * @param container - 演示容器
+ * @param title - 标题文字
+ * @returns 创建的文本对象
+ */
+function addTitle(container: PIXI.Container, title: string): PIXI.Text {
+  const text = new PIXI.Text({
+    text: title,
+    style: {
+      fontSize: 16,
+      fill: 0xffff00,
+      fontWeight: "bold",
+      dropShadow: {
+        alpha: 0.5,
+        blur: 2,
+        distance: 2,
+        angle: Math.PI / 4,
+      },
+    },
+  });
+  text.position.set(10, 10);
+  container.addChild(text);
+  return text;
+}
+
+/**
+ * 在演示容器中添加一行说明文本
+ * @param container - 演示容器
+ * @param description - 说明文字
+ * @param y - 垂直位置（相对于容器顶部）
+ */
+function addDescription(
+  container: PIXI.Container,
+  description: string,
+  y: number,
+) {
+  const text = new PIXI.Text({
+    text: description,
+    style: {
+      fontSize: 12,
+      fill: 0xcccccc,
+    },
+  });
+  text.position.set(10, y);
+  container.addChild(text);
+}
+
+// ============================================================
+// 各个演示函数
+// ============================================================
+
+/**
+ * 演示基础图形绘制 (Graphics)
+ * - 矩形、圆形、线条、多边形
+ * - 填充与描边
+ */
+function showBasicShapes(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "基础图形 (Graphics)");
+  addDescription(container, "矩形、圆形、线条、多边形", 40);
+
+  // 创建一个 Graphics 对象，所有图形都画在上面（也可以分别创建多个，这里集中演示）
+  const graphics = new PIXI.Graphics();
+
+  // 矩形（填充红色，黑色描边）
+  graphics.rect(20, 60, 60, 40);
+  graphics.fill(0xff0000);
+  graphics.stroke({ width: 2, color: 0x000000 });
+
+  // 圆形（填充蓝色，无描边）
+  graphics.circle(120, 80, 25);
+  graphics.fill(0x0000ff);
+
+  // 线条（绿色，线宽3）
+  graphics.moveTo(160, 60);
+  graphics.lineTo(200, 100);
+  graphics.stroke({ width: 3, color: 0x00ff00 });
+
+  // 多边形（黄色填充，紫色描边）
+  graphics.poly([220, 60, 260, 60, 240, 100]);
+  graphics.fill(0xffff00);
+  graphics.stroke({ width: 2, color: 0xff00ff });
+
+  container.addChild(graphics);
+}
+
+/**
+ * 演示文本样式 (Text)
+ * - 不同字体、大小、颜色
+ * - 描边、阴影
+ */
+function showText(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "文本样式 (Text)");
+
+  // 普通文本
+  const text1 = new PIXI.Text({
+    text: "普通文本",
+    style: { fontSize: 14, fill: 0xffffff },
+  });
+  text1.position.set(10, 40);
+  container.addChild(text1);
+
+  // 彩色文本
+  const text2 = new PIXI.Text({
+    text: "彩色文本",
+    style: { fontSize: 16, fill: 0xffaa00 },
+  });
+  text2.position.set(10, 70);
+  container.addChild(text2);
+
+  // 描边文本
+  const text3 = new PIXI.Text({
+    text: "描边文本",
+    style: {
+      fontSize: 18,
+      fill: 0x00ff00,
+      stroke: { color: 0x0000ff, width: 2 },
+    },
+  });
+  text3.position.set(10, 100);
+  container.addChild(text3);
+
+  // 阴影文本
+  const text4 = new PIXI.Text({
+    text: "阴影文本",
+    style: {
+      fontSize: 18,
+      fill: 0xffffff,
+      dropShadow: {
+        alpha: 0.8,
+        blur: 4,
+        distance: 3,
+        angle: Math.PI / 4,
+      },
+    },
+  });
+  text4.position.set(150, 100);
+  container.addChild(text4);
+
+  // 多种样式组合
+  const text5 = new PIXI.Text({
+    text: "组合样式",
+    style: {
+      fontSize: 20,
+      fill: 0xff00ff,
+      stroke: { color: 0xffffff, width: 1 },
+      dropShadow: {
+        alpha: 0.7,
+        blur: 3,
+        distance: 2,
+        angle: 0,
+      },
+    },
+  });
+  text5.position.set(10, 140);
+  container.addChild(text5);
+
+  addDescription(container, "支持字体、颜色、描边、阴影等", 180);
+}
+
+/**
+ * 演示精灵 (Sprite)
+ * - 从纹理创建精灵
+ * - 设置位置、旋转、缩放、透明度
+ * - 使用 tint 改变颜色
+ */
+function showSprite(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "精灵 (Sprite)");
+  addDescription(container, "纹理、位置、旋转、缩放、tint", 40);
+
+  // 创建一个圆形纹理（使用 Graphics 生成）
+  const circleGraphic = new PIXI.Graphics();
+  circleGraphic.circle(0, 0, 25);
+  circleGraphic.fill(0xffaa00);
+  const texture = app.renderer.generateTexture(circleGraphic);
+
+  // 创建第一个精灵
+  const sprite1 = new PIXI.Sprite(texture);
+  sprite1.position.set(50, 80);
+  sprite1.rotation = 0.2; // 旋转
+  sprite1.scale.set(1.2); // 缩放
+  container.addChild(sprite1);
+
+  // 创建第二个精灵，使用 tint 改变颜色
+  const sprite2 = new PIXI.Sprite(texture);
+  sprite2.position.set(130, 90);
+  sprite2.tint = 0x00ff00; // 变为绿色
+  sprite2.alpha = 0.7; // 半透明
+  container.addChild(sprite2);
+
+  // 创建第三个精灵，设置锚点为中心，并添加边框效果
+  const sprite3 = new PIXI.Sprite(texture);
+  sprite3.anchor.set(0.5);
+  sprite3.position.set(220, 100);
+  sprite3.scale.set(1.5);
+  sprite3.rotation = 0.5;
+  container.addChild(sprite3);
+
+  // 添加一个白色方块精灵演示纹理复用
+  const whiteTexture = PIXI.Texture.WHITE;
+  const sprite4 = new PIXI.Sprite(whiteTexture);
+  sprite4.position.set(300, 80);
+  sprite4.width = 40;
+  sprite4.height = 40;
+  sprite4.tint = 0xff0000; // 红色方块
+  container.addChild(sprite4);
+}
+
+/**
+ * 演示动画 (Ticker)
+ * - 使用 app.ticker 创建动画
+ * - 移动、旋转、缩放动画
+ */
+function showAnimation(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "动画 (Ticker)");
+  addDescription(container, "旋转、移动、缩放动画", 40);
+
+  // 创建一个矩形
+  const rect = new PIXI.Graphics();
+  rect.rect(0, 0, 40, 30);
+  rect.fill(0x00aaff);
+  rect.stroke({ width: 2, color: 0xffffff });
+  rect.position.set(50, 80);
+  container.addChild(rect);
+
+  // 创建一个圆形
+  const circle = new PIXI.Graphics();
+  circle.circle(0, 0, 20);
+  circle.fill(0xffaa00);
+  circle.position.set(150, 95);
+  container.addChild(circle);
+
+  // 创建一个文本显示帧频信息
+  const fpsText = new PIXI.Text({
+    text: "FPS: ",
+    style: { fontSize: 12, fill: 0xffffff },
+  });
+  fpsText.position.set(250, 80);
+  container.addChild(fpsText);
+
+  // 存储动画状态
+  let rectAngle = 0;
+  let circleY = 80;
+  let circleDir = 1;
+
+  // 定义 ticker 回调
+  const tickerCallback = () => {
+    // 矩形旋转
+    rect.rotation += 0.02;
+
+    // 圆形上下移动
+    circleY += circleDir * 1.5;
+    if (circleY > 120 || circleY < 60) circleDir *= -1;
+    circle.y = circleY;
+
+    // 更新 FPS 显示
+    fpsText.text = `FPS: ${Math.round(app.ticker.FPS)}`;
+  };
+
+  app.ticker.add(tickerCallback);
+
+  // 保存 ticker 回调到状态，以便清除
+  const state = appStates.get(app)!;
+  state.tickerCallback = tickerCallback;
+}
+
+/**
+ * 演示滤镜 (Filter)
+ * - 应用模糊滤镜
+ * - 应用颜色矩阵滤镜（灰度、色调）
+ */
+function showFilter(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "滤镜 (Filter)");
+  addDescription(container, "模糊滤镜、颜色矩阵（灰度）", 40);
+
+  // 创建一个带纹理的精灵作为滤镜对象
+  const graphic = new PIXI.Graphics();
+  graphic.rect(0, 0, 80, 60);
+  graphic.fill(0xffaa00);
+  graphic.stroke({ width: 2, color: 0xffffff });
+  const texture = app.renderer.generateTexture(graphic);
+  const sprite = new PIXI.Sprite(texture);
+  sprite.position.set(30, 70);
+  container.addChild(sprite);
+
+  // 应用模糊滤镜
+  const blurFilter = new PIXI.BlurFilter({ strength: 5 });
+  const spriteBlur = new PIXI.Sprite(texture);
+  spriteBlur.position.set(130, 70);
+  spriteBlur.filters = [blurFilter];
+  container.addChild(spriteBlur);
+
+  // 应用颜色矩阵滤镜（灰度）
+  const grayMatrix = new PIXI.ColorMatrixFilter();
+  grayMatrix.grayscale(0.5, true); // 部分灰度
+  const spriteGray = new PIXI.Sprite(texture);
+  spriteGray.position.set(230, 70);
+  spriteGray.filters = [grayMatrix];
+  container.addChild(spriteGray);
+
+  // 添加说明文字
+  const desc = new PIXI.Text({
+    text: "左:原图  中:模糊  右:灰度",
+    style: { fontSize: 12, fill: 0xcccccc },
+  });
+  desc.position.set(30, 140);
+  container.addChild(desc);
+}
+
+/**
+ * 演示交互事件 (Interaction)
+ * - 设置 eventMode 为 static
+ * - 监听点击、鼠标悬停事件
+ * - 动态改变颜色
+ */
+function showInteraction(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "交互事件 (Interaction)");
+  addDescription(container, "点击矩形变红，鼠标悬停圆形变蓝", 40);
+
+  // 创建一个可点击的矩形
+  const rect = new PIXI.Graphics();
+  rect.rect(30, 60, 80, 50);
+  rect.fill(0x3366cc);
+  rect.stroke({ width: 2, color: 0xffffff });
+  rect.eventMode = "static"; // 开启交互
+  rect.cursor = "pointer";
+  rect.on("pointerdown", () => {
+    rect.fill(0xff0000); // 点击变红
+    rect.stroke({ width: 2, color: 0xffff00 });
+  });
+  container.addChild(rect);
+
+  // 创建一个可悬停的圆形
+  const circle = new PIXI.Graphics();
+  circle.circle(160, 85, 30);
+  circle.fill(0x44aa44);
+  circle.stroke({ width: 2, color: 0xffffff });
+  circle.eventMode = "static";
+  circle.cursor = "grab";
+  circle.on("pointerover", () => {
+    circle.fill(0x0000ff); // 悬停变蓝
+  });
+  circle.on("pointerout", () => {
+    circle.fill(0x44aa44); // 恢复原色
+  });
+  container.addChild(circle);
+
+  // 存储交互对象以便清理
+  const state = appStates.get(app)!;
+  state.interactiveObjects = [rect, circle];
+
+  // 添加提示文字
+  const tip = new PIXI.Text({
+    text: "尝试点击矩形，鼠标悬停圆形",
+    style: { fontSize: 12, fill: 0xffff00 },
+  });
+  tip.position.set(30, 130);
+  container.addChild(tip);
+}
+
+/**
+ * 演示容器与层级 (Container)
+ * - 创建容器，内部放置多个图形
+ * - 移动容器影响所有子元素
+ * - 调整子元素顺序
+ */
+function showContainer(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "容器与层级 (Container)");
+  addDescription(container, "容器整体移动，子元素顺序", 40);
+
+  // 创建一个子容器
+  const subContainer = new PIXI.Container();
+  subContainer.position.set(50, 70);
+
+  // 在子容器中添加三个不同颜色的矩形
+  const rect1 = new PIXI.Graphics();
+  rect1.rect(0, 0, 40, 30);
+  rect1.fill(0xff0000);
+  subContainer.addChild(rect1);
+
+  const rect2 = new PIXI.Graphics();
+  rect2.rect(20, 15, 40, 30);
+  rect2.fill(0x00ff00);
+  subContainer.addChild(rect2);
+
+  const rect3 = new PIXI.Graphics();
+  rect3.rect(40, 30, 40, 30);
+  rect3.fill(0x0000ff);
+  subContainer.addChild(rect3);
+
+  container.addChild(subContainer);
+
+  // 添加一个按钮形状来演示移动整个容器
+  const moveButton = new PIXI.Graphics();
+  moveButton.rect(200, 70, 80, 30);
+  moveButton.fill(0x666666);
+  moveButton.stroke({ width: 1, color: 0xffffff });
+  moveButton.eventMode = "static";
+  moveButton.cursor = "pointer";
+  moveButton.on("pointerdown", () => {
+    subContainer.x += 10;
+    if (subContainer.x > 200) subContainer.x = 50;
+  });
+  container.addChild(moveButton);
+
+  const buttonText = new PIXI.Text({
+    text: "移动容器",
+    style: { fontSize: 12, fill: 0xffffff },
+  });
+  buttonText.position.set(210, 76);
+  container.addChild(buttonText);
+
+  // 存储交互对象以便清理
+  const state = appStates.get(app)!;
+  state.interactiveObjects = [moveButton];
+}
+
+/**
+ * 演示简单粒子系统 (ParticleContainer)
+ * - 使用 ParticleContainer 优化大量小精灵
+ * - 生成随机粒子并动画
+ */
+function showParticles(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, "粒子系统 (ParticleContainer)");
+  addDescription(container, "大量粒子，性能优化", 40);
+
+  // 1. Setup the container
+  const particleContainer = new PIXI.ParticleContainer({
+    dynamicProperties: {
+      position: true,
+      rotation: true,
+      color: true, // In v8, tint and alpha are handled via 'color'
+    },
+    // texture: myTexture, // Optional: default texture for all particles
+  });
+  
+
+  particleContainer.position.set(20, 60);
+  app.stage.addChild(particleContainer); // You still add the container to the stage
+
+  // 创建一个圆形纹理供粒子使用
+  const particleGraphic = new PIXI.Graphics();
+  particleGraphic.circle(0, 0, 3);
+  particleGraphic.fill(0xffffff);
+  const texture = app.renderer.generateTexture(particleGraphic);
+
+  // 生成200个粒子
+  const particles: PIXI.Sprite[] = [];
+  for (let i = 0; i < 200; i++) {
+    const sprite = new PIXI.Sprite(texture);
+    sprite.x = Math.random() * 300;
+    sprite.y = Math.random() * 120;
+    sprite.tint = Math.random() * 0xffffff;
+    sprite.alpha = 0.6 + Math.random() * 0.4;
+    sprite.rotation = Math.random() * Math.PI * 2;
+    particles.push(sprite);
+    particleContainer.addChild(sprite);
+  }
+  container.addChild(particleContainer);
+
+  // 动画：让粒子缓慢旋转和移动
+  const tickerCallback = () => {
+    particles.forEach((p, index) => {
+      p.rotation += 0.01;
+      p.x += Math.sin(index + Date.now() * 0.001) * 0.5;
+      p.y += Math.cos(index + Date.now() * 0.001) * 0.5;
+      // 边界环绕
+      if (p.x < 0) p.x = 300;
+      if (p.x > 300) p.x = 0;
+      if (p.y < 0) p.y = 120;
+      if (p.y > 120) p.y = 0;
+    });
+  };
+
+  app.ticker.add(tickerCallback);
+  const state = appStates.get(app)!;
+  state.tickerCallback = tickerCallback;
+}
+
+// ============================================================
+// 插件导出
+// ============================================================
+
+/**
+ * API 演示插件
+ * 支持多种消息类型，每个类型触发一个独立的 PixiJS 功能演示
+ */
+export const apiDemoPlugin: PixiPlugin = {
+  name: "ApiDemoPlugin",
+  messageTypes: [
+    "apiDemo/basicShapes",
+    "apiDemo/text",
+    "apiDemo/sprite",
+    "apiDemo/animation",
+    "apiDemo/filter",
+    "apiDemo/interaction",
+    "apiDemo/container",
+    "apiDemo/particles",
+  ],
+
+  /**
+   * 插件执行入口
+   * @param message - 消息对象，必须包含 type 字段，用于选择演示内容
+   * @param app - Pixi Application 实例
+   */
+  execute(message: any, app: PIXI.Application): void {
+    if (!app) {
+      console.warn("[ApiDemoPlugin] 未提供 Pixi 应用实例");
+      return;
+    }
+
+    console.log(`[ApiDemoPlugin] 执行演示: ${message.type}`);
+
+    // 根据消息类型分发到对应的演示函数
+    switch (message.type) {
+      case "apiDemo/basicShapes":
+        showBasicShapes(app);
+        break;
+      case "apiDemo/text":
+        showText(app);
+        break;
+      case "apiDemo/sprite":
+        showSprite(app);
+        break;
+      case "apiDemo/animation":
+        showAnimation(app);
+        break;
+      case "apiDemo/filter":
+        showFilter(app);
+        break;
+      case "apiDemo/interaction":
+        showInteraction(app);
+        break;
+      case "apiDemo/container":
+        showContainer(app);
+        break;
+      case "apiDemo/particles":
+        showParticles(app);
+        break;
+      default:
+        console.warn(`[ApiDemoPlugin] 未知的消息类型: ${message.type}`);
+    }
+  },
+};
+
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/rectangle.plugin.ts
+// 用途: 绘制矩形的插件（对象字面量形式）
+// 上下文: 被 PixiController 注册，处理 'drawRectangle' 类型的消息。
+//
+// Outline:
+// 1. 导入插件类型和 PIXI
+// 2. 定义插件对象，包含 name、messageTypes、execute
+// 3. 导出插件对象
+//
+// 使用方法:
+//   import { rectanglePlugin } from './plugins/rectangle.plugin';
+//   controller.registerPlugin(rectanglePlugin);
+// ============================================================
+
+import { PixiPlugin } from './plugin.types';
+import * as PIXI from 'pixi.js';
+
+export const rectanglePlugin: PixiPlugin = {
+  name: 'RectanglePlugin',
+  messageTypes: ['drawRectangle'],
+
+  /**
+   * 绘制矩形
+   * @param message 应包含 x, y, width, height, color
+   * @param app Pixi Application 实例
+   */
+  execute(message: any, app: PIXI.Application): void {
+    const { x, y, width = 60, height = 40, color = 0x00ff00 } = message;
+    const rect = new PIXI.Graphics();
+    rect.rect(x - width / 2, y - height / 2, width, height); // 以(x,y)为中心
+    rect.fill(color);
+    app.stage.addChild(rect);
   }
 };
 ```
@@ -756,84 +2009,1171 @@ export const circlePlugin: PixiPlugin = {
 };
 ```
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
 
 ```
 // ============================================================
-// 文件: src/plugins/rectangle.plugin.ts
-// 用途: 绘制矩形的插件（对象字面量形式）
-// 上下文: 被 PixiController 注册，处理 'drawRectangle' 类型的消息。
+// 文件: src/components/PixiCanvas.tsx
+// 用途: PixiJS 画布 React 组件，管理 Pixi 应用生命周期，
+//       监听画布上的鼠标/触摸事件，并通过 Controller 发送带时间戳的消息。
+//       初始化完成后通过 onAppInit 回调将 app 实例传出。
+// 上下文: 应在 React 应用中使用，作为画布容器。接收 PixiController 实例，
+//        并将用户交互转换为统一格式的消息发送给 Controller。
 //
-// Outline:
-// 1. 导入插件类型和 PIXI
-// 2. 定义插件对象，包含 name、messageTypes、execute
-// 3. 导出插件对象
+// 版本: 2.3.0
+//    - 修复严格模式下二次销毁 app 实例导致的错误
+//    - 引入 Symbol 标记 _DESTROYED，确保每个 app 只销毁一次
+//    - 封装 safeDestroy 函数统一处理销毁逻辑
+//    - 保留 isMountedRef 和 appRef 检查，增强稳定性
+//
+// 处理逻辑:
+// 1. 组件挂载时，创建 PIXI.Application 并异步初始化。
+// 2. 初始化完成后，将 canvas 挂载到容器，绑定事件监听，并通过 onAppInit 回调通知父组件。
+// 3. 组件卸载或依赖项变化时，清理当前 app 实例：
+//    - 停止 ticker
+//    - 调用 safeDestroy 销毁 app（附带标记检查）
+//    - 清空容器内的 canvas
+// 4. 异步初始化过程中，若组件已卸载或 app 已被替换，则安全销毁新创建的 app。
 //
 // 使用方法:
-//   import { rectanglePlugin } from './plugins/rectangle.plugin';
-//   controller.registerPlugin(rectanglePlugin);
+//   <PixiCanvas
+//     controller={controller}
+//     width={800}
+//     height={600}
+//     backgroundColor={0x1099bb}
+//     onAppInit={(app) => controller.setApp(app)}
+//   />
+//
+// 注意事项:
+//   - 必须确保 controller 在组件生命周期内保持稳定引用。
+//   - 使用 isMountedRef 防止异步操作更新已卸载的组件。
+//   - safeDestroy 中的标记 Symbol 可防止同一个 app 被多次销毁。
 // ============================================================
 
-import { PixiPlugin } from './plugin.types';
+import React, { useEffect, useRef, useCallback } from 'react';
 import * as PIXI from 'pixi.js';
+import { PixiController } from '../controllers/PixiController';
 
-export const rectanglePlugin: PixiPlugin = {
-  name: 'RectanglePlugin',
-  messageTypes: ['drawRectangle'],
+interface PixiCanvasProps {
+  controller: PixiController;          // 外部传入的控制器实例，用于发送事件
+  width?: number;                       // 画布宽度（像素）
+  height?: number;                      // 画布高度（像素）
+  backgroundColor?: number;             // 背景色（十六进制数，如 0x1099bb）
+  onAppInit?: (app: PIXI.Application) => void; // 初始化完成后的回调，通常将 app 注入 controller
+}
+
+/**
+ * 用于标记 app 实例是否已被销毁的私有 Symbol
+ * 每个 app 对象上会添加这个 Symbol 属性，值为 true 表示已销毁。
+ * 这样可以防止在严格模式或异步操作中对同一个 app 多次调用 destroy 导致错误。
+ */
+const DESTROYED = Symbol('pixi-app-destroyed');
+
+/**
+ * 安全销毁 app 实例，避免重复销毁
+ * @param app PIXI.Application 实例（可能为 null 或 undefined）
+ * 
+ * 内部细节：
+ * - 首先检查 app 是否存在以及是否已被标记销毁，若已销毁则直接返回。
+ * - 调用 ticker.stop() 显式停止动画循环（虽然 destroy 内部也会做，但提前停止更安全）。
+ * - 调用 app.destroy(true) 销毁所有资源，包括 stage、渲染器等。
+ * - 销毁后通过 (app as any)[DESTROYED] = true 打上标记，防止后续再次销毁。
+ * - 捕获可能出现的异常并打印警告，避免导致整个组件崩溃。
+ */
+function safeDestroy(app: PIXI.Application | null | undefined) {
+  if (!app) return;
+  // 检查自定义标记，若已销毁则跳过
+  if ((app as any)[DESTROYED]) return;
+
+  try {
+    // 先停止 ticker，确保销毁时不再触发任何更新
+    app.ticker?.stop();
+    // 第二个参数 true 表示移除 canvas 并销毁所有子项
+    app.destroy(true);
+    // 标记为已销毁
+    (app as any)[DESTROYED] = true;
+  } catch (e) {
+    console.warn('销毁 Pixi 应用时出错:', e);
+  }
+}
+
+/**
+ * PixiCanvas React 函数组件
+ * 
+ * 内部逻辑详解：
+ * - 使用 containerRef 引用包裹画布的 <div> 元素。
+ * - 使用 appRef 保存当前活跃的 PIXI.Application 实例，确保在多次渲染中引用一致。
+ * - 使用 isMountedRef 标记组件是否仍处于挂载状态，用于防止异步初始化完成后对已卸载组件的状态更新。
+ * - 使用 useCallback 稳定 onAppInit 回调，避免因父组件传递的新函数导致 useEffect 重复执行。
+ * - useEffect 是核心：负责创建、初始化和销毁 Pixi 应用，并绑定事件。
+ *   - 首先清除容器内可能残留的 canvas（防止因快速刷新或热更新导致多个 canvas 叠加）。
+ *   - 若已有 appRef.current，则安全销毁（通常是上一个渲染周期遗留的实例）。
+ *   - 创建新的 PIXI.Application 实例，调用其 init 方法异步初始化。
+ *   - 初始化完成后进行一系列检查：
+ *     - 组件是否仍然挂载 (isMountedRef.current)
+ *     - 当前 appRef.current 是否仍然指向这个 app（防止在异步过程中又被新的 app 替换，例如依赖项变化导致 useEffect 重新执行）
+ *     - 若检查不通过，则调用 safeDestroy 销毁此 app 并返回。
+ *   - 检查通过后，将 app.canvas 挂载到容器，并通过 handleAppInit 回调通知父组件（通常是将 app 设置到 controller 中）。
+ *   - 然后绑定各种鼠标/触摸事件，将事件转换为统一格式的消息，通过 controller.sendToParent 发送。
+ *   - 在清理函数（return）中，标记组件已卸载，安全销毁 app，并再次清空容器。
+ */
+export const PixiCanvas: React.FC<PixiCanvasProps> = ({
+  controller,
+  width = 800,
+  height = 600,
+  backgroundColor = 0x1099bb,
+  onAppInit,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const appRef = useRef<PIXI.Application | null>(null);
+  const isMountedRef = useRef(true);
 
   /**
-   * 绘制矩形
-   * @param message 应包含 x, y, width, height, color
-   * @param app Pixi Application 实例
+   * 使用 useCallback 稳定化 onAppInit 回调，避免因父组件重传新函数导致 useEffect 重新执行。
+   * 注意：如果父组件每次渲染都传递一个新的箭头函数，useCallback 并不能完全避免，
+   * 但此处将 onAppInit 作为依赖项，当它变化时回调会更新，这是合理的。
+   */
+  const handleAppInit = useCallback((app: PIXI.Application) => {
+    onAppInit?.(app);
+  }, [onAppInit]);
+
+  useEffect(() => {
+    // 标记组件已挂载
+    isMountedRef.current = true;
+    const container = containerRef.current;
+    if (!container) return;
+
+    // --- 清理容器内残留的 canvas ---
+    // 在某些情况（如热更新、快速刷新）下，容器内可能已有 canvas，手动清除以防多个 canvas 叠加
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+
+    // --- 销毁之前的 Pixi 应用（如果有）---
+    // 当依赖项变化（如 width, height 等）导致 useEffect 重新执行时，需要销毁旧 app
+    if (appRef.current) {
+      safeDestroy(appRef.current);
+      appRef.current = null;
+    }
+
+    // --- 创建新应用并初始化 ---
+    const app = new PIXI.Application();
+    appRef.current = app;
+
+    // 注意：init 是异步方法，返回 Promise
+    app.init({
+      width,
+      height,
+      backgroundColor,
+      antialias: true,
+      resolution: window.devicePixelRatio || 1, // 适配高 DPI 屏幕
+      autoDensity: true,                        // 自动调整 canvas CSS 尺寸以匹配分辨率
+    })
+      .then(() => {
+        // --- 初始化成功后的检查 ---
+        // 1. 如果组件已卸载，则直接销毁并返回
+        if (!isMountedRef.current) {
+          safeDestroy(app);
+          return;
+        }
+
+        // 2. 检查 appRef.current 是否仍然指向当前 app
+        //    若在异步过程中，useEffect 因依赖变化再次执行，创建了新 app 并赋值给 appRef.current，
+        //    此时 appRef.current 不再是这个 app，说明当前 app 已被取代，应当废弃。
+        if (appRef.current !== app) {
+          safeDestroy(app);
+          return;
+        }
+
+        // --- 将 canvas 挂载到 DOM 容器 ---
+        if (container && app.canvas) {
+          container.appendChild(app.canvas);
+
+          // 通知父组件 app 已初始化，通常父组件会调用 controller.setApp(app)
+          handleAppInit(app);
+
+          // --- 事件处理函数（使用 app 闭包，确保始终操作当前 app）---
+          // 注意：由于事件绑定是在此 then 块内，且 app 变量引用当前实例，事件处理中使用的 app 始终是当前 app，
+          // 即使 appRef.current 后来被替换，这些事件处理器仍然引用旧的 app，但此时旧的 app 已经被销毁或废弃，
+          // 而且事件监听器也会在组件卸载或 app 替换时被移除（因为 canvas 元素会被移除），所以不会造成内存泄漏。
+          const handlePointerEvent = (eventType: string) => (event: MouseEvent | TouchEvent) => {
+            event.preventDefault(); // 防止默认行为（如触摸滚动）
+
+            // 获取客户端坐标（相对于视口）
+            let clientX = 0, clientY = 0;
+            if (event instanceof MouseEvent) {
+              clientX = event.clientX;
+              clientY = event.clientY;
+            } else if (event instanceof TouchEvent && event.touches.length > 0) {
+              clientX = event.touches[0].clientX;
+              clientY = event.touches[0].clientY;
+            }
+
+            // 将视口坐标转换为 canvas 局部坐标（考虑 canvas 在页面上的偏移）
+            const canvas = app.canvas;
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            // 构建标准消息对象，包含坐标（限制在 canvas 范围内）、时间戳和原始事件
+            const message = {
+              type: eventType,
+              x: Math.max(0, Math.min(x, canvas.width)),  // 确保坐标不超出画布边界
+              y: Math.max(0, Math.min(y, canvas.height)),
+              timestamp: Date.now(),
+              originalEvent: event, // 可选，保留原始事件以备高级用途
+            };
+
+            // 通过 controller 将事件发送给父组件
+            controller.sendToParent(message);
+          };
+
+          // --- 绑定事件监听器 ---
+          // 鼠标/触摸事件统一转换为 pointer 系列事件，便于上层统一处理
+          app.canvas.addEventListener('mousedown', handlePointerEvent('pointerdown'));
+          app.canvas.addEventListener('mousemove', handlePointerEvent('pointermove'));
+          app.canvas.addEventListener('mouseup', handlePointerEvent('pointerup'));
+          app.canvas.addEventListener('mouseleave', handlePointerEvent('pointerleave'));
+          // touch 事件需注意 passive 选项：对于 touchstart 和 touchmove，设置 { passive: false } 以便调用 preventDefault 阻止滚动
+          app.canvas.addEventListener('touchstart', handlePointerEvent('pointerdown'), { passive: false });
+          app.canvas.addEventListener('touchmove', handlePointerEvent('pointermove'), { passive: false });
+          app.canvas.addEventListener('touchend', handlePointerEvent('pointerup'));
+          app.canvas.addEventListener('touchcancel', handlePointerEvent('pointerleave'));
+          app.canvas.addEventListener('click', handlePointerEvent('click'));
+        }
+      })
+      .catch(error => {
+        // 初始化失败时的处理：打印错误，并尝试销毁 app（safeDestroy 会处理未完全初始化的状态）
+        console.error('PixiJS 初始化失败:', error);
+        safeDestroy(app);
+      });
+
+    // --- 清理函数（组件卸载或依赖变化时执行）---
+    return () => {
+      // 标记组件已卸载
+      isMountedRef.current = false;
+
+      // 安全销毁当前 app（如果有）
+      if (appRef.current) {
+        safeDestroy(appRef.current);
+        appRef.current = null;
+      }
+
+      // 再次确保容器内无残留 canvas（防止清理不完全）
+      if (container) {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+      }
+    };
+  }, [controller, width, height, backgroundColor, handleAppInit]); // 依赖项：当这些 props 变化时重新创建 Pixi 应用
+
+  // 渲染一个占位 div，作为画布容器，样式设置为指定宽高
+  return <div ref={containerRef} style={{ width, height }} />;
+};
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/index.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/index.ts
+// 用途: API 演示插件的主入口。导出符合 PixiPlugin 接口的插件对象。
+// 上下文: 被 src/plugins/index.ts 导入并注册到 PixiController。
+//
+// 处理逻辑:
+//   1. 从 './demos' 导入 demoMap，该对象包含了所有消息类型到对应演示函数的映射。
+//   2. 从 demoMap 中提取所有消息类型作为插件能处理的 messageTypes。
+//   3. 定义插件对象，包含 name、messageTypes、execute 方法。
+//   4. 在 execute 中，根据 message.type 从 demoMap 获取对应的演示函数并执行，
+//      如果找不到则输出警告。
+//
+// 使用方法:
+//   import { apiDemoPlugin } from './api-demo';
+//   controller.registerPlugin(apiDemoPlugin);
+//
+// 注意事项:
+//   - 插件自动支持所有在 demoMap 中注册的消息类型，新增演示只需在 demos/index.ts 中扩展即可。
+//   - execute 方法中会先检查 app 实例是否存在，确保安全。
+// ============================================================
+
+import { PixiPlugin } from '../plugin.types';
+import * as PIXI from 'pixi.js';
+import { demoMap } from './demos';
+
+// 从 demoMap 中提取所有消息类型，作为插件能够处理的消息类型列表
+const messageTypes = Object.keys(demoMap);
+
+/**
+ * API 演示插件
+ * 支持多个演示功能，每个演示对应一个消息类型。
+ */
+export const apiDemoPlugin: PixiPlugin = {
+  name: 'ApiDemoPlugin',
+  messageTypes,
+
+  /**
+   * 插件执行入口
+   * @param message - 消息对象，必须包含 type 字段，用于选择演示内容
+   * @param app - Pixi Application 实例
    */
   execute(message: any, app: PIXI.Application): void {
-    const { x, y, width = 60, height = 40, color = 0x00ff00 } = message;
-    const rect = new PIXI.Graphics();
-    rect.rect(x - width / 2, y - height / 2, width, height); // 以(x,y)为中心
-    rect.fill(color);
-    app.stage.addChild(rect);
-  }
+    if (!app) {
+      console.warn('[ApiDemoPlugin] 未提供 Pixi 应用实例');
+      return;
+    }
+
+    const demoFunc = demoMap[message.type];
+    if (demoFunc) {
+      console.log(`[ApiDemoPlugin] 执行演示: ${message.type}`);
+      demoFunc(app);
+    } else {
+      console.warn(`[ApiDemoPlugin] 未知的消息类型: ${message.type}`);
+    }
+  },
 };
 ```
 
-
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/utils.ts?proxy_host=raw.githubusercontent.com]
 
 ```
 // ============================================================
-// 文件: src/plugins/index.ts
-// 用途: 插件统一导出入口，方便批量注册。
-// 上下文: 被 App.tsx 或其他初始化代码使用，通过循环注册所有插件。
+// 文件: src/plugins/api-demo/utils.ts
+// 用途: 提供在演示容器中添加标题和说明文本的辅助函数。
+// 上下文: 被所有演示函数调用，统一文本样式。
 //
-// 版本: 1.1.0
-//    - 新增导出 fireworksPlugin，并整合所有插件到 plugins 数组。
+// Outline:
+// 1. 导入 PIXI
+// 2. 导出函数: addTitle, addDescription
+//
+// 注意事项:
+//   - 标题字体大小 16，黄色加粗带阴影。
+//   - 说明文字字体大小 12，灰色。
 // ============================================================
 
-import { circlePlugin } from './circle.plugin';
-import { rectanglePlugin } from './rectangle.plugin';
-import { clearPlugin } from './clear.plugin';
-import { bouncePlugin } from './bounce.plugin';
-import { fireworksPlugin } from './fireworks.plugin';
+import * as PIXI from 'pixi.js';
 
-// 所有插件列表，按需添加
-export const plugins = [
-  circlePlugin,
-  rectanglePlugin,
-  clearPlugin,
-  bouncePlugin,
-  fireworksPlugin,
-];
+/**
+ * 在演示容器中添加一个标题文本
+ * @param container - 演示容器
+ * @param title - 标题文字
+ * @returns 创建的文本对象
+ */
+export function addTitle(container: PIXI.Container, title: string): PIXI.Text {
+  const text = new PIXI.Text({
+    text: title,
+    style: {
+      fontSize: 16,
+      fill: 0xffff00,
+      fontWeight: 'bold',
+      dropShadow: {
+        alpha: 0.5,
+        blur: 2,
+        distance: 2,
+        angle: Math.PI / 4,
+      },
+    },
+  });
+  text.position.set(10, 10);
+  container.addChild(text);
+  return text;
+}
 
-// 也可以单独导出每个插件，供需要单独使用的场景
+/**
+ * 在演示容器中添加一行说明文本
+ * @param container - 演示容器
+ * @param description - 说明文字
+ * @param y - 垂直位置（相对于容器顶部）
+ */
+export function addDescription(container: PIXI.Container, description: string, y: number) {
+  const text = new PIXI.Text({
+    text: description,
+    style: {
+      fontSize: 12,
+      fill: 0xcccccc,
+    },
+  });
+  text.position.set(10, y);
+  container.addChild(text);
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/types.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/types.ts
+// 用途: 定义 API 演示插件所需的 TypeScript 类型。
+// 上下文: 被 state.ts 和各个演示文件引用，确保类型安全。
+//
+// Outline:
+// 1. 导入 PIXI 类型
+// 2. 定义 AppState 接口，用于存储每个应用实例的私有状态
+// 3. 导出类型
+//
+// 注意事项:
+//   - 这些类型仅用于内部状态管理，不对外暴露。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+
+/**
+ * 每个应用实例的私有状态
+ */
+export interface AppState {
+  /** 用于放置所有演示内容的容器 */
+  container: PIXI.Container;
+  /** 当前正在运行的动画 ticker 回调（如果有），切换演示时需要移除 */
+  tickerCallback?: () => void;
+  /** 当前正在运行的交互对象（如可点击的图形），切换演示时需要清理事件监听 */
+  interactiveObjects?: PIXI.Graphics[];
+}
+
+export const appStates = new WeakMap<PIXI.Application, AppState>();
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/state.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/state.ts
+// 用途: 管理每个 PIXI.Application 实例的私有状态。
+//       提供获取/创建演示容器、清除演示内容的方法。
+// 上下文: 被所有演示函数调用，用于操作容器和清理旧内容。
+//
+// Outline:
+// 1. 导入 PIXI 和类型
+// 2. 使用 WeakMap 存储每个 app 的状态
+// 3. 导出函数: getDemoContainer, clearDemo
+//
+// 注意事项:
+//   - WeakMap 确保当 app 被销毁时，状态自动垃圾回收。
+//   - 每个演示容器固定在舞台左上角 (50,50)，尺寸 400x250，带半透明背景。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { AppState } from './types';
+
+// 使用 WeakMap 存储每个 app 的状态，避免内存泄漏
+export const appStates = new WeakMap<PIXI.Application, AppState>();
+
+/**
+ * 获取指定 app 的演示容器，如果不存在则创建并初始化
+ * @param app - PIXI.Application 实例
+ * @returns 该 app 对应的演示容器
+ */
+export function getDemoContainer(app: PIXI.Application): PIXI.Container {
+  let state = appStates.get(app);
+  if (!state) {
+    // 创建新的容器
+    const container = new PIXI.Container();
+    container.label = 'apiDemoContainer';
+    container.position.set(50, 50); // 固定在左上角，留出边距
+    app.stage.addChild(container);
+
+    // 添加一个半透明的背景矩形，使演示内容更清晰
+    const bg = new PIXI.Graphics();
+    bg.rect(0, 0, 400, 250);
+    bg.fill({ color: 0x000000, alpha: 0.3 });
+    bg.stroke({ width: 2, color: 0xffffff, alpha: 0.5 });
+    container.addChild(bg);
+
+    state = { container };
+    appStates.set(app, state);
+  }
+  return state.container;
+}
+
+/**
+ * 清除当前演示内容，并停止任何正在运行的动画
+ * @param app - PIXI.Application 实例
+ */
+export function clearDemo(app: PIXI.Application) {
+  const state = appStates.get(app);
+  if (!state) return;
+
+  // 移除之前添加的 ticker 回调
+  if (state.tickerCallback) {
+    app.ticker.remove(state.tickerCallback);
+    state.tickerCallback = undefined;
+  }
+
+  // 移除之前的交互对象（如果有）
+  if (state.interactiveObjects) {
+    state.interactiveObjects.forEach(obj => {
+      obj.removeAllListeners(); // 移除所有事件监听
+    });
+    state.interactiveObjects = undefined;
+  }
+
+  // 清空容器，但保留背景（索引0）
+  const container = state.container;
+  while (container.children.length > 1) {
+    container.removeChildAt(1).destroy({ children: true });
+  }
+}
+
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/filter.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/filter.ts
+// 用途: 演示滤镜 (Filter)
+//       包括模糊滤镜、颜色矩阵滤镜（灰度）。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/filter' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数
+// 2. 定义并导出 showFilter 函数
+// 3. 生成纹理，创建三个精灵分别应用不同滤镜
+//
+// 注意事项:
+//   - 模糊滤镜使用 BlurFilter，强度 5。
+//   - 颜色矩阵使用 grayscale(0.5) 实现半灰度。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo } from '../state';
+import { addTitle, addDescription } from '../utils';
+
+export function showFilter(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '滤镜 (Filter)');
+  addDescription(container, '模糊滤镜、颜色矩阵（灰度）', 40);
+
+  const graphic = new PIXI.Graphics();
+  graphic.rect(0, 0, 80, 60);
+  graphic.fill(0xffaa00);
+  graphic.stroke({ width: 2, color: 0xffffff });
+  const texture = app.renderer.generateTexture(graphic);
+
+  const sprite = new PIXI.Sprite(texture);
+  sprite.position.set(30, 70);
+  container.addChild(sprite);
+
+  const blurFilter = new PIXI.BlurFilter({ strength: 5 });
+  const spriteBlur = new PIXI.Sprite(texture);
+  spriteBlur.position.set(130, 70);
+  spriteBlur.filters = [blurFilter];
+  container.addChild(spriteBlur);
+
+  const grayMatrix = new PIXI.ColorMatrixFilter();
+  grayMatrix.grayscale(0.5, true);
+  const spriteGray = new PIXI.Sprite(texture);
+  spriteGray.position.set(230, 70);
+  spriteGray.filters = [grayMatrix];
+  container.addChild(spriteGray);
+
+  const desc = new PIXI.Text({
+    text: '左:原图  中:模糊  右:灰度',
+    style: { fontSize: 12, fill: 0xcccccc },
+  });
+  desc.position.set(30, 140);
+  container.addChild(desc);
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/index.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/index.ts
+// 用途: 导出所有演示函数，并提供消息类型到演示函数的映射。
+// 上下文: 被主插件入口文件引用，用于在 execute 中根据消息类型调用对应函数。
+//
+// Outline:
+// 1. 导入所有演示函数
+// 2. 定义演示映射表：消息类型 -> 函数
+// 3. 导出映射表，供插件使用
+//
+// 注意事项:
+//   - 当新增演示时，需要在此文件中添加对应的导入和映射条目。
+// ============================================================
+import * as PIXI from 'pixi.js';
+
+import { showBasicShapes } from './basicShapes';
+import { showText } from './text';
+import { showSprite } from './sprite';
+import { showAnimation } from './animation';
+import { showFilter } from './filter';
+import { showInteraction } from './interaction';
+import { showContainer } from './container';
+import { showParticles } from './particles';
+
+// 消息类型到演示函数的映射
+export const demoMap: Record<string, (app: PIXI.Application) => void> = {
+  'apiDemo/basicShapes': showBasicShapes,
+  'apiDemo/text': showText,
+  'apiDemo/sprite': showSprite,
+  'apiDemo/animation': showAnimation,
+  'apiDemo/filter': showFilter,
+  'apiDemo/interaction': showInteraction,
+  'apiDemo/container': showContainer,
+  'apiDemo/particles': showParticles,
+};
+
+// 为了方便，也单独导出每个函数
 export {
-  circlePlugin,
-  rectanglePlugin,
-  clearPlugin,
-  bouncePlugin,
-  fireworksPlugin,
+  showBasicShapes,
+  showText,
+  showSprite,
+  showAnimation,
+  showFilter,
+  showInteraction,
+  showContainer,
+  showParticles,
 };
 ```
 
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/particles.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/particles.ts
+// 用途: 演示粒子系统 (ParticleContainer) - 已适配 PixiJS v8
+//       使用 ParticleContainer 优化大量粒子，展示简单粒子动画。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/particles' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数、状态管理
+// 2. 定义并导出 showParticles 函数
+// 3. 创建 ParticleContainer，生成 200 个彩色粒子
+// 4. 注册 ticker 更新粒子位置、旋转，实现缓慢流动效果
+// 5. 保存 tickerCallback 以便清理
+//
+// 注意事项:
+//   - ParticleContainer 构造函数使用两个参数形式（maxSize, properties），并添加 as any 绕过类型检查。
+//   - 粒子动画使用正弦波移动，边界环绕。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo, appStates } from '../state';
+import { addTitle, addDescription } from '../utils';
+
+export function showParticles(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '粒子系统 (ParticleContainer)');
+  addDescription(container, 'v8 优化版：使用 addParticle 代替 addChild', 40);
+
+  // 1. 创建圆形纹理 (v8 的 Graphics 语法略有变化)
+  const particleGraphic = new PIXI.Graphics();
+  particleGraphic.circle(0, 0, 3);
+  particleGraphic.fill(0xffffff);
+  const texture = app.renderer.generateTexture(particleGraphic);
+
+  // 2. 创建 ParticleContainer
+  // v8 构造函数只接收一个配置对象
+  const particleContainer = new PIXI.ParticleContainer({
+    texture: texture, // 指定容器使用的基础纹理
+    dynamicProperties: {
+      position: true,
+      rotation: true,
+      color: true, // v8 中 tint 和 alpha 统称为 color
+    },
+  });
+
+  particleContainer.position.set(20, 60);
+  container.addChild(particleContainer);
+
+  // 3. 生成粒子
+  // v8 不再使用 new PIXI.Sprite，而是使用 addParticle()
+  const particles: any[] = []; // 存储粒子引用以便在 ticker 中更新
+  
+  for (let i = 0; i < 200; i++) {
+    const x = Math.random() * 300;
+    const y = Math.random() * 120;
+    const rotation = Math.random() * Math.PI * 2;
+    
+    // 处理颜色：v8 使用 32位 RGBA (0xRRGGBBAA)
+    // 这里将随机颜色与 alpha (0.6-1.0) 结合
+    const randomRGB = Math.floor(Math.random() * 0xffffff);
+    const alpha = Math.floor((0.6 + Math.random() * 0.4) * 255);
+    const rgbaColor = (randomRGB << 8) | alpha;
+
+    const p = particleContainer.addParticle({
+      x,
+      y,
+      rotation,
+      scaleX: 1,
+      scaleY: 1,
+      anchorX: 0.5,
+      anchorY: 0.5,
+      color: rgbaColor,
+      texture: texture,
+    });
+    
+    particles.push(p);
+  }
+
+  // 4. 注册 ticker 更新粒子位置
+  const tickerCallback = () => {
+    const now = Date.now() * 0.001;
+    particles.forEach((p, index) => {
+      // 在 v8 中，这些属性是直接暴露在粒子对象上的
+      p.rotation += 0.01;
+      p.x += Math.sin(index + now) * 0.5;
+      p.y += Math.cos(index + now) * 0.5;
+
+      // 边界环绕
+      if (p.x < 0) p.x = 300;
+      if (p.x > 300) p.x = 0;
+      if (p.y < 0) p.y = 120;
+      if (p.y > 120) p.y = 0;
+    });
+  };
+
+  app.ticker.add(tickerCallback);
+  
+  // 保存状态以便清理
+  const state = appStates.get(app)!;
+  state.tickerCallback = tickerCallback;
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/container.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/container.ts
+// 用途: 演示容器与层级 (Container)
+//       包括创建子容器、移动容器影响所有子元素、调整子元素顺序。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/container' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数、状态管理
+// 2. 定义并导出 showContainer 函数
+// 3. 创建子容器并添加多个矩形，添加移动按钮
+// 4. 保存交互对象以便清理
+//
+// 注意事项:
+//   - 移动按钮演示了移动整个容器。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo, appStates } from '../state';
+import { addTitle, addDescription } from '../utils';
+import { AppState } from '../types';
+
+export function showContainer(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '容器与层级 (Container)');
+  addDescription(container, '容器整体移动，子元素顺序', 40);
+
+  const subContainer = new PIXI.Container();
+  subContainer.position.set(50, 70);
+
+  const rect1 = new PIXI.Graphics();
+  rect1.rect(0, 0, 40, 30);
+  rect1.fill(0xff0000);
+  subContainer.addChild(rect1);
+
+  const rect2 = new PIXI.Graphics();
+  rect2.rect(20, 15, 40, 30);
+  rect2.fill(0x00ff00);
+  subContainer.addChild(rect2);
+
+  const rect3 = new PIXI.Graphics();
+  rect3.rect(40, 30, 40, 30);
+  rect3.fill(0x0000ff);
+  subContainer.addChild(rect3);
+
+  container.addChild(subContainer);
+
+  const moveButton = new PIXI.Graphics();
+  moveButton.rect(200, 70, 80, 30);
+  moveButton.fill(0x666666);
+  moveButton.stroke({ width: 1, color: 0xffffff });
+  moveButton.eventMode = 'static';
+  moveButton.cursor = 'pointer';
+  moveButton.on('pointerdown', () => {
+    subContainer.x += 10;
+    if (subContainer.x > 200) subContainer.x = 50;
+  });
+  container.addChild(moveButton);
+
+  const buttonText = new PIXI.Text({
+    text: '移动容器',
+    style: { fontSize: 12, fill: 0xffffff },
+  });
+  buttonText.position.set(210, 76);
+  container.addChild(buttonText);
+
+  const state = appStates.get(app)!;
+  state.interactiveObjects = [moveButton];
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/sprite.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/sprite.ts
+// 用途: 演示精灵 (Sprite)
+//       包括从纹理创建精灵、设置位置/旋转/缩放/透明度、使用 tint。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/sprite' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数
+// 2. 定义并导出 showSprite 函数
+// 3. 生成圆形纹理，创建多个精灵展示不同属性
+//
+// 注意事项:
+//   - 使用 app.renderer.generateTexture 从 Graphics 生成纹理。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo } from '../state';
+import { addTitle, addDescription } from '../utils';
+
+export function showSprite(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '精灵 (Sprite)');
+  addDescription(container, '纹理、位置、旋转、缩放、tint', 40);
+
+  // 创建一个圆形纹理
+  const circleGraphic = new PIXI.Graphics();
+  circleGraphic.circle(0, 0, 25);
+  circleGraphic.fill(0xffaa00);
+  const texture = app.renderer.generateTexture(circleGraphic);
+
+  // 精灵1：基础
+  const sprite1 = new PIXI.Sprite(texture);
+  sprite1.position.set(50, 80);
+  sprite1.rotation = 0.2;
+  sprite1.scale.set(1.2);
+  container.addChild(sprite1);
+
+  // 精灵2：tint 变色，半透明
+  const sprite2 = new PIXI.Sprite(texture);
+  sprite2.position.set(130, 90);
+  sprite2.tint = 0x00ff00;
+  sprite2.alpha = 0.7;
+  container.addChild(sprite2);
+
+  // 精灵3：锚点居中
+  const sprite3 = new PIXI.Sprite(texture);
+  sprite3.anchor.set(0.5);
+  sprite3.position.set(220, 100);
+  sprite3.scale.set(1.5);
+  sprite3.rotation = 0.5;
+  container.addChild(sprite3);
+
+  // 使用白色纹理创建色块
+  const whiteTexture = PIXI.Texture.WHITE;
+  const sprite4 = new PIXI.Sprite(whiteTexture);
+  sprite4.position.set(300, 80);
+  sprite4.width = 40;
+  sprite4.height = 40;
+  sprite4.tint = 0xff0000;
+  container.addChild(sprite4);
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/basicShapes.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/basicShapes.ts
+// 用途: 演示基础图形绘制 (Graphics)
+//       包括矩形、圆形、线条、多边形，以及填充与描边。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/basicShapes' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及必要的辅助函数
+// 2. 定义并导出 showBasicShapes 函数
+// 3. 在函数内部：获取容器、清除旧内容、添加标题/说明、绘制图形
+//
+// 注意事项:
+//   - 所有图形绘制在同一个 Graphics 对象上，便于演示。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo } from '../state';
+import { addTitle, addDescription } from '../utils';
+
+export function showBasicShapes(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '基础图形 (Graphics)');
+  addDescription(container, '矩形、圆形、线条、多边形', 40);
+
+  const graphics = new PIXI.Graphics();
+
+  // 矩形（填充红色，黑色描边）
+  graphics.rect(20, 60, 60, 40);
+  graphics.fill(0xff0000);
+  graphics.stroke({ width: 2, color: 0x000000 });
+
+  // 圆形（填充蓝色，无描边）
+  graphics.circle(120, 80, 25);
+  graphics.fill(0x0000ff);
+
+  // 线条（绿色，线宽3）
+  graphics.moveTo(160, 60);
+  graphics.lineTo(200, 100);
+  graphics.stroke({ width: 3, color: 0x00ff00 });
+
+  // 多边形（黄色填充，紫色描边）
+  graphics.poly([220, 60, 260, 60, 240, 100]);
+  graphics.fill(0xffff00);
+  graphics.stroke({ width: 2, color: 0xff00ff });
+
+  container.addChild(graphics);
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/interaction.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/interaction.ts
+// 用途: 演示交互事件 (Interaction)
+//       包括点击矩形变色、鼠标悬停圆形变色。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/interaction' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数、状态管理
+// 2. 定义并导出 showInteraction 函数
+// 3. 创建可交互的矩形和圆形，设置事件监听
+// 4. 将交互对象存入状态，以便清理时移除监听
+//
+// 注意事项:
+//   - 必须设置 eventMode = 'static' 并指定 cursor。
+//   - 交互对象保存在 state.interactiveObjects 中。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo, appStates } from '../state';
+import { addTitle, addDescription } from '../utils';
+import { AppState } from '../types';
+
+export function showInteraction(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '交互事件 (Interaction)');
+  addDescription(container, '点击矩形变红，鼠标悬停圆形变蓝', 40);
+
+  const rect = new PIXI.Graphics();
+  rect.rect(30, 60, 80, 50);
+  rect.fill(0x3366cc);
+  rect.stroke({ width: 2, color: 0xffffff });
+  rect.eventMode = 'static';
+  rect.cursor = 'pointer';
+  rect.on('pointerdown', () => {
+    rect.fill(0xff0000);
+    rect.stroke({ width: 2, color: 0xffff00 });
+  });
+  container.addChild(rect);
+
+  const circle = new PIXI.Graphics();
+  circle.circle(160, 85, 30);
+  circle.fill(0x44aa44);
+  circle.stroke({ width: 2, color: 0xffffff });
+  circle.eventMode = 'static';
+  circle.cursor = 'grab';
+  circle.on('pointerover', () => {
+    circle.fill(0x0000ff);
+  });
+  circle.on('pointerout', () => {
+    circle.fill(0x44aa44);
+  });
+  container.addChild(circle);
+
+  // 保存交互对象以便清理
+  const state = appStates.get(app)!;
+  state.interactiveObjects = [rect, circle];
+
+  const tip = new PIXI.Text({
+    text: '尝试点击矩形，鼠标悬停圆形',
+    style: { fontSize: 12, fill: 0xffff00 },
+  });
+  tip.position.set(30, 130);
+  container.addChild(tip);
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/text.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/text.ts
+// 用途: 演示文本样式 (Text)
+//       包括普通文本、彩色文本、描边文本、阴影文本、组合样式。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/text' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数
+// 2. 定义并导出 showText 函数
+// 3. 在函数内部：获取容器、清除旧内容、添加标题、创建多个文本示例
+//
+// 注意事项:
+//   - 每个文本独立创建，展示不同样式。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo } from '../state';
+import { addTitle, addDescription } from '../utils';
+
+export function showText(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '文本样式 (Text)');
+
+  const text1 = new PIXI.Text({
+    text: '普通文本',
+    style: { fontSize: 14, fill: 0xffffff },
+  });
+  text1.position.set(10, 40);
+  container.addChild(text1);
+
+  const text2 = new PIXI.Text({
+    text: '彩色文本',
+    style: { fontSize: 16, fill: 0xffaa00 },
+  });
+  text2.position.set(10, 70);
+  container.addChild(text2);
+
+  const text3 = new PIXI.Text({
+    text: '描边文本',
+    style: {
+      fontSize: 18,
+      fill: 0x00ff00,
+      stroke: { color: 0x0000ff, width: 2 },
+    },
+  });
+  text3.position.set(10, 100);
+  container.addChild(text3);
+
+  const text4 = new PIXI.Text({
+    text: '阴影文本',
+    style: {
+      fontSize: 18,
+      fill: 0xffffff,
+      dropShadow: {
+        alpha: 0.8,
+        blur: 4,
+        distance: 3,
+        angle: Math.PI / 4,
+      },
+    },
+  });
+  text4.position.set(150, 100);
+  container.addChild(text4);
+
+  const text5 = new PIXI.Text({
+    text: '组合样式',
+    style: {
+      fontSize: 20,
+      fill: 0xff00ff,
+      stroke: { color: 0xffffff, width: 1 },
+      dropShadow: {
+        alpha: 0.7,
+        blur: 3,
+        distance: 2,
+        angle: 0,
+      },
+    },
+  });
+  text5.position.set(10, 140);
+  container.addChild(text5);
+
+  addDescription(container, '支持字体、颜色、描边、阴影等', 180);
+}
+```
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/animation.ts?proxy_host=raw.githubusercontent.com]
+
+```
+// ============================================================
+// 文件: src/plugins/api-demo/demos/animation.ts
+// 用途: 演示动画 (Ticker)
+//       包括旋转、移动、缩放动画，并显示帧率。
+// 上下文: 被 demos/index.ts 导入，由 apiDemoPlugin 在收到
+//        'apiDemo/animation' 消息时调用。
+//
+// Outline:
+// 1. 导入 PIXI 及辅助函数、状态管理
+// 2. 定义并导出 showAnimation 函数
+// 3. 创建矩形、圆形、FPS 文本，注册 ticker 回调
+// 4. 在状态中保存 tickerCallback 以便清理
+//
+// 注意事项:
+//   - 使用 app.ticker 进行逐帧更新。
+//   - 需要保存回调到状态，以便切换演示时移除。
+// ============================================================
+
+import * as PIXI from 'pixi.js';
+import { getDemoContainer, clearDemo, appStates } from '../state';
+import { addTitle, addDescription } from '../utils';
+import { AppState } from '../types';
+
+export function showAnimation(app: PIXI.Application) {
+  const container = getDemoContainer(app);
+  clearDemo(app);
+
+  addTitle(container, '动画 (Ticker)');
+  addDescription(container, '旋转、移动、缩放动画', 40);
+
+  const rect = new PIXI.Graphics();
+  rect.rect(0, 0, 40, 30);
+  rect.fill(0x00aaff);
+  rect.stroke({ width: 2, color: 0xffffff });
+  rect.position.set(50, 80);
+  container.addChild(rect);
+
+  const circle = new PIXI.Graphics();
+  circle.circle(0, 0, 20);
+  circle.fill(0xffaa00);
+  circle.position.set(150, 95);
+  container.addChild(circle);
+
+  const fpsText = new PIXI.Text({
+    text: 'FPS: ',
+    style: { fontSize: 12, fill: 0xffffff },
+  });
+  fpsText.position.set(250, 80);
+  container.addChild(fpsText);
+
+  let circleY = 80;
+  let circleDir = 1;
+
+  const tickerCallback = () => {
+    rect.rotation += 0.02;
+
+    circleY += circleDir * 1.5;
+    if (circleY > 120 || circleY < 60) circleDir *= -1;
+    circle.y = circleY;
+
+    fpsText.text = `FPS: ${Math.round(app.ticker.FPS)}`;
+  };
+
+  app.ticker.add(tickerCallback);
+
+  // 保存回调以便清理
+  const state = (appStates as any).get(app) as AppState;
+  state.tickerCallback = tickerCallback;
+}
+```
 
 
 ## 其他补充

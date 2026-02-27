@@ -78,25 +78,38 @@
 ├── vite.config.js
 └── vite.config.ts
 
-## 重要代码(不一定是最新的,因为github有缓存.)
+## 代码
 
-这些是核心逻辑.
-
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.css?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/styles.css?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/main.tsx?proxy_host=raw.githubusercontent.com]
-
-这些是plugins,也请阅读以下
-
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
-
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/vite-env.d.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/assets/react.svg?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/assets/dvd-logo.svg?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
-
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/fireworks.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/apiDemo.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/index.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/utils.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/types.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/state.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/filter.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/index.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/particles.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/container.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/sprite.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/basicShapes.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/interaction.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/text.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/demos/animation.ts?proxy_host=raw.githubusercontent.com]
 
 ## 其他补充
 
