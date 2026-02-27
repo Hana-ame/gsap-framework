@@ -1,43 +1,41 @@
 // src/controllers/PixiController.ts
-/**
- * 控制器类 - 负责React父组件与Pixi画布之间的双向通信
- * 当前为dummy实现，但设计为可轻松扩展为WebSocket版本
- */
 type MessageHandler = (message: any) => void;
+type Plugin = (message: any) => void;
 
 export class PixiController {
-  private parentMessageHandler: MessageHandler | null = null;
+  private plugins: Set<Plugin> = new Set();           // 存储所有插件
   private childMessageHandlers: MessageHandler[] = [];
 
   /**
-   * 由Pixi组件内部调用，注册收到父组件消息时的处理函数
+   * 注册一个插件，当收到父组件消息时会被调用
+   * @param plugin 插件函数，接收消息参数
+   * @returns 取消注册的函数
    */
-  onParentMessage(handler: MessageHandler) {
-    this.parentMessageHandler = handler;
+  registerPlugin(plugin: Plugin): () => void {
+    this.plugins.add(plugin);
+    return () => {
+      this.plugins.delete(plugin);
+    };
   }
 
   /**
-   * 由父组件调用，向Pixi发送消息（例如绘图指令）
+   * 由父组件调用，向Pixi发送消息（将分发给所有已注册的插件）
    */
   sendToPixi(message: any) {
-    if (this.parentMessageHandler) {
-      this.parentMessageHandler(message);
-    } else {
-      console.warn('Pixi组件尚未就绪，消息被忽略');
-    }
+    this.plugins.forEach(plugin => {
+      try {
+        plugin(message);
+      } catch (error) {
+        console.error('插件执行错误:', error);
+      }
+    });
   }
 
-  /**
-   * 由Pixi组件内部调用，向所有监听者发送消息（例如用户输入）
-   */
+  // 以下方法保持不变（用于Pixi向父组件发送消息）
   sendToParent(message: any) {
     this.childMessageHandlers.forEach(handler => handler(message));
   }
 
-  /**
-   * 由父组件调用，监听来自Pixi的消息
-   * @returns 取消订阅的函数
-   */
   onMessageFromPixi(handler: MessageHandler): () => void {
     this.childMessageHandlers.push(handler);
     return () => {
@@ -45,31 +43,8 @@ export class PixiController {
     };
   }
 
-  /**
-   * 清理资源（可选）
-   */
   cleanup() {
-    this.parentMessageHandler = null;
+    this.plugins.clear();
     this.childMessageHandlers = [];
   }
 }
-
-// 未来可扩展为WebSocket版本：
-// export class WebSocketPixiController extends PixiController {
-//   private ws: WebSocket;
-//   constructor(url: string) {
-//     super();
-//     this.ws = new WebSocket(url);
-//     this.ws.onmessage = (event) => {
-//       // 将服务器消息转发给Pixi组件
-//       const message = JSON.parse(event.data);
-//       this.sendToPixi(message);
-//     };
-//     // 也可以将Pixi发来的消息发送给服务器
-//     const originalSendToParent = this.sendToParent.bind(this);
-//     this.sendToParent = (message) => {
-//       this.ws.send(JSON.stringify(message));
-//       originalSendToParent(message);
-//     };
-//   }
-// }
