@@ -12,6 +12,8 @@ import { rectanglePlugin } from './rectangle.plugin';
 import { clearPlugin } from './clear.plugin';
 import { bouncePlugin } from './bounce.plugin';
 import { fireworksPlugin } from './fireworks.plugin';
+import { apiDemoPlugin } from './api-demo'; // 注意路径
+
 
 // 所有插件列表，按需添加
 export const plugins = [
@@ -20,6 +22,7 @@ export const plugins = [
   clearPlugin,
   bouncePlugin,
   fireworksPlugin,
+  apiDemoPlugin, // 添加到数组
 ];
 
 // 也可以单独导出每个插件，供需要单独使用的场景
@@ -29,4 +32,5 @@ export {
   clearPlugin,
   bouncePlugin,
   fireworksPlugin,
+  apiDemoPlugin, // 添加到数组
 };

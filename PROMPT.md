@@ -34,30 +34,47 @@
 ## 当前目录树
 
 `tree`
-
 ├── src
 │   ├── App.css
 │   ├── App.tsx
 │   ├── assets
+│   │   ├── dvd-logo.svg
 │   │   └── react.svg
 │   ├── components
 │   │   └── PixiCanvas.tsx
 │   ├── controllers
 │   │   └── PixiController.ts
 │   ├── main.tsx
-│   ├── pixijs
-│   │   ├── PixiExample.tsx
 │   ├── plugins
+│   │   ├── api-demo
+│   │   │   ├── demos
+│   │   │   │   ├── animation.ts
+│   │   │   │   ├── basicShapes.ts
+│   │   │   │   ├── container.ts
+│   │   │   │   ├── filter.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── interaction.ts
+│   │   │   │   ├── particles.ts
+│   │   │   │   ├── sprite.ts
+│   │   │   │   └── text.ts
+│   │   │   ├── index.ts
+│   │   │   ├── state.ts
+│   │   │   ├── types.ts
+│   │   │   └── utils.ts
+│   │   ├── apiDemo.plugin.ts
+│   │   ├── bounce.plugin.ts
 │   │   ├── circle.plugin.ts
 │   │   ├── clear.plugin.ts
+│   │   ├── fireworks.plugin.ts
 │   │   ├── index.ts
 │   │   ├── plugin.types.ts
 │   │   └── rectangle.plugin.ts
 │   ├── styles.css
-│   ├── vite-env.d.ts
+│   └── vite-env.d.ts
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
+├── VERSION.md
 ├── vite.config.js
 └── vite.config.ts
 

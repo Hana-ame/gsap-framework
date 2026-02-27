@@ -33,16 +33,9 @@ import React, { useState, useRef, useCallback } from "react";
 import * as PIXI from "pixi.js";
 import { PixiCanvas } from "./components/PixiCanvas";
 import { PixiController } from "./controllers/PixiController";
-
 // 导入插件数组
 import { plugins } from "./plugins";
 
-// 导入所有插件
-import { circlePlugin } from "./plugins/circle.plugin";
-import { rectanglePlugin } from "./plugins/rectangle.plugin";
-import { clearPlugin } from "./plugins/clear.plugin";
-import { bouncePlugin } from "./plugins/bounce.plugin"; // 新增
-import { fireworksPlugin } from "./plugins/fireworks.plugin";
 import "./App.css";
 
 const formatTimestamp = (timestamp: number) => {
@@ -89,7 +82,7 @@ function App() {
     controllerRef.current?.setApp(app);
     // 发送启动 DVD 反弹动画的消息
     controllerRef.current?.sendToPixi({ type: "startDVD" });
-    controllerRef.current?.sendToPixi({ type: 'startFireworks' });
+    controllerRef.current?.sendToPixi({ type: "startFireworks" });
     // 记录日志
     const timeStr = new Date().toLocaleTimeString("zh-CN", {
       hour12: false,
@@ -139,6 +132,30 @@ function App() {
         <button onClick={() => sendDrawCommand("drawCircle")}>画圆</button>
         <button onClick={() => sendDrawCommand("drawRectangle")}>画矩形</button>
         <button onClick={() => sendDrawCommand("clear")}>清除</button>
+        <button onClick={() => sendDrawCommand("apiDemo/basicShapes")}>
+          API: 基础图形
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/text")}>
+          API: 文本
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/sprite")}>
+          API: 精灵
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/animation")}>
+          API: 动画
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/filter")}>
+          API: 滤镜
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/interaction")}>
+          API: 交互
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/container")}>
+          API: 容器
+        </button>
+        <button onClick={() => sendDrawCommand("apiDemo/particles")}>
+          API: 粒子
+        </button>
         <button onClick={clearLogs}>清除日志</button>
       </div>
       <div className="canvas-container">
