@@ -1,166 +1,106 @@
 // ============================================================
 // 文件: src/App.tsx
 // 用途: 主应用测试界面。展示画布、工具栏，并实时显示来自画布的事件日志。
-//       新增 DVD 屏保反弹动画功能，通过插件实现。
-// 上下文: React 根组件，用于演示 PixiCanvas 和 PixiController 的集成，
-//        以及函数式插件的注册与使用。
+//       使用 GameController 封装所有业务逻辑，使组件保持简洁。
+// 上下文: React 根组件，仅负责渲染和用户输入，所有逻辑委托给 GameController。
 //
-// 版本: 2.2.0
-//    - 新增 bouncePlugin，实现反弹图片动画。
-//    - 在画布初始化后自动发送 startDVD 消息启动动画。
-//    - 更新日志和按钮以支持新功能。
+// 版本: 2.5.0
+//    - 重构：将事件处理和命令发送移入 GameController，App.tsx 只负责 UI 和日志展示。
+//    - 添加对 GameController 的实例化，并通过 onAppInit 回调传递 app。
 //
 // Outline:
-// 1. 导入依赖、组件、控制器和插件（包括新 bouncePlugin）
-// 2. App 函数组件
-//    a. 状态: 事件日志列表
-//    b. 初始化控制器并注册所有插件
-//    c. 处理来自控制器的消息，更新日志
-//    d. 发送绘图指令的函数（使用 controller.sendToPixi）
-//    e. 在 handleAppInit 中发送 startDVD 消息
-//    f. 渲染 UI: 标题、按钮、画布、日志显示区
-// 3. 辅助函数: 格式化时间戳
+// 1. 导入依赖、组件、PixiController 和 GameController。
+// 2. 初始化 PixiController 和 GameController（使用 useRef 确保只执行一次）。
+// 3. 定义日志状态和更新函数，传递给 GameController 的 logCallback。
+// 4. 定义 onAppInit 回调，调用 gameController.onAppInit。
+// 5. 渲染 UI: 按钮点击调用 gameController 的对应方法。
+// 6. 渲染日志列表。
 //
 // 注意事项:
-//   - 插件是直接导入的对象，无需实例化。
-//   - 在 PixiCanvas 初始化后通过 onAppInit 回调设置 controller 的 app 实例，
-//     并发送 startDVD 启动动画。
-//   - 点击“清除”按钮会同时触发 clearPlugin 和 bouncePlugin 的清理逻辑，
-//     但 bouncePlugin 会在收到 clear 消息后停止动画，然后 clearPlugin 清空舞台。
+//   - 所有业务逻辑和消息处理都在 GameController 中，App.tsx 不再处理事件转发。
+//   - 新增“启动小球”按钮，调用 gameController.startBalls()。
 // ============================================================
 
 import React, { useState, useRef, useCallback } from "react";
 import * as PIXI from "pixi.js";
 import { PixiCanvas } from "./components/PixiCanvas";
 import { PixiController } from "./controllers/PixiController";
+import { GameController } from "./controllers/GameController"; // 新增导入
 // 导入插件数组
 import { plugins } from "./plugins";
 
 import "./App.css";
 
-const formatTimestamp = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  const seconds = pad(date.getSeconds());
-  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
-  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
-};
-
 function App() {
   const [eventLogs, setEventLogs] = useState<string[]>([]);
-  const appRef = useRef<PIXI.Application | null>(null);
-  const controllerRef = useRef<PixiController | null>(null);
+  const gameControllerRef = useRef<GameController | null>(null);
+  const pixiControllerRef = useRef<PixiController | null>(null);
 
-  // 初始化控制器并注册插件（只执行一次）
-  if (!controllerRef.current) {
-    const controller = new PixiController();
+  // 初始化控制器（只执行一次）
+  if (!pixiControllerRef.current) {
+    const pixiController = new PixiController();
 
     // 批量注册所有插件
-    plugins.forEach((plugin) => controller.registerPlugin(plugin));
+    plugins.forEach((plugin) => pixiController.registerPlugin(plugin));
 
-    // 设置父组件消息处理器（接收画布事件）
-    controller.onMessageFromParent((message) => {
-      const timeStr = message.timestamp
-        ? formatTimestamp(message.timestamp)
-        : "未知时间";
-
-      let logEntry = `[${timeStr}] 事件: ${message.type}`;
-      if (message.x !== undefined && message.y !== undefined) {
-        logEntry += ` 坐标: (${message.x.toFixed(2)}, ${message.y.toFixed(2)})`;
-      }
-      setEventLogs((prev) => [logEntry, ...prev.slice(0, 49)]);
-    });
-
-    controllerRef.current = controller;
+    pixiControllerRef.current = pixiController;
   }
 
-  // 当 PixiCanvas 初始化完成时，将 app 实例设置到控制器，并启动 DVD 动画
-  const handleAppInit = useCallback((app: PIXI.Application) => {
-    appRef.current = app;
-    controllerRef.current?.setApp(app);
-    // 发送启动 DVD 反弹动画的消息
-    controllerRef.current?.sendToPixi({ type: "startDVD" });
-    controllerRef.current?.sendToPixi({ type: "startFireworks" });
-    // 记录日志
-    const timeStr = new Date().toLocaleTimeString("zh-CN", {
-      hour12: false,
-      fractionalSecondDigits: 3,
+  if (!gameControllerRef.current && pixiControllerRef.current) {
+    // 创建 GameController，并传入日志回调
+    const gameController = new GameController(pixiControllerRef.current, (logEntry) => {
+      setEventLogs((prev) => [logEntry, ...prev.slice(0, 49)]);
     });
-    setEventLogs((prev) => [
-      `[${timeStr}] 启动 DVD 反弹动画`,
-      ...prev.slice(0, 49),
-    ]);
+    gameControllerRef.current = gameController;
+  }
+
+  // 当 PixiCanvas 初始化完成时，调用 GameController 的 onAppInit
+  const handleAppInit = useCallback((app: PIXI.Application) => {
+    gameControllerRef.current?.onAppInit(app);
   }, []);
 
-  // 发送绘图指令
-  const sendDrawCommand = (type: string) => {
-    if (!controllerRef.current) return;
-
-    const message = {
-      type,
-      timestamp: Date.now(),
-      x: Math.random() * 400 + 200,
-      y: Math.random() * 300 + 150,
-      radius: 30,
-      width: 60,
-      height: 40,
-      color: Math.random() * 0xffffff,
-    };
-
-    // 通过控制器发送，它会自动调用匹配的插件
-    controllerRef.current.sendToPixi(message);
-
-    // 记录指令日志
-    const timeStr = new Date().toLocaleTimeString("zh-CN", {
-      hour12: false,
-      fractionalSecondDigits: 3,
-    });
-    setEventLogs((prev) => [
-      `[${timeStr}] 发送绘图指令: ${type}`,
-      ...prev.slice(0, 49),
-    ]);
-  };
-
+  // 清除日志
   const clearLogs = () => setEventLogs([]);
 
   return (
     <div className="App">
-      <h1>PixiJS v8 事件测试 (DVD 屏保动画)</h1>
+      <h1>PixiJS v8 事件测试 (100个小球碰撞模拟)</h1>
       <div className="toolbar">
-        <button onClick={() => sendDrawCommand("drawCircle")}>画圆</button>
-        <button onClick={() => sendDrawCommand("drawRectangle")}>画矩形</button>
-        <button onClick={() => sendDrawCommand("clear")}>清除</button>
-        <button onClick={() => sendDrawCommand("apiDemo/basicShapes")}>
+        <button onClick={() => gameControllerRef.current?.drawCircle()}>画圆</button>
+        <button onClick={() => gameControllerRef.current?.drawRectangle()}>画矩形</button>
+        <button onClick={() => gameControllerRef.current?.clearCanvas()}>清除</button>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/basicShapes')}>
           API: 基础图形
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/text")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/text')}>
           API: 文本
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/sprite")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/sprite')}>
           API: 精灵
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/animation")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/animation')}>
           API: 动画
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/filter")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/filter')}>
           API: 滤镜
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/interaction")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/interaction')}>
           API: 交互
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/container")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/container')}>
           API: 容器
         </button>
-        <button onClick={() => sendDrawCommand("apiDemo/particles")}>
+        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/particles')}>
           API: 粒子
+        </button>
+        <button onClick={() => gameControllerRef.current?.startBalls()}>
+          启动100个小球
         </button>
         <button onClick={clearLogs}>清除日志</button>
       </div>
       <div className="canvas-container">
         <PixiCanvas
-          controller={controllerRef.current}
+          controller={pixiControllerRef.current!}
           width={800}
           height={600}
           backgroundColor={0x1099bb}

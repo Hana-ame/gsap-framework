@@ -25,11 +25,23 @@
 
 目前所有功能都很成功.
 
-现在,添加这样的功能:
-在canvas,随着鼠标的移动,follow鼠标,有烟花的效果.
+创建控制器
+要求:
+STEP1
+所有的pixijs传出事件都由控制器监听.
+控制器向pixijs发送绘图指令,绘图指令经由plugins处理
 
-注意,目前写出的plugins的目的是为了指导之后的plugins如何写,因此请加上详细的说明.
-使得用户可以熟悉api.
+请先完成STEP1
+
+STEP2
+使用上面的控制器布置场景:
+100个小球,相互碰撞之后会弹开,碰到边缘会反弹.
+鼠标可以撞击小球
+
+请跟随对话在完成STEP1之后完成STEP2
+
+(PS:你可以吐槽一下这个安排)
+
 
 ## 当前目录树
 
@@ -83,48 +95,6 @@
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.css?proxy_host=raw.githubusercontent.com]
 
 ```
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
 
 ```
 
@@ -2451,8 +2421,8 @@ export const appStates = new WeakMap<PIXI.Application, AppState>();
 //   - 每个演示容器固定在舞台左上角 (50,50)，尺寸 400x250，带半透明背景。
 // ============================================================
 
-import * as PIXI from 'pixi.js';
-import { AppState } from './types';
+import * as PIXI from "pixi.js";
+import { AppState } from "./types";
 
 // 使用 WeakMap 存储每个 app 的状态，避免内存泄漏
 export const appStates = new WeakMap<PIXI.Application, AppState>();
@@ -2464,10 +2434,18 @@ export const appStates = new WeakMap<PIXI.Application, AppState>();
  */
 export function getDemoContainer(app: PIXI.Application): PIXI.Container {
   let state = appStates.get(app);
+  if (state) {
+    // 检查容器是否在舞台上
+    if (!state.container.parent) {
+      // 容器已被移除，销毁并重建
+      state.container.destroy({ children: true });
+      state = undefined; // 触发重新创建
+    }
+  }
   if (!state) {
     // 创建新的容器
     const container = new PIXI.Container();
-    container.label = 'apiDemoContainer';
+    container.label = "apiDemoContainer";
     container.position.set(50, 50); // 固定在左上角，留出边距
     app.stage.addChild(container);
 
@@ -2481,6 +2459,7 @@ export function getDemoContainer(app: PIXI.Application): PIXI.Container {
     state = { container };
     appStates.set(app, state);
   }
+
   return state.container;
 }
 
@@ -2500,7 +2479,7 @@ export function clearDemo(app: PIXI.Application) {
 
   // 移除之前的交互对象（如果有）
   if (state.interactiveObjects) {
-    state.interactiveObjects.forEach(obj => {
+    state.interactiveObjects.forEach((obj) => {
       obj.removeAllListeners(); // 移除所有事件监听
     });
     state.interactiveObjects = undefined;
@@ -3200,7 +3179,7 @@ export function showAnimation(app: PIXI.Application) {
 ### 1. 初始化阶段
 
 - `App.tsx` 创建 `PixiController` 实例。
-- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象（如 `circlePlugin`）。
+- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象（如 `circlePlugin`）。所有插件通过 `src/plugins/index.ts` 统一导入并循环注册。
 - 设置父组件消息处理器：`controller.onMessageFromParent(handler)`，该处理器负责将画布事件显示在 UI 日志中。
 - 渲染 `PixiCanvas` 组件，传入 `controller` 和 `onAppInit` 回调。
 
@@ -3229,29 +3208,68 @@ export function showAnimation(app: PIXI.Application) {
 ### 5. 清理阶段
 
 - `PixiCanvas` 组件卸载时，自动销毁 `PIXI.Application` 实例，释放资源。
+- 插件通过监听 `clear` 消息等方式自行清理状态（如 API 演示插件会销毁其容器）。
 
-## 三、当前版本功能 (Version 2.2.0)
+## 三、当前版本功能 (Version 2.3.0)
 
 ### ✨ 新增功能
 
-1. **DVD屏保风格反弹动画**：画布启动后自动出现一个彩色DVD标志，在画布内匀速移动并触碰边界反弹。动画通过 `bounce.plugin.ts` 插件实现。
-2. **插件支持持续性动画**：首次在插件中引入状态管理和 `PIXI.Ticker`，为后续复杂动画提供范例。
-3. **增强的插件协作**：`bouncePlugin` 同时监听 `clear` 消息，在画布清除时自动停止动画，避免资源泄露。
+1. **API 教学演示插件**：新增 `apiDemoPlugin`，以一系列从简单到复杂的示例展示 PixiJS v8 的核心 API 使用。每个示例都配有详细的注释和说明，可作为插件开发的参考典范。
+   - 包含八个独立演示：基础图形、文本样式、精灵、动画、滤镜、交互事件、容器层级、粒子系统。
+   - 演示区域固定在画布左上角（50,50），尺寸 400x250，带半透明背景。
+   - 通过发送 `apiDemo/basicShapes`、`apiDemo/text` 等消息触发对应演示。
+2. **插件代码拆分**：将 `apiDemoPlugin` 拆分为多个文件（`types.ts`、`state.ts`、`utils.ts` 及独立演示模块），便于维护和扩展。
 
 ### ✅ 继承保留的功能
 
 - 插件注册与消息分发机制。
 - 通过按钮发送绘图指令（画圆、矩形、清除）。
-- 画布生命周期管理。
+- DVD 屏保反弹动画（`bouncePlugin`），每次撞击随机变色、随机方向。
+- 鼠标跟随烟花效果（`fireworksPlugin`）。
+- 画布生命周期管理，严格模式下的安全销毁。
 - 带时间戳的事件日志。
 
 ## 四、使用方法
 
-1. **安装依赖**:
-   ```bash
-   npm install pixi.js@8.x react react-dom
-   ```
+### 1. 安装依赖
 
+```bash
+npm install pixi.js@8.x react react-dom
+```
+
+### 2. 运行项目
+
+```bash
+npm run dev
+```
+
+### 3. 测试 API 演示
+
+在 `App.tsx` 中添加以下按钮（或直接发送消息）：
+
+```tsx
+<button onClick={() => sendDrawCommand('apiDemo/basicShapes')}>API: 基础图形</button>
+<button onClick={() => sendDrawCommand('apiDemo/text')}>API: 文本</button>
+<button onClick={() => sendDrawCommand('apiDemo/sprite')}>API: 精灵</button>
+<button onClick={() => sendDrawCommand('apiDemo/animation')}>API: 动画</button>
+<button onClick={() => sendDrawCommand('apiDemo/filter')}>API: 滤镜</button>
+<button onClick={() => sendDrawCommand('apiDemo/interaction')}>API: 交互</button>
+<button onClick={() => sendDrawCommand('apiDemo/container')}>API: 容器</button>
+<button onClick={() => sendDrawCommand('apiDemo/particles')}>API: 粒子</button>
+```
+
+点击后，画布左上角将显示对应的演示内容，并带有标题和说明文字。
+
+### 4. 编写新插件
+
+参考 `api-demo` 目录下的代码结构，创建新的插件文件并遵循 `PixiPlugin` 接口。在 `src/plugins/index.ts` 中导入并加入 `plugins` 数组即可自动注册。
+
+## 五、注意事项
+
+- API 演示插件监听了 `clear` 消息，当点击“清除”按钮时会自动销毁其容器并重置状态，确保后续演示正常显示。
+- 所有演示内容都放在一个固定容器中，不会影响舞台上其他图形（如 DVD 动画、烟花）。
+- 粒子演示使用了 `ParticleContainer` 优化性能，展示了大量粒子的动画效果。
+- 如果需要在 React 组件中直接触发演示，只需调用 `controller.sendToPixi({ type: 'apiDemo/xxx' })` 即可。
 ```
 
 
@@ -3297,6 +3315,82 @@ export function showAnimation(app: PIXI.Application) {
 - **插件热加载**：允许在运行时动态注册/注销插件（需评估 Pixi 应用状态管理）。
 - **更多图形插件**：如文本、线条、图片插件，丰富绘图能力。
 - **单元测试**：为核心控制器和插件编写 Jest 测试用例。
+
+## [0.6.0] - 2025-03-01
+
+### 核心更新
+
+- **新增 API 教学演示插件 (`apiDemoPlugin`)**：提供一系列从简单到复杂的 PixiJS v8 API 示例，涵盖基础图形、文本、精灵、动画、滤镜、交互、容器和粒子系统。每个示例都带有标题和说明文字，固定在画布左上角展示。
+- **插件代码拆分**：将 `apiDemoPlugin` 拆分为多文件结构（`types.ts`、`state.ts`、`utils.ts` 及独立演示模块），提高可维护性和可扩展性。
+- **修复清除后 API 演示失效的问题**：API 演示插件现在监听 `clear` 消息，收到后主动销毁自己的容器并重置状态，确保清除后再次点击按钮能正常显示新内容。
+- **粒子演示适配 PixiJS v8**：修正 `ParticleContainer` 的构造函数用法，添加类型断言以兼容 v8 的实际 API。
+
+### 困难与修正过程
+
+#### 困难 1：清除后 API 演示按钮失效
+
+- **问题**：点击“清除”按钮后，`clear.plugin.ts` 执行 `app.stage.removeChildren()` 移除了舞台上所有子对象，但 API 演示插件的容器虽然从舞台移除，仍保留在 `WeakMap` 状态中。后续点击 API 按钮时，`getDemoContainer` 返回已被移除的容器，导致新内容添加到不可见的容器上，画布无显示。
+- **尝试**：
+  - 最初考虑在 `clear.plugin` 中通知所有插件清理，但插件之间不应直接耦合。
+  - 尝试在 `getDemoContainer` 中检查容器是否仍在舞台上，若不在则销毁重建，但此方法不够通用，且需要处理动画和交互对象的清理。
+- **解决**：让 API 演示插件自身监听 `clear` 消息。在 `execute` 中增加对 `'clear'` 类型的处理，调用 `destroyDemoContainer` 函数（封装在 `state.ts` 中），该函数停止所有动画、销毁容器并从 `WeakMap` 中移除状态。这样清除后，下次点击 API 按钮时会重新创建全新的容器，问题解决。
+
+#### 困难 2：ParticleContainer 在 PixiJS v8 中的类型错误
+
+- **问题**：创建 `ParticleContainer` 时，TypeScript 提示 `capacity` 不是有效属性，因为 v8 的类型定义要求使用选项对象 `{ maxSize, properties }` 但实际运行时仍支持两个参数的形式。
+- **尝试**：查阅官方文档，发现 v8 推荐使用选项对象，但为了保持代码简洁并确保运行时正确，决定保留两个参数形式并添加 `as any` 类型断言。
+- **解决**：在 `particles.ts` 中使用 `new PIXI.ParticleContainer(1000, { ... } as any)`，并在注释中说明原因，确保代码既通过类型检查又能正常运行。
+
+#### 困难 3：如何设计可扩展的演示插件结构
+
+- **问题**：API 演示插件包含多个独立示例，如果所有代码写在一个文件里将难以维护。
+- **解决**：采用模块化设计，将状态管理、工具函数、每个演示分别放在独立文件中，通过 `demos/index.ts` 导出映射表。主插件入口根据消息类型自动调用对应的演示函数，新增演示只需添加新文件并在映射表中注册，无需修改核心逻辑。
+
+### 当前功能列表
+
+- **PixiController**：管理插件注册、消息分发、事件回调。
+- **PixiCanvas**：封装 Pixi 应用生命周期，捕获用户事件并抛出。
+- **插件系统**：
+  - `clear.plugin.ts`：清空画布。
+  - `circle.plugin.ts`：绘制圆形。
+  - `rectangle.plugin.ts`：绘制矩形。
+  - `bounce.plugin.ts`：DVD 反弹动画，每次撞击随机变色、随机方向。
+  - `fireworks.plugin.ts`：鼠标跟随烟花效果。
+  - **`apiDemo.plugin.ts`（拆分后为 `api-demo/` 目录）**：PixiJS API 教学演示，包含 8 个子演示（基础图形、文本、精灵、动画、滤镜、交互、容器、粒子）。
+- **WebSocket 基础**：提供连接管理与消息接收（需手动桥接至控制器）。
+- **测试界面**：按钮触发绘图、控制烟花效果、触发 API 演示，实时显示事件日志，自动启动 DVD 动画。
+
+### 测试验证
+
+#### 测试 1：API 演示各功能
+
+- **操作**：分别点击八个 API 演示按钮。
+- **预期结果**：画布左上角依次显示对应的演示内容，包含正确的标题和说明，所有动画、交互正常工作。
+- **实际结果**：✅ 通过。
+
+#### 测试 2：清除后重新触发 API 演示
+
+- **操作**：点击任意 API 演示按钮（如“基础图形”），然后点击“清除”按钮，再次点击同一 API 按钮。
+- **预期结果**：清除后画布空白，再次点击后演示内容重新出现，控制台无报错。
+- **实际结果**：✅ 通过。
+
+#### 测试 3：粒子演示性能与正确性
+
+- **操作**：点击“粒子”演示，观察 200 个彩色粒子在区域内缓慢移动、旋转、边界环绕。
+- **预期结果**：粒子数量稳定，动画流畅，无性能问题。
+- **实际结果**：✅ 通过。
+
+#### 测试 4：与其他插件共存
+
+- **操作**：启动后观察 DVD 动画自动运行，移动鼠标触发烟花，点击 API 演示按钮，再点击画圆等按钮。
+- **预期结果**：所有插件互不干扰，API 演示容器独立于其他图形。
+- **实际结果**：✅ 通过。
+
+#### 🗑️ 待移除内容
+
+- **`src/components/TestJSX.jsx`**：计划在下一个版本中删除（仍保留但建议移除）。
+
+---
 
 ## [0.5.0] - 2025-02-28
 
@@ -3734,3 +3828,5 @@ export interface PixiPlugin {
 VERSION.md是记录每一次都更新了些什么的文件
 除非在对话中说明需要更新Version.md(一般在对话的最后),否则不要更新.
 如果更新,直接在对话中输出Version.md的内容,不要使用markdown codeblock包裹.  
+
+如果有必要,你可以随时要求发送[url]中的代码.

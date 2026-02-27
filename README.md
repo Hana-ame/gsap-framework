@@ -1,4 +1,4 @@
-# Pixi.js React 测试项目 (带时间戳事件日志)
+# Pixi.js React 测试项目 (带时间戳事件日志与物理模拟)
 
 ## 一、项目概述与上下文
 
@@ -6,8 +6,9 @@
 
 ### 核心架构
 
-- **`PixiController`**：消息中枢。负责管理插件、分发绘图指令，并将画布事件（如点击、移动）传递给 React 父组件。所有消息均包含时间戳。
+- **`PixiController`**：底层消息中枢。负责管理插件、分发绘图指令，并将画布事件（如点击、移动）传递给父组件。所有消息均包含时间戳。
 - **`PixiCanvas`**：React 组件。封装 Pixi 应用的生命周期（初始化、销毁），监听画布上的鼠标/触摸事件，并通过 Controller 发送带时间戳的事件。
+- **`GameController`**：高级业务控制器。封装所有与 UI 交互相关的逻辑，接收来自画布的事件并更新日志，同时提供简洁的 API 供 UI 按钮调用。使 `App.tsx` 保持纯净，只负责渲染。
 - **插件系统**：独立的绘图插件（对象字面量形式），每个插件声明自己能处理的消息类型，并包含具体的绘图逻辑。插件是函数式的，无需实例化。
 
 ## 二、技术指南：逻辑流程
@@ -15,53 +16,53 @@
 ### 1. 初始化阶段
 
 - `App.tsx` 创建 `PixiController` 实例。
-- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象（如 `circlePlugin`）。所有插件通过 `src/plugins/index.ts` 统一导入并循环注册。
-- 设置父组件消息处理器：`controller.onMessageFromParent(handler)`，该处理器负责将画布事件显示在 UI 日志中。
-- 渲染 `PixiCanvas` 组件，传入 `controller` 和 `onAppInit` 回调。
+- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象。所有插件通过 `src/plugins/index.ts` 统一导入并循环注册。
+- 创建 `GameController` 实例，传入 `PixiController` 和一个日志回调函数，用于在 UI 上显示事件。
+- 渲染 `PixiCanvas` 组件，传入 `PixiController` 和 `onAppInit` 回调。
 
 ### 2. 画布初始化
 
 - `PixiCanvas` 内部创建 `PIXI.Application` 并异步初始化。
 - 初始化完成后，将 `app` 实例通过 `onAppInit` 回调传回 `App.tsx`。
-- `App.tsx` 调用 `controller.setApp(app)`，使控制器持有 `app` 引用，以便后续插件执行绘图。
+- `App.tsx` 调用 `gameController.onAppInit(app)`，该函数负责设置 `PixiController` 的 app 引用，并自动发送默认启动消息（如 `startDVD`）。
 
 ### 3. 用户交互事件流
 
 - 用户在画布上操作（鼠标/触摸），`PixiCanvas` 监听相应事件（`pointerdown`、`pointermove` 等）。
-- 事件处理器构造消息对象：包含 `type`、坐标 `x`/`y`、`timestamp`（`Date.now()`）等。
-- 调用 `controller.sendToParent(message)` 将消息发送给父组件。
-- 父组件的处理器格式化日志并更新 UI。
+- 事件处理器构造消息对象：包含 `type`、坐标 `x`/`y`、`timestamp` 等。
+- 调用 `controller.sendToParent(message)` 将消息发送给 `GameController`（因为 `GameController` 在构造函数中设置了监听器）。
+- `GameController` 内部处理事件：更新日志（通过回调），并转发必要的消息（如 `mouseMove`）给 `PixiController` 以触发插件行为。
 
 ### 4. 绘图指令流
 
-- 用户点击 UI 按钮（如“画圆”），`App.tsx` 调用 `sendDrawCommand('drawCircle')`。
-- 构造绘图消息对象，包含 `type`、随机坐标、颜色等。
-- 调用 `controller.sendToPixi(message)`。
+- 用户点击 UI 按钮，`App.tsx` 调用 `gameController` 对应的公开方法（如 `drawCircle()`）。
+- 这些方法构造绘图消息对象，调用 `pixiController.sendToPixi(message)`。
 - 控制器遍历已注册插件，寻找 `messageTypes` 包含该 `type` 的插件。
-- 找到后调用插件的 `execute(message, app)` 方法，在画布上绘制图形。
-- 若没有插件处理该类型，控制台输出警告。
+- 找到后调用插件的 `execute(message, app)` 方法，在画布上绘制图形或启动持续性动画。
 
 ### 5. 清理阶段
 
 - `PixiCanvas` 组件卸载时，自动销毁 `PIXI.Application` 实例，释放资源。
-- 插件通过监听 `clear` 消息等方式自行清理状态（如 API 演示插件会销毁其容器）。
+- 插件通过监听 `clear` 消息等方式自行清理状态（如物理插件会停止动画、销毁所有实体）。
 
-## 三、当前版本功能 (Version 2.3.0)
+## 三、当前版本功能 (Version 2.5.0)
 
 ### ✨ 新增功能
 
-1. **API 教学演示插件**：新增 `apiDemoPlugin`，以一系列从简单到复杂的示例展示 PixiJS v8 的核心 API 使用。每个示例都配有详细的注释和说明，可作为插件开发的参考典范。
-   - 包含八个独立演示：基础图形、文本样式、精灵、动画、滤镜、交互事件、容器层级、粒子系统。
-   - 演示区域固定在画布左上角（50,50），尺寸 400x250，带半透明背景。
-   - 通过发送 `apiDemo/basicShapes`、`apiDemo/text` 等消息触发对应演示。
-2. **插件代码拆分**：将 `apiDemoPlugin` 拆分为多个文件（`types.ts`、`state.ts`、`utils.ts` 及独立演示模块），便于维护和扩展。
+1. **`GameController` 抽象层**：将所有业务逻辑从 `App.tsx` 中剥离，使得 UI 层仅负责渲染和用户输入。事件监听、日志更新、鼠标转发均由 `GameController` 处理。
+2. **统一物理插件 (`physicsPlugin`)**：将原有的 DVD 动画和小球碰撞合并为一个插件，采用模块化文件结构（类似 `api-demo`），便于维护和扩展。
+   - **DVD 动画**：启动后显示 DVD 标志，以恒定速度移动，边界反弹时随机变色和随机方向（速度大小不变）。
+   - **100 个小球碰撞**：生成随机大小的小球，质量与半径平方成正比，进行弹性碰撞（基于质量的完全弹性碰撞公式）。
+   - **跨实体碰撞**：小球与 DVD 碰撞时，DVD 速度保持不变（不可阻挡），小球按法向反射（如同撞击静止障碍物）。
+   - **鼠标交互**：移动鼠标可“撞开”小球，鼠标视为一个半径为 30 的固定球体，施加排斥力。
+   - **边界处理**：小球边界反弹带能量损耗（系数 0.9），DVD 边界反弹随机变色和方向。
+3. **API 教学演示插件**：展示 PixiJS v8 的核心功能，包含基础图形、文本、精灵、动画、滤镜、交互、容器、粒子系统等示例，每个示例带有标题和说明文字。
+4. **烟花效果插件**：鼠标跟随烟花，粒子扩散淡出。
 
 ### ✅ 继承保留的功能
 
 - 插件注册与消息分发机制。
 - 通过按钮发送绘图指令（画圆、矩形、清除）。
-- DVD 屏保反弹动画（`bouncePlugin`），每次撞击随机变色、随机方向。
-- 鼠标跟随烟花效果（`fireworksPlugin`）。
 - 画布生命周期管理，严格模式下的安全销毁。
 - 带时间戳的事件日志。
 
@@ -79,30 +80,23 @@ npm install pixi.js@8.x react react-dom
 npm run dev
 ```
 
-### 3. 测试 API 演示
+### 3. 测试功能
 
-在 `App.tsx` 中添加以下按钮（或直接发送消息）：
-
-```tsx
-<button onClick={() => sendDrawCommand('apiDemo/basicShapes')}>API: 基础图形</button>
-<button onClick={() => sendDrawCommand('apiDemo/text')}>API: 文本</button>
-<button onClick={() => sendDrawCommand('apiDemo/sprite')}>API: 精灵</button>
-<button onClick={() => sendDrawCommand('apiDemo/animation')}>API: 动画</button>
-<button onClick={() => sendDrawCommand('apiDemo/filter')}>API: 滤镜</button>
-<button onClick={() => sendDrawCommand('apiDemo/interaction')}>API: 交互</button>
-<button onClick={() => sendDrawCommand('apiDemo/container')}>API: 容器</button>
-<button onClick={() => sendDrawCommand('apiDemo/particles')}>API: 粒子</button>
-```
-
-点击后，画布左上角将显示对应的演示内容，并带有标题和说明文字。
+- **启动 100 个小球**：点击“启动100个小球”按钮。
+- **移动鼠标**：观察小球被鼠标“撞开”。
+- **观察 DVD 与小球碰撞**：DVD 速度不变，小球被弹开。
+- **清除画布**：点击“清除”按钮，所有图形消失，动画停止。
+- **API 演示**：点击“API: 基础图形”等按钮，左上角显示对应示例。
+- **烟花效果**：点击“开始烟花”按钮（若存在），移动鼠标产生烟花粒子。
 
 ### 4. 编写新插件
 
-参考 `api-demo` 目录下的代码结构，创建新的插件文件并遵循 `PixiPlugin` 接口。在 `src/plugins/index.ts` 中导入并加入 `plugins` 数组即可自动注册。
+参考 `physics` 或 `api-demo` 目录下的代码结构，创建新的插件文件并遵循 `PixiPlugin` 接口。在 `src/plugins/index.ts` 中导入并加入 `plugins` 数组即可自动注册。
 
 ## 五、注意事项
 
-- API 演示插件监听了 `clear` 消息，当点击“清除”按钮时会自动销毁其容器并重置状态，确保后续演示正常显示。
-- 所有演示内容都放在一个固定容器中，不会影响舞台上其他图形（如 DVD 动画、烟花）。
-- 粒子演示使用了 `ParticleContainer` 优化性能，展示了大量粒子的动画效果。
-- 如果需要在 React 组件中直接触发演示，只需调用 `controller.sendToPixi({ type: 'apiDemo/xxx' })` 即可。
+- 物理插件中的小球质量与半径平方成正比，确保大球更难被推动，碰撞效果真实。
+- DVD 为不可阻挡物体，小球碰撞不会改变 DVD 的速度。
+- 鼠标移动事件频繁，日志列表限制为最多 50 条，避免性能问题。
+- 所有演示内容（API 演示）固定在舞台左上角，不影响其他图形。
+- 清除画布时，物理插件会停止所有动画并销毁实体，确保资源释放。
