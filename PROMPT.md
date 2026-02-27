@@ -11,7 +11,7 @@
 代码段的边界应清晰可见，最好是用特殊符号进行分割。
 如果太长,则需要拆分为多个文件.
 输出时注释和代码都需要完整.注释除了当前版本进行了什么样的修改,还需要写明白整个文件在这个版本一共有什么功能(继承了而保留的功能和添加了的功能)
-
+代码当中的函数,需要标明输入param的含义,并且在注释中简要说明function的目的.与文件开头的注释不冲突
 修改后请给出测试意见:即如何操作和预期结果.
 并且列出在已经列出的测试中,有哪些需要删除的.
 
@@ -29,10 +29,7 @@
 
 ## 已经列出的测试和其测试结果
 
-1. 点击canvas success?
-   - 有响应,绘画出红色的点和蓝色的点,蓝色的点看上去是随机的.
-2. 点击按钮 success?
-   - 矩形和圆都被画了出来。
+都通过了.
 
 ## 当前目录树
 
@@ -78,30 +75,35 @@
 
 这些是核心逻辑.
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com&v=2602271320]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com&v=2602271852]
 
 这些是plugins,也请阅读以下
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/bounce.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com&v=2602271852]
 
 
 ## 其他补充
 
 ### README.md
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com&v=2602271852]
 
-如有需要.请将README.md的版本也更新未最新版本.
+如有需要.请将README.md的版本也更新未最新版本
+除非在对话中说明需要更新 Readme.md(一般在对话的最后,比version.md稍前),否则不要更新.
+如果更新,直接在对话中输出 Readme.md 的内容,不要使用markdown codeblock包裹.  
 
 ### VERSION.md
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com&v=2602271852]
 
 VERSION.md是记录每一次都更新了些什么的文件
+除非在对话中说明需要更新Version.md(一般在对话的最后),否则不要更新.
+如果更新,直接在对话中输出Version.md的内容,不要使用markdown codeblock包裹.  
