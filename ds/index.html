@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>万人同屏测试客户端</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; font-family: monospace; background: rgba(0,0,0,0.5); padding: 5px; }
+    </style>
+</head>
+<body>
+    <div id="info">等待连接...</div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const infoDiv = document.getElementById('info');
+
+        // 设置Canvas大小为窗口大小
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const ws = new WebSocket(`ws://127.0.0.1:8000/ws/test_user_1`); // 连接地址
+        let units = []; // 存储当前所有单位的状态
+        let lastUpdateTime = 0;
+        let frameCount = 0;
+        let fps = 0;
+
+        ws.binaryType = 'arraybuffer'; // 关键：接收二进制数据
+
+        ws.onopen = () => {
+            infoDiv.textContent = "已连接到服务器。";
+            console.log("WebSocket连接已打开");
+        };
+
+        ws.onmessage = (event) => {
+            if (!(event.data instanceof ArrayBuffer)) {
+                console.warn("收到非二进制消息:", event.data);
+                return;
+            }
+
+            // 解析二进制数据
+            const dataView = new DataView(event.data);
+            let offset = 0;
+
+            // 1. 读取单位数量 (2字节，无符号)
+            const unitCount = dataView.getUint16(offset, true); // true 表示小端字节序
+            offset += 2;
+
+            // 2. 清空并更新单位数组
+            units = [];
+            for (let i = 0; i < unitCount; i++) {
+                const id = dataView.getUint16(offset, true); offset += 2;
+                const x = dataView.getInt16(offset, true); offset += 2;
+                const y = dataView.getInt16(offset, true); offset += 2;
+                units.push({ id, x, y });
+            }
+
+            // 计算FPS
+            frameCount++;
+            const now = performance.now();
+            if (now - lastUpdateTime >= 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastUpdateTime = now;
+            }
+        };
+
+        ws.onerror = (error) => {
+            infoDiv.textContent = "WebSocket错误: " + error.message;
+            console.error("WebSocket错误:", error);
+        };
+
+        ws.onclose = () => {
+            infoDiv.textContent = "连接已断开。";
+            console.log("WebSocket连接已关闭");
+        };
+
+        // 渲染循环
+        function render() {
+            // 清空画布（半透明清除可实现拖尾效果）
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制所有单位（简单用点表示）
+            ctx.fillStyle = '#0f0';
+            for (const unit of units) {
+                // 将游戏坐标映射到屏幕坐标（这里简单缩放）
+                const screenX = unit.x * 0.1;
+                const screenY = unit.y * 0.1;
+                if (screenX >= 0 && screenX < canvas.width && screenY >= 0 && screenY < canvas.height) {
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // 显示信息
+            infoDiv.textContent = `单位数量: ${units.length} | FPS: ${fps}`;
+
+            requestAnimationFrame(render);
+        }
+
+        // 启动渲染循环
+        render();
+
+        // 窗口大小调整时重置Canvas
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
