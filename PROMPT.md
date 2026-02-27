@@ -18,14 +18,16 @@
 ## 全局目的(SYSTEM PROMPT)
 
 是一个pixi.js的测试项目。
-作为框架,能够便利地在react框架下对pixi.js进行操作
+作为框架,能够便利地在react框架下对pixi.js进行操作.
+最终能成为一个互动游戏.
 
 ## 当前轮次的目的(USER PROMPT)
 
-完善Version.md的内容.
-注意不应该删除过去的内容,但可以添加补充说明
+目前所有功能都很成功.
 
-## 已经列出的测试和其测试结果.
+现在,添加这样的功能:类似于DVD屏保一样在canvas中反弹移动的图片.图片暂时以一个svg文件代替,需要给出svg文件.
+
+## 已经列出的测试和其测试结果
 
 1. 点击canvas success?
    - 有响应,绘画出红色的点和蓝色的点,蓝色的点看上去是随机的.
@@ -76,27 +78,30 @@
 
 这些是核心逻辑.
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com&v=2602271154]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com&v=2602271154]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com&v=2602271154]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/App.tsx?proxy_host=raw.githubusercontent.com&v=2602271320]
 
 这些是plugins,也请阅读以下
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com]
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com&v=2602271320]
 
-## README.md
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com&v=2602271223]
+## 其他补充
+
+### README.md
+
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/README.md?proxy_host=raw.githubusercontent.com&v=2602271320]
 
 如有需要.请将README.md的版本也更新未最新版本.
 
-## VERSION.md
+### VERSION.md
 
-[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com&v=2602271223]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/VERSION.md?proxy_host=raw.githubusercontent.com&v=2602271320]
 
 VERSION.md是记录每一次都更新了些什么的文件

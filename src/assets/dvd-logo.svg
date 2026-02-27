@@ -1,0 +1,28 @@
+<!-- ============================================================
+     文件: src/assets/dvd-logo.svg
+     用途: DVD屏保风格的测试图片，包含彩色渐变和"DVD"文字。
+           在PixiJS中作为纹理加载，用于反弹动画。
+     上下文: 被 bounce.plugin.ts 加载并创建精灵。
+     
+     Outline:
+     - 使用SVG格式，包含一个圆角矩形背景和"DVD"文本。
+     - 颜色采用红蓝渐变，模拟经典DVD标志。
+     - 尺寸 200x100，便于在画布上观察。
+     
+     使用方法:
+       在PixiJS中通过 PIXI.Assets.load 加载此SVG，生成纹理。
+     
+     注意事项:
+       确保SVG文件路径正确，PixiJS会自动将其转换为纹理。
+     ============================================================ -->
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff0000" />
+      <stop offset="50%" stop-color="#0000ff" />
+      <stop offset="100%" stop-color="#ff0000" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="100" rx="20" ry="20" fill="url(#grad)" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="48" font-family="Arial, sans-serif" fill="white" font-weight="bold">DVD</text>
+</svg>
