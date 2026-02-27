@@ -1,123 +1,85 @@
 // src/App.tsx
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { PixiController } from "./controllers/PixiController";
-import { PixiCanvas } from "./components/PixiCanvas";
-import "./styles.css";
+import React, { useCallback, useRef } from 'react';
+import { PixiCanvas, PixiCanvasHandle } from './components/PixiCanvas';
+import { PixiController } from './controllers/PixiController';
+import './App.css';
 
 function App() {
-  // 使用useRef保证控制器在整个生命周期内不变（除非手动替换）
-  const controllerRef = useRef(new PixiController());
-  const [messages, setMessages] = useState<string[]>([]);
+  const canvasRef = useRef<PixiCanvasHandle>(null);
 
-  // 监听来自Pixi的消息
-  useEffect(() => {
-    const controller = controllerRef.current;
-
-    const unsubscribe = controller.onMessageFromPixi((message) => {
-      console.log("[Parent] 收到Pixi消息:", message);
-      // 将消息显示在界面上
-      setMessages((prev) => [
-        `收到: ${JSON.stringify(message)}`,
-        ...prev.slice(0, 9),
-      ]);
-    });
-
-    return unsubscribe;
-  }, []);
-  
-  // src/App.tsx (片段)
-  useEffect(() => {
-    const controller = controllerRef.current;
-    const unsubscribe = controller.onMessageFromPixi((message) => {
-      console.log("[Parent] 收到Pixi消息:", message);
-      if (message.type === "pluginError") {
-        setMessages((prev) => [
-          `❌ 插件错误: ${message.error}`,
-          ...prev.slice(0, 9),
-        ]);
-      } else {
-        setMessages((prev) => [
-          `收到: ${JSON.stringify(message)}`,
-          ...prev.slice(0, 9),
-        ]);
+  //--------------------------------------------------------------------------
+  // 安全的发送消息函数：等待控制器就绪后再发送
+  //--------------------------------------------------------------------------
+  const sendMessage = useCallback(async (type: string, params?: any) => {
+    try {
+      const controller = await canvasRef.current?.ready();
+      if (!controller) {
+        console.warn('无法获取控制器');
+        return;
       }
-    });
-    return unsubscribe;
+
+      const canvas = document.querySelector('canvas');
+      if (!canvas) return;
+
+      const margin = 50;
+      const x = margin + Math.random() * (canvas.width - 2 * margin);
+      const y = margin + Math.random() * (canvas.height - 2 * margin);
+
+      switch (type) {
+        case 'circle':
+          controller.handleMessage({
+            type: 'drawCircle',
+            x,
+            y,
+            radius: 30,
+            color: 0xff00ff,
+            ...params,
+          });
+          break;
+        case 'rectangle':
+          controller.handleMessage({
+            type: 'drawRectangle',
+            x,
+            y,
+            width: 60,
+            height: 40,
+            color: 0x00ff00,
+            ...params,
+          });
+          break;
+        case 'clear':
+          controller.handleMessage({ type: 'clear' });
+          break;
+        default:
+          console.warn('未知消息类型', type);
+      }
+    } catch (error) {
+      console.error('发送消息失败', error);
+    }
   }, []);
 
-  // 向Pixi发送绘图指令
-  const handleDrawCircle = useCallback(() => {
-    const x = Math.random() * 700 + 50;
-    const y = Math.random() * 500 + 50;
-    const color = Math.floor(Math.random() * 0xffffff);
-    controllerRef.current.sendToPixi({
-      type: "drawCircle",
-      x,
-      y,
-      radius: 30,
-      color,
-    });
-  }, []);
-
-  const handleDrawRectangle = useCallback(() => {
-    const x = Math.random() * 700 + 50;
-    const y = Math.random() * 500 + 50;
-    const color = Math.floor(Math.random() * 0xffffff);
-    controllerRef.current.sendToPixi({
-      type: "drawRectangle",
-      x,
-      y,
-      width: 50,
-      height: 50,
-      color,
-    });
-  }, []);
-
-  const handleClear = useCallback(() => {
-    controllerRef.current.sendToPixi({ type: "clear" });
-  }, []);
-
-  const handleSendTestData = useCallback(() => {
-    // 模拟服务器推送的数据（未来可通过WebSocket接收）
-    const testMessage = {
-      type: "drawCircle",
-      x: 400,
-      y: 120,
-      radius: 50,
-      color: 0xffaa00,
-    };
-    controllerRef.current.sendToPixi(testMessage);
-    setMessages((prev) => [
-      `发送测试数据: ${JSON.stringify(testMessage)}`,
-      ...prev.slice(0, 9),
-    ]);
+  //--------------------------------------------------------------------------
+  // 点击回调（仅记录，无需等待）
+  //--------------------------------------------------------------------------
+  const handleCanvasClick = useCallback((x: number, y: number) => {
+    console.log(`业务处理：点击坐标 (${x}, ${y})`);
   }, []);
 
   return (
-    <div className="app">
-      <h1>Pixi.js + React 测试项目</h1>
+    <div className="App">
+      <h1>PixiJS v8 测试项目</h1>
       <div className="toolbar">
-        <button onClick={handleDrawCircle}>画随机圆</button>
-        <button onClick={handleDrawRectangle}>画随机矩形</button>
-        <button onClick={handleClear}>清空画布</button>
-        <button onClick={handleSendTestData}>模拟服务器数据</button>
+        <button onClick={() => sendMessage('circle')}>画圆</button>
+        <button onClick={() => sendMessage('rectangle')}>画矩形</button>
+        <button onClick={() => sendMessage('clear')}>清除</button>
       </div>
-      <div className="canvas-container">
-        <PixiCanvas
-          controller={controllerRef.current}
-          width={800}
-          height={320}
-        />
-      </div>
-      <div className="message-log">
-        <h3>消息日志:</h3>
-        <ul>
-          {messages.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-        <p className="hint">点击画布或在画布上按键盘，会发送消息到父组件</p>
-      </div>
+      <PixiCanvas
+        ref={canvasRef}
+        width={800}
+        height={600}
+        backgroundColor={0x1099bb}
+        onCanvasClick={handleCanvasClick}
+      />
     </div>
   );
 }

@@ -1,101 +1,163 @@
 // src/components/PixiCanvas.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import * as PIXI from 'pixi.js';
 import { PixiController } from '../controllers/PixiController';
-import { plugins } from '../plugins'; // 导入所有插件
+
+//==============================================================================
+// PixiCanvas 组件（PixiJS v8 兼容版，支持控制器就绪 Promise）
+// 用途：在 React 中创建并管理 PixiJS 应用实例，处理画布点击事件，
+//       通过 ref 暴露控制器就绪状态，确保外部调用时控制器已可用。
+// 上下文：应作为 PixiJS 相关功能的根组件，建议配合 ErrorBoundary 使用。
+// 
+// 使用方法：
+//   const canvasRef = useRef<{ ready: () => Promise<PixiController> }>();
+//   <PixiCanvas ref={canvasRef} ... />
+//   const controller = await canvasRef.current.ready();
+//   controller.handleMessage(...);
+// 
+// 注意事项：
+//   - 使用异步初始化（app.init()）以符合 PixiJS v8 规范
+//   - 通过 ref.ready() 获取控制器，确保初始化完成
+//==============================================================================
+
+export interface PixiCanvasHandle {
+  ready: () => Promise<PixiController>;
+}
 
 interface PixiCanvasProps {
-  controller: PixiController;
   width?: number;
   height?: number;
   backgroundColor?: number;
+  onCanvasClick?: (x: number, y: number) => void;
 }
 
-export const PixiCanvas: React.FC<PixiCanvasProps> = ({
-  controller,
-  width = 600,
-  height = 400,
+export const PixiCanvas = forwardRef<PixiCanvasHandle, PixiCanvasProps>(({
+  width = 800,
+  height = 600,
   backgroundColor = 0x1099bb,
-}) => {
+  onCanvasClick,
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<PIXI.Application | null>(null);
-  const initializedRef = useRef(false);
+  const controllerRef = useRef<PixiController | null>(null);
+  const clickHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
+  
+  // 控制器就绪的 Promise 及其 resolve 函数
+  const readyPromiseRef = useRef<Promise<PixiController>>(null);
+  const resolveReadyRef = useRef<(controller: PixiController) => void>(null);
 
+  // 初始化 ready Promise
+  if (!readyPromiseRef.current) {
+    readyPromiseRef.current = new Promise((resolve) => {
+      resolveReadyRef.current = resolve;
+    });
+  }
+
+  // 暴露给父组件的句柄
+  useImperativeHandle(ref, () => ({
+    ready: () => readyPromiseRef.current!,
+  }), []);
+
+  //--------------------------------------------------------------------------
+  // 创建点击处理器
+  //--------------------------------------------------------------------------
+  const createClickHandler = useCallback(
+    (app: PIXI.Application) => {
+      return (event: PointerEvent) => {
+        const canvas = app.canvas;
+        const rect = canvas.getBoundingClientRect();
+
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const canvasX = (event.clientX - rect.left) * scaleX;
+        const canvasY = (event.clientY - rect.top) * scaleY;
+
+        const boundedX = Math.max(0, Math.min(canvas.width, canvasX));
+        const boundedY = Math.max(0, Math.min(canvas.height, canvasY));
+
+        const margin = 30;
+        const randomX = Math.floor(margin + Math.random() * (canvas.width - 2 * margin));
+        const randomY = Math.floor(margin + Math.random() * (canvas.height - 2 * margin));
+
+        console.log('========== 画布点击信息 ==========');
+        console.log(`点击位置: (${boundedX.toFixed(2)}, ${boundedY.toFixed(2)})`);
+        console.log(`画布尺寸: ${canvas.width} x ${canvas.height}`);
+        console.log(`可见范围内的测试点: (${randomX}, ${randomY})`);
+        console.log('==================================');
+
+        const redPoint = new PIXI.Graphics();
+        redPoint.beginFill(0xff0000);
+        redPoint.drawCircle(boundedX, boundedY, 5);
+        redPoint.endFill();
+        app.stage.addChild(redPoint);
+
+        const bluePoint = new PIXI.Graphics();
+        bluePoint.beginFill(0x0000ff);
+        bluePoint.drawCircle(randomX, randomY, 3);
+        bluePoint.endFill();
+        app.stage.addChild(bluePoint);
+
+        onCanvasClick?.(boundedX, boundedY);
+      };
+    },
+    [onCanvasClick]
+  );
+
+  //--------------------------------------------------------------------------
+  // 初始化 PixiJS 应用（异步）
+  //--------------------------------------------------------------------------
   useEffect(() => {
-    if (initializedRef.current || !containerRef.current) return;
-
     let isMounted = true;
-    const unregisterFns: (() => void)[] = [];
+    let app: PIXI.Application | null = null;
 
-    const initPixi = async () => {
-      const app = new PIXI.Application();
+    const initApp = async () => {
+      if (!containerRef.current) return;
+
+      app = new PIXI.Application();
       await app.init({
         width,
         height,
         backgroundColor,
-        antialias: true,
-        resolution: window.devicePixelRatio || 1,
       });
 
       if (!isMounted) {
-        await app.destroy(true);
+        app.destroy(true);
         return;
       }
 
+      containerRef.current.appendChild(app.canvas);
       appRef.current = app;
-      initializedRef.current = true;
-      containerRef.current!.appendChild(app.canvas);
-      const canvas = app.canvas;
 
-      // --- 为每个插件生成处理函数并注册到控制器 ---
-      plugins.forEach(plugin => {
-        const handler = (message: any) => {
-          // 检查消息类型是否匹配
-          if (plugin.messageTypes.includes(message.type)) {
-            plugin.execute(message, app);
-          }
-          // 不匹配则忽略，让其他插件处理
-        };
-        const unregister = controller.registerPlugin(handler);
-        unregisterFns.push(unregister);
-      });
+      const controller = new PixiController(app);
+      controllerRef.current = controller;
 
-      // --- 向父组件发送用户输入消息（保持不变）---
-      const handleCanvasClick = (e: MouseEvent) => {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        controller.sendToParent({ type: 'canvasClick', x, y });
-      };
-      canvas.addEventListener('click', handleCanvasClick);
+      // 通知 ready Promise 已就绪
+      if (resolveReadyRef.current) {
+        resolveReadyRef.current(controller);
+      }
 
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-        controller.sendToParent({ type: 'keydown', key: e.key, code: e.code });
-      };
-      window.addEventListener('keydown', handleKeyDown);
-
-      // 保存清理函数
-      (app as any)._cleanup = () => {
-        canvas.removeEventListener('click', handleCanvasClick);
-        window.removeEventListener('keydown', handleKeyDown);
-        unregisterFns.forEach(fn => fn()); // 取消所有插件注册
-      };
+      const clickHandler = createClickHandler(app);
+      clickHandlerRef.current = clickHandler;
+      app.canvas.addEventListener('pointerdown', clickHandler);
     };
 
-    initPixi();
+    initApp().catch(console.error);
 
     return () => {
       isMounted = false;
       if (appRef.current) {
-        (appRef.current as any)._cleanup?.();
-        appRef.current.destroy(true);
+        const currentApp = appRef.current;
+        if (clickHandlerRef.current) {
+          currentApp.canvas.removeEventListener('pointerdown', clickHandlerRef.current);
+        }
+        currentApp.destroy(true, { children: true });
         appRef.current = null;
-        initializedRef.current = false;
+        controllerRef.current = null;
       }
-      controller.cleanup?.();
     };
-  }, [controller, width, height, backgroundColor]);
+  }, [width, height, backgroundColor, createClickHandler]);
 
-  return <div ref={containerRef} style={{ border: '1px solid #ccc' }} />;
-};
+  return <div ref={containerRef} style={{ width, height }} />;
+});
+
+PixiCanvas.displayName = 'PixiCanvas';
