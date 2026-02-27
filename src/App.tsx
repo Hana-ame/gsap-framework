@@ -1,8 +1,8 @@
 // src/App.tsx
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PixiController } from './controllers/PixiController';
-import { PixiCanvas } from './components/PixiCanvas';
-import './styles.css';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { PixiController } from "./controllers/PixiController";
+import { PixiCanvas } from "./components/PixiCanvas";
+import "./styles.css";
 
 function App() {
   // 使用useRef保证控制器在整个生命周期内不变（除非手动替换）
@@ -14,11 +14,34 @@ function App() {
     const controller = controllerRef.current;
 
     const unsubscribe = controller.onMessageFromPixi((message) => {
-      console.log('[Parent] 收到Pixi消息:', message);
+      console.log("[Parent] 收到Pixi消息:", message);
       // 将消息显示在界面上
-      setMessages(prev => [`收到: ${JSON.stringify(message)}`, ...prev.slice(0, 9)]);
+      setMessages((prev) => [
+        `收到: ${JSON.stringify(message)}`,
+        ...prev.slice(0, 9),
+      ]);
     });
 
+    return unsubscribe;
+  }, []);
+  
+  // src/App.tsx (片段)
+  useEffect(() => {
+    const controller = controllerRef.current;
+    const unsubscribe = controller.onMessageFromPixi((message) => {
+      console.log("[Parent] 收到Pixi消息:", message);
+      if (message.type === "pluginError") {
+        setMessages((prev) => [
+          `❌ 插件错误: ${message.error}`,
+          ...prev.slice(0, 9),
+        ]);
+      } else {
+        setMessages((prev) => [
+          `收到: ${JSON.stringify(message)}`,
+          ...prev.slice(0, 9),
+        ]);
+      }
+    });
     return unsubscribe;
   }, []);
 
@@ -28,7 +51,7 @@ function App() {
     const y = Math.random() * 500 + 50;
     const color = Math.floor(Math.random() * 0xffffff);
     controllerRef.current.sendToPixi({
-      type: 'drawCircle',
+      type: "drawCircle",
       x,
       y,
       radius: 30,
@@ -41,7 +64,7 @@ function App() {
     const y = Math.random() * 500 + 50;
     const color = Math.floor(Math.random() * 0xffffff);
     controllerRef.current.sendToPixi({
-      type: 'drawRectangle',
+      type: "drawRectangle",
       x,
       y,
       width: 50,
@@ -51,20 +74,23 @@ function App() {
   }, []);
 
   const handleClear = useCallback(() => {
-    controllerRef.current.sendToPixi({ type: 'clear' });
+    controllerRef.current.sendToPixi({ type: "clear" });
   }, []);
 
   const handleSendTestData = useCallback(() => {
     // 模拟服务器推送的数据（未来可通过WebSocket接收）
     const testMessage = {
-      type: 'drawCircle',
+      type: "drawCircle",
       x: 400,
       y: 120,
       radius: 50,
       color: 0xffaa00,
     };
     controllerRef.current.sendToPixi(testMessage);
-    setMessages(prev => [`发送测试数据: ${JSON.stringify(testMessage)}`, ...prev.slice(0, 9)]);
+    setMessages((prev) => [
+      `发送测试数据: ${JSON.stringify(testMessage)}`,
+      ...prev.slice(0, 9),
+    ]);
   }, []);
 
   return (
@@ -77,7 +103,11 @@ function App() {
         <button onClick={handleSendTestData}>模拟服务器数据</button>
       </div>
       <div className="canvas-container">
-        <PixiCanvas controller={controllerRef.current} width={800} height={320} />
+        <PixiCanvas
+          controller={controllerRef.current}
+          width={800}
+          height={320}
+        />
       </div>
       <div className="message-log">
         <h3>消息日志:</h3>

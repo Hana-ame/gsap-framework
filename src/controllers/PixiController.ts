@@ -1,42 +1,51 @@
 // src/controllers/PixiController.ts
-type MessageHandler = (message: any) => void;
-type Plugin = (message: any) => void;
+
+import * as PIXI from 'pixi.js';
+
+export type PixiPlugin = {
+  /** 声明此插件能处理的消息类型列表 */
+  messageTypes: string[];
+  /** 执行绘图逻辑，接收消息和Pixi应用实例 */
+  execute(message: any, app: PIXI.Application): void;
+};
+
+type PluginHandler = (message: any) => void; // 内部使用的包装函数
 
 export class PixiController {
-  private plugins: Set<Plugin> = new Set();           // 存储所有插件
-  private childMessageHandlers: MessageHandler[] = [];
+  private plugins: Set<PluginHandler> = new Set();
+  private childMessageHandlers: ((message: any) => void)[] = [];
 
   /**
-   * 注册一个插件，当收到父组件消息时会被调用
-   * @param plugin 插件函数，接收消息参数
-   * @returns 取消注册的函数
+   * 注册插件（需要传入已经绑定app的处理函数）
    */
-  registerPlugin(plugin: Plugin): () => void {
-    this.plugins.add(plugin);
+  registerPlugin(handler: PluginHandler): () => void {
+    this.plugins.add(handler);
     return () => {
-      this.plugins.delete(plugin);
+      this.plugins.delete(handler);
     };
   }
 
   /**
-   * 由父组件调用，向Pixi发送消息（将分发给所有已注册的插件）
+   * 由父组件调用，向Pixi发送消息（分发给所有已注册插件）
    */
   sendToPixi(message: any) {
-    this.plugins.forEach(plugin => {
+    this.plugins.forEach(handler => {
       try {
-        plugin(message);
+        handler(message);
       } catch (error) {
         console.error('插件执行错误:', error);
+        // 可选：将错误发送给父组件
+        this.sendToParent({ type: 'pluginError', error: String(error), originalMessage: message });
       }
     });
   }
 
-  // 以下方法保持不变（用于Pixi向父组件发送消息）
+  // 以下方法保持不变
   sendToParent(message: any) {
     this.childMessageHandlers.forEach(handler => handler(message));
   }
 
-  onMessageFromPixi(handler: MessageHandler): () => void {
+  onMessageFromPixi(handler: (message: any) => void): () => void {
     this.childMessageHandlers.push(handler);
     return () => {
       this.childMessageHandlers = this.childMessageHandlers.filter(h => h !== handler);

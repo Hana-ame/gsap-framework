@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { PixiController } from '../controllers/PixiController';
+import { plugins } from '../plugins'; // 导入所有插件
 
 interface PixiCanvasProps {
   controller: PixiController;
@@ -12,7 +13,7 @@ interface PixiCanvasProps {
 
 export const PixiCanvas: React.FC<PixiCanvasProps> = ({
   controller,
-  width = 600,      // 默认改小
+  width = 600,
   height = 400,
   backgroundColor = 0x1099bb,
 }) => {
@@ -24,7 +25,7 @@ export const PixiCanvas: React.FC<PixiCanvasProps> = ({
     if (initializedRef.current || !containerRef.current) return;
 
     let isMounted = true;
-    let unregisterPlugin: (() => void) | null = null;
+    const unregisterFns: (() => void)[] = [];
 
     const initPixi = async () => {
       const app = new PIXI.Application();
@@ -46,33 +47,20 @@ export const PixiCanvas: React.FC<PixiCanvasProps> = ({
       containerRef.current!.appendChild(app.canvas);
       const canvas = app.canvas;
 
-      // --- 定义消息处理插件（闭包捕获 app）---
-      const messagePlugin = (message: any) => {
-        console.log('[Pixi] 收到父组件消息:', message);
-        if (message.type === 'drawCircle') {
-          const { x, y, radius = 30, color = 0xff0000 } = message;
-          const circle = new PIXI.Graphics();
-          circle.beginFill(color);
-          circle.drawCircle(x, y, radius);
-          circle.endFill();
-          app.stage.addChild(circle);
-        } else if (message.type === 'drawRectangle') {
-          const { x, y, width = 50, height = 50, color = 0x00ff00 } = message;
-          const rect = new PIXI.Graphics();
-          rect.beginFill(color);
-          rect.drawRect(x, y, width, height);
-          rect.endFill();
-          app.stage.addChild(rect);
-        } else if (message.type === 'clear') {
-          app.stage.removeChildren();
-        }
-        // 可继续扩展其他指令
-      };
+      // --- 为每个插件生成处理函数并注册到控制器 ---
+      plugins.forEach(plugin => {
+        const handler = (message: any) => {
+          // 检查消息类型是否匹配
+          if (plugin.messageTypes.includes(message.type)) {
+            plugin.execute(message, app);
+          }
+          // 不匹配则忽略，让其他插件处理
+        };
+        const unregister = controller.registerPlugin(handler);
+        unregisterFns.push(unregister);
+      });
 
-      // 将插件注册到控制器
-      unregisterPlugin = controller.registerPlugin(messagePlugin);
-
-      // --- 向父组件发送消息（用户输入）---
+      // --- 向父组件发送用户输入消息（保持不变）---
       const handleCanvasClick = (e: MouseEvent) => {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -91,7 +79,7 @@ export const PixiCanvas: React.FC<PixiCanvasProps> = ({
       (app as any)._cleanup = () => {
         canvas.removeEventListener('click', handleCanvasClick);
         window.removeEventListener('keydown', handleKeyDown);
-        if (unregisterPlugin) unregisterPlugin(); // 取消插件注册
+        unregisterFns.forEach(fn => fn()); // 取消所有插件注册
       };
     };
 
