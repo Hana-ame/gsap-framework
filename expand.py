@@ -3,6 +3,8 @@ import time
 import requests
 import sys
 import os
+import subprocess
+import urllib, urllib.parse
 
 rf"""
 文件内部处理逻辑：
@@ -67,10 +69,48 @@ def process_file(input_path, output_path):
     pattern = r"\[(https?://[^\]]+)\]"
 
     def replace_callback(match):
+        # url = match.group(1)
+        # original_tag = match.group(0)  # [url]
+        # url = url + "&v=" + str(int(time.time()))
+        # fetched_text = fetch_content(url)
+        
+        # 改进后
         url = match.group(1)
-        original_tag = match.group(0)  # [url]
-        url = url + "&v=" + time.time()
-        fetched_text = fetch_content(url)
+        original_tag = match.group(0)
+
+        try:
+            # 获取当前 commit hash
+            commit_hash = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                text=True
+            ).strip()
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            # git 命令失败时的后备处理（例如继续使用时间戳或直接报错）
+            print(f"无法获取 commit hash: {e}，回退到时间戳模式")
+            url = url + "&v=" + str(int(time.time()))
+            fetched_text = fetch_content(url)
+        else:
+            # 使用 urllib.parse 解析 URL
+            parsed = urllib.parse.urlparse(url)
+            path_parts = parsed.path.split('/')
+
+            # 检查路径是否符合预期格式: /owner/repo/refs/heads/branch/...
+            if len(path_parts) >= 6 and path_parts[3] == 'refs' and path_parts[4] == 'heads':
+                # 构造新路径: /owner/repo/<commit_hash>/剩余部分
+                new_path_parts = path_parts[:3] + [commit_hash] + path_parts[6:]
+                new_path = '/'.join(new_path_parts)
+
+                # 更新 URL 路径
+                parsed = parsed._replace(path=new_path)
+
+                new_url = parsed.geturl()
+            else:
+                # 路径格式不匹配，回退到原逻辑或直接使用原 URL
+                print("URL 格式异常，无法替换 commit hash，使用原 URL（附加时间戳）")
+                new_url = url + "&v=" + str(int(time.time()))
+
+            fetched_text = fetch_content(new_url)
+
 
         # 组装新内容：保留原标签 + 换行 + 抓取的内容 + 换行
         # 这里使用了 Markdown 的代码块语法，如果内容是代码会非常整洁
