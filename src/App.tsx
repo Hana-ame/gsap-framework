@@ -1,85 +1,140 @@
-// src/App.tsx
-import React, { useCallback, useRef } from 'react';
-import { PixiCanvas, PixiCanvasHandle } from './components/PixiCanvas';
-import { PixiController } from './controllers/PixiController';
-import './App.css';
+// ============================================================
+// 文件: src/App.tsx
+// 用途: 主应用测试界面。展示画布、工具栏，并实时显示来自画布的事件日志。
+// 上下文: React 根组件，用于演示 PixiCanvas 和 PixiController 的集成，
+//        以及函数式插件的注册与使用。
+//
+// Outline:
+// 1. 导入依赖、组件、控制器和插件（对象字面量）
+// 2. App 函数组件
+//    a. 状态: 事件日志列表
+//    b. 初始化控制器并注册函数式插件
+//    c. 处理来自控制器的消息，更新日志
+//    d. 发送绘图指令的函数（使用 controller.sendToPixi）
+//    e. 渲染 UI: 标题、按钮、画布、日志显示区
+// 3. 辅助函数: 格式化时间戳
+//
+// 注意事项:
+//   - 插件是直接导入的对象，无需实例化。
+//   - 在 PixiCanvas 初始化后通过 onAppInit 回调设置 controller 的 app 实例。
+// ============================================================
+
+import React, { useState, useRef, useCallback } from "react";
+import * as PIXI from "pixi.js";
+import { PixiCanvas } from "./components/PixiCanvas";
+import { PixiController } from "./controllers/PixiController";
+// 导入函数式插件（对象字面量）
+import { circlePlugin } from "./plugins/circle.plugin";
+import { rectanglePlugin } from "./plugins/rectangle.plugin";
+import { clearPlugin } from "./plugins/clear.plugin";
+import "./App.css";
+
+const formatTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  const milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+};
+
+// 使用时
 
 function App() {
-  const canvasRef = useRef<PixiCanvasHandle>(null);
+  const [eventLogs, setEventLogs] = useState<string[]>([]);
+  const appRef = useRef<PIXI.Application | null>(null);
+  const controllerRef = useRef<PixiController | null>(null);
 
-  //--------------------------------------------------------------------------
-  // 安全的发送消息函数：等待控制器就绪后再发送
-  //--------------------------------------------------------------------------
-  const sendMessage = useCallback(async (type: string, params?: any) => {
-    try {
-      const controller = await canvasRef.current?.ready();
-      if (!controller) {
-        console.warn('无法获取控制器');
-        return;
+  // 初始化控制器并注册插件（只执行一次）
+  if (!controllerRef.current) {
+    const controller = new PixiController();
+
+    // 注册函数式插件（直接传入对象）
+    controller.registerPlugin(circlePlugin);
+    controller.registerPlugin(rectanglePlugin);
+    controller.registerPlugin(clearPlugin);
+
+    // 设置父组件消息处理器（接收画布事件）
+    controller.onMessageFromParent((message) => {
+      const timeStr = message.timestamp
+        ? formatTimestamp(message.timestamp)
+        : "未知时间";
+
+      let logEntry = `[${timeStr}] 事件: ${message.type}`;
+      if (message.x !== undefined && message.y !== undefined) {
+        logEntry += ` 坐标: (${message.x.toFixed(2)}, ${message.y.toFixed(2)})`;
       }
+      setEventLogs((prev) => [logEntry, ...prev.slice(0, 49)]);
+    });
 
-      const canvas = document.querySelector('canvas');
-      if (!canvas) return;
+    controllerRef.current = controller;
+  }
 
-      const margin = 50;
-      const x = margin + Math.random() * (canvas.width - 2 * margin);
-      const y = margin + Math.random() * (canvas.height - 2 * margin);
+  // 当 PixiCanvas 初始化完成时，将 app 实例设置到控制器
+  // 在 App.tsx 中
+  const handleAppInit = useCallback((app: PIXI.Application) => {
+    appRef.current = app;
+    controllerRef.current?.setApp(app);
+  }, []); // 空依赖，因为 appRef 和 controllerRef 是稳定的
 
-      switch (type) {
-        case 'circle':
-          controller.handleMessage({
-            type: 'drawCircle',
-            x,
-            y,
-            radius: 30,
-            color: 0xff00ff,
-            ...params,
-          });
-          break;
-        case 'rectangle':
-          controller.handleMessage({
-            type: 'drawRectangle',
-            x,
-            y,
-            width: 60,
-            height: 40,
-            color: 0x00ff00,
-            ...params,
-          });
-          break;
-        case 'clear':
-          controller.handleMessage({ type: 'clear' });
-          break;
-        default:
-          console.warn('未知消息类型', type);
-      }
-    } catch (error) {
-      console.error('发送消息失败', error);
-    }
-  }, []);
+  // 发送绘图指令
+  const sendDrawCommand = (type: string) => {
+    if (!controllerRef.current) return;
 
-  //--------------------------------------------------------------------------
-  // 点击回调（仅记录，无需等待）
-  //--------------------------------------------------------------------------
-  const handleCanvasClick = useCallback((x: number, y: number) => {
-    console.log(`业务处理：点击坐标 (${x}, ${y})`);
-  }, []);
+    const message = {
+      type,
+      timestamp: Date.now(),
+      x: Math.random() * 400 + 200,
+      y: Math.random() * 300 + 150,
+      radius: 30,
+      width: 60,
+      height: 40,
+      color: Math.random() * 0xffffff,
+    };
+
+    // 通过控制器发送，它会自动调用匹配的插件
+    controllerRef.current.sendToPixi(message);
+
+    // 记录指令日志
+    const timeStr = new Date().toLocaleTimeString("zh-CN", {
+      hour12: false,
+      fractionalSecondDigits: 3,
+    });
+    setEventLogs((prev) => [
+      `[${timeStr}] 发送绘图指令: ${type}`,
+      ...prev.slice(0, 49),
+    ]);
+  };
+
+  const clearLogs = () => setEventLogs([]);
 
   return (
     <div className="App">
-      <h1>PixiJS v8 测试项目</h1>
+      <h1>PixiJS v8 事件测试 (函数式插件)</h1>
       <div className="toolbar">
-        <button onClick={() => sendMessage('circle')}>画圆</button>
-        <button onClick={() => sendMessage('rectangle')}>画矩形</button>
-        <button onClick={() => sendMessage('clear')}>清除</button>
+        <button onClick={() => sendDrawCommand("drawCircle")}>画圆</button>
+        <button onClick={() => sendDrawCommand("drawRectangle")}>画矩形</button>
+        <button onClick={() => sendDrawCommand("clear")}>清除</button>
+        <button onClick={clearLogs}>清除日志</button>
       </div>
-      <PixiCanvas
-        ref={canvasRef}
-        width={800}
-        height={600}
-        backgroundColor={0x1099bb}
-        onCanvasClick={handleCanvasClick}
-      />
+      <div className="canvas-container">
+        <PixiCanvas
+          controller={controllerRef.current}
+          width={800}
+          height={600}
+          backgroundColor={0x1099bb}
+          onAppInit={handleAppInit}
+        />
+      </div>
+      <div className="event-log">
+        <h3>事件日志 (带时间戳)</h3>
+        <ul>
+          {eventLogs.map((log, index) => (
+            <li key={index}>{log}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
