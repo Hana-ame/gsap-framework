@@ -1,3 +1,5 @@
+// not used.
+
 export interface DataSource {
   /** 当前连接状态 */
   readonly isConnected: boolean;
