@@ -16,32 +16,25 @@
 并且列出在已经列出的测试中,有哪些需要删除的.
 每个文件不宜过长,因为项目是用vibe coding做的,每次会修改一整个文件.
 
+(PS:你可以吐槽一下这个安排)
+
 ## 全局目的(SYSTEM PROMPT)
 
 是一个pixi.js的测试项目。
 作为框架,能够便利地在react框架下对pixi.js进行操作.
-最终能成为一个互动游戏.
+最终能成为一个互动游戏(连接到服务器,由服务器控制显示内容.并且将操作上传到服务器.通过ws连接)
+PS:此处可能要写一个WsController取代GameController的位置?
 
 ## 当前轮次的目的(USER PROMPT)
 
 目前所有功能都很成功.
 
-创建控制器
-要求:
-STEP1
-所有的pixijs传出事件都由控制器监听.
-控制器向pixijs发送绘图指令,绘图指令经由plugins处理
-
-请先完成STEP1
-
-STEP2
-使用上面的控制器布置场景:
-100个小球,相互碰撞之后会弹开,碰到边缘会反弹.
-鼠标可以撞击小球
-
-请跟随对话在完成STEP1之后完成STEP2
-
-(PS:你可以吐槽一下这个安排)
+当前轮次的目标:
+实现一个康威生命游戏.并且将测试按钮移除,使用暂停和开始和步进三个按钮控制.
+控制是通过一个GameController实现的,或者新的Controller.
+点击canvas上的点,可以改变dead or alive状态.
+边界处理时,视为上下边界相连,左右边界相连
+暂时不需要联网
 
 
 ## 当前目录树
@@ -99,6 +92,7 @@ STEP2
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/main.tsx?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/vite-env.d.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/PixiController.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/controllers/GameController.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/assets/react.svg?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/assets/dvd-logo.svg?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/index.ts?proxy_host=raw.githubusercontent.com]
@@ -106,10 +100,17 @@ STEP2
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/plugin.types.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/clear.plugin.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/fireworks.plugin.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/balls.plugin.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/apiDemo.plugin.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/rectangle.plugin.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/circle.plugin.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/components/PixiCanvas.tsx?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/physics/index.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/physics/utils.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/physics/types.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/physics/dvd.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/physics/balls.ts?proxy_host=raw.githubusercontent.com]
+[https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/physics/state.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/index.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/utils.ts?proxy_host=raw.githubusercontent.com]
 [https://proxy.moonchan.xyz/Hana-ame/Hana-ame/refs/heads/sim/src/plugins/api-demo/types.ts?proxy_host=raw.githubusercontent.com]

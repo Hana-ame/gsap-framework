@@ -4,9 +4,10 @@
 //       使用 GameController 封装所有业务逻辑，使组件保持简洁。
 // 上下文: React 根组件，仅负责渲染和用户输入，所有逻辑委托给 GameController。
 //
-// 版本: 2.5.0
-//    - 重构：将事件处理和命令发送移入 GameController，App.tsx 只负责 UI 和日志展示。
-//    - 添加对 GameController 的实例化，并通过 onAppInit 回调传递 app。
+// 版本: 3.0.0
+//    - 移除所有演示按钮（API演示、小球、烟花等），仅保留康威生命游戏控制按钮：
+//      开始、暂停、步进、清除。
+//    - 更新 GameController 实例化，添加生命游戏相关方法。
 //
 // Outline:
 // 1. 导入依赖、组件、PixiController 和 GameController。
@@ -18,14 +19,14 @@
 //
 // 注意事项:
 //   - 所有业务逻辑和消息处理都在 GameController 中，App.tsx 不再处理事件转发。
-//   - 新增“启动小球”按钮，调用 gameController.startBalls()。
+//   - 插件列表已精简，仅注册 clear 和 gameOfLife 插件（见 plugins/index.ts）。
 // ============================================================
 
 import React, { useState, useRef, useCallback } from "react";
 import * as PIXI from "pixi.js";
 import { PixiCanvas } from "./components/PixiCanvas";
 import { PixiController } from "./controllers/PixiController";
-import { GameController } from "./controllers/GameController"; // 新增导入
+import { GameController } from "./controllers/GameController";
 // 导入插件数组
 import { plugins } from "./plugins";
 
@@ -40,7 +41,7 @@ function App() {
   if (!pixiControllerRef.current) {
     const pixiController = new PixiController();
 
-    // 批量注册所有插件
+    // 批量注册所有插件（现在只包含 clear 和 gameOfLife）
     plugins.forEach((plugin) => pixiController.registerPlugin(plugin));
 
     pixiControllerRef.current = pixiController;
@@ -64,38 +65,12 @@ function App() {
 
   return (
     <div className="App">
-      <h1>PixiJS v8 事件测试 (100个小球碰撞模拟)</h1>
+      <h1>康威生命游戏 (PixiJS v8)</h1>
       <div className="toolbar">
-        <button onClick={() => gameControllerRef.current?.drawCircle()}>画圆</button>
-        <button onClick={() => gameControllerRef.current?.drawRectangle()}>画矩形</button>
-        <button onClick={() => gameControllerRef.current?.clearCanvas()}>清除</button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/basicShapes')}>
-          API: 基础图形
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/text')}>
-          API: 文本
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/sprite')}>
-          API: 精灵
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/animation')}>
-          API: 动画
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/filter')}>
-          API: 滤镜
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/interaction')}>
-          API: 交互
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/container')}>
-          API: 容器
-        </button>
-        <button onClick={() => gameControllerRef.current?.runApiDemo('apiDemo/particles')}>
-          API: 粒子
-        </button>
-        <button onClick={() => gameControllerRef.current?.startBalls()}>
-          启动100个小球
-        </button>
+        <button onClick={() => gameControllerRef.current?.startGameOfLife()}>开始</button>
+        <button onClick={() => gameControllerRef.current?.pauseGameOfLife()}>暂停</button>
+        <button onClick={() => gameControllerRef.current?.stepGameOfLife()}>步进</button>
+        <button onClick={() => gameControllerRef.current?.clearCanvas()}>清除网格</button>
         <button onClick={clearLogs}>清除日志</button>
       </div>
       <div className="canvas-container">
@@ -103,7 +78,7 @@ function App() {
           controller={pixiControllerRef.current!}
           width={800}
           height={600}
-          backgroundColor={0x1099bb}
+          backgroundColor={0x000000} // 黑色背景，与网格边框对比
           onAppInit={handleAppInit}
         />
       </div>
