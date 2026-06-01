@@ -20,6 +20,10 @@ export function RouteSwitch() {
       const C = routeMap.three;
       return <C />;
     }
+    case 'two-3d': {
+      const C = routeMap['two-3d'];
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;

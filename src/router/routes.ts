@@ -3,8 +3,9 @@ import { SingleDisplay } from '../displays/single/SingleDisplay';
 import { MultipleDisplay } from '../displays/multiple/MultipleDisplay';
 import { WindowDisplay } from '../displays/window/WindowDisplay';
 import { ThreeDisplay } from '../displays/three/ThreeDisplay';
+import { Two3DDisplay } from '../displays/two-3d/Two3DDisplay';
 
-export const ROUTES = ['single', 'multiple', 'window', 'three'] as const;
+export const ROUTES = ['single', 'multiple', 'window', 'three', 'two-3d'] as const;
 export type Route = (typeof ROUTES)[number];
 export const DEFAULT_ROUTE: Route = 'three';
 
@@ -16,4 +17,5 @@ export const routeMap: Record<Route, ComponentType> = {
   multiple: MultipleDisplay,
   window: WindowDisplay,
   three: ThreeDisplay,
+  'two-3d': Two3DDisplay,
 };
