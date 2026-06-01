@@ -144,12 +144,22 @@ export class SubCanvas {
     const parent = this.stage.parent;
     if (!parent) return;
     parent.setChildIndex(this.stage, parent.children.length - 1);
+    if (this.parent) {
+      const idx = this.parent.children.indexOf(this);
+      if (idx >= 0) this.parent.children.splice(idx, 1);
+      this.parent.children.push(this);
+    }
   }
 
   sendToBack(): void {
     const parent = this.stage.parent;
     if (!parent) return;
     parent.setChildIndex(this.stage, 0);
+    if (this.parent) {
+      const idx = this.parent.children.indexOf(this);
+      if (idx >= 0) this.parent.children.splice(idx, 1);
+      this.parent.children.unshift(this);
+    }
   }
 
   setDraggable(opts: DragOptions = {}): () => void {
