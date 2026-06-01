@@ -2,10 +2,11 @@ import type { ComponentType } from 'react';
 import { SingleDisplay } from '../displays/single/SingleDisplay';
 import { MultipleDisplay } from '../displays/multiple/MultipleDisplay';
 import { WindowDisplay } from '../displays/window/WindowDisplay';
-import { ThreeDisplay } from '../displays/three/ThreeDisplay';
-import { Two3DDisplay } from '../displays/two-3d/Two3DDisplay';
-import { ThreeEulerDisplay } from '../displays/three-euler/ThreeEulerDisplay';
-import { CameraEulerDisplay } from '../displays/camera-euler/CameraEulerDisplay';
+import { ThreeDisplay } from '../three-displays/three/ThreeDisplay';
+import { Two3DDisplay } from '../three-displays/two-3d/Two3DDisplay';
+import { ThreeEulerDisplay } from '../three-displays/three-euler/ThreeEulerDisplay';
+import { CameraEulerDisplay } from '../three-displays/camera-euler/CameraEulerDisplay';
+import { ConfirmDisplay } from '../three-displays/confirm/ConfirmDisplay';
 
 export const ROUTES = [
   'single',
@@ -15,9 +16,10 @@ export const ROUTES = [
   'two-3d',
   'three-euler',
   'camera-euler',
+  'confirm',
 ] as const;
 export type Route = (typeof ROUTES)[number];
-export const DEFAULT_ROUTE: Route = 'camera-euler';
+export const DEFAULT_ROUTE: Route = 'confirm';
 
 export const isRoute = (r: string): r is Route =>
   (ROUTES as readonly string[]).includes(r);
@@ -30,4 +32,5 @@ export const routeMap: Record<Route, ComponentType> = {
   'two-3d': Two3DDisplay,
   'three-euler': ThreeEulerDisplay,
   'camera-euler': CameraEulerDisplay,
+  confirm: ConfirmDisplay,
 };

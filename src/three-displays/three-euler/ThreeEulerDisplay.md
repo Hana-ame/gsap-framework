@@ -51,7 +51,7 @@ YXZ 在游戏 / 飞行里常用（FPS 相机、飞机姿态），因为：
 ## Usage
 
 ```ts
-import { ThreeEulerDisplay } from './displays/three-euler/ThreeEulerDisplay';
+import { ThreeEulerDisplay } from './three-displays/three-euler/ThreeEulerDisplay';
 // 在 RouteSwitch
 case 'three-euler': return <ThreeEulerDisplay />;
 ```

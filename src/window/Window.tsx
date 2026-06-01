@@ -10,6 +10,8 @@ export const WINDOW_API_VERSION = '0.1.0';
 
 export type WindowPosition = { x: number; y: number };
 
+export type DragMode = 'title' | 'anywhere';
+
 export type WindowProps = {
   id?: string;
   title?: ReactNode;
@@ -17,6 +19,7 @@ export type WindowProps = {
   width: number | string;
   height: number | string;
   draggable?: boolean;
+  dragMode?: DragMode;
   closable?: boolean;
   visible?: boolean;
   zIndex?: number;
@@ -37,6 +40,7 @@ export function Window({
   width,
   height,
   draggable = true,
+  dragMode = 'title',
   closable = false,
   visible = true,
   zIndex,
@@ -58,6 +62,7 @@ export function Window({
   }, [visible]);
 
   const handleTitleDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragMode !== 'title') return;
     if (!draggable) {
       onFocus?.();
       return;
@@ -69,6 +74,7 @@ export function Window({
     dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
   };
   const handleTitleMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragMode !== 'title') return;
     const d = dragRef.current;
     if (!d) return;
     const next = { x: d.ox + (e.clientX - d.sx), y: d.oy + (e.clientY - d.sy) };
@@ -76,6 +82,31 @@ export function Window({
     onPositionChange?.(next);
   };
   const handleTitleUp = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragMode !== 'title') return;
+    dragRef.current = null;
+    try {
+      (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+    } catch {
+      // already released
+    }
+  };
+  const handleRootDownCapture = () => onFocus?.();
+  const handleRootDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragMode !== 'anywhere' || !draggable) return;
+    e.preventDefault();
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
+  };
+  const handleRootMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragMode !== 'anywhere') return;
+    const d = dragRef.current;
+    if (!d) return;
+    const next = { x: d.ox + (e.clientX - d.sx), y: d.oy + (e.clientY - d.sy) };
+    setPos(next);
+    onPositionChange?.(next);
+  };
+  const handleRootUp = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragMode !== 'anywhere') return;
     dragRef.current = null;
     try {
       (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
@@ -88,7 +119,6 @@ export function Window({
     if (onClose) onClose();
     else setInternalVisible(false);
   };
-  const handleRootDown = () => onFocus?.();
 
   if (!internalVisible) return null;
 
@@ -96,8 +126,13 @@ export function Window({
     <div
       data-window-id={internalId}
       data-window-version={WINDOW_API_VERSION}
+      data-window-drag-mode={dragMode}
       className={className}
+      onPointerDownCapture={handleRootDownCapture}
       onPointerDown={handleRootDown}
+      onPointerMove={handleRootMove}
+      onPointerUp={handleRootUp}
+      onPointerCancel={handleRootUp}
       style={{
         position: 'absolute',
         left: pos.x,
@@ -114,6 +149,8 @@ export function Window({
         boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
         minWidth: 0,
         minHeight: 0,
+        cursor: dragMode === 'anywhere' && draggable ? 'grab' : 'default',
+        touchAction: draggable ? 'none' : 'auto',
         ...style,
       }}
     >
@@ -126,8 +163,7 @@ export function Window({
           fontSize: 12,
           borderBottom: '1px solid #2a2a3a',
           userSelect: 'none',
-          cursor: draggable ? 'grab' : 'default',
-          touchAction: draggable ? 'none' : 'auto',
+          cursor: dragMode === 'title' && draggable ? 'grab' : 'default',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',

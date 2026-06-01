@@ -32,6 +32,10 @@ export function RouteSwitch() {
       const C = routeMap['camera-euler'];
       return <C />;
     }
+    case 'confirm': {
+      const C = routeMap.confirm;
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;

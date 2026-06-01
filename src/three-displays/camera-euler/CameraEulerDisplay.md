@@ -50,7 +50,7 @@ YXZ 是 FPS / 飞行类应用标准：
 ## Usage
 
 ```ts
-import { CameraEulerDisplay } from './displays/camera-euler/CameraEulerDisplay';
+import { CameraEulerDisplay } from './three-displays/camera-euler/CameraEulerDisplay';
 // RouteSwitch
 case 'camera-euler': return <CameraEulerDisplay />;
 ```

@@ -4,6 +4,8 @@ import { SubCanvas } from '../pixi/SubCanvas';
 const TITLE_BAR_H = 22;
 const CLOSE_BTN_R = 5;
 
+export type PixiDragMode = 'title' | 'anywhere';
+
 export interface GameWindowOptions {
   parent: SubCanvas;
   title: string;
@@ -12,6 +14,7 @@ export interface GameWindowOptions {
   x?: number;
   y?: number;
   draggable?: boolean;
+  dragMode?: PixiDragMode;
   closable?: boolean;
   onClose?: () => void;
 }
@@ -25,6 +28,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   const x = opts.x ?? 60;
   const y = opts.y ?? 60;
   const draggable = opts.draggable !== false;
+  const dragMode: PixiDragMode = opts.dragMode ?? 'title';
   const closable = opts.closable !== false;
 
   const win = opts.parent.createSubRegion({ x, y, width: opts.width, height: opts.height }) as GameWindow;
@@ -115,7 +119,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
           return;
         }
       }
-      if (e.y > TITLE_BAR_H) return;
+      if (dragMode === 'title' && e.y > TITLE_BAR_H) return;
       dragging = true;
       sx = e.globalX;
       sy = e.globalY;

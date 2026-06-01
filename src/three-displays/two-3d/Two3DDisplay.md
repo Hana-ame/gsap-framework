@@ -25,7 +25,7 @@ RouteSwitch (switch route)
 ## Usage
 
 ```ts
-import { Two3DDisplay } from './displays/two-3d/Two3DDisplay';
+import { Two3DDisplay } from './three-displays/two-3d/Two3DDisplay';
 
 // 在 RouteSwitch 中
 switch (route) {

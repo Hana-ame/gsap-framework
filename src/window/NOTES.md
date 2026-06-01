@@ -8,6 +8,47 @@
 
 ## 1. 踩过的坑（按时间倒序）
 
+### 1.7 Dialog 风格 Window 缺「anywhere drag」
+
+**症状**：`Confirm`（对话框）最初用 `Window` + 默认 `draggable`。用户反馈：「我想拖对话框，只能拖那一条 title bar，看着不像对话框。」
+
+**根因**：默认 `dragMode='title'` 适合信息型窗口（有 canvas/3D/表格），但对话框整面都该是 drag handle（除了按钮）。
+
+**修法**（Window.tsx）：加 `dragMode: 'title' | 'anywhere'`：
+- `'title'`（默认）：只有 title bar 触发 drag
+- `'anywhere'`：root 整个 surface 触发 drag（按钮自己 `e.stopPropagation()`）
+
+**事件流**（`anywhere` 模式）：
+```
+用户按 root
+  └─ onPointerDownCapture → onFocus()           // root 永远响应 onFocus
+  └─ onPointerDown (bubble) → setPointerCapture + dragRef.current = ...
+        ↓
+用户移到按钮上
+  └─ button.onPointerDown → e.stopPropagation()  // bubble 在 button 处停
+       → root.onPointerDown 不会跑（已经过了）
+       → drag 不会开始
+  └─ button.onClick → handler
+        ↓
+用户释放
+  └─ onPointerUp on root → releasePointerCapture + dragRef.current = null
+```
+
+**关键 insight**：
+- `onPointerDownCapture` 在 root 上负责 `onFocus`（先于 bubble 跑，stopPropagation 拦不住）
+- `onPointerDown` 在 root 上负责 drag（bubble 阶段，按钮可以拦）
+- 两套并存是因为 capture vs bubble 的传播顺序
+
+**PIXI 版同步加**：见 `PixiWindow.ts` 的 `dragMode: 'title' | 'anywhere'`。PIXI 版有限制：`anywhere` 模式只在 `content` 是空 SubCanvas 时才"全表面"（PIXI 事件路由是 children-first，按钮若放在 content 里会拦截 win.onPress 不会触发 drag）。复杂场景用 HTML `Window` 解决。
+
+**教训**：
+- 不同的「容器风格」需要不同的 drag 触发面，不要 hard-code 一个
+- 一个 prop (`dragMode`) 暴露两种行为，简单胜过把 drag 抽到 hook 让父级拼
+- HTML/PIXI 两版必须同步 API；PIXI 版有约束时要写进 doc 警告
+
+---
+
+
 ### 1.1 Z-Order 缺失：点击 B 响应 A
 
 **症状**：两个 Window 重叠时，点上面那个窗口的可见部分，**下面**那个窗口的 handler 触发了。
@@ -212,6 +253,8 @@ Window 提供的只是**容器**和**事件路由之外的事**（drag / focus /
 - [x] `onPointerCancel` 释放 capture
 - [x] `data-window-version` DOM attribute
 - [x] a11y: `aria-label="close"` on close button
+- [x] `dragMode: 'title' | 'anywhere'`（HTML + PIXI 同步）
+- [x] `data-window-drag-mode` DOM attribute
 - [ ] Resize support (`resizable` prop + handle)
 - [ ] Keyboard: Escape to close, Tab order
 - [ ] Animation on open / close
@@ -255,6 +298,9 @@ Window 提供的只是**容器**和**事件路由之外的事**（drag / focus /
 - `src/window/Window.md` — HTML Window API 文档
 - `src/window/PixiWindow.ts` — PIXI Window（createWindow + GameWindow extends SubCanvas）
 - `src/window/PixiWindow.md` — PIXI Window API 文档
+- `src/window/Confirm.tsx` — HTML 高层对话框（基于 `Window` + `dragMode="anywhere"`）
+- `src/window/Confirm.md` — Confirm API + 设计说明
+- `src/displays/confirm/ConfirmDisplay.tsx` — `#confirm` 路由 demo（两个 Confirm 实例）
 - `src/displays/two-3d/Two3DDisplay.tsx` — 两个 3D window 的 display，演示 z-order + per-window click
 - `src/displays/window/WindowDisplay.tsx` — 用了 PIXI createWindow 的 display
 - `src/pixi/SubCanvas.ts` — PIXI Window 的底层，drag / event routing / bounds 都在这

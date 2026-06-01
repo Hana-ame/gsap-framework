@@ -17,13 +17,13 @@ App → RouteSwitch → useHashRoute / routes → display components
 
 | 文件 | 作用 |
 |---|---|
-| `routes.ts` | 路由注册表：定义 6 个 route 名称、default、type guard、route → component 映射 |
+| `routes.ts` | 路由注册表：定义 route 名称、default、type guard、route → component 映射 |
 | `useHashRoute.ts` | Hook：监听 `hashchange`，返回当前 `Route` |
 | `RouteSwitch.tsx` | 根据 hash 从 `routeMap` 取对应组件渲染 |
 
 依赖链：`App → RouteSwitch → (routes + useHashRoute)`
 
-## displays/ — 各页面展示组件
+## displays/ — PIXI 展示组件
 
 ```
 routes.ts → DisplayComponents
@@ -34,11 +34,20 @@ routes.ts → DisplayComponents
 | `single/SingleDisplay.tsx` | 全屏单区域 PIXI 画布 | `PixiApp → Displays` |
 | `multiple/MultipleDisplay.tsx` | 2×2 四象限 PIXI 画布 | `PixiApp → Displays` |
 | `window/WindowDisplay.tsx` | PIXI 窗口系统（Inventory + Chat） | `PixiApp → PixiWindow, Loading` |
-| `three/ThreeDisplay.tsx` | Three.js 场景（icosahedron + 弹跳方块） | `start3DApp` |
-| `two-3d/Two3DDisplay.tsx` | 两个 React Window 内嵌 Three.js 场景 | `window/Window` |
-| `three-euler/ThreeEulerDisplay.tsx` | Three.js 飞船模型 Euler 角演示（mesh） | 无内部依赖 |
-| `camera-euler/CameraEulerDisplay.tsx` | Three.js 相机 Euler 角演示（camera） | 无内部依赖 |
 | `Displays.ts` | 公用工具：挂载 PIXI 十字线、移动文字、点击涟漪 | `SubCanvas` |
+
+## three-displays/ — Three.js 展示组件
+
+```
+routes.ts → ThreeDisplayComponents
+```
+
+| 文件 | 作用 | 依赖 |
+|---|---|---|
+| `three/ThreeDisplay.tsx` | Three.js 场景（icosahedron + 弹跳方块 + 点击生成） | `start3DApp` |
+| `three-euler/ThreeEulerDisplay.tsx` | Three.js 飞船模型 Euler 角演示（mesh，YXZ 顺序 + pitch clamp） | 无内部依赖 |
+| `two-3d/Two3DDisplay.tsx` | 两个 React Window 内嵌 Three.js 场景（TorusKnot + Icosahedron） | `window/Window` |
+| `camera-euler/CameraEulerDisplay.tsx` | Three.js 相机 Euler 角演示（camera，YXZ 顺序 + pitch clamp） | 无内部依赖 |
 
 ## pixi/ — PIXI 基础设施层
 
@@ -59,12 +68,6 @@ PixiApp → SubCanvasProxy → SubCanvas
 | 文件 | 作用 | 被依赖方 |
 |---|---|---|
 | `start3DApp.ts` | 创建全屏 Three.js 场景（fog、OrbitControls、raycaster），返回 cleanup | `ThreeDisplay` |
-
-## ui/ — 杂项 UI 组件
-
-| 文件 | 作用 | 被依赖方 |
-|---|---|---|
-| `Loading.ts` | PIXI 加载遮罩（半透明背景 + 旋转8点动画 + 文字） | `WindowDisplay` |
 
 ## window/ — window 化层（**polish 重点**）
 

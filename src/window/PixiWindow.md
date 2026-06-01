@@ -87,6 +87,8 @@ win.destroy()
 ## API
 
 ```ts
+type PixiDragMode = 'title' | 'anywhere';
+
 interface GameWindowOptions {
   parent: SubCanvas;          // 父级（一般是 root 或某个 layout 区域）
   title: string;              // 标题栏文字
@@ -95,6 +97,7 @@ interface GameWindowOptions {
   x?: number;                 // 默认 60
   y?: number;                 // 默认 60
   draggable?: boolean;        // 默认 true
+  dragMode?: PixiDragMode;    // 默认 'title'
   closable?: boolean;         // 默认 true
   onClose?: () => void;       // 默认 win.destroy()
 }
@@ -106,6 +109,15 @@ interface GameWindow extends SubCanvas {
 
 function createWindow(opts: GameWindowOptions): GameWindow
 ```
+
+### `dragMode`
+
+| 值 | 行为 | 适用 |
+| --- | --- | --- |
+| `'title'` (default) | 只有 y ≤ TITLE_BAR_H 的按压才开 drag | 信息型窗口、里面有交互式 content |
+| `'anywhere'` | 整个 window 区域按压都开 drag | 对话框、纯展示面板 |
+
+注意：PIXI 模式下 `anywhere` 模式有一个限制 — `content` 是 SubCanvas child，按 PIXI 事件路由，**点击 content 会优先命中 content 的 listeners，不触发 win.onPress**。所以 `anywhere` 拖动只在 content 是空的时候才"全表面"。如果 content 里有按钮/图形需要可点同时要拖动，content 内的子对象必须在 pointer 事件里自己 `e.stopPropagation?.()`，或考虑用 HTML `Window` + 3D 嵌入（参考 `src/three-displays/two-3d`）。
 
 ### GameWindow vs SubCanvas
 - GameWindow **是** SubCanvas（extends + 类型断言）
