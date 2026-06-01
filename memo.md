@@ -71,3 +71,60 @@ gh run list --repo Hana-ame/Hana-ame --branch sim
 ### 注意
 - Node 22.9 < Vite 7 要求的 ≥22.12（仅 warning，构建 OK）
 - Tailwind 装在 deps 但 vite.config.ts 没启用（dead weight，待定）
+
+## 2026-06-01 — 多窗口架构（WindowInstance / SubCanvasProxy）
+
+### 目标
+一个主 PIXI.Application（canvas 仍挂 body）下，挂多个 `WindowInstance`，每个看上去跟 `PIXI.Application` 一样（`.stage`、`.ticker`、`.renderer`、`.canvas`、`.onPress/.onMove/.onRelease`、`.destroy`），但实际只占用主 canvas 的一个子区域，事件按 bounds 路由。
+
+### 新增文件
+- `src/WindowInstance.ts` — 类。内部 = 主 app 的一个 `Container`（`.position = bounds`），外部暴露 PIXI 兼容的 getter 链（`ticker/renderer/canvas` 都是主 app 的代理）；自管 `pointerdown/move/up/leave` 监听。
+- `src/SubCanvasProxy.ts` — 代理类。`createWindow(bounds)` / `destroyAll()` / `routePointer(type, e)`。事件从 `PixiApp` 一处统一监听后投喂进来。
+
+### 修改
+- `src/PixiApp.ts` — `startPixiApp(onReady?)` 改为接受回调；`onReady(proxy)` 在 `app.init()` 完成后触发；全局 `window` 监听 4 种 pointer 事件，路由到 `proxy.routePointer`。
+- `src/Displays.ts` — 签名从 `mountDisplays(app)` 改为 `mountDisplays(win)`；坐标改用 `e.x/e.y`（窗口内局部坐标）；点击环/十字准星都加到 `win.stage`，所以天然在子区域内。
+- `src/App.tsx` — `onReady` 里 2×2 创建 4 个 `WindowInstance`，每窗带边框 + 标题 + `mountDisplays`。
+
+### WindowInstance 公开 API（PIXI 兼容面）
+```ts
+class WindowInstance {
+  readonly stage: PIXI.Container       // PIXI.Application.stage
+  readonly bounds: { x, y, width, height }
+  get ticker(): PIXI.Ticker             // → app.ticker
+  get renderer(): PIXI.IRenderer        // → app.renderer
+  get canvas(): HTMLCanvasElement       // → app.canvas
+  get destroyed(): boolean
+  onPress(fn): this                     // pointerdown 在 bounds 内
+  onMove(fn): this                      // pointermove
+  onRelease(fn): this                   // pointerup
+  onLeave(fn): this                     // pointerleave
+  off(type, fn): this
+  destroy(): void
+}
+```
+
+### 事件流（点击）
+```
+[OS] pointerdown @ (cx, cy)
+  └─ window 'pointerdown' 监听 (PixiApp.ts)
+       └─ proxy.routePointer('pointerdown', e)
+            └─ for win in proxy.windows:
+                 └─ win.handlePointer('pointerdown', e)
+                      ├─ localX = cx - bounds.x
+                      ├─ localY = cy - bounds.y
+                      ├─ 越界则 return
+                      └─ listeners.get('pointerdown').forEach(fn => fn({ type, x: localX, y: localY, ... }))
+                           └─ Displays 的 onPress 回调，画 ring + label
+```
+
+### 已知限制
+- resize 时子窗口 bounds 不变（按创建时的 viewport 算的）。要做响应式：监听 resize → 调 `win.stage.position.set(...)` + 更新 bounds。
+- 越界渲染：子窗口内的 Graphics 越界后会画到主 canvas 的别的区域（没加 mask/clip）。如需严格"窗口化"，在 `WindowInstance` 构造时加 `stage.mask = new Graphics().rect(0, 0, w, h).fill(0xffffff)`。
+- 每个 WindowInstance 的 ticker/renderer/canvas 都是主 app 的引用——任何"销毁"操作应只走 `win.destroy()`，**别**直接调 `app.destroy()`。
+
+### 设计原则（备忘）
+- "PIXI 兼容" = 暴露同名/同形的属性与方法，让用户照搬 PIXI 习惯的代码（`win.stage.addChild`、`win.ticker.add`）
+- "proxy 接收 canvas 操作" = 唯一的 `app` 引用在 `SubCanvasProxy` 内部，外部只通过 `proxy.createWindow` / `proxy.routePointer` 间接操作
+- 事件路由放在 proxy 一处，单点监听 + 多点分发，避免每个 WindowInstance 都挂监听（性能 + 内存）
+
