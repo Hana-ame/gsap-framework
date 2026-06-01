@@ -6,7 +6,7 @@ import { ThreeDisplay } from '../displays/three/ThreeDisplay';
 
 export const ROUTES = ['single', 'multiple', 'window', 'three'] as const;
 export type Route = (typeof ROUTES)[number];
-export const DEFAULT_ROUTE: Route = 'multiple';
+export const DEFAULT_ROUTE: Route = 'three';
 
 export const isRoute = (r: string): r is Route =>
   (ROUTES as readonly string[]).includes(r);
