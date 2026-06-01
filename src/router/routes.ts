@@ -7,6 +7,7 @@ import { Two3DDisplay } from '../three-displays/two-3d/Two3DDisplay';
 import { ThreeEulerDisplay } from '../three-displays/three-euler/ThreeEulerDisplay';
 import { CameraEulerDisplay } from '../three-displays/camera-euler/CameraEulerDisplay';
 import { ConfirmDisplay } from '../three-displays/confirm/ConfirmDisplay';
+import { PixiConfirmDisplay } from '../three-displays/pixi-confirm/PixiConfirmDisplay';
 
 export const ROUTES = [
   'single',
@@ -17,9 +18,10 @@ export const ROUTES = [
   'three-euler',
   'camera-euler',
   'confirm',
+  'pixi-confirm',
 ] as const;
 export type Route = (typeof ROUTES)[number];
-export const DEFAULT_ROUTE: Route = 'confirm';
+export const DEFAULT_ROUTE: Route = 'pixi-confirm';
 
 export const isRoute = (r: string): r is Route =>
   (ROUTES as readonly string[]).includes(r);
@@ -33,4 +35,5 @@ export const routeMap: Record<Route, ComponentType> = {
   'three-euler': ThreeEulerDisplay,
   'camera-euler': CameraEulerDisplay,
   confirm: ConfirmDisplay,
+  'pixi-confirm': PixiConfirmDisplay,
 };

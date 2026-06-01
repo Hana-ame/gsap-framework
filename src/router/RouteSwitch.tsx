@@ -36,6 +36,10 @@ export function RouteSwitch() {
       const C = routeMap.confirm;
       return <C />;
     }
+    case 'pixi-confirm': {
+      const C = routeMap['pixi-confirm'];
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;

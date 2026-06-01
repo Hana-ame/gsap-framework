@@ -300,7 +300,10 @@ Window 提供的只是**容器**和**事件路由之外的事**（drag / focus /
 - `src/window/PixiWindow.md` — PIXI Window API 文档
 - `src/window/Confirm.tsx` — HTML 高层对话框（基于 `Window` + `dragMode="anywhere"`）
 - `src/window/Confirm.md` — Confirm API + 设计说明
-- `src/displays/confirm/ConfirmDisplay.tsx` — `#confirm` 路由 demo（两个 Confirm 实例）
+- `src/window/PixiConfirm.ts` — PIXI 高层对话框（基于 `SubCanvas` + `dragMode="anywhere"` + 手写 button hit-test）
+- `src/window/PixiConfirm.md` — PixiConfirm API + 实现说明
+- `src/three-displays/confirm/ConfirmDisplay.tsx` — `#confirm` 路由 demo（HTML Confirm 实例）
+- `src/three-displays/pixi-confirm/PixiConfirmDisplay.tsx` — `#pixi-confirm` 路由 demo（PIXI Confirm 实例）
 - `src/displays/two-3d/Two3DDisplay.tsx` — 两个 3D window 的 display，演示 z-order + per-window click
 - `src/displays/window/WindowDisplay.tsx` — 用了 PIXI createWindow 的 display
 - `src/pixi/SubCanvas.ts` — PIXI Window 的底层，drag / event routing / bounds 都在这

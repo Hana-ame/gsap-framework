@@ -7,9 +7,9 @@
     <title>sim</title>
     <script>
       (function () {
-        var valid = ['#single', '#multiple', '#window', '#three', '#two-3d', '#three-euler', '#camera-euler', '#confirm'];
+        var valid = ['#single', '#multiple', '#window', '#three', '#two-3d', '#three-euler', '#camera-euler', '#confirm', '#pixi-confirm'];
         if (valid.indexOf(window.location.hash) < 0) {
-          window.location.replace('#confirm');
+          window.location.replace('#pixi-confirm');
         }
       })();
     </script>
