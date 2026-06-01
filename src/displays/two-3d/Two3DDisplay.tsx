@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import type { CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EventBus } from '../../pixi/EventBus';
@@ -14,6 +14,8 @@ type SceneCtx = {
   scene: THREE.Scene;
   dispose: () => void;
 };
+
+type Pos = { x: number; y: number };
 
 export function Two3DDisplay() {
   const ref = useRef<HTMLDivElement>(null);
@@ -53,26 +55,85 @@ export function Two3DDisplay() {
 
   return (
     <div ref={ref} style={container}>
-      <Window title="A · TorusKnot (click → recolor both)" dataAttr="a" />
-      <Window title="B · Icosahedron (click → rotate A)" dataAttr="b" />
+      <DraggableWindow
+        title="A · TorusKnot (click → recolor both)"
+        dataAttr="a"
+        initial={{ x: 24, y: 32 }}
+      />
+      <DraggableWindow
+        title="B · Icosahedron (click → rotate A)"
+        dataAttr="b"
+        initial={{ x: 360, y: 96 }}
+      />
     </div>
   );
 }
 
 const container: CSSProperties = {
-  display: 'flex',
+  position: 'relative',
   width: '100%',
   height: '100%',
-  gap: 8,
-  padding: 8,
-  boxSizing: 'border-box',
   background: '#0a0a12',
+  overflow: 'hidden',
 };
 
-function Window({ title, dataAttr }: { title: string; dataAttr: string }) {
+const WINDOW_W = 320;
+const WINDOW_H = 260;
+
+function DraggableWindow({
+  title,
+  dataAttr,
+  initial,
+}: {
+  title: string;
+  dataAttr: string;
+  initial: Pos;
+}) {
+  const [pos, setPos] = useState<Pos>(initial);
+  const drag = useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
+
+  const onDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    drag.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
+  };
+  const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d) return;
+    setPos({
+      x: d.ox + (e.clientX - d.sx),
+      y: d.oy + (e.clientY - d.sy),
+    });
+  };
+  const onUp = (e: ReactPointerEvent<HTMLDivElement>) => {
+    drag.current = null;
+    try {
+      (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+    } catch {
+      // already released
+    }
+  };
+
   return (
-    <div style={windowFrame}>
-      <div style={titleBar}>{title}</div>
+    <div
+      style={{
+        ...windowFrame,
+        position: 'absolute',
+        left: pos.x,
+        top: pos.y,
+        width: WINDOW_W,
+        height: WINDOW_H,
+      }}
+    >
+      <div
+        style={{ ...titleBar, cursor: 'grab', touchAction: 'none' }}
+        onPointerDown={onDown}
+        onPointerMove={onMove}
+        onPointerUp={onUp}
+        onPointerCancel={onUp}
+      >
+        {title}
+      </div>
       <div style={content}>
         <canvas data-3d={dataAttr} style={canvasStyle} />
       </div>
@@ -81,7 +142,6 @@ function Window({ title, dataAttr }: { title: string; dataAttr: string }) {
 }
 
 const windowFrame: CSSProperties = {
-  flex: 1,
   display: 'flex',
   flexDirection: 'column',
   border: '1px solid #2a2a3a',
@@ -90,6 +150,7 @@ const windowFrame: CSSProperties = {
   background: '#0d0d18',
   minWidth: 0,
   minHeight: 0,
+  boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
 };
 
 const titleBar: CSSProperties = {
