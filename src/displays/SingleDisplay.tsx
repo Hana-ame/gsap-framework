@@ -6,6 +6,7 @@ import { mountDisplays } from './Displays';
 export function SingleDisplay() {
   useEffect(() => {
     const displayCleanups: (() => void)[] = [];
+    let cleanupResize: (() => void) | null = null;
 
     const destroy = startPixiApp((proxy) => {
       const W = window.innerWidth;
@@ -21,9 +22,14 @@ export function SingleDisplay() {
       root.stage.addChild(title);
 
       displayCleanups.push(mountDisplays(root));
+
+      cleanupResize = proxy.onWindowResize(() => {
+        root.setBounds({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight });
+      });
     });
 
     return () => {
+      cleanupResize?.();
       displayCleanups.forEach((c) => c());
       destroy();
     };

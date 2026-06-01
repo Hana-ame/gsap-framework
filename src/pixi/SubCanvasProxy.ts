@@ -21,7 +21,7 @@ export class SubCanvasProxy {
     return this.app.ticker;
   }
 
-  get renderer(): PIXI.IRenderer {
+  get renderer(): PIXI.Renderer {
     return this.app.renderer;
   }
 
@@ -55,5 +55,10 @@ export class SubCanvasProxy {
   destroyAll(): void {
     [...this.topCanvases].forEach((sc) => sc.destroy());
     this.topCanvases = [];
+  }
+
+  onWindowResize(fn: () => void): () => void {
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
   }
 }

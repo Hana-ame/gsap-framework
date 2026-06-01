@@ -6,22 +6,23 @@ import { mountDisplays } from './Displays';
 export function MultipleDisplay() {
   useEffect(() => {
     const displayCleanups: (() => void)[] = [];
+    let cleanupResize: (() => void) | null = null;
 
     const destroy = startPixiApp((proxy) => {
       const W = window.innerWidth;
       const H = window.innerHeight;
-      const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-      const quadrants = root.grid({ rows: 2, cols: 2 });
       const colors = [0xff6688, 0x66ff88, 0x6688ff, 0xffff66];
+      const cols = 2;
+      const rows = 2;
 
-      quadrants.forEach((sc, i) => {
+      const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      const quadrants = root.grid({ rows, cols });
+
+      quadrants.forEach((q, i) => {
         const color = colors[i];
 
         const border = new PIXI.Graphics();
-        border
-          .rect(0, 0, sc.bounds.width, sc.bounds.height)
-          .stroke({ width: 2, color, alpha: 0.6 });
-        sc.stage.addChild(border);
+        q.stage.addChild(border);
 
         const title = new PIXI.Text({
           text: `Window ${i + 1}`,
@@ -29,13 +30,32 @@ export function MultipleDisplay() {
         });
         title.x = 12;
         title.y = 12;
-        sc.stage.addChild(title);
+        q.stage.addChild(title);
 
-        displayCleanups.push(mountDisplays(sc));
+        q.onResize((b) => {
+          border.clear().rect(0, 0, b.width, b.height).stroke({ width: 2, color, alpha: 0.6 });
+        });
+
+        displayCleanups.push(mountDisplays(q));
       });
+
+      const layout = (W: number, H: number) => {
+        root.setBounds({ x: 0, y: 0, width: W, height: H });
+        quadrants.forEach((q, i) => {
+          const row = Math.floor(i / cols);
+          const col = i % cols;
+          const qW = W / cols;
+          const qH = H / rows;
+          q.setBounds({ x: col * qW, y: row * qH, width: qW, height: qH });
+        });
+      };
+
+      layout(W, H);
+      cleanupResize = proxy.onWindowResize(() => layout(window.innerWidth, window.innerHeight));
     });
 
     return () => {
+      cleanupResize?.();
       displayCleanups.forEach((c) => c());
       destroy();
     };

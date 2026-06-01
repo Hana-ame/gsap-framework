@@ -155,21 +155,59 @@ HTML 元素（如果有 nav 之类）在 canvas 之上时，pointer 事件仍冒
 | `#anything-else` | 回退到 `multiple` |
 
 ### 已知限制（同上次）
-- resize 时子窗口 bounds 不变
 - 越界渲染不裁切（无 mask）
 - 路由切换瞬时（destroy → init 闪一下）
+
+## 2026-06-01 — resize 响应 + 控件文档
+
+### 触发
+用户："支持 resize" + "多查看 PIXI 文档，按照最新的来" + "为每个控件写下调用栈"。
+
+### 动作
+- **PIXI v8.18 API 适配**：
+  - `PIXI.IRenderer` → `PIXI.Renderer`（v8 改名为联合类型 WebGL/WebGPU/Canvas）
+  - `tsconfig.app.json` 删 `erasableSyntaxOnly`（TS 5.8+ 才支持，当前用 5.6.3）
+- **resize 支持**（additive，不改原 API）：
+  - `SubCanvas.setBounds(bounds)` — 改 `_bounds` + `stage.position` + 触发 `onResize` 回调
+  - `SubCanvas.onResize(fn)` — 注册布局回调
+  - `SubCanvas.bounds` 改 getter，背后 `_bounds`（保留 readonly 语义，外部不能 `sc.bounds = ...`）
+  - `SubCanvasProxy.onWindowResize(fn)` — 包 `window.addEventListener('resize', fn)`，返回 cleanup
+  - `MultipleDisplay` 加 `layout(W, H)` 函数 + `onResize` 重画 border
+  - `SingleDisplay` 用 `root.setBounds` 响应 resize
+- **控件文档**（每个控件一个 .md，调用栈 + API + 使用 + 应用范围 + 注意事项）：
+  - `src/pixi/SubCanvas.md`
+  - `src/pixi/SubCanvasProxy.md`
+  - `src/pixi/PixiApp.md`
+  - `src/displays/Displays.md`
+  - `src/displays/SingleDisplay.md`
+  - `src/displays/MultipleDisplay.md`
+  - `src/router/routes.md`
+  - `src/router/RouteSwitch.md`
+  - `src/router/useHashRoute.md`
+
+### 部署
+- 远端 `Hana-ame/sim` ← 当前 HEAD（Cloudflare 接管 deploy）
+- 部署后查看地址：**https://react.moonchan.xyz/**
 
 ## 待完善（后续 todo）
 按重要性排：
 
-1. **resize 响应** — 监听 resize，按规则重算各 window 的 `bounds` 与 `stage.position`
-2. **越界裁切** — `WindowInstance` 构造时 `stage.mask = new Graphics().rect(0, 0, w, h).fill(0xffffff)`
+1. ~~resize 响应~~ ✅ 完成
+2. **越界裁切** — `SubCanvas` 构造时 `stage.mask = new Graphics().rect(0, 0, w, h).fill(0xffffff)`
 3. **z-order / 拖动** — 多个 window 堆叠、拖动标题改位置
-4. **窗口生命周期事件** — `onFocus` / `onBlur` / `onResize` / `onClose` 回调
-5. **Inter-window 通信** — `proxy.broadcast(msg)` 或 `win1.sendTo(win2, msg)`
+4. **窗口生命周期事件** — `onFocus` / `onBlur` / `onClose` 回调
+5. **Inter-window 通信** — `proxy.broadcast(msg)` 或 `sc1.sendTo(sc2, msg)`
 6. **更多 example displays** — 拖拽、键盘事件、文本输入、动画曲线
 7. **持久化** — localStorage 记窗口布局
 8. **键盘焦点** — tab 切换、Enter/Esc 绑定
 9. **路由过渡动画** — single ↔ multiple 切换时淡入淡出
-10. **Window class 派生** — `class GameWindow extends WindowInstance`，内置通用工具栏/关闭按钮
+10. **Window class 派生** — `class GameWindow extends SubCanvas`，内置通用工具栏/关闭按钮
+
+## PIXI 文档参考
+- 模块索引：https://pixijs.download/release/docs/modules.html
+- v8.18 类型变化（与 v7/v8.0 不同）：
+  - `Application.renderer` 类型是 `Renderer`（联合），不是 `IRenderer`
+  - `Application.destroy(rendererDestroyOptions?, options?)` 仍支持 v7 签名（v8.18 兼容）
+  - `Container` 仍用 `position.set(x, y)`
+  - `init()` 仍异步，返回 Promise
 

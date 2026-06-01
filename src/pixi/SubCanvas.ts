@@ -29,18 +29,19 @@ export interface SubCanvasOptions {
 
 export class SubCanvas {
   readonly stage: PIXI.Container;
-  readonly bounds: Rect;
   readonly parent: SubCanvas | null;
   readonly rootApp: PIXI.Application;
 
+  private _bounds: Rect;
   private children: SubCanvas[] = [];
   private listeners: Map<SubPointerType, Set<Listener>> = new Map();
+  private resizeListeners: Set<(bounds: Rect) => void> = new Set();
   private _destroyed = false;
   private onDestroy: () => void;
 
   constructor(opts: SubCanvasOptions) {
     this.rootApp = opts.rootApp;
-    this.bounds = opts.bounds;
+    this._bounds = opts.bounds;
     this.parent = opts.parent ?? null;
     this.onDestroy = opts.onDestroy ?? (() => {});
 
@@ -54,14 +55,18 @@ export class SubCanvas {
     }
   }
 
+  get bounds(): Rect {
+    return this._bounds;
+  }
+
   get globalBounds(): Rect {
-    if (!this.parent) return { ...this.bounds };
+    if (!this.parent) return { ...this._bounds };
     const pg = this.parent.globalBounds;
     return {
-      x: pg.x + this.bounds.x,
-      y: pg.y + this.bounds.y,
-      width: this.bounds.width,
-      height: this.bounds.height,
+      x: pg.x + this._bounds.x,
+      y: pg.y + this._bounds.y,
+      width: this._bounds.width,
+      height: this._bounds.height,
     };
   }
 
@@ -69,7 +74,7 @@ export class SubCanvas {
     return this.rootApp.ticker;
   }
 
-  get renderer(): PIXI.IRenderer {
+  get renderer(): PIXI.Renderer {
     return this.rootApp.renderer;
   }
 
@@ -106,6 +111,17 @@ export class SubCanvas {
     return this;
   }
 
+  onResize(fn: (bounds: Rect) => void): this {
+    this.resizeListeners.add(fn);
+    return this;
+  }
+
+  setBounds(bounds: Rect): void {
+    this._bounds = bounds;
+    this.stage.position.set(bounds.x, bounds.y);
+    this.resizeListeners.forEach((fn) => fn(bounds));
+  }
+
   private addListener(type: SubPointerType, fn: Listener): this {
     if (!this.listeners.has(type)) this.listeners.set(type, new Set());
     this.listeners.get(type)!.add(fn);
@@ -127,15 +143,15 @@ export class SubCanvas {
   }
 
   divide(opts: { direction: 'horizontal' | 'vertical'; ratios: number[] }): SubCanvas[] {
-    const total = opts.direction === 'horizontal' ? this.bounds.width : this.bounds.height;
+    const total = opts.direction === 'horizontal' ? this._bounds.width : this._bounds.height;
     const subs: SubCanvas[] = [];
     let offset = 0;
     opts.ratios.forEach((ratio) => {
       const size = total * ratio;
       const subBounds: Rect =
         opts.direction === 'horizontal'
-          ? { x: offset, y: 0, width: size, height: this.bounds.height }
-          : { x: 0, y: offset, width: this.bounds.width, height: size };
+          ? { x: offset, y: 0, width: size, height: this._bounds.height }
+          : { x: 0, y: offset, width: this._bounds.width, height: size };
       subs.push(this.createSubRegion(subBounds));
       offset += size;
     });
@@ -146,8 +162,8 @@ export class SubCanvas {
     const gap = opts.gap ?? 0;
     const totalGapX = gap * (opts.cols - 1);
     const totalGapY = gap * (opts.rows - 1);
-    const cellW = (this.bounds.width - totalGapX) / opts.cols;
-    const cellH = (this.bounds.height - totalGapY) / opts.rows;
+    const cellW = (this._bounds.width - totalGapX) / opts.cols;
+    const cellH = (this._bounds.height - totalGapY) / opts.rows;
     const subs: SubCanvas[] = [];
     for (let r = 0; r < opts.rows; r++) {
       for (let c = 0; c < opts.cols; c++) {
