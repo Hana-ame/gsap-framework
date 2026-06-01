@@ -2,12 +2,12 @@ import type { ComponentType } from 'react';
 import { SingleDisplay } from '../displays/single/SingleDisplay';
 import { MultipleDisplay } from '../displays/multiple/MultipleDisplay';
 import { WindowDisplay } from '../displays/window/WindowDisplay';
-import { ConfirmDisplay } from '../displays/confirm/ConfirmDisplay';
 import { PixiConfirmDisplay } from '../displays/pixi-confirm/PixiConfirmDisplay';
 import { ThreeDisplay } from '../three-displays/three/ThreeDisplay';
 import { Two3DDisplay } from '../three-displays/two-3d/Two3DDisplay';
 import { ThreeEulerDisplay } from '../three-displays/three-euler/ThreeEulerDisplay';
 import { CameraEulerDisplay } from '../three-displays/camera-euler/CameraEulerDisplay';
+import { ConfirmDisplay } from '../html-displays/confirm/ConfirmDisplay';
 
 export const ROUTES = [
   'single',
