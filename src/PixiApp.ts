@@ -20,7 +20,9 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
   };
 
   const makePointerHandler = (type: SubPointerType) => (e: PointerEvent) => {
-    proxy?.routePointer(type, e);
+    if (!proxy) return;
+    if (e.target !== proxy.canvas) return;
+    proxy.routePointer(type, e);
   };
 
   POINTER_TYPES.forEach((type) => {

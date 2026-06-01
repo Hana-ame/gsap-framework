@@ -128,3 +128,45 @@ class WindowInstance {
 - "proxy 接收 canvas 操作" = 唯一的 `app` 引用在 `SubCanvasProxy` 内部，外部只通过 `proxy.createWindow` / `proxy.routePointer` 间接操作
 - 事件路由放在 proxy 一处，单点监听 + 多点分发，避免每个 WindowInstance 都挂监听（性能 + 内存）
 
+## 2026-06-01 — hash router + 单/多窗口分流
+
+### 新增
+- `src/router.ts` — `useHashRoute()` hook（自写，不引 react-router）。`Route = 'single' | 'multiple'`，默认 `multiple`；hash 非法自动 replace 到默认
+- `src/Nav.tsx` — 右上角固定 nav（两个 `<a href="#single/#multiple">`，当前路由高亮）
+- `src/SingleDisplay.tsx` — 1 个 WindowInstance 填满 viewport
+- `src/MultipleDisplay.tsx` — 2×2 网格（从原 App.tsx 抽出）
+
+### 修改
+- `src/App.tsx` — 极薄：`useHashRoute` + `<Nav>` + 路由分发
+- `src/PixiApp.ts` — pointer 监听加 `e.target !== proxy.canvas` 过滤，nav 点击不再误触发窗口 click
+
+### 关键修复
+nav 是绝对定位的 HTML 元素，在 canvas 之上。点击 nav 链接时，`pointerdown` 仍会冒泡到 `window`，让原实现误以为点在 canvas 上 → 在 Window 2（右上）触发 click 环。修复：路由前先看 `e.target` 是不是主 canvas。
+
+### 路由表
+| URL | 显示 |
+|---|---|
+| `https://react.moonchan.xyz/` | redirect → `#multiple` |
+| `#single` | 1 个全屏 window + displays |
+| `#multiple` | 2×2 网格 window + displays |
+| `#anything-else` | 回退到 `multiple` |
+
+### 已知限制（同上次）
+- resize 时子窗口 bounds 不变
+- 越界渲染不裁切（无 mask）
+- 路由切换瞬时（destroy → init 闪一下）
+
+## 待完善（后续 todo）
+按重要性排：
+
+1. **resize 响应** — 监听 resize，按规则重算各 window 的 `bounds` 与 `stage.position`
+2. **越界裁切** — `WindowInstance` 构造时 `stage.mask = new Graphics().rect(0, 0, w, h).fill(0xffffff)`
+3. **z-order / 拖动** — 多个 window 堆叠、拖动标题改位置
+4. **窗口生命周期事件** — `onFocus` / `onBlur` / `onResize` / `onClose` 回调
+5. **Inter-window 通信** — `proxy.broadcast(msg)` 或 `win1.sendTo(win2, msg)`
+6. **更多 example displays** — 拖拽、键盘事件、文本输入、动画曲线
+7. **持久化** — localStorage 记窗口布局
+8. **键盘焦点** — tab 切换、Enter/Esc 绑定
+9. **路由过渡动画** — single ↔ multiple 切换时淡入淡出
+10. **Window class 派生** — `class GameWindow extends WindowInstance`，内置通用工具栏/关闭按钮
+
