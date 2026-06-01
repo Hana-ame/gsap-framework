@@ -103,10 +103,34 @@ off(type, fn)                                                  // 移除单个
 
 ### 布局
 ```ts
-onResize(fn: (bounds: Rect) => void): this        // 注册布局回调
+onResize(fn: (bounds: Rect) => void): this        // 注册布局回调（只在 size 变化时需要）
 setBounds(bounds: Rect): void                     // 更新 _bounds + stage.position + 触发 onResize
+setPosition(x: number, y: number): void           // 只改位置，不触发 onResize（拖动用）
+setSize(width: number, height: number): void      // 只改大小，触发 onResize
 ```
-**`bounds` 是只读的**（getter，背后是 `_bounds`）。外部代码不能 `sc.bounds = ...`，必须用 `setBounds`。
+**`bounds` 是只读的**（getter，背后是 `_bounds`）。外部代码不能 `sc.bounds = ...`，必须用 `setBounds / setPosition / setSize`。
+
+**拖动场景**：用 `setPosition(x, y)` 而不是 `setBounds` — 避免拖动期间无意义地触发 `onResize`，子级 content 不会因位置变化而重布局。
+
+### z-order
+```ts
+bringToFront(): void                              // 移到 parent.stage.children 末尾（最上层）
+sendToBack(): void                                // 移到 0 位（最下层）
+```
+**渲染顺序 = 命中顺序**：后画的在上层 + 后被命中。`createSubRegion` 的顺序就是 z-order；想换序调 `bringToFront`。
+
+### 拖动
+```ts
+setDraggable(opts?: {
+  bounds?: Rect;                                  // 拖动范围（默认 parent.bounds）
+  onDragStart?: (e: SubPointerEvent) => void;
+  onDrag?: (e: SubPointerEvent, pos: { x, y }) => void;
+  onDragEnd?: (e: SubPointerEvent) => void;
+  bringToFront?: boolean;                         // 拖动时是否置顶，默认 true
+}): () => void                                    // 返回 cleanup
+```
+**实现**：内部注册 `onPress` / `onMove` / `onRelease`，在 `onPress` 时记起点，`onMove` 时算 delta 并 `setPosition`，自动 clamp 到 `bounds`。
+**注意**：用了 `setDraggable` 就别再在同一个 SubCanvas 上手动写 `onPress` 处理拖动 — 会冲突；其他用途的 onPress 仍然可以共存。
 
 ### 生命周期
 ```ts

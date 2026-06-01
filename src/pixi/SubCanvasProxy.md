@@ -59,6 +59,7 @@ proxy.onWindowResize(fn)
 | `ticker` | `PIXI.Ticker` | → `app.ticker` |
 | `renderer` | `PIXI.Renderer` | → `app.renderer` |
 | `stage` | `PIXI.Container` | → `app.stage`（主 stage，所有顶层 canvas 挂在这里） |
+| `bus` | `EventBus` | 共享 pub-sub，跨 SubCanvas 通信 + 后台事件入口 |
 
 ### 方法
 ```ts

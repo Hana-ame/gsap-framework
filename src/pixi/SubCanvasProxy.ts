@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Rect, SubCanvas, SubPointerType } from './SubCanvas';
+import { EventBus } from './EventBus';
 
 export interface SubCanvasProxyOptions {
   app: PIXI.Application;
@@ -8,9 +9,14 @@ export interface SubCanvasProxyOptions {
 export class SubCanvasProxy {
   private app: PIXI.Application;
   private topCanvases: SubCanvas[] = [];
+  private _bus = new EventBus();
 
   constructor(opts: SubCanvasProxyOptions) {
     this.app = opts.app;
+  }
+
+  get bus(): EventBus {
+    return this._bus;
   }
 
   get canvas(): HTMLCanvasElement {
@@ -55,6 +61,7 @@ export class SubCanvasProxy {
   destroyAll(): void {
     [...this.topCanvases].forEach((sc) => sc.destroy());
     this.topCanvases = [];
+    this._bus.clear();
   }
 
   onWindowResize(fn: () => void): () => void {

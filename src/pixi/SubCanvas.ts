@@ -20,6 +20,14 @@ export interface SubPointerEvent {
 
 type Listener = (e: SubPointerEvent) => void;
 
+export interface DragOptions {
+  bounds?: Rect;
+  onDragStart?: (e: SubPointerEvent) => void;
+  onDrag?: (e: SubPointerEvent, pos: { x: number; y: number }) => void;
+  onDragEnd?: (e: SubPointerEvent) => void;
+  bringToFront?: boolean;
+}
+
 export interface SubCanvasOptions {
   rootApp: PIXI.Application;
   bounds: Rect;
@@ -120,6 +128,74 @@ export class SubCanvas {
     this._bounds = bounds;
     this.stage.position.set(bounds.x, bounds.y);
     this.resizeListeners.forEach((fn) => fn(bounds));
+  }
+
+  setPosition(x: number, y: number): void {
+    this._bounds = { ...this._bounds, x, y };
+    this.stage.position.set(x, y);
+  }
+
+  setSize(width: number, height: number): void {
+    this._bounds = { ...this._bounds, width, height };
+    this.resizeListeners.forEach((fn) => fn(this._bounds));
+  }
+
+  bringToFront(): void {
+    const parent = this.stage.parent;
+    if (!parent) return;
+    parent.setChildIndex(this.stage, parent.children.length - 1);
+  }
+
+  sendToBack(): void {
+    const parent = this.stage.parent;
+    if (!parent) return;
+    parent.setChildIndex(this.stage, 0);
+  }
+
+  setDraggable(opts: DragOptions = {}): () => void {
+    const constraint = opts.bounds ?? this.parent?.bounds ?? null;
+    const autoFront = opts.bringToFront !== false;
+    let dragging = false;
+    let sx = 0;
+    let sy = 0;
+    let ox = 0;
+    let oy = 0;
+
+    const onDown = (e: SubPointerEvent) => {
+      dragging = true;
+      sx = e.globalX;
+      sy = e.globalY;
+      ox = this._bounds.x;
+      oy = this._bounds.y;
+      if (autoFront) this.bringToFront();
+      opts.onDragStart?.(e);
+    };
+    const onMove = (e: SubPointerEvent) => {
+      if (!dragging) return;
+      let nx = ox + (e.globalX - sx);
+      let ny = oy + (e.globalY - sy);
+      if (constraint) {
+        nx = Math.max(0, Math.min(nx, constraint.width - this._bounds.width));
+        ny = Math.max(0, Math.min(ny, constraint.height - this._bounds.height));
+      }
+      this.setPosition(nx, ny);
+      opts.onDrag?.(e, { x: nx, y: ny });
+    };
+    const onUp = (e: SubPointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      opts.onDragEnd?.(e);
+    };
+
+    this.onPress(onDown);
+    this.onMove(onMove);
+    this.onRelease(onUp);
+
+    return () => {
+      this.off('pointerdown', onDown);
+      this.off('pointermove', onMove);
+      this.off('pointerup', onUp);
+    };
   }
 
   private addListener(type: SubPointerType, fn: Listener): this {

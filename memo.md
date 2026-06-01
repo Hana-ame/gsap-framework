@@ -158,50 +158,51 @@ HTML 元素（如果有 nav 之类）在 canvas 之上时，pointer 事件仍冒
 - 越界渲染不裁切（无 mask）
 - 路由切换瞬时（destroy → init 闪一下）
 
-## 2026-06-01 — resize 响应 + 控件文档
+## 2026-06-01 — game UI 化：drag / z-order / EventBus / Window / Loading
 
 ### 触发
-用户："支持 resize" + "多查看 PIXI 文档，按照最新的来" + "为每个控件写下调用栈"。
+用户："基本上是为 game UI 做的，以此为前提做一下功能。注意今后会有后台。"
+
+### 背景前提
+- **场景**：game UI（背包 / HUD / 聊天 / 设置等浮动窗口）
+- **未来**：有后台（WebSocket / API），需要 pub-sub 解耦通信 + 异步 loading 状态
 
 ### 动作
-- **PIXI v8.18 API 适配**：
-  - `PIXI.IRenderer` → `PIXI.Renderer`（v8 改名为联合类型 WebGL/WebGPU/Canvas）
-  - `tsconfig.app.json` 删 `erasableSyntaxOnly`（TS 5.8+ 才支持，当前用 5.6.3）
-- **resize 支持**（additive，不改原 API）：
-  - `SubCanvas.setBounds(bounds)` — 改 `_bounds` + `stage.position` + 触发 `onResize` 回调
-  - `SubCanvas.onResize(fn)` — 注册布局回调
-  - `SubCanvas.bounds` 改 getter，背后 `_bounds`（保留 readonly 语义，外部不能 `sc.bounds = ...`）
-  - `SubCanvasProxy.onWindowResize(fn)` — 包 `window.addEventListener('resize', fn)`，返回 cleanup
-  - `MultipleDisplay` 加 `layout(W, H)` 函数 + `onResize` 重画 border
-  - `SingleDisplay` 用 `root.setBounds` 响应 resize
-- **控件文档**（每个控件一个 .md，调用栈 + API + 使用 + 应用范围 + 注意事项）：
-  - `src/pixi/SubCanvas.md`
-  - `src/pixi/SubCanvasProxy.md`
-  - `src/pixi/PixiApp.md`
-  - `src/displays/Displays.md`
-  - `src/displays/SingleDisplay.md`
-  - `src/displays/MultipleDisplay.md`
-  - `src/router/routes.md`
-  - `src/router/RouteSwitch.md`
-  - `src/router/useHashRoute.md`
+- **EventBus**（`src/pixi/EventBus.ts`）：极简 pub-sub，挂到 `proxy.bus`，跨 SubCanvas + 后台事件统一入口
+- **SubCanvas 增强**（additive）：
+  - `setPosition(x, y)` / `setSize(w, h)` — 拆分 setBounds，位置/大小单独更新
+  - `bringToFront()` / `sendToBack()` — z-order（PIXI 渲染顺序 = 命中顺序）
+  - `setDraggable(opts?)` — 内置拖动（自动 clamp 到 parent.bounds，自动 bringToFront）
+- **SubCanvasProxy.bus**：共享 EventBus，`destroyAll` 时自动 clear
+- **ui/Window**（`src/ui/Window.ts`）：`createWindow({ parent, title, w, h, ... })` — 标题栏 + 关闭按钮 + 可拖动 GameWindow；暴露 `.content` 子区
+- **ui/Loading**（`src/ui/Loading.ts`）：`showLoading(sc, opts?)` — 遮罩 + 旋转 spinner + 文字
+- **新路由** `#window`（`src/displays/window/WindowDisplay.tsx`）：2 个 GameWindow（Inventory + Chat）+ loading 模拟后台 + bus 事件
+- **目录**：
+  - `src/ui/` 新增（Window / Loading）
+  - `src/displays/window/` 新增
+- **文档**：
+  - 新增 `src/pixi/EventBus.md` / `src/ui/Window.md` / `src/ui/Loading.md`
+  - 增补 SubCanvas.md / SubCanvasProxy.md（新 API）
 
 ### 部署
 - 远端 `Hana-ame/sim` ← 当前 HEAD（Cloudflare 接管 deploy）
 - 部署后查看地址：**https://react.moonchan.xyz/**
 
-## 待完善（后续 todo）
-按重要性排：
+## 待完善（后续 todo，按 game UI 重要性排）
 
-1. ~~resize 响应~~ ✅ 完成
-2. **越界裁切** — `SubCanvas` 构造时 `stage.mask = new Graphics().rect(0, 0, w, h).fill(0xffffff)`
-3. **z-order / 拖动** — 多个 window 堆叠、拖动标题改位置
-4. **窗口生命周期事件** — `onFocus` / `onBlur` / `onClose` 回调
-5. **Inter-window 通信** — `proxy.broadcast(msg)` 或 `sc1.sendTo(sc2, msg)`
-6. **更多 example displays** — 拖拽、键盘事件、文本输入、动画曲线
-7. **持久化** — localStorage 记窗口布局
-8. **键盘焦点** — tab 切换、Enter/Esc 绑定
-9. **路由过渡动画** — single ↔ multiple 切换时淡入淡出
-10. **Window class 派生** — `class GameWindow extends SubCanvas`，内置通用工具栏/关闭按钮
+1. ~~resize 响应~~ ✅
+2. ~~z-order / 拖动~~ ✅（bringToFront + setDraggable）
+3. ~~Window class 派生~~ ✅（createWindow）
+4. ~~Inter-window 通信~~ ✅（proxy.bus EventBus）
+5. **越界裁切** — `stage.mask` 防止子级画到 bounds 外
+6. **更多 game UI 组件** — Button / ProgressBar（HP/蓝）/ Tabs / Toast / Modal
+7. **窗口生命周期** — `onFocus` / `onBlur`（点击置顶即激活）
+8. **更多 example routes** — `#hud`（HP+蓝+小地图）/ `#chat`（消息列表+输入）
+9. **持久化** — localStorage 记窗口位置/大小（`bus.on('window:state', saveState)`）
+10. **键盘焦点** — tab 切换、Enter/Esc 绑定、快捷键
+11. **路由过渡动画** — single ↔ multiple ↔ window 切换时淡入淡出
+12. **后台 API 集成** — `src/api/`（WebSocket / fetch 包装 / withLoading helper）
+13. **Type-safe events** — EventBus 用字符串 key 太松；考虑 typed emitter
 
 ## PIXI 文档参考
 - 模块索引：https://pixijs.download/release/docs/modules.html

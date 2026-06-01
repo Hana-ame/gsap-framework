@@ -12,6 +12,10 @@ export function RouteSwitch() {
       const C = routeMap.multiple;
       return <C />;
     }
+    case 'window': {
+      const C = routeMap.window;
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;
