@@ -1,4 +1,4 @@
-import { routeMap, DEFAULT_ROUTE, type Route } from './routes';
+import { routeMap, DEFAULT_ROUTE } from './routes';
 import { useHashRoute } from './useHashRoute';
 
 export function RouteSwitch() {

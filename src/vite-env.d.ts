@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // 声明 .jsx 文件模块
 declare module '*.jsx' {
   const value: any

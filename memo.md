@@ -211,3 +211,28 @@ HTML 元素（如果有 nav 之类）在 canvas 之上时，pointer 事件仍冒
   - `Container` 仍用 `position.set(x, y)`
   - `init()` 仍异步，返回 Promise
 
+## 每次 routine（提交/部署后必跑）
+1. **git commit + push**
+   ```bash
+   git add -A
+   git -c user.name=lumin -c user.email=luminovoez@gmail.com commit -m "..."
+   git push origin sim
+   ```
+2. **查语法错误**
+   ```bash
+   ./node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json   # tsc
+   npm run lint                                                       # eslint
+   ```
+   两个都 `exit 0` 才算干净。
+3. **检查部署**
+   ```bash
+   curl -sI https://react.moonchan.xyz/
+   # 期望：HTTP/2 200
+   ```
+   实际页面在浏览器里看 (`#single` / `#multiple`)。
+4. **检查 CI/CD 错误**
+   ```bash
+   gh run list --repo Hana-ame/Hana-ame --limit 5
+   ```
+   当前 `sim` 分支**无 workflow 文件**（`.github/` 不存在），Cloudflare 走 GitHub App，部署日志在 Cloudflare dashboard。`gh run list` 只显示其他分支的（Android 构建等），与 sim 部署无关。
+
