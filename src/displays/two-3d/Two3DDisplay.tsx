@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
+import type { CSSProperties } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EventBus } from '../../pixi/EventBus';
+import { Window } from '../../ui/Window';
 
 type SceneHandle = {
   destroy: () => void;
@@ -15,15 +15,12 @@ type SceneCtx = {
   dispose: () => void;
 };
 
-type Pos = { x: number; y: number };
-
 export function Two3DDisplay() {
   const ref = useRef<HTMLDivElement>(null);
+  const [focused, setFocused] = useState<string | null>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-
-    const bus = new EventBus();
     const cleanups: (() => void)[] = [];
 
     const canvasA = ref.current.querySelector<HTMLCanvasElement>('canvas[data-3d="a"]');
@@ -34,20 +31,11 @@ export function Two3DDisplay() {
     const b = mountIcoScene(canvasB);
     cleanups.push(a.destroy, b.destroy);
 
-    const offColor = bus.on<number>('pick-color', (c) => {
-      a.setColor(c);
-      b.setColor(c);
-    });
-    const offRotate = bus.on<number>('rotate-a', (r) => {
-      a.setRotation(r);
-    });
-    cleanups.push(offColor, offRotate);
-
     canvasA.addEventListener('click', () => {
-      bus.emit('pick-color', Math.floor(Math.random() * 0xffffff));
+      a.setColor(Math.floor(Math.random() * 0xffffff));
     });
     canvasB.addEventListener('click', () => {
-      bus.emit('rotate-a', Math.random() * Math.PI * 2);
+      b.setColor(Math.floor(Math.random() * 0xffffff));
     });
 
     return () => cleanups.forEach((fn) => fn());
@@ -55,16 +43,28 @@ export function Two3DDisplay() {
 
   return (
     <div ref={ref} style={container}>
-      <DraggableWindow
-        title="A · TorusKnot (click → recolor both)"
-        dataAttr="a"
+      <Window
+        id="a"
+        title="A · TorusKnot"
         initial={{ x: 24, y: 32 }}
-      />
-      <DraggableWindow
-        title="B · Icosahedron (click → rotate A)"
-        dataAttr="b"
+        width={320}
+        height={260}
+        zIndex={focused === 'a' ? 10 : 1}
+        onFocus={() => setFocused('a')}
+      >
+        <canvas data-3d="a" style={canvasStyle} />
+      </Window>
+      <Window
+        id="b"
+        title="B · Icosahedron"
         initial={{ x: 360, y: 96 }}
-      />
+        width={320}
+        height={260}
+        zIndex={focused === 'b' ? 10 : 1}
+        onFocus={() => setFocused('b')}
+      >
+        <canvas data-3d="b" style={canvasStyle} />
+      </Window>
     </div>
   );
 }
@@ -75,99 +75,6 @@ const container: CSSProperties = {
   height: '100%',
   background: '#0a0a12',
   overflow: 'hidden',
-};
-
-const WINDOW_W = 320;
-const WINDOW_H = 260;
-
-function DraggableWindow({
-  title,
-  dataAttr,
-  initial,
-}: {
-  title: string;
-  dataAttr: string;
-  initial: Pos;
-}) {
-  const [pos, setPos] = useState<Pos>(initial);
-  const drag = useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null);
-
-  const onDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-    drag.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
-  };
-  const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    const d = drag.current;
-    if (!d) return;
-    setPos({
-      x: d.ox + (e.clientX - d.sx),
-      y: d.oy + (e.clientY - d.sy),
-    });
-  };
-  const onUp = (e: ReactPointerEvent<HTMLDivElement>) => {
-    drag.current = null;
-    try {
-      (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
-    } catch {
-      // already released
-    }
-  };
-
-  return (
-    <div
-      style={{
-        ...windowFrame,
-        position: 'absolute',
-        left: pos.x,
-        top: pos.y,
-        width: WINDOW_W,
-        height: WINDOW_H,
-      }}
-    >
-      <div
-        style={{ ...titleBar, cursor: 'grab', touchAction: 'none' }}
-        onPointerDown={onDown}
-        onPointerMove={onMove}
-        onPointerUp={onUp}
-        onPointerCancel={onUp}
-      >
-        {title}
-      </div>
-      <div style={content}>
-        <canvas data-3d={dataAttr} style={canvasStyle} />
-      </div>
-    </div>
-  );
-}
-
-const windowFrame: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  border: '1px solid #2a2a3a',
-  borderRadius: 4,
-  overflow: 'hidden',
-  background: '#0d0d18',
-  minWidth: 0,
-  minHeight: 0,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-};
-
-const titleBar: CSSProperties = {
-  padding: '6px 10px',
-  background: '#1a1a2a',
-  color: '#999',
-  fontFamily: 'ui-monospace, monospace',
-  fontSize: 12,
-  borderBottom: '1px solid #2a2a3a',
-  userSelect: 'none',
-};
-
-const content: CSSProperties = {
-  flex: 1,
-  position: 'relative',
-  overflow: 'hidden',
-  minHeight: 0,
 };
 
 const canvasStyle: CSSProperties = {

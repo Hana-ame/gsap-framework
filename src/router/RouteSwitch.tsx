@@ -24,6 +24,10 @@ export function RouteSwitch() {
       const C = routeMap['two-3d'];
       return <C />;
     }
+    case 'three-euler': {
+      const C = routeMap['three-euler'];
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;

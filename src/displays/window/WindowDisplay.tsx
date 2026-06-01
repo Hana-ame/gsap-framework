@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../pixi/PixiApp';
-import { createWindow } from '../../ui/Window';
+import { createWindow } from '../../ui/PixiWindow';
 import { showLoading } from '../../ui/Loading';
 
 export function WindowDisplay() {
