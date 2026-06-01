@@ -19,7 +19,10 @@ interface PixiConfirmButton {
 interface PixiConfirmOptions {
   parent: SubCanvas;
   title: string;
-  message: string;
+  message?: string;            // 文字内容（与 image 二选一）
+  image?: string;              // 图片 URL（与 message 二选一；image 优先）
+  imageMaxWidth?: number;      // 图片最大宽（默认 body 宽）
+  imageMaxHeight?: number;     // 图片最大高（默认 body 高）
   width: number;
   height: number;
   x?: number;
@@ -36,8 +39,9 @@ interface PixiConfirmOptions {
 
 interface PixiConfirm extends SubCanvas {
   setTitle(title: string): void;
-  setMessage(message: string): void;
-  content: SubCanvas;          // 给高级用户加自定义 PIXI children
+  setMessage(message: string): void;     // 切换到文字模式（隐藏 image）
+  setImage(url: string): void;           // 切换到图片模式（异步加载；隐藏 message）
+  content: SubCanvas;                    // 给高级用户加自定义 PIXI children
 }
 ```
 
@@ -121,6 +125,21 @@ createConfirm({
 });
 ```
 
+### 图片预览
+```ts
+createConfirm({
+  parent: root,
+  title: 'Image preview',
+  image: 'https://example.com/foo.jpg',
+  width: 440,
+  height: 360,
+  dragMode: 'anywhere',
+});
+// 图片异步加载（PIXI.Assets.load）；失败时 fallback 在 message 区显示错误
+// 图片按 contain 模式缩放（不会放大），居中显示
+// setImage(url) 运行时切换
+```
+
 ## 内部实现要点
 
 - **按钮 hit-test 不走 SubCanvas 路由**：按钮是 PIXI 容器（Graphics + Text）add 到 `win.stage`，不是 `SubCanvas` child。`SubCanvas.handlePointer` 不会看到它们。所以 `onPress` 显式遍历 `buttonHits` 做 AABB 测试。
@@ -128,10 +147,12 @@ createConfirm({
 - **drag 期间挂 window 全局 listener**（同 `PixiWindow` 的 1.6 修法）：PIXI 没有 `setPointerCapture`，鼠标移出窗口 bounds 后 SubCanvas 收不到事件，drag 就卡住。详见 `NOTES.md` 1.6。
 - **message 自动 word-wrap**：用 `PIXI.TextStyle` 的 `wordWrap: true` + `wordWrapWidth = width - PADDING * 2`。
 - **点击后自动 destroy（`keepOpen: false`）**：onClick / onResult 跑完，若 `!keepOpen` 就 `win.destroy()`。Cancel 按钮无 onClick 也能关，对齐 HTML `Confirm` 行为。X 关闭按钮不受 `keepOpen` 影响（X 永远关）。
+- **图片 vs message 二选一**：两者都给时 image 覆盖 message 显示；调用 `setMessage` 切回文字（image 隐藏），调用 `setImage` 切回图片（message 隐藏）。同一时刻只有一个可见。
 
 ## Scope
 
 - ✅ Title + message + 自定义 buttons
+- ✅ Image preview（image URL + setImage 切换）
 - ✅ dragMode='title' | 'anywhere'
 - ✅ X close (closable) = cancel result
 - ✅ 按钮 hit-test（不触发 drag）

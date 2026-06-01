@@ -39,7 +39,11 @@ export function PixiConfirmDisplay() {
       });
 
       const triggerY = H - 60;
-      const spawnAt = (ox: number, oy: number, kind: 'simple' | 'custom' | 'three' | 'closeonly') => {
+      const spawnAt = (
+        ox: number,
+        oy: number,
+        kind: 'simple' | 'custom' | 'three' | 'closeonly' | 'image',
+      ) => {
         if (kind === 'simple') {
           const c = createConfirm({
             parent: root,
@@ -87,6 +91,20 @@ export function PixiConfirmDisplay() {
             onResult: (r) => append(`three onResult=${r}`),
           });
           confirmsRef.current.push(c);
+        } else if (kind === 'image') {
+          const c = createConfirm({
+            parent: root,
+            title: 'Image preview',
+            image:
+              'https://proxy.moonchan.xyz/8c38ea09-f922-477b-9eba-ea642423cfdd/i/7264791/358f15be-954e-4cef-b855-04a527545804_base_resized.jpg?proxy_host=booth.pximg.net',
+            width: 440,
+            height: 360,
+            x: ox,
+            y: oy,
+            dragMode: 'anywhere',
+            onResult: (r) => append(`image: result=${r}`),
+          });
+          confirmsRef.current.push(c);
         } else {
           const c = createConfirm({
             parent: root,
@@ -105,7 +123,10 @@ export function PixiConfirmDisplay() {
       };
 
       let cursorX = 12;
-      const mkTrigger = (label: string, kind: 'simple' | 'custom' | 'three' | 'closeonly') => {
+      const mkTrigger = (
+        label: string,
+        kind: 'simple' | 'custom' | 'three' | 'closeonly' | 'image',
+      ) => {
         const padding = 14;
         const t = new PIXI.Text({
           text: label,
@@ -143,6 +164,7 @@ export function PixiConfirmDisplay() {
       const offT2 = mkTrigger('Custom (Save/Discard)', 'custom');
       const offT3 = mkTrigger('3 buttons', 'three');
       const offT4 = mkTrigger('X only (no buttons)', 'closeonly');
+      const offT5 = mkTrigger('Image (Pixiv proxy)', 'image');
 
       const offBus = proxy.bus.on('pixi-confirm:demo', () => {});
 
@@ -156,6 +178,7 @@ export function PixiConfirmDisplay() {
         offT2();
         offT3();
         offT4();
+        offT5();
         offBus();
         offResize();
         clearTimeout(t);

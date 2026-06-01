@@ -20,7 +20,10 @@ export interface PixiConfirmButton {
 export interface PixiConfirmOptions {
   parent: SubCanvas;
   title: string;
-  message: string;
+  message?: string;
+  image?: string;
+  imageMaxWidth?: number;
+  imageMaxHeight?: number;
   width: number;
   height: number;
   x?: number;
@@ -46,6 +49,7 @@ interface ButtonHit {
 export interface PixiConfirm extends SubCanvas {
   setTitle(title: string): void;
   setMessage(message: string): void;
+  setImage(url: string): void;
   content: SubCanvas;
 }
 
@@ -119,13 +123,68 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     lineHeight: 18,
   });
   const messageText = new PIXI.Text({
-    text: opts.message,
+    text: opts.message ?? '',
     style: messageStyle,
   });
   messageText.x = PADDING;
   messageText.y = TITLE_BAR_H + PADDING;
   messageText.eventMode = 'none';
   win.stage.addChild(messageText);
+
+  const bodyTop = TITLE_BAR_H + PADDING;
+  const bodyBottom = opts.height - PADDING - BTN_H;
+  const bodyW = opts.width - PADDING * 2;
+  const bodyH = bodyBottom - bodyTop;
+  const bodyCx = opts.width / 2;
+  const bodyCy = bodyTop + bodyH / 2;
+
+  let imageSprite: PIXI.Sprite | null = null;
+
+  const showMessage = (m: string) => {
+    messageText.text = m;
+    messageText.visible = true;
+    if (imageSprite) imageSprite.visible = false;
+  };
+
+  const showImage = (url: string) => {
+    messageText.visible = false;
+    PIXI.Assets.load(url)
+      .then((texture) => {
+        if (win.destroyed) {
+          return;
+        }
+        if (!imageSprite) {
+          imageSprite = new PIXI.Sprite(texture);
+          imageSprite.eventMode = 'none';
+          win.stage.addChild(imageSprite);
+        } else {
+          imageSprite.texture = texture;
+        }
+        const maxW = opts.imageMaxWidth ?? bodyW;
+        const maxH = opts.imageMaxHeight ?? bodyH;
+        const scale = Math.min(maxW / texture.width, maxH / texture.height, 1);
+        imageSprite.scale.set(scale);
+        imageSprite.anchor.set(0.5);
+        imageSprite.x = bodyCx;
+        imageSprite.y = bodyCy;
+        imageSprite.visible = true;
+      })
+      .catch((err) => {
+        console.warn('[PixiConfirm] image load failed:', err);
+        if (!win.destroyed) {
+          showMessage(`(image load failed: ${err?.message ?? err})`);
+        }
+      });
+  };
+
+  if (opts.message && opts.message.length > 0) {
+    messageText.visible = true;
+  } else {
+    messageText.visible = false;
+  }
+  if (opts.image) {
+    showImage(opts.image);
+  }
 
   const buttonHits: ButtonHit[] = [];
   let cursorX = opts.width - PADDING;
@@ -273,7 +332,10 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     titleText.text = t;
   };
   win.setMessage = (m: string) => {
-    messageText.text = m;
+    showMessage(m);
+  };
+  win.setImage = (url: string) => {
+    showImage(url);
   };
 
   return win;
