@@ -264,8 +264,8 @@ export class SubCanvas {
     if (gx < gb.x || gx > gb.x + gb.width) return false;
     if (gy < gb.y || gy > gb.y + gb.height) return false;
 
-    for (const child of this.children) {
-      if (child.handlePointer(type, e)) return true;
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      if (this.children[i].handlePointer(type, e)) return true;
     }
 
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
