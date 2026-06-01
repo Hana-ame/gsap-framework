@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export function ThreeEulerDisplay() {
+export function CameraEulerDisplay() {
   const hostRef = useRef<HTMLDivElement>(null);
   const hudRef = useRef<HTMLDivElement>(null);
 
@@ -27,8 +26,9 @@ export function ThreeEulerDisplay() {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a14);
 
-    const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-    camera.position.set(2.6, 1.8, 3.6);
+    const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100);
+    camera.position.set(0, 1.2, 5);
+    camera.rotation.order = 'YXZ';
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     const dir = new THREE.DirectionalLight(0xffffff, 1.2);
@@ -38,48 +38,39 @@ export function ThreeEulerDisplay() {
     fill.position.set(-4, 2, -3);
     scene.add(fill);
 
-    scene.add(new THREE.GridHelper(8, 8, 0x334455, 0x223344));
+    scene.add(new THREE.AxesHelper(2));
+    scene.add(new THREE.GridHelper(20, 20, 0x334455, 0x223344));
 
-    const ship = new THREE.Group();
-    ship.position.y = 0.3;
-
-    const body = new THREE.Mesh(
-      new THREE.BoxGeometry(0.4, 0.15, 1),
-      new THREE.MeshStandardMaterial({ color: 0x4488ff, roughness: 0.4, metalness: 0.6 }),
+    const target = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshStandardMaterial({ color: 0xff4488, roughness: 0.4, metalness: 0.5 }),
     );
-    ship.add(body);
+    target.position.set(0, 0.5, 0);
+    scene.add(target);
 
-    const nose = new THREE.Mesh(
-      new THREE.ConeGeometry(0.18, 0.4, 6),
-      new THREE.MeshStandardMaterial({ color: 0xff4488, roughness: 0.3, metalness: 0.7 }),
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const r = 3.5;
+      const m = new THREE.Mesh(
+        new THREE.BoxGeometry(0.4, 1.2, 0.4),
+        new THREE.MeshStandardMaterial({
+          color: new THREE.Color().setHSL(i / 8, 0.6, 0.55),
+          roughness: 0.5,
+          metalness: 0.4,
+        }),
+      );
+      m.position.set(Math.cos(angle) * r, 0.6, Math.sin(angle) * r);
+      scene.add(m);
+    }
+
+    const wall = new THREE.Mesh(
+      new THREE.PlaneGeometry(10, 4),
+      new THREE.MeshStandardMaterial({ color: 0x223344, side: THREE.DoubleSide }),
     );
-    nose.position.z = 0.6;
-    nose.rotation.x = Math.PI / 2;
-    ship.add(nose);
+    wall.position.set(0, 2, -8);
+    scene.add(wall);
 
-    const wingL = new THREE.Mesh(
-      new THREE.BoxGeometry(0.6, 0.05, 0.3),
-      new THREE.MeshStandardMaterial({ color: 0x66aaff, roughness: 0.5, metalness: 0.5 }),
-    );
-    wingL.position.set(-0.45, 0, 0);
-    ship.add(wingL);
-    const wingR = wingL.clone();
-    wingR.position.x = 0.45;
-    ship.add(wingR);
-
-    ship.add(new THREE.AxesHelper(0.7));
-    scene.add(ship);
-
-    const euler = new THREE.Euler(0, 0, 0, 'YXZ');
-    ship.rotation.copy(euler);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.maxPolarAngle = Math.PI / 2 - 0.05;
-    controls.target.set(0, 0.3, 0);
-
-    const PITCH_MAX = THREE.MathUtils.degToRad(85);
-    const LOCK_THRESHOLD = THREE.MathUtils.degToRad(89);
+    const PITCH_MAX = THREE.MathUtils.degToRad(80);
 
     const resize = () => {
       const w = host.clientWidth || 1;
@@ -96,32 +87,25 @@ export function ThreeEulerDisplay() {
     let raf = 0;
     const tick = () => {
       const t = clock.getElapsedTime();
-      euler.set(
-        Math.sin(t * 0.3) * PITCH_MAX,
-        t * 0.5,
-        Math.sin(t * 0.7) * 0.5,
-      );
-      ship.rotation.copy(euler);
+      const pitch = Math.sin(t * 0.3) * PITCH_MAX;
+      const yaw = t * 0.4;
+      const roll = Math.sin(t * 0.7) * THREE.MathUtils.degToRad(20);
+      camera.rotation.set(pitch, yaw, roll, 'YXZ');
 
-      const pitchDeg = euler.x * 180 / Math.PI;
-      const yawDeg = (((euler.y * 180 / Math.PI) % 360) + 360) % 360;
-      const rollDeg = euler.z * 180 / Math.PI;
-      const status =
-        Math.abs(pitchDeg) > LOCK_THRESHOLD * (180 / Math.PI)
-          ? '⚠ near gimbal lock'
-          : '✓ safe (YXZ order + pitch clamp)';
-
+      const pitchDeg = pitch * 180 / Math.PI;
+      const yawDeg = (((yaw * 180 / Math.PI) % 360) + 360) % 360;
+      const rollDeg = roll * 180 / Math.PI;
+      const status = Math.abs(pitchDeg) > 85 ? 'near gimbal lock' : 'safe (YXZ + pitch clamp)';
       hud.textContent =
-        `Euler order: YXZ  (yaw-pitch-roll)\n` +
-        `Pitch clamped to ±85°\n` +
+        `Camera Euler (YXZ order, pitch clamped +/-80)\n` +
         `\n` +
-        `  pitch (X): ${pitchDeg.toFixed(1).padStart(7)}°\n` +
-        `  yaw   (Y): ${yawDeg.toFixed(1).padStart(7)}°\n` +
-        `  roll  (Z): ${rollDeg.toFixed(1).padStart(7)}°\n` +
+        `  pitch (X): ${pitchDeg.toFixed(1).padStart(7)}\u00b0\n` +
+        `  yaw   (Y): ${yawDeg.toFixed(1).padStart(7)}\u00b0\n` +
+        `  roll  (Z): ${rollDeg.toFixed(1).padStart(7)}\u00b0\n` +
         `\n` +
-        `  ${status}`;
+        `  ${status}\n` +
+        `  pos: (${camera.position.x.toFixed(1)}, ${camera.position.y.toFixed(1)}, ${camera.position.z.toFixed(1)})`;
 
-      controls.update();
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
     };
@@ -130,7 +114,6 @@ export function ThreeEulerDisplay() {
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      controls.dispose();
       scene.traverse((o) => {
         const m = o as THREE.Mesh;
         if (m.geometry) m.geometry.dispose();
@@ -139,8 +122,8 @@ export function ThreeEulerDisplay() {
         else if (mat) (mat as THREE.Material).dispose();
       });
       renderer.dispose();
-      if (renderer.domElement.parentNode === host) {
-        host.removeChild(renderer.domElement);
+      if (canvas.parentNode === host) {
+        host.removeChild(canvas);
       }
     };
   }, []);

@@ -7,13 +7,13 @@
     <title>sim</title>
     <script>
       (function () {
-        var valid = ['#single', '#multiple', '#window', '#three', '#two-3d', '#three-euler'];
+        var valid = ['#single', '#multiple', '#window', '#three', '#two-3d', '#three-euler', '#camera-euler'];
         if (valid.indexOf(window.location.hash) < 0) {
-          window.location.replace('#three-euler');
+          window.location.replace('#camera-euler');
         }
       })();
     </script>
-    <noscript>This app requires JavaScript. Try <a href="#three-euler">#three-euler</a>.</noscript>
+    <noscript>This app requires JavaScript. Try <a href="#camera-euler">#camera-euler</a>.</noscript>
   </head>
   <body>
     <div id="root"></div>

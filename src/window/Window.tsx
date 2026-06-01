@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState, useId } from 'react';
 import type {
   CSSProperties,
   ReactNode,
@@ -18,16 +18,15 @@ export type WindowProps = {
   height: number | string;
   draggable?: boolean;
   closable?: boolean;
+  visible?: boolean;
   zIndex?: number;
   onFocus?: () => void;
   onClose?: () => void;
+  onPositionChange?: (pos: WindowPosition) => void;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
 };
-
-let _seq = 0;
-const genId = () => `w${++_seq}`;
 
 type DragState = { sx: number; sy: number; ox: number; oy: number };
 
@@ -39,19 +38,24 @@ export function Window({
   height,
   draggable = true,
   closable = false,
+  visible = true,
   zIndex,
   onFocus,
   onClose,
+  onPositionChange,
   className,
   style,
   children,
 }: WindowProps) {
+  const reactId = useId();
+  const internalId = id ?? reactId;
   const [pos, setPos] = useState<WindowPosition>(initial);
-  const [closed, setClosed] = useState(false);
+  const [internalVisible, setInternalVisible] = useState(visible);
   const dragRef = useRef<DragState | null>(null);
-  const internalId = useRef(id ?? genId()).current;
 
-  if (closed) return null;
+  useEffect(() => {
+    setInternalVisible(visible);
+  }, [visible]);
 
   const handleTitleDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (!draggable) {
@@ -67,7 +71,9 @@ export function Window({
   const handleTitleMove = (e: ReactPointerEvent<HTMLDivElement>) => {
     const d = dragRef.current;
     if (!d) return;
-    setPos({ x: d.ox + (e.clientX - d.sx), y: d.oy + (e.clientY - d.sy) });
+    const next = { x: d.ox + (e.clientX - d.sx), y: d.oy + (e.clientY - d.sy) };
+    setPos(next);
+    onPositionChange?.(next);
   };
   const handleTitleUp = (e: ReactPointerEvent<HTMLDivElement>) => {
     dragRef.current = null;
@@ -80,9 +86,11 @@ export function Window({
   const handleClose = (e: ReactMouseEvent) => {
     e.stopPropagation();
     if (onClose) onClose();
-    else setClosed(true);
+    else setInternalVisible(false);
   };
   const handleRootDown = () => onFocus?.();
+
+  if (!internalVisible) return null;
 
   return (
     <div

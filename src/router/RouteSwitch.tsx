@@ -28,6 +28,10 @@ export function RouteSwitch() {
       const C = routeMap['three-euler'];
       return <C />;
     }
+    case 'camera-euler': {
+      const C = routeMap['camera-euler'];
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;
