@@ -158,6 +158,39 @@ HTML 元素（如果有 nav 之类）在 canvas 之上时，pointer 事件仍冒
 - 越界渲染不裁切（无 mask）
 - 路由切换瞬时（destroy → init 闪一下）
 
+## 2026-06-01 — 3D 示例（#three）+ three.js r184 调研
+
+### 触发
+用户："做一个 3D 的例子，基于 single 改但不能改在原地。使用 three.js，查询官方文档，尽量使用原生方案（如果稳定了的话），可以先调研一下现在的 API 有什么巨坑。"
+
+### 调研结论（r184 巨坑）
+- ✅ ESM only（r150+ 删了 `build/three.js` / `three.min.js`）
+- ✅ WebGL 1 删了（r163 起 WebGLRenderer 只支持 WebGL 2）
+- ✅ `setAnimationLoop` 取代手写 rAF
+- ✅ `renderer.dispose()` 释放 WebGL 资源
+- ✅ OrbitControls 在 `three/addons/controls/`（官方 example/jsm，半原生）
+- ⚠️ OrbitControls.update 返回 boolean — 包装时**必须保留返回类型**
+- ⚠️ 与 PIXI 混用：`getContext()` 共享 + `clearBeforeRender: false` + 交替 `resetState()` + `stencil: true`
+
+### 动作
+- **新目录** `src/three/`：three.js 启动器
+- **`src/three/start3DApp.ts`**：对称于 `startPixiApp`，建 renderer/scene/camera/OrbitControls/resize，返回 destroy
+- **新路由** `#three`（`src/displays/three/ThreeDisplay.tsx`）：
+  - 8 圈立方体 + 1 中央二十面体 + 地面 GridHelper + 3 灯（Ambient + 主 + 补光）
+  - OrbitControls 拖动（带 damping + autoRotate）
+  - 点击地面 raycast 生成方块（spawn FIFO 上限 60）
+  - HUD：HTML overlay（与 canvas 分层，避免 PIXI+three 复杂度）
+- **未动** SingleDisplay（用户明确要求"不能改在原地"）
+- **PIXI+three 混用指南**写在 `start3DApp.md` 末尾（未来用）
+
+### 文档
+- `src/three/start3DApp.md`（巨坑 + 混用指南）
+- `src/displays/three/ThreeDisplay.md`
+
+### 部署
+- 远端 `Hana-ame/sim` ← 当前 HEAD
+- 部署后查看：**https://react.moonchan.xyz/#three**
+
 ## 2026-06-01 — game UI 化：drag / z-order / EventBus / Window / Loading
 
 ### 触发
@@ -197,12 +230,15 @@ HTML 元素（如果有 nav 之类）在 canvas 之上时，pointer 事件仍冒
 5. **越界裁切** — `stage.mask` 防止子级画到 bounds 外
 6. **更多 game UI 组件** — Button / ProgressBar（HP/蓝）/ Tabs / Toast / Modal
 7. **窗口生命周期** — `onFocus` / `onBlur`（点击置顶即激活）
-8. **更多 example routes** — `#hud`（HP+蓝+小地图）/ `#chat`（消息列表+输入）
+8. **更多 example routes** — `#hud`（HP+蓝+小地图+PIXI overlay）/ `#chat`（消息列表+输入）
 9. **持久化** — localStorage 记窗口位置/大小（`bus.on('window:state', saveState)`）
 10. **键盘焦点** — tab 切换、Enter/Esc 绑定、快捷键
-11. **路由过渡动画** — single ↔ multiple ↔ window 切换时淡入淡出
+11. **路由过渡动画** — single ↔ multiple ↔ window ↔ three 切换时淡入淡出
 12. **后台 API 集成** — `src/api/`（WebSocket / fetch 包装 / withLoading helper）
 13. **Type-safe events** — EventBus 用字符串 key 太松；考虑 typed emitter
+14. **PIXI+three 混用** — 文档已写，需要时再写 `start3DWithPixi`（共享 WebGL context + PIXI 2D overlay）
+15. **WebGL context lost 处理** — `webglcontextlost` / `webglcontextrestored` 监听 + 重建
+16. **3D 场景持久化** — 相机位置、spawn 的方块存 bus / localStorage
 
 ## PIXI 文档参考
 - 模块索引：https://pixijs.download/release/docs/modules.html

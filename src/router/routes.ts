@@ -2,8 +2,9 @@ import type { ComponentType } from 'react';
 import { SingleDisplay } from '../displays/single/SingleDisplay';
 import { MultipleDisplay } from '../displays/multiple/MultipleDisplay';
 import { WindowDisplay } from '../displays/window/WindowDisplay';
+import { ThreeDisplay } from '../displays/three/ThreeDisplay';
 
-export const ROUTES = ['single', 'multiple', 'window'] as const;
+export const ROUTES = ['single', 'multiple', 'window', 'three'] as const;
 export type Route = (typeof ROUTES)[number];
 export const DEFAULT_ROUTE: Route = 'multiple';
 
@@ -14,4 +15,5 @@ export const routeMap: Record<Route, ComponentType> = {
   single: SingleDisplay,
   multiple: MultipleDisplay,
   window: WindowDisplay,
+  three: ThreeDisplay,
 };

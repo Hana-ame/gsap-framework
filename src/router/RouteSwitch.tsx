@@ -16,6 +16,10 @@ export function RouteSwitch() {
       const C = routeMap.window;
       return <C />;
     }
+    case 'three': {
+      const C = routeMap.three;
+      return <C />;
+    }
     default: {
       const C = routeMap[DEFAULT_ROUTE];
       return <C />;
