@@ -1,102 +1,42 @@
-# Pixi.js React 测试项目 (带时间戳事件日志与物理模拟)
+# sim
 
-## 一、项目概述与上下文
+极简 Vite + React 19 + PixiJS v8 项目，全屏画布 + 独立显示逻辑。
 
-本项目是一个基于 **PixiJS v8** 和 **React** 的测试框架，采用**解耦的控制器-插件架构**。主要目标是通过 React 组件方便地控制 Pixi 画布进行绘图，并实时接收画布上的用户交互事件（带时间戳），以便调试和分析。
-
-### 核心架构
-
-- **`PixiController`**：底层消息中枢。负责管理插件、分发绘图指令，并将画布事件（如点击、移动）传递给父组件。所有消息均包含时间戳。
-- **`PixiCanvas`**：React 组件。封装 Pixi 应用的生命周期（初始化、销毁），监听画布上的鼠标/触摸事件，并通过 Controller 发送带时间戳的事件。
-- **`GameController`**：高级业务控制器。封装所有与 UI 交互相关的逻辑，接收来自画布的事件并更新日志，同时提供简洁的 API 供 UI 按钮调用。使 `App.tsx` 保持纯净，只负责渲染。
-- **插件系统**：独立的绘图插件（对象字面量形式），每个插件声明自己能处理的消息类型，并包含具体的绘图逻辑。插件是函数式的，无需实例化。
-
-## 二、技术指南：逻辑流程
-
-### 1. 初始化阶段
-
-- `App.tsx` 创建 `PixiController` 实例。
-- 注册插件：调用 `controller.registerPlugin(pluginObject)`，传入符合 `PixiPlugin` 接口的对象。所有插件通过 `src/plugins/index.ts` 统一导入并循环注册。
-- 创建 `GameController` 实例，传入 `PixiController` 和一个日志回调函数，用于在 UI 上显示事件。
-- 渲染 `PixiCanvas` 组件，传入 `PixiController` 和 `onAppInit` 回调。
-
-### 2. 画布初始化
-
-- `PixiCanvas` 内部创建 `PIXI.Application` 并异步初始化。
-- 初始化完成后，将 `app` 实例通过 `onAppInit` 回调传回 `App.tsx`。
-- `App.tsx` 调用 `gameController.onAppInit(app)`，该函数负责设置 `PixiController` 的 app 引用，并自动发送默认启动消息（如 `startDVD`）。
-
-### 3. 用户交互事件流
-
-- 用户在画布上操作（鼠标/触摸），`PixiCanvas` 监听相应事件（`pointerdown`、`pointermove` 等）。
-- 事件处理器构造消息对象：包含 `type`、坐标 `x`/`y`、`timestamp` 等。
-- 调用 `controller.sendToParent(message)` 将消息发送给 `GameController`（因为 `GameController` 在构造函数中设置了监听器）。
-- `GameController` 内部处理事件：更新日志（通过回调），并转发必要的消息（如 `mouseMove`）给 `PixiController` 以触发插件行为。
-
-### 4. 绘图指令流
-
-- 用户点击 UI 按钮，`App.tsx` 调用 `gameController` 对应的公开方法（如 `drawCircle()`）。
-- 这些方法构造绘图消息对象，调用 `pixiController.sendToPixi(message)`。
-- 控制器遍历已注册插件，寻找 `messageTypes` 包含该 `type` 的插件。
-- 找到后调用插件的 `execute(message, app)` 方法，在画布上绘制图形或启动持续性动画。
-
-### 5. 清理阶段
-
-- `PixiCanvas` 组件卸载时，自动销毁 `PIXI.Application` 实例，释放资源。
-- 插件通过监听 `clear` 消息等方式自行清理状态（如物理插件会停止动画、销毁所有实体）。
-
-## 三、当前版本功能 (Version 2.5.0)
-
-### ✨ 新增功能
-
-1. **`GameController` 抽象层**：将所有业务逻辑从 `App.tsx` 中剥离，使得 UI 层仅负责渲染和用户输入。事件监听、日志更新、鼠标转发均由 `GameController` 处理。
-2. **统一物理插件 (`physicsPlugin`)**：将原有的 DVD 动画和小球碰撞合并为一个插件，采用模块化文件结构（类似 `api-demo`），便于维护和扩展。
-   - **DVD 动画**：启动后显示 DVD 标志，以恒定速度移动，边界反弹时随机变色和随机方向（速度大小不变）。
-   - **100 个小球碰撞**：生成随机大小的小球，质量与半径平方成正比，进行弹性碰撞（基于质量的完全弹性碰撞公式）。
-   - **跨实体碰撞**：小球与 DVD 碰撞时，DVD 速度保持不变（不可阻挡），小球按法向反射（如同撞击静止障碍物）。
-   - **鼠标交互**：移动鼠标可“撞开”小球，鼠标视为一个半径为 30 的固定球体，施加排斥力。
-   - **边界处理**：小球边界反弹带能量损耗（系数 0.9），DVD 边界反弹随机变色和方向。
-3. **API 教学演示插件**：展示 PixiJS v8 的核心功能，包含基础图形、文本、精灵、动画、滤镜、交互、容器、粒子系统等示例，每个示例带有标题和说明文字。
-4. **烟花效果插件**：鼠标跟随烟花，粒子扩散淡出。
-
-### ✅ 继承保留的功能
-
-- 插件注册与消息分发机制。
-- 通过按钮发送绘图指令（画圆、矩形、清除）。
-- 画布生命周期管理，严格模式下的安全销毁。
-- 带时间戳的事件日志。
-
-## 四、使用方法
-
-### 1. 安装依赖
+## 跑起来
 
 ```bash
-npm install pixi.js@8.x react react-dom
+npm install
+npm run dev      # 开发
+npm run build    # 构建到 dist/
+npm run preview  # 预览构建结果
 ```
 
-### 2. 运行项目
+## 结构
 
-```bash
-npm run dev
+```
+.
+├── index.html
+├── package.json
+├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+├── vite.config.ts
+├── eslint.config.js
+├── src/
+│   ├── main.tsx       React 入口
+│   ├── App.tsx        useEffect 启动 PixiApp
+│   ├── PixiApp.ts     全屏 PIXI.Application（100vw × 100vh，resize 监听）
+│   ├── Displays.ts    显示逻辑：点击圆圈+坐标 / 鼠标十字准星+坐标
+│   └── index.css      100% 重置
+├── memo.md            随笔记录
+└── WILD_BRANCH.md     野分支 9a2d559 存档
 ```
 
-### 3. 测试功能
+## 行为
 
-- **启动 100 个小球**：点击“启动100个小球”按钮。
-- **移动鼠标**：观察小球被鼠标“撞开”。
-- **观察 DVD 与小球碰撞**：DVD 速度不变，小球被弹开。
-- **清除画布**：点击“清除”按钮，所有图形消失，动画停止。
-- **API 演示**：点击“API: 基础图形”等按钮，左上角显示对应示例。
-- **烟花效果**：点击“开始烟花”按钮（若存在），移动鼠标产生烟花粒子。
+- PixiJS 直接接管 viewport，canvas 为 `100vw × 100vh`
+- 鼠标移动：屏幕中央跟随一个绿色十字准星 + 左上角实时坐标
+- 点击：点击处出现品红色圆点 + 扩散环 + 坐标标签 + 累计计数
 
-### 4. 编写新插件
+## 部署
 
-参考 `physics` 或 `api-demo` 目录下的代码结构，创建新的插件文件并遵循 `PixiPlugin` 接口。在 `src/plugins/index.ts` 中导入并加入 `plugins` 数组即可自动注册。
-
-## 五、注意事项
-
-- 物理插件中的小球质量与半径平方成正比，确保大球更难被推动，碰撞效果真实。
-- DVD 为不可阻挡物体，小球碰撞不会改变 DVD 的速度。
-- 鼠标移动事件频繁，日志列表限制为最多 50 条，避免性能问题。
-- 所有演示内容（API 演示）固定在舞台左上角，不影响其他图形。
-- 清除画布时，物理插件会停止所有动画并销毁实体，确保资源释放。
+- push 到 `origin/sim` → Cloudflare 接管（具体配置见 Cloudflare dashboard）
+- 检查：仓库侧无 workflow，部署状态在 Cloudflare Pages 面板查看
