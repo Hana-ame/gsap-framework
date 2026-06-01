@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { SubCanvasProxy } from './SubCanvasProxy';
-import { SubPointerType } from './WindowInstance';
+import { SubPointerType } from './SubCanvas';
 
 const POINTER_TYPES: SubPointerType[] = [
   'pointerdown',

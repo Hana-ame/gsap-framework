@@ -1,8 +1,5 @@
-import { useHashRoute } from './router';
-import { SingleDisplay } from './SingleDisplay';
-import { MultipleDisplay } from './MultipleDisplay';
+import { RouteSwitch } from './router/RouteSwitch';
 
 export default function App() {
-  const route = useHashRoute();
-  return route === 'single' ? <SingleDisplay /> : <MultipleDisplay />;
+  return <RouteSwitch />;
 }

@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubPointerType, WindowBounds, WindowInstance } from './WindowInstance';
+import { Rect, SubCanvas, SubPointerType } from './SubCanvas';
 
 export interface SubCanvasProxyOptions {
   app: PIXI.Application;
@@ -7,7 +7,7 @@ export interface SubCanvasProxyOptions {
 
 export class SubCanvasProxy {
   private app: PIXI.Application;
-  private windows: WindowInstance[] = [];
+  private topCanvases: SubCanvas[] = [];
 
   constructor(opts: SubCanvasProxyOptions) {
     this.app = opts.app;
@@ -29,31 +29,31 @@ export class SubCanvasProxy {
     return this.app.stage;
   }
 
-  getWindows(): WindowInstance[] {
-    return [...this.windows];
+  getTopCanvases(): SubCanvas[] {
+    return [...this.topCanvases];
   }
 
-  createWindow(bounds: WindowBounds): WindowInstance {
-    const win = new WindowInstance({
-      app: this.app,
+  createRegion(bounds: Rect): SubCanvas {
+    const sc = new SubCanvas({
+      rootApp: this.app,
       bounds,
       onDestroy: () => {
-        const idx = this.windows.indexOf(win);
-        if (idx >= 0) this.windows.splice(idx, 1);
+        const idx = this.topCanvases.indexOf(sc);
+        if (idx >= 0) this.topCanvases.splice(idx, 1);
       },
     });
-    this.windows.push(win);
-    return win;
+    this.topCanvases.push(sc);
+    return sc;
   }
 
   routePointer(type: SubPointerType, e: PointerEvent): void {
-    for (const win of this.windows) {
-      win.handlePointer(type, e);
+    for (const sc of this.topCanvases) {
+      sc.handlePointer(type, e);
     }
   }
 
   destroyAll(): void {
-    [...this.windows].forEach((w) => w.destroy());
-    this.windows = [];
+    [...this.topCanvases].forEach((sc) => sc.destroy());
+    this.topCanvases = [];
   }
 }

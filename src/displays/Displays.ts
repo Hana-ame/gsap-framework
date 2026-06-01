@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { WindowInstance } from './WindowInstance';
+import { SubCanvas } from '../pixi/SubCanvas';
 
-export function mountDisplays(win: WindowInstance): () => void {
+export function mountDisplays(sc: SubCanvas): () => void {
   const crosshair = new PIXI.Graphics();
   const clickLayer = new PIXI.Container();
 
@@ -19,14 +19,14 @@ export function mountDisplays(win: WindowInstance): () => void {
   clickCountText.x = 10;
   clickCountText.y = 30;
 
-  win.stage.addChild(crosshair);
-  win.stage.addChild(clickLayer);
-  win.stage.addChild(moveText);
-  win.stage.addChild(clickCountText);
+  sc.stage.addChild(crosshair);
+  sc.stage.addChild(clickLayer);
+  sc.stage.addChild(moveText);
+  sc.stage.addChild(clickCountText);
 
   let clickCount = 0;
 
-  win.onMove((e) => {
+  sc.onMove((e) => {
     const x = e.x;
     const y = e.y;
 
@@ -41,7 +41,7 @@ export function mountDisplays(win: WindowInstance): () => void {
     moveText.text = `move: (${x.toFixed(0)}, ${y.toFixed(0)})`;
   });
 
-  win.onPress((e) => {
+  sc.onPress((e) => {
     const x = e.x;
     const y = e.y;
     clickCount += 1;
@@ -62,7 +62,7 @@ export function mountDisplays(win: WindowInstance): () => void {
     const tick = (delta: { deltaMS: number }) => {
       t += delta.deltaMS / 700;
       if (t >= 1) {
-        win.ticker.remove(tick);
+        sc.ticker.remove(tick);
         return;
       }
       const r = 6 + t * 26;
@@ -71,16 +71,16 @@ export function mountDisplays(win: WindowInstance): () => void {
       ring.setStrokeStyle({ width: 2, color: 0xff00ff, alpha: a });
       ring.circle(x, y, r).stroke();
     };
-    win.ticker.add(tick);
+    sc.ticker.add(tick);
 
     clickCountText.text = `clicks: ${clickCount}`;
   });
 
   return () => {
-    win.stage.removeChild(crosshair);
-    win.stage.removeChild(clickLayer);
-    win.stage.removeChild(moveText);
-    win.stage.removeChild(clickCountText);
+    sc.stage.removeChild(crosshair);
+    sc.stage.removeChild(clickLayer);
+    sc.stage.removeChild(moveText);
+    sc.stage.removeChild(clickCountText);
     crosshair.destroy();
     clickLayer.destroy({ children: true });
     moveText.destroy();

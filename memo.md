@@ -137,11 +137,14 @@ class WindowInstance {
 - `src/MultipleDisplay.tsx` — 2×2 网格（从原 App.tsx 抽出）
 
 ### 修改
-- `src/App.tsx` — 极薄：`useHashRoute` + `<Nav>` + 路由分发
-- `src/PixiApp.ts` — pointer 监听加 `e.target !== proxy.canvas` 过滤，nav 点击不再误触发窗口 click
+- `src/App.tsx` — 极薄：`useHashRoute` + 路由分发，**无 Nav 元素**（canvas 占满 viewport）
+- `src/PixiApp.ts` — pointer 监听加 `e.target !== proxy.canvas` 过滤，HTML 元素上的事件不再误触发窗口 click
+
+### 后来删了
+- `src/Nav.tsx`（navbar 叠加层） — 用户要求"canvas 占满全屏，hash 路由切换"
 
 ### 关键修复
-nav 是绝对定位的 HTML 元素，在 canvas 之上。点击 nav 链接时，`pointerdown` 仍会冒泡到 `window`，让原实现误以为点在 canvas 上 → 在 Window 2（右上）触发 click 环。修复：路由前先看 `e.target` 是不是主 canvas。
+HTML 元素（如果有 nav 之类）在 canvas 之上时，pointer 事件仍冒泡到 `window`，让原实现误以为点在 canvas 上。修复：路由前先看 `e.target` 是不是主 canvas。
 
 ### 路由表
 | URL | 显示 |

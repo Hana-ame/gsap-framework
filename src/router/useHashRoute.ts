@@ -1,10 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-
-export const ROUTES = ['single', 'multiple'] as const;
-export type Route = (typeof ROUTES)[number];
-export const DEFAULT_ROUTE: Route = 'multiple';
-
-const isRoute = (r: string): r is Route => (ROUTES as readonly string[]).includes(r);
+import { DEFAULT_ROUTE, isRoute, type Route } from './routes';
 
 export function useHashRoute(): Route {
   const compute = useCallback((): Route => {
@@ -24,10 +19,4 @@ export function useHashRoute(): Route {
   }, [compute]);
 
   return route;
-}
-
-export function navigate(route: Route): void {
-  if (window.location.hash !== `#${route}`) {
-    window.location.hash = route;
-  }
 }

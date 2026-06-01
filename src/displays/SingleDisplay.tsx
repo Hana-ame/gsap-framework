@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from './PixiApp';
+import { startPixiApp } from '../pixi/PixiApp';
 import { mountDisplays } from './Displays';
 
 export function SingleDisplay() {
@@ -10,7 +10,7 @@ export function SingleDisplay() {
     const destroy = startPixiApp((proxy) => {
       const W = window.innerWidth;
       const H = window.innerHeight;
-      const win = proxy.createWindow({ x: 0, y: 0, width: W, height: H });
+      const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
 
       const title = new PIXI.Text({
         text: 'single window — full viewport',
@@ -18,9 +18,9 @@ export function SingleDisplay() {
       });
       title.x = 12;
       title.y = 12;
-      win.stage.addChild(title);
+      root.stage.addChild(title);
 
-      displayCleanups.push(mountDisplays(win));
+      displayCleanups.push(mountDisplays(root));
     });
 
     return () => {
