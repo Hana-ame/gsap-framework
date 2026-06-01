@@ -268,6 +268,9 @@ export class SubCanvas {
       if (child.handlePointer(type, e)) return true;
     }
 
+    const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
+    if (!hasListeners) return false;
+
     const localX = gx - gb.x;
     const localY = gy - gb.y;
     const sub: SubPointerEvent = {
@@ -278,7 +281,7 @@ export class SubCanvas {
       globalY: gy,
       originalEvent: e,
     };
-    this.listeners.get(type)?.forEach((fn) => fn(sub));
+    this.listeners.get(type)!.forEach((fn) => fn(sub));
     return true;
   }
 

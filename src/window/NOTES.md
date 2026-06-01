@@ -39,7 +39,7 @@
 - `onPointerDown` 在 root 上负责 drag（bubble 阶段，按钮可以拦）
 - 两套并存是因为 capture vs bubble 的传播顺序
 
-**PIXI 版同步加**：见 `PixiWindow.ts` 的 `dragMode: 'title' | 'anywhere'`。PIXI 版有限制：`anywhere` 模式只在 `content` 是空 SubCanvas 时才"全表面"（PIXI 事件路由是 children-first，按钮若放在 content 里会拦截 win.onPress 不会触发 drag）。复杂场景用 HTML `Window` 解决。
+**PIXI 版同步加**：见 `PixiWindow.ts` 的 `dragMode: 'title' | 'anywhere'`。PIXI 版当时以为有限制（`anywhere` 模式只在 `content` 是空 SubCanvas 时才"全表面"），后来发现其实是 SubCanvas.handlePointer 的隐性 bug（见 1.8）。
 
 **教训**：
 - 不同的「容器风格」需要不同的 drag 触发面，不要 hard-code 一个
@@ -47,6 +47,52 @@
 - HTML/PIXI 两版必须同步 API；PIXI 版有约束时要写进 doc 警告
 
 ---
+
+### 1.8 SubCanvas.handlePointer 空 listener 也 claim → 按钮/drag 不响应
+
+**症状**：`PixiConfirm` 按钮按了不触发 onClick，dragMode='anywhere' 的 Confirm 在 content 区域拖不动。HTML 版 `Window` 没事但 PIXI 版 `PixiWindow` 'anywhere' 模式同样有 bug。
+
+**根因**：
+- `SubCanvas.handlePointer` 旧逻辑：children 全部 `return false` 后，**无条件** fire own listeners + `return true`。
+- `win.content` 是 `win` 的 SubCanvas child，没 listener 但仍然 claim 事件 → `win.onPress` 永远收不到事件。
+- 结果：drag handler 不跑 + 按钮 hit-test（在 onPress 里手写的）不跑。
+
+**修法**（`SubCanvas.ts`）：
+```ts
+// 旧
+this.listeners.get(type)?.forEach((fn) => fn(sub));
+return true;
+
+// 新
+const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
+if (!hasListeners) return false;  // 没有 listener → 不 claim，让 parent 有机会处理
+this.listeners.get(type)!.forEach((fn) => fn(sub));
+return true;
+```
+
+**为什么之前没人发现**：
+- `#window` / `#multiple` / `#single` 这些 display 里，`content` 区域不要求 drag（默认 'title' 模式）+ 用户在 content 里加的 PIXI children 是 `addChild` 到 `content.stage`，不在 SubCanvas 树里。
+- 所以"点了 content 没反应"在 title 模式下是符合预期的。
+- 加上 `anywhere` 模式后，这个隐性 bug 才显形。
+
+**验证矩阵**（修后）：
+
+| 场景 | content 有 listener? | win 有 listener? | 结果 |
+|------|----------------------|------------------|------|
+| PixiWindow 拖 title | 否 | 是（drag） | ✓ drag |
+| PixiWindow 点 content（title 模式） | 否 | 是 | ✓ win.onPress fire → 检查 e.y > TITLE_BAR_H → 忽略 |
+| PixiWindow 点 content（anywhere 模式） | 否 | 是 | ✓ win.onPress fire → 拖 |
+| PixiConfirm 点按钮 | 否 | 是（drag + button test） | ✓ content pass through → button hit-test 命中 → 触发 |
+| PixiConfirm 点空 content（anywhere） | 否 | 是 | ✓ 拖 |
+| 用户在 content.onPress 加 handler | 是 | 是 | ✓ content claim，win 不动（同 HTML 现状） |
+
+**教训**：
+- "Claim 事件"和"有 handler 处理事件"是两件事。空 container 不该 claim。
+- SubCanvas 树形路由下，空节点的 `return true` 会被一路 pass up，但 root 上没 listener 就丢；`return false` 让有 listener 的祖先接管。两种语义选对的就近。
+- 单元测试要补：drag-anywhere + button-not-drag 这种组合一定要有 regression test。
+
+---
+
 
 
 ### 1.1 Z-Order 缺失：点击 B 响应 A
