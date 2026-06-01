@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
+import { WindowInstance } from './WindowInstance';
 
-export function mountDisplays(app: PIXI.Application): () => void {
+export function mountDisplays(win: WindowInstance): () => void {
   const crosshair = new PIXI.Graphics();
   const clickLayer = new PIXI.Container();
 
@@ -18,16 +19,16 @@ export function mountDisplays(app: PIXI.Application): () => void {
   clickCountText.x = 10;
   clickCountText.y = 30;
 
-  app.stage.addChild(crosshair);
-  app.stage.addChild(clickLayer);
-  app.stage.addChild(moveText);
-  app.stage.addChild(clickCountText);
+  win.stage.addChild(crosshair);
+  win.stage.addChild(clickLayer);
+  win.stage.addChild(moveText);
+  win.stage.addChild(clickCountText);
 
   let clickCount = 0;
 
-  const onPointerMove = (e: PointerEvent) => {
-    const x = e.clientX;
-    const y = e.clientY;
+  win.onMove((e) => {
+    const x = e.x;
+    const y = e.y;
 
     crosshair.clear();
     crosshair
@@ -38,11 +39,11 @@ export function mountDisplays(app: PIXI.Application): () => void {
       .stroke({ width: 1, color: 0x00ff00, alpha: 0.8 });
 
     moveText.text = `move: (${x.toFixed(0)}, ${y.toFixed(0)})`;
-  };
+  });
 
-  const onPointerDown = (e: PointerEvent) => {
-    const x = e.clientX;
-    const y = e.clientY;
+  win.onPress((e) => {
+    const x = e.x;
+    const y = e.y;
     clickCount += 1;
 
     const ring = new PIXI.Graphics();
@@ -61,7 +62,7 @@ export function mountDisplays(app: PIXI.Application): () => void {
     const tick = (delta: { deltaMS: number }) => {
       t += delta.deltaMS / 700;
       if (t >= 1) {
-        app.ticker.remove(tick);
+        win.ticker.remove(tick);
         return;
       }
       const r = 6 + t * 26;
@@ -70,23 +71,16 @@ export function mountDisplays(app: PIXI.Application): () => void {
       ring.setStrokeStyle({ width: 2, color: 0xff00ff, alpha: a });
       ring.circle(x, y, r).stroke();
     };
-    app.ticker.add(tick);
+    win.ticker.add(tick);
 
     clickCountText.text = `clicks: ${clickCount}`;
-  };
-
-  window.addEventListener('pointermove', onPointerMove);
-  window.addEventListener('pointerdown', onPointerDown);
+  });
 
   return () => {
-    window.removeEventListener('pointermove', onPointerMove);
-    window.removeEventListener('pointerdown', onPointerDown);
-
-    app.stage.removeChild(crosshair);
-    app.stage.removeChild(clickLayer);
-    app.stage.removeChild(moveText);
-    app.stage.removeChild(clickCountText);
-
+    win.stage.removeChild(crosshair);
+    win.stage.removeChild(clickLayer);
+    win.stage.removeChild(moveText);
+    win.stage.removeChild(clickCountText);
     crosshair.destroy();
     clickLayer.destroy({ children: true });
     moveText.destroy();
