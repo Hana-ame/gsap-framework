@@ -86,7 +86,7 @@ export function SingleDisplay(): null
 
 ### 直接渲染（一般不这么用）
 ```tsx
-import { SingleDisplay } from './displays/SingleDisplay';
+import { SingleDisplay } from './displays/single/SingleDisplay';
 <SingleDisplay />
 ```
 但要保证没有其他 PIXI 实例在跑（不然 canvas 叠加）。

@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
-import { SingleDisplay } from '../displays/SingleDisplay';
-import { MultipleDisplay } from '../displays/MultipleDisplay';
+import { SingleDisplay } from '../displays/single/SingleDisplay';
+import { MultipleDisplay } from '../displays/multiple/MultipleDisplay';
 
 export const ROUTES = ['single', 'multiple'] as const;
 export type Route = (typeof ROUTES)[number];
