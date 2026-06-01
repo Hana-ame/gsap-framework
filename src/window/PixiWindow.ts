@@ -82,8 +82,28 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     let sy = 0;
     let ox = 0;
     let oy = 0;
+    let onGlobalMove: ((e: PointerEvent) => void) | null = null;
+    let onGlobalUp: ((e: PointerEvent) => void) | null = null;
+
+    const cleanupGlobal = () => {
+      if (onGlobalMove) {
+        window.removeEventListener('pointermove', onGlobalMove);
+        onGlobalMove = null;
+      }
+      if (onGlobalUp) {
+        window.removeEventListener('pointerup', onGlobalUp);
+        window.removeEventListener('pointercancel', onGlobalUp);
+        onGlobalUp = null;
+      }
+    };
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      cleanupGlobal();
+    };
 
     win.onPress((e) => {
+      cleanupGlobal();
       if (closable) {
         const closeX = opts.width - 12;
         const closeY = TITLE_BAR_H / 2;
@@ -102,18 +122,28 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
       ox = win.bounds.x;
       oy = win.bounds.y;
       win.bringToFront();
+
+      onGlobalMove = (ev: PointerEvent) => {
+        if (!dragging) return;
+        let nx = ox + (ev.clientX - sx);
+        let ny = oy + (ev.clientY - sy);
+        nx = Math.max(0, Math.min(nx, constraint.width - win.bounds.width));
+        ny = Math.max(0, Math.min(ny, constraint.height - win.bounds.height));
+        win.setPosition(nx, ny);
+      };
+      onGlobalUp = () => endDrag();
+      window.addEventListener('pointermove', onGlobalMove);
+      window.addEventListener('pointerup', onGlobalUp);
+      window.addEventListener('pointercancel', onGlobalUp);
     });
-    win.onMove((e) => {
-      if (!dragging) return;
-      let nx = ox + (e.globalX - sx);
-      let ny = oy + (e.globalY - sy);
-      nx = Math.max(0, Math.min(nx, constraint.width - win.bounds.width));
-      ny = Math.max(0, Math.min(ny, constraint.height - win.bounds.height));
-      win.setPosition(nx, ny);
-    });
-    win.onRelease(() => {
-      dragging = false;
-    });
+
+    win.onRelease(() => endDrag());
+
+    const origDestroy = win.destroy.bind(win);
+    (win as unknown as { destroy: () => void }).destroy = () => {
+      cleanupGlobal();
+      origDestroy();
+    };
   }
 
   win.setTitle = (t: string) => {

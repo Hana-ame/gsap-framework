@@ -109,6 +109,51 @@ const handleTitleUp = (e: ReactPointerEvent<HTMLDivElement>) => {
 
 ---
 
+### 1.6 PIXI Window drag 鼠标快了卡住
+
+**症状**：`#window` 拖窗口，鼠标快速移动 → 窗口停下不跟手 → 后续点击"卡住"（不响应）。
+
+**根因**（PIXI 没 `setPointerCapture`）：
+- `SubCanvas.handlePointer` 用 **bounds 命中测试**：`if (gx < gb.x || gx > gb.x + gb.width) return false;`
+- 鼠标移出 title bar 区域 → `handlePointer` 返回 false → 事件不派发到这个 SubCanvas
+- `onMove` 收不到事件 → window 不动
+- 鼠标移出整个 window → `onRelease` 也收不到 → `dragging` 永远 `true` → 后续 `onPress` 进入 if 分支但 `dragging` 还是上次的 `true` → 行为错乱
+
+**为什么是 PIXI 一个 canvas**：是的，确实一个 canvas（`startPixiApp` 一个 `PIXI.Application`）。所有 GameWindow 是这个 canvas 上的 SubCanvas 子区域。**不是**多 canvas 互打架。
+
+**修法**（`PixiWindow.ts`）：drag 期间挂 `window` 上的全局 `pointermove` / `pointerup` / `pointercancel`：
+
+```ts
+const cleanupGlobal = () => {
+  window.removeEventListener('pointermove', onGlobalMove);
+  window.removeEventListener('pointerup', onGlobalUp);
+  window.removeEventListener('pointercancel', onGlobalUp);
+};
+
+win.onPress((e) => {
+  cleanupGlobal();  // 防 stale listeners
+  // ... 启动 drag ...
+  onGlobalMove = (ev) => { /* update win.setPosition */ };
+  onGlobalUp = () => endDrag();
+  window.addEventListener('pointermove', onGlobalMove);
+  window.addEventListener('pointerup', onGlobalUp);
+  window.addEventListener('pointercancel', onGlobalUp);
+});
+win.onRelease(() => endDrag());
+
+// wrap destroy 防 listener 泄漏
+const origDestroy = win.destroy.bind(win);
+win.destroy = () => { cleanupGlobal(); origDestroy(); };
+```
+
+**教训**：
+- PIXI 的 event system 是「hit-test based」，没有 DOM 的 `setPointerCapture`
+- 任何 drag 跨区域（出 bounds）的需求，要自己挂全局 `window` 监听
+- `pointercancel` 必加（alt-tab / OS 弹窗 / iframe 切换会触发）
+- 每次 `onPress` 开头 `cleanupGlobal()` —— 防止前一次 drag 没正常结束（pointerup 丢失）导致 listener 累积
+
+---
+
 ## 2. 设计决策（不要随便改）
 
 ### 2.1 父级管 z-index，不用 Context
