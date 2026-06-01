@@ -14,6 +14,7 @@ export interface PixiConfirmButton {
   label: string;
   onClick?: (confirm: PixiConfirm) => void;
   primary?: boolean;
+  keepOpen?: boolean;
 }
 
 export interface PixiConfirmOptions {
@@ -213,6 +214,9 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
       else if (b.label === cancelText) result = 'cancel';
       b.onClick?.(win);
       opts.onResult?.(result, win);
+      if (!b.keepOpen) {
+        win.destroy();
+      }
     };
 
     win.onPress((e) => {

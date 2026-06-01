@@ -50,10 +50,7 @@ export function PixiConfirmDisplay() {
             x: ox,
             y: oy,
             dragMode: 'anywhere',
-            onResult: (r, conf) => {
-              append(`simple: result=${r}`);
-              conf.destroy();
-            },
+            onResult: (r) => append(`simple: result=${r}`),
           });
           confirmsRef.current.push(c);
         } else if (kind === 'custom') {
@@ -68,10 +65,7 @@ export function PixiConfirmDisplay() {
             dragMode: 'anywhere',
             okText: 'Save',
             cancelText: 'Discard',
-            onResult: (r, conf) => {
-              append(`custom: result=${r}`);
-              conf.destroy();
-            },
+            onResult: (r) => append(`custom: result=${r}`),
           });
           confirmsRef.current.push(c);
         } else if (kind === 'three') {
@@ -86,9 +80,9 @@ export function PixiConfirmDisplay() {
             dragMode: 'anywhere',
             buttons: [
               { label: 'Cancel' },
-              { label: 'Red', onClick: (conf) => { append('three: Red'); conf.destroy(); } },
-              { label: 'Green', primary: true, onClick: (conf) => { append('three: Green'); conf.destroy(); } },
-              { label: 'Blue', onClick: (conf) => { append('three: Blue'); conf.destroy(); } },
+              { label: 'Red', onClick: () => append('three: Red') },
+              { label: 'Green', primary: true, onClick: () => append('three: Green') },
+              { label: 'Blue', onClick: () => append('three: Blue') },
             ],
             onResult: (r) => append(`three onResult=${r}`),
           });
@@ -104,10 +98,7 @@ export function PixiConfirmDisplay() {
             y: oy,
             dragMode: 'anywhere',
             buttons: [],
-            onResult: (r, conf) => {
-              append(`closeonly: result=${r}`);
-              conf.destroy();
-            },
+            onResult: (r) => append(`closeonly: result=${r}`),
           });
           confirmsRef.current.push(c);
         }

@@ -12,7 +12,8 @@ type PixiConfirmResult = 'ok' | 'cancel' | string;
 interface PixiConfirmButton {
   label: string;
   onClick?: (confirm: PixiConfirm) => void;
-  primary?: boolean;   // 主色高亮
+  primary?: boolean;    // 主色高亮
+  keepOpen?: boolean;   // 默认 false：点击后自动 destroy
 }
 
 interface PixiConfirmOptions {
@@ -84,12 +85,26 @@ createConfirm({
   height: 160,
   dragMode: 'anywhere',
   buttons: [
-    { label: 'Red',   onClick: (c) => { setColor(0xff0000); c.destroy(); } },
-    { label: 'Green', primary: true, onClick: (c) => { setColor(0x00ff00); c.destroy(); } },
-    { label: 'Blue',  onClick: (c) => { setColor(0x0000ff); c.destroy(); } },
+    { label: 'Red',   onClick: () => setColor(0xff0000) },
+    { label: 'Green', primary: true, onClick: () => setColor(0x00ff00) },
+    { label: 'Blue',  onClick: () => setColor(0x0000ff) },
   ],
   onResult: (r) => console.log('result label =', r),
 });
+// 红/绿/蓝任一被点 → onClick 跑 → 弹窗自动 destroy
+```
+
+### 「Cancel 永远关」语义
+每个按钮默认 `keepOpen: false` —— 点完调用 `onClick` + `onResult` 后自动 `destroy()`。Cancel 没 `onClick` 也照样关（对齐 HTML `Confirm`）。要保持打开（异步任务中等），传 `keepOpen: true`：
+```ts
+buttons: [
+  { label: 'Cancel' },
+  { label: 'Delete', keepOpen: true, onClick: (c) => {
+    fetch('/api/delete', { method: 'POST' })
+      .then(() => c.destroy())   // 异步完成手动关
+      .catch((e) => showError(e));
+  }},
+]
 ```
 
 ### 只剩 X 关闭
@@ -102,7 +117,7 @@ createConfirm({
   height: 120,
   dragMode: 'anywhere',
   buttons: [],
-  onResult: (r, c) => { console.log('closed via', r); c.destroy(); },
+  onResult: (r) => console.log('closed via', r),  // r = 'cancel'（X 触发）
 });
 ```
 
@@ -112,6 +127,7 @@ createConfirm({
 - **dragMode='anywhere' 时 button 拦 drag**：因为 hit-test 在 drag 判定之前，button 命中就直接 `return` 不会进 drag 流程。
 - **drag 期间挂 window 全局 listener**（同 `PixiWindow` 的 1.6 修法）：PIXI 没有 `setPointerCapture`，鼠标移出窗口 bounds 后 SubCanvas 收不到事件，drag 就卡住。详见 `NOTES.md` 1.6。
 - **message 自动 word-wrap**：用 `PIXI.TextStyle` 的 `wordWrap: true` + `wordWrapWidth = width - PADDING * 2`。
+- **点击后自动 destroy（`keepOpen: false`）**：onClick / onResult 跑完，若 `!keepOpen` 就 `win.destroy()`。Cancel 按钮无 onClick 也能关，对齐 HTML `Confirm` 行为。X 关闭按钮不受 `keepOpen` 影响（X 永远关）。
 
 ## Scope
 
