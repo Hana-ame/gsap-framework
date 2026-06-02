@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../pixi/PixiApp';
 import type { SubCanvas } from '../../pixi/SubCanvas';
@@ -29,8 +29,12 @@ const TILE_H = 110;
 const TILE_GAP_X = 12;
 const TILE_GAP_Y = 12;
 const SIDE_MARGIN = 16;
-const TOP_BAR_H = 90;
+const TOP_BAR_H = 140;
 const TILE_INNER_PAD = 14;
+const INPUT_BOX_H = 40;
+const BUTTON_W = 84;
+const BUTTON_GAP = 8;
+const INPUT_BOX_W_RATIO = 0.7;
 
 function readSafeBottom(): number {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom');
@@ -41,8 +45,36 @@ interface Scene {
   root: SubCanvas;
   bg: PIXI.Graphics;
   title: PIXI.Text;
+  inputBg: PIXI.Graphics;
+  inputText: PIXI.Text;
+  buttonBg: PIXI.Graphics;
+  buttonText: PIXI.Text;
   statusText: PIXI.Text;
   tilesLayer: PIXI.Container;
+}
+
+function buildInputBox(scene: Scene, W: number) {
+  const inputW = Math.round(W * INPUT_BOX_W_RATIO) - BUTTON_GAP;
+  scene.inputBg
+    .clear()
+    .roundRect(0, 0, inputW, INPUT_BOX_H, 8)
+    .fill({ color: 0x14141f, alpha: 0.95 })
+    .stroke({ width: 1, color: 0x2a2a3a });
+  scene.inputBg.x = SIDE_MARGIN;
+  scene.inputBg.y = 80;
+  scene.inputText.x = SIDE_MARGIN + 14;
+  scene.inputText.y = 80 + (INPUT_BOX_H - scene.inputText.height) / 2;
+
+  const bx = SIDE_MARGIN + inputW + BUTTON_GAP;
+  scene.buttonBg
+    .clear()
+    .roundRect(0, 0, BUTTON_W, INPUT_BOX_H, 8)
+    .fill({ color: 0x3a4a6a })
+    .stroke({ width: 1, color: 0x4a5a7a });
+  scene.buttonBg.x = bx;
+  scene.buttonBg.y = 80;
+  scene.buttonText.x = bx + (BUTTON_W - scene.buttonText.width) / 2;
+  scene.buttonText.y = 80 + (INPUT_BOX_H - scene.buttonText.height) / 2;
 }
 
 function buildTile(app: AppEntry, x: number, y: number): PIXI.Container {
@@ -109,6 +141,8 @@ function rebuildTiles(scene: Scene, W: number, viewportH: number, scrollY: numbe
 }
 
 export function LauncherDisplay() {
+  const [, setBump] = useState(0);
+
   useEffect(() => {
     let scrollY = 0;
     let cleanupResize: (() => void) | null = null;
@@ -129,6 +163,20 @@ export function LauncherDisplay() {
 
     const onPress = (e: { globalX: number; globalY: number }) => {
       if (!sceneRef) return;
+      const btn = sceneRef.buttonBg.getBounds();
+      if (
+        e.globalX >= btn.x &&
+        e.globalX <= btn.x + btn.width &&
+        e.globalY >= btn.y &&
+        e.globalY <= btn.y + btn.height
+      ) {
+        setBump((b) => b + 1);
+        if (sceneRef) {
+          sceneRef.statusText.text = 'input disabled — tap a tile';
+          sceneRef.statusText.style.fill = 0xffaa66;
+        }
+        return;
+      }
       for (let i = 0; i < sceneRef.tilesLayer.children.length; i++) {
         const child = sceneRef.tilesLayer.getChildAt(i) as PIXI.Container;
         const cb = child.getBounds();
@@ -165,12 +213,34 @@ export function LauncherDisplay() {
       title.eventMode = 'none';
       root.stage.addChild(title);
 
+      const inputBg = new PIXI.Graphics();
+      inputBg.eventMode = 'none';
+      root.stage.addChild(inputBg);
+
+      const inputText = new PIXI.Text({
+        text: 'filter input disabled (tap Go or a tile)',
+        style: { fontSize: 12, fill: 0x666, fontFamily: 'monospace' },
+      });
+      inputText.eventMode = 'none';
+      root.stage.addChild(inputText);
+
+      const buttonBg = new PIXI.Graphics();
+      buttonBg.eventMode = 'none';
+      root.stage.addChild(buttonBg);
+
+      const buttonText = new PIXI.Text({
+        text: 'Go',
+        style: { fontSize: 15, fill: 0xffffff, fontFamily: 'monospace' },
+      });
+      buttonText.eventMode = 'none';
+      root.stage.addChild(buttonText);
+
       const statusText = new PIXI.Text({
         text: `${APPS.length} routes · tap a tile to launch`,
         style: { fontSize: 11, fill: 0x8a8a9a, fontFamily: 'monospace' },
       });
       statusText.x = SIDE_MARGIN;
-      statusText.y = 58;
+      statusText.y = 126;
       statusText.eventMode = 'none';
       root.stage.addChild(statusText);
 
@@ -178,9 +248,10 @@ export function LauncherDisplay() {
       tilesLayer.eventMode = 'none';
       root.stage.addChild(tilesLayer);
 
-      const scene: Scene = { root, bg, title, statusText, tilesLayer };
+      const scene: Scene = { root, bg, title, inputBg, inputText, buttonBg, buttonText, statusText, tilesLayer };
       sceneRef = scene;
 
+      buildInputBox(scene, W);
       const r0 = rebuildTiles(scene, W, H, 0);
       contentHRef = r0.contentH;
       maxScrollRef = r0.maxScroll;
@@ -197,6 +268,7 @@ export function LauncherDisplay() {
         const H2 = window.innerHeight;
         sceneRef.root.setBounds({ x: 0, y: 0, width: W2, height: H2 });
         sceneRef.bg.clear().rect(0, 0, W2, H2).fill({ color: 0x0a0a14 });
+        buildInputBox(sceneRef, W2);
         scrollY = 0;
         const r = rebuildTiles(sceneRef, W2, H2, 0);
         contentHRef = r.contentH;
