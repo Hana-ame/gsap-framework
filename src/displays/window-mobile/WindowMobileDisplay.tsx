@@ -238,7 +238,7 @@ export function WindowMobileDisplay() {
             }
           };
           root!.onPress(off);
-          triggerCleanups.push(() => root!.off('pointerdown', off));
+          triggerCleanups.push(() => root!.offPointer('pointerdown', off));
 
           cursorX += w + TRIGGER_GAP;
         });

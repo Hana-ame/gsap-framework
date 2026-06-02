@@ -38,18 +38,6 @@ export interface SubCanvasOptions {
 
 const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
 
-const EVENT_ALIAS: Record<string, SubPointerType> = {
-  press: 'pointerdown',
-  pointerdown: 'pointerdown',
-  move: 'pointermove',
-  pointermove: 'pointermove',
-  release: 'pointerup',
-  pointerup: 'pointerup',
-  leave: 'pointerleave',
-  pointerleave: 'pointerleave',
-  pointerout: 'pointerleave',
-};
-
 type DragHandlers = {
   onStart?: (p: { x: number; y: number }) => void;
   onDrag?: (p: { x: number; y: number }) => void;
@@ -57,7 +45,6 @@ type DragHandlers = {
   getBounds?: () => Rect | null;
   bringToFront: boolean;
 };
-
 export class SubCanvas {
   readonly stage: PIXI.Container;
   readonly parent: SubCanvas | null;
@@ -173,13 +160,8 @@ export class SubCanvas {
     return this.addListener('pointerleave', fn);
   }
 
-  off(type: SubPointerType | string, fn: Listener): this {
-    const aliased = EVENT_ALIAS[type];
-    if (aliased) {
-      this.listeners.get(aliased)?.delete(fn);
-    } else {
-      this.stage.off(type, fn as (...a: unknown[]) => void);
-    }
+  offPointer(type: SubPointerType, fn: Listener): this {
+    this.listeners.get(type)?.delete(fn);
     return this;
   }
 
@@ -247,38 +229,6 @@ export class SubCanvas {
       if (idx >= 0) this.parent._subRegions.splice(idx, 1);
       this.parent._subRegions.unshift(this);
     }
-  }
-
-  on(event: string, fn: (...args: unknown[]) => void): this {
-    const aliased = EVENT_ALIAS[event];
-    if (aliased) {
-      this.addListener(aliased, fn as Listener);
-      return this;
-    }
-    this.stage.on(event, fn as (...a: unknown[]) => void);
-    return this;
-  }
-
-  once(event: string, fn: (...args: unknown[]) => void): this {
-    const aliased = EVENT_ALIAS[event];
-    if (aliased) {
-      const wrapped = ((e: SubPointerEvent) => {
-        this.off(aliased, wrapped as Listener);
-        (fn as Listener)(e);
-      }) as Listener;
-      this.addListener(aliased, wrapped);
-      return this;
-    }
-    this.stage.once(event, fn as (...a: unknown[]) => void);
-  }
-
-  emit(event: string, ...args: unknown[]): boolean {
-    const aliased = EVENT_ALIAS[event];
-    if (aliased) {
-      this.listeners.get(aliased)?.forEach((fn) => (fn as (...a: unknown[]) => void)(...args));
-      return true;
-    }
-    return this.stage.emit(event, ...args);
   }
 
   addChild<T extends PIXI.Container>(child: T): T {

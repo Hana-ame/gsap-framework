@@ -157,7 +157,7 @@ export function PixiConfirmDisplay() {
           }
         };
         root.onPress(offPress);
-        return () => root.off('pointerdown', offPress);
+        return () => root.offPointer('pointerdown', offPress);
       };
 
       const offT1 = mkTrigger('Simple', 'simple');
