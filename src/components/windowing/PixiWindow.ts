@@ -71,12 +71,15 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     win.stage.addChild(xMark);
   }
 
-  const content = win.createSubRegion({
-    x: 0,
-    y: TITLE_BAR_H,
-    width: opts.width,
-    height: Math.max(0, opts.height - TITLE_BAR_H),
-  });
+  const content = win.createSubRegion(
+    {
+      x: 0,
+      y: TITLE_BAR_H,
+      width: opts.width,
+      height: Math.max(0, opts.height - TITLE_BAR_H),
+    },
+    { clipToBounds: true },
+  );
   win.content = content;
 
   if (draggable) {

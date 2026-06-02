@@ -32,6 +32,7 @@ export interface SubCanvasOptions {
   rootApp: PIXI.Application;
   bounds: Rect;
   parent?: SubCanvas | null;
+  clipToBounds?: boolean;
   onDestroy?: () => void;
 }
 
@@ -58,6 +59,7 @@ export class SubCanvas {
   private resizeListeners: Set<(bounds: Rect) => void> = new Set();
   private _destroyed = false;
   private _syncing = false;
+  private _mask: PIXI.Graphics | null = null;
   private onDestroy: () => void;
 
   constructor(opts: SubCanvasOptions) {
@@ -79,6 +81,13 @@ export class SubCanvas {
       opts.bounds.y,
     );
     this.stage.position = posObserver;
+
+    if (opts.clipToBounds) {
+      this._mask = new PIXI.Graphics();
+      this.stage.addChild(this._mask);
+      this.stage.mask = this._mask;
+      this.updateMask();
+    }
 
     if (this.parent) {
       this.parent.stage.addChild(this.stage);
@@ -163,6 +172,7 @@ export class SubCanvas {
     this._bounds = bounds;
     this.stage.position.set(bounds.x, bounds.y);
     this._syncing = false;
+    this.updateMask();
     this.resizeListeners.forEach((fn) => fn(bounds));
   }
 
@@ -177,6 +187,7 @@ export class SubCanvas {
   setSize(width: number, height: number): void {
     if (this._destroyed) return;
     this._bounds = { ...this._bounds, width, height };
+    this.updateMask();
     this.resizeListeners.forEach((fn) => fn(this._bounds));
   }
 
@@ -387,11 +398,20 @@ export class SubCanvas {
     return this;
   }
 
-  createSubRegion(bounds: Rect): SubCanvas {
+  private updateMask(): void {
+    if (!this._mask) return;
+    this._mask
+      .clear()
+      .rect(0, 0, this._bounds.width, this._bounds.height)
+      .fill({ color: 0xffffff });
+  }
+
+  createSubRegion(bounds: Rect, opts?: { clipToBounds?: boolean }): SubCanvas {
     const sub = new SubCanvas({
       rootApp: this.rootApp,
       bounds,
       parent: this,
+      clipToBounds: opts?.clipToBounds,
       onDestroy: () => {
         const idx = this._subRegions.indexOf(sub);
         if (idx >= 0) this._subRegions.splice(idx, 1);
