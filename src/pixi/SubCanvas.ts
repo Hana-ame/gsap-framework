@@ -183,7 +183,13 @@ export class SubCanvas {
   bringToFront(): void {
     const parent = this.stage.parent;
     if (!parent) return;
-    parent.setChildIndex(this.stage, parent.children.length - 1);
+    parent.sortableChildren = true;
+    let max = this.stage.zIndex;
+    for (const child of parent.children) {
+      if (child === this.stage) continue;
+      if (child.zIndex > max) max = child.zIndex;
+    }
+    this.stage.zIndex = max + 1;
     if (this.parent) {
       const idx = this.parent._subRegions.indexOf(this);
       if (idx >= 0) this.parent._subRegions.splice(idx, 1);
@@ -194,7 +200,13 @@ export class SubCanvas {
   sendToBack(): void {
     const parent = this.stage.parent;
     if (!parent) return;
-    parent.setChildIndex(this.stage, 0);
+    parent.sortableChildren = true;
+    let min = this.stage.zIndex;
+    for (const child of parent.children) {
+      if (child === this.stage) continue;
+      if (child.zIndex < min) min = child.zIndex;
+    }
+    this.stage.zIndex = min - 1;
     if (this.parent) {
       const idx = this.parent._subRegions.indexOf(this);
       if (idx >= 0) this.parent._subRegions.splice(idx, 1);
