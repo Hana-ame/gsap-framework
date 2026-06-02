@@ -163,6 +163,8 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       canvas.style.zIndex = '0';
       canvas.dataset.pixiReady = '1';
 
+      app.stage.eventMode = 'static';
+
       assertSingleBodyCanvas(canvas);
       bodyCanvases.add(canvas);
       document.body.appendChild(canvas);
