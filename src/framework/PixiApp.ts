@@ -136,7 +136,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
   });
   window.addEventListener('resize', onResize);
 
-  const initOpts: PIXI.ApplicationOptions = {
+  const initOpts: Partial<PIXI.ApplicationOptions> = {
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0x000000,
@@ -235,7 +235,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
     .catch((err) => {
       if (destroyed) return;
       console.error('[PixiApp] init failed:', err);
-      const renderer = (app as { renderer?: { type?: string } }).renderer?.type;
+      const renderer = (app as { renderer?: { name?: string } }).renderer?.name;
       showFatalOverlay(
         'PIXI init failed',
         [
