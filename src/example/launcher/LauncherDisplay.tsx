@@ -15,6 +15,11 @@ const APPS: AppEntry[] = [
   { route: 'multiple', label: 'Multiple', hint: '2x2 quadrant grid', glyph: '\u229E', accent: '#3a6a5a' },
   { route: 'window', label: 'Window', hint: 'draggable windows + chat', glyph: '\u25A2', accent: '#6a5a3a' },
   { route: 'pixi-confirm', label: 'Pixi Confirm', hint: 'pixi confirm with buttons', glyph: '!', accent: '#4a6a4a' },
+  { route: 'component-window', label: 'Component: Window', hint: 'createWindow + 3 drag modes', glyph: '\u25A2', accent: '#6a3a4a' },
+  { route: 'component-confirm', label: 'Component: Confirm', hint: 'createConfirm variants', glyph: '?', accent: '#4a3a6a' },
+  { route: 'component-image', label: 'Component: Image', hint: 'createLoadingImage + states', glyph: '\u25A3', accent: '#3a5a6a' },
+  { route: 'component-loading', label: 'Component: Loading', hint: 'showLoading + custom color', glyph: '\u21BB', accent: '#5a6a3a' },
+  { route: 'component-bus', label: 'Component: Bus', hint: 'EventBus pub-sub', glyph: '\u21C4', accent: '#3a6a4a' },
 ];
 
 function accentToText(hex: string): string {

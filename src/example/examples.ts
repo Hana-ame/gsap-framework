@@ -5,6 +5,11 @@ import { WindowDisplay } from './window/WindowDisplay';
 import { WindowMobileDisplay } from './window-mobile/WindowMobileDisplay';
 import { PixiConfirmDisplay } from './pixi-confirm/PixiConfirmDisplay';
 import { ScreenSizeDisplay } from './screen-size/ScreenSizeDisplay';
+import { ComponentWindowDisplay } from './component-window/ComponentWindowDisplay';
+import { ComponentConfirmDisplay } from './component-confirm/ComponentConfirmDisplay';
+import { ComponentImageDisplay } from './component-image/ComponentImageDisplay';
+import { ComponentLoadingDisplay } from './component-loading/ComponentLoadingDisplay';
+import { ComponentBusDisplay } from './component-bus/ComponentBusDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -13,6 +18,11 @@ export const EXAMPLES = [
   'multiple',
   'window',
   'pixi-confirm',
+  'component-window',
+  'component-confirm',
+  'component-image',
+  'component-loading',
+  'component-bus',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -27,4 +37,9 @@ export const exampleMap: Record<Example, ComponentType> = {
   multiple: MultipleDisplay,
   window: WindowDisplay,
   'pixi-confirm': PixiConfirmDisplay,
+  'component-window': ComponentWindowDisplay,
+  'component-confirm': ComponentConfirmDisplay,
+  'component-image': ComponentImageDisplay,
+  'component-loading': ComponentLoadingDisplay,
+  'component-bus': ComponentBusDisplay,
 };
