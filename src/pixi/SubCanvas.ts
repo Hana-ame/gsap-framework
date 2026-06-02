@@ -386,6 +386,7 @@ export class SubCanvas {
     let startBoundsX = 0;
     let startBoundsY = 0;
 
+    const tag = `drag#${Math.random().toString(36).slice(2, 6)}`;
     const onDown = (e: PIXI.FederatedPointerEvent) => {
       e.stopPropagation();
       const parent = this.stage.parent;
@@ -397,6 +398,7 @@ export class SubCanvas {
       startBoundsX = this._bounds.x;
       startBoundsY = this._bounds.y;
       if (handlers.bringToFront) this.bringToFront();
+      console.log(tag, 'onDown target=' + e.target?.constructor?.name, 'local=', local.x, local.y, 'pid=' + e.pointerId);
       handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
     };
 
@@ -405,6 +407,7 @@ export class SubCanvas {
       const parent = this.stage.parent;
       if (!parent) return;
       const local = e.getLocalPosition(parent);
+      console.log(tag, 'onMove target=' + e.target?.constructor?.name, 'local=', local.x, local.y);
       let nx = startBoundsX + (local.x - startLocalX);
       let ny = startBoundsY + (local.y - startLocalY);
       const constraint = handlers.getBounds?.() ?? this.parent?.bounds ?? null;
@@ -416,9 +419,10 @@ export class SubCanvas {
       handlers.onDrag?.({ x: nx, y: ny });
     };
 
-    const onUp = () => {
+    const onUp = (e: PIXI.FederatedPointerEvent) => {
       if (!dragging) return;
       dragging = false;
+      console.log(tag, 'onUp target=' + e.target?.constructor?.name);
       handlers.onEnd?.({ x: this._bounds.x, y: this._bounds.y });
     };
 
