@@ -35,16 +35,29 @@ export interface SubCanvasOptions {
   onDestroy?: () => void;
 }
 
+const EVENT_ALIAS: Record<string, SubPointerType> = {
+  press: 'pointerdown',
+  pointerdown: 'pointerdown',
+  move: 'pointermove',
+  pointermove: 'pointermove',
+  release: 'pointerup',
+  pointerup: 'pointerup',
+  leave: 'pointerleave',
+  pointerleave: 'pointerleave',
+  pointerout: 'pointerleave',
+};
+
 export class SubCanvas {
   readonly stage: PIXI.Container;
   readonly parent: SubCanvas | null;
   readonly rootApp: PIXI.Application;
 
   private _bounds: Rect;
-  private children: SubCanvas[] = [];
+  private _subRegions: SubCanvas[] = [];
   private listeners: Map<SubPointerType, Set<Listener>> = new Map();
   private resizeListeners: Set<(bounds: Rect) => void> = new Set();
   private _destroyed = false;
+  private _syncing = false;
   private onDestroy: () => void;
 
   constructor(opts: SubCanvasOptions) {
@@ -54,7 +67,14 @@ export class SubCanvas {
     this.onDestroy = opts.onDestroy ?? (() => {});
 
     this.stage = new PIXI.Container();
-    this.stage.position.set(opts.bounds.x, opts.bounds.y);
+
+    const posObserver = new PIXI.ObservablePoint((pt: { x: number; y: number }) => {
+      if (this._syncing) return;
+      this._bounds = { ...this._bounds, x: pt.x, y: pt.y };
+    }, this);
+    posObserver.x = opts.bounds.x;
+    posObserver.y = opts.bounds.y;
+    this.stage.position = posObserver;
 
     if (this.parent) {
       this.parent.stage.addChild(this.stage);
@@ -95,7 +115,11 @@ export class SubCanvas {
   }
 
   getChildren(): SubCanvas[] {
-    return [...this.children];
+    return [...this._subRegions];
+  }
+
+  get subRegions(): readonly SubCanvas[] {
+    return this._subRegions;
   }
 
   onPress(fn: Listener): this {
@@ -114,8 +138,13 @@ export class SubCanvas {
     return this.addListener('pointerleave', fn);
   }
 
-  off(type: SubPointerType, fn: Listener): this {
-    this.listeners.get(type)?.delete(fn);
+  off(type: SubPointerType | string, fn: Listener): this {
+    const aliased = EVENT_ALIAS[type];
+    if (aliased) {
+      this.listeners.get(aliased)?.delete(fn);
+    } else {
+      this.stage.off(type, fn as (...a: unknown[]) => void);
+    }
     return this;
   }
 
@@ -125,14 +154,18 @@ export class SubCanvas {
   }
 
   setBounds(bounds: Rect): void {
+    this._syncing = true;
     this._bounds = bounds;
     this.stage.position.set(bounds.x, bounds.y);
+    this._syncing = false;
     this.resizeListeners.forEach((fn) => fn(bounds));
   }
 
   setPosition(x: number, y: number): void {
+    this._syncing = true;
     this._bounds = { ...this._bounds, x, y };
     this.stage.position.set(x, y);
+    this._syncing = false;
   }
 
   setSize(width: number, height: number): void {
@@ -145,9 +178,9 @@ export class SubCanvas {
     if (!parent) return;
     parent.setChildIndex(this.stage, parent.children.length - 1);
     if (this.parent) {
-      const idx = this.parent.children.indexOf(this);
-      if (idx >= 0) this.parent.children.splice(idx, 1);
-      this.parent.children.push(this);
+      const idx = this.parent._subRegions.indexOf(this);
+      if (idx >= 0) this.parent._subRegions.splice(idx, 1);
+      this.parent._subRegions.push(this);
     }
   }
 
@@ -156,9 +189,9 @@ export class SubCanvas {
     if (!parent) return;
     parent.setChildIndex(this.stage, 0);
     if (this.parent) {
-      const idx = this.parent.children.indexOf(this);
-      if (idx >= 0) this.parent.children.splice(idx, 1);
-      this.parent.children.unshift(this);
+      const idx = this.parent._subRegions.indexOf(this);
+      if (idx >= 0) this.parent._subRegions.splice(idx, 1);
+      this.parent._subRegions.unshift(this);
     }
   }
 
@@ -208,6 +241,139 @@ export class SubCanvas {
     };
   }
 
+  on(event: string, fn: (...args: unknown[]) => void): this {
+    const aliased = EVENT_ALIAS[event];
+    if (aliased) {
+      this.addListener(aliased, fn as Listener);
+      return this;
+    }
+    this.stage.on(event, fn as (...a: unknown[]) => void);
+    return this;
+  }
+
+  once(event: string, fn: (...args: unknown[]) => void): this {
+    const aliased = EVENT_ALIAS[event];
+    if (aliased) {
+      const wrapped = ((e: SubPointerEvent) => {
+        this.off(aliased, wrapped as Listener);
+        (fn as Listener)(e);
+      }) as Listener;
+      this.addListener(aliased, wrapped);
+      return this;
+    }
+    this.stage.once(event, fn as (...a: unknown[]) => void);
+    return this;
+  }
+
+  emit(event: string, ...args: unknown[]): boolean {
+    const aliased = EVENT_ALIAS[event];
+    if (aliased) {
+      this.listeners.get(aliased)?.forEach((fn) => (fn as (...a: unknown[]) => void)(...args));
+      return true;
+    }
+    return this.stage.emit(event, ...args);
+  }
+
+  addChild<T extends PIXI.Container>(child: T): T {
+    return this.stage.addChild(child) as T;
+  }
+
+  removeChild<T extends PIXI.Container>(child: T): T {
+    return this.stage.removeChild(child) as T;
+  }
+
+  removeChildren(): PIXI.Container[] {
+    return this.stage.removeChildren();
+  }
+
+  getChildAt(index: number): PIXI.Container {
+    return this.stage.getChildAt(index);
+  }
+
+  getChildByLabel(label: string): PIXI.Container | null {
+    return this.stage.getChildByLabel(label);
+  }
+
+  get children(): readonly PIXI.Container[] {
+    return this.stage.children;
+  }
+
+  get position(): PIXI.ObservablePoint {
+    return this.stage.position;
+  }
+
+  get scale(): PIXI.ObservablePoint {
+    return this.stage.scale;
+  }
+
+  get pivot(): PIXI.ObservablePoint {
+    return this.stage.pivot;
+  }
+
+  get rotation(): number {
+    return this.stage.rotation;
+  }
+
+  set rotation(v: number) {
+    this.stage.rotation = v;
+  }
+
+  get angle(): number {
+    return this.stage.angle;
+  }
+
+  set angle(v: number) {
+    this.stage.angle = v;
+  }
+
+  get alpha(): number {
+    return this.stage.alpha;
+  }
+
+  set alpha(v: number) {
+    this.stage.alpha = v;
+  }
+
+  get visible(): boolean {
+    return this.stage.visible;
+  }
+
+  set visible(v: boolean) {
+    this.stage.visible = v;
+  }
+
+  get tint(): number {
+    return this.stage.tint;
+  }
+
+  set tint(v: number) {
+    this.stage.tint = v;
+  }
+
+  get x(): number {
+    return this.stage.x;
+  }
+
+  get y(): number {
+    return this.stage.y;
+  }
+
+  get eventMode(): PIXI.EventMode {
+    return this.stage.eventMode;
+  }
+
+  set eventMode(v: PIXI.EventMode) {
+    this.stage.eventMode = v;
+  }
+
+  get label(): string {
+    return this.stage.label;
+  }
+
+  set label(v: string) {
+    this.stage.label = v;
+  }
+
   private addListener(type: SubPointerType, fn: Listener): this {
     if (!this.listeners.has(type)) this.listeners.set(type, new Set());
     this.listeners.get(type)!.add(fn);
@@ -220,11 +386,11 @@ export class SubCanvas {
       bounds,
       parent: this,
       onDestroy: () => {
-        const idx = this.children.indexOf(sub);
-        if (idx >= 0) this.children.splice(idx, 1);
+        const idx = this._subRegions.indexOf(sub);
+        if (idx >= 0) this._subRegions.splice(idx, 1);
       },
     });
-    this.children.push(sub);
+    this._subRegions.push(sub);
     return sub;
   }
 
@@ -274,8 +440,8 @@ export class SubCanvas {
     if (gx < gb.x || gx > gb.x + gb.width) return false;
     if (gy < gb.y || gy > gb.y + gb.height) return false;
 
-    for (let i = this.children.length - 1; i >= 0; i--) {
-      if (this.children[i].handlePointer(type, e)) return true;
+    for (let i = this._subRegions.length - 1; i >= 0; i--) {
+      if (this._subRegions[i].handlePointer(type, e)) return true;
     }
 
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
@@ -295,14 +461,19 @@ export class SubCanvas {
     return true;
   }
 
-  destroy(): void {
+  destroy(_options?: { children?: boolean; texture?: boolean }): void {
     if (this._destroyed) return;
     this._destroyed = true;
-    [...this.children].forEach((c) => c.destroy());
-    this.children = [];
+    [...this._subRegions].forEach((c) => c.destroy());
+    this._subRegions = [];
     this.listeners.clear();
+    this.resizeListeners.clear();
     if (this.stage.parent) this.stage.parent.removeChild(this.stage);
-    this.stage.destroy({ children: true });
+    try {
+      this.stage.destroy({ children: true, texture: false });
+    } catch {
+      // stage already destroyed
+    }
     this.onDestroy();
   }
 }

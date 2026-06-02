@@ -73,14 +73,47 @@ new SubCanvas({
 | 属性 | 类型 | 说明 |
 |---|---|---|
 | `stage` | `PIXI.Container` | 这个子画布的容器（在主 stage 或父 stage 里） |
-| `bounds` | `Rect` | 当前本地边界（x, y 相对父级） |
-| `globalBounds` | `Rect` | 当前全局边界（递归父级） |
+| `bounds` | `Rect` | **本地的 AABB**（x, y 相对父级）— SubCanvas 自己的 source of truth |
+| `globalBounds` | `Rect` | 全局 AABB（递归父级），惰性 getter |
 | `parent` | `SubCanvas \| null` | 父级（顶层为 null） |
 | `rootApp` | `PIXI.Application` | 主 PIXI 应用 |
 | `ticker` | `PIXI.Ticker` | → `rootApp.ticker` |
 | `renderer` | `PIXI.Renderer` | → `rootApp.renderer`（v8.18 类型，不是 `IRenderer`） |
 | `canvas` | `HTMLCanvasElement` | → `rootApp.canvas` |
 | `destroyed` | `boolean` | 已 destroy 标志 |
+
+### PIXI 兼容代理（顶层 API 无感知）
+所有这些都代理到内部 `stage`，但写时跟 PIXI Container 完全一样：
+
+**变换属性**
+- `position: ObservablePoint`（带 callback，AABB 双向同步）
+- `scale: ObservablePoint`、`pivot: ObservablePoint`
+- `rotation: number`、`angle: number`
+- `alpha: number`、`visible: boolean`、`tint: number`
+- `x: number`、`y: number`
+- `eventMode: PIXI.EventMode`
+- `label: string`
+
+**Children**
+- `addChild<T>(c: T): T`
+- `removeChild<T>(c: T): T`
+- `removeChildren(): Container[]`
+- `getChildAt(i): Container`、`getChildByLabel(label)`
+- `children: readonly Container[]`（注意：返回 `stage` 的 PIXI children；SubCanvas 子区域用 `getChildren()` 或 `subRegions`）
+
+**事件（EventEmitter 风格，跟 PIXI 一致）**
+- `on(event, fn)` — 路由到 SubCanvas 路由（`pointerdown`/`move`/`up`/`leave`）或转发到 `stage.on`
+- `once(event, fn)`、`off(event, fn)`、`emit(event, ...args)`
+- 事件名 alias：`press`/`pointerdown`、`move`/`pointermove`、`release`/`pointerup`、`leave`/`pointerleave`
+
+**销毁**
+- `destroy(options?: { children?, texture? })` — 幂等，递归子 SubCanvas + stage.destroy
+
+**AABB 同步规则**
+- `sc.position.set(x, y)` → ObservablePoint callback 触发 → `bounds` 同步更新
+- `sc.setPosition(x, y)` / `sc.setBounds(rect)` → 改 `bounds` + `stage.position`，用 `_syncing` flag 防止 callback 循环
+- 两个方向都不会死循环
+- **所以 AABB 是 source of truth，但用户用 PIXI 风格的 `position.set` 也能改它**
 
 ### 派生 / 划分
 ```ts
