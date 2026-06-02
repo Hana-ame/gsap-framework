@@ -9,8 +9,10 @@ import { Two3DDisplay } from '../three-displays/two-3d/Two3DDisplay';
 import { ThreeEulerDisplay } from '../three-displays/three-euler/ThreeEulerDisplay';
 import { CameraEulerDisplay } from '../three-displays/camera-euler/CameraEulerDisplay';
 import { ConfirmDisplay } from '../html-displays/confirm/ConfirmDisplay';
+import { LauncherDisplay } from '../displays/launcher/LauncherDisplay';
 
 export const ROUTES = [
+  'launcher',
   'single',
   'multiple',
   'window',
@@ -23,12 +25,13 @@ export const ROUTES = [
   'pixi-confirm',
 ] as const;
 export type Route = (typeof ROUTES)[number];
-export const DEFAULT_ROUTE: Route = 'window-mobile';
+export const DEFAULT_ROUTE: Route = 'launcher';
 
 export const isRoute = (r: string): r is Route =>
   (ROUTES as readonly string[]).includes(r);
 
 export const routeMap: Record<Route, ComponentType> = {
+  launcher: LauncherDisplay,
   single: SingleDisplay,
   multiple: MultipleDisplay,
   window: WindowDisplay,

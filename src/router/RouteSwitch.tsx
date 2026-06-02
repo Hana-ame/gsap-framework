@@ -1,9 +1,41 @@
-import { routeMap, DEFAULT_ROUTE } from './routes';
+import { routeMap, DEFAULT_ROUTE, type Route } from './routes';
 import { useHashRoute } from './useHashRoute';
 
-export function RouteSwitch() {
-  const route = useHashRoute();
+function BackButton() {
+  return (
+    <button
+      onClick={() => {
+        window.location.hash = '#launcher';
+      }}
+      style={{
+        position: 'fixed',
+        top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
+        left: 'calc(env(safe-area-inset-left, 0px) + 8px)',
+        zIndex: 10000,
+        padding: '6px 12px',
+        background: 'rgba(10,10,20,0.85)',
+        color: '#88aaff',
+        border: '1px solid #2a2a3a',
+        borderRadius: 6,
+        fontSize: 13,
+        fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+        cursor: 'pointer',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        touchAction: 'manipulation',
+      }}
+    >
+      ← sim
+    </button>
+  );
+}
+
+function renderRoute(route: Route) {
   switch (route) {
+    case 'launcher': {
+      const C = routeMap.launcher;
+      return <C />;
+    }
     case 'single': {
       const C = routeMap.single;
       return <C />;
@@ -49,4 +81,17 @@ export function RouteSwitch() {
       return <C />;
     }
   }
+}
+
+export function RouteSwitch() {
+  const route = useHashRoute();
+  if (route === 'launcher') {
+    return renderRoute(route);
+  }
+  return (
+    <>
+      <BackButton />
+      {renderRoute(route)}
+    </>
+  );
 }
