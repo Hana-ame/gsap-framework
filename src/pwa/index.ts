@@ -1,15 +1,11 @@
 export { isStandalone, onStandaloneChange } from './standalone';
 export { detectMobile, isMobile, type MobileDetection, type MobileEvidence } from './isMobile';
+export { detectInstallPlatform, type InstallPlatform } from './detectInstallPlatform';
+export { InstallPrompt, type InstallPromptProps } from './InstallPrompt';
 export {
-  InstallPrompt,
-  detectInstallPlatform,
-  type InstallPromptProps,
-  type InstallPlatform,
-} from './InstallPrompt';
-export {
-  PwaGate,
   isAccessGranted,
   setBypass,
-  type PwaGateProps,
+  readBypass,
   type StandaloneRequirement,
-} from './PwaGate';
+} from './access';
+export { PwaGate, type PwaGateProps } from './PwaGate';

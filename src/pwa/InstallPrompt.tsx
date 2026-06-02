@@ -1,14 +1,8 @@
 import { useMemo } from 'react';
+import { detectInstallPlatform } from './detectInstallPlatform';
+import type { InstallPlatform } from './detectInstallPlatform';
 
-export type InstallPlatform = 'ios' | 'android' | 'other';
-
-export function detectInstallPlatform(): InstallPlatform {
-  if (typeof navigator === 'undefined') return 'other';
-  const ua = navigator.userAgent;
-  if (/iPad|iPhone|iPod/.test(ua) || (ua.includes('Mac') && 'ontouchend' in document)) return 'ios';
-  if (/Android/i.test(ua)) return 'android';
-  return 'other';
-}
+export type { InstallPlatform };
 
 export interface InstallPromptProps {
   isMobile: boolean;
@@ -23,7 +17,7 @@ export function InstallPrompt({
   appName = 'this app',
   className,
 }: InstallPromptProps) {
-  const platform = useMemo(detectInstallPlatform, []);
+  const platform = useMemo(() => detectInstallPlatform(), []);
 
   if (!isMobile) {
     return (

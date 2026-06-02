@@ -1,9 +1,10 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { isStandalone, onStandaloneChange } from './standalone';
+import { onStandaloneChange, isStandalone } from './standalone';
 import { detectMobile } from './isMobile';
+import { isAccessGranted, setBypass, readBypass, type StandaloneRequirement } from './access';
 import { InstallPrompt } from './InstallPrompt';
 
-export type StandaloneRequirement = 'never' | 'mobile-only' | 'always';
+export type { StandaloneRequirement };
 
 export interface PwaGateProps {
   children: ReactNode;
@@ -16,39 +17,6 @@ export interface PwaGateProps {
   onBypassChange?: (bypassed: boolean) => void;
 }
 
-export function isAccessGranted(
-  requireStandalone: StandaloneRequirement,
-  isMobileDevice: boolean,
-  standalone: boolean,
-  bypassed: boolean,
-  enabled: boolean,
-): boolean {
-  if (!enabled) return true;
-  if (bypassed) return true;
-  if (requireStandalone === 'never') return true;
-  if (requireStandalone === 'always') return standalone;
-  return standalone || !isMobileDevice;
-}
-
-export function setBypass(bypassStorageKey: string | null | undefined, value: boolean): void {
-  if (!bypassStorageKey || typeof localStorage === 'undefined') return;
-  try {
-    if (value) localStorage.setItem(bypassStorageKey, '1');
-    else localStorage.removeItem(bypassStorageKey);
-  } catch {
-    // ignore
-  }
-}
-
-function readBypass(key: string | null | undefined): boolean {
-  if (!key || typeof localStorage === 'undefined') return false;
-  try {
-    return localStorage.getItem(key) === '1';
-  } catch {
-    return false;
-  }
-}
-
 export function PwaGate({
   children,
   fallback,
@@ -59,24 +27,19 @@ export function PwaGate({
   showContinue = true,
   onBypassChange,
 }: PwaGateProps) {
-  const [granted, setGranted] = useState(false);
-  const [bypassed, setBypassed] = useState(false);
-  const [standalone, setStandalone] = useState(false);
-  const [isMobileDevice, setIsMobile] = useState(false);
+  const [isMobileDevice] = useState(() => detectMobile().isMobile);
+  const [bypassed, setBypassed] = useState(() => readBypass(bypassStorageKey));
+  const [granted, setGranted] = useState(() => {
+    const m = detectMobile();
+    return isAccessGranted(requireStandalone, m.isMobile, isStandalone(), readBypass(bypassStorageKey), enabled);
+  });
 
   useEffect(() => {
-    const m = detectMobile();
-    const sa = isStandalone();
-    const bp = readBypass(bypassStorageKey);
-    setIsMobile(m.isMobile);
-    setStandalone(sa);
-    setBypassed(bp);
-    setGranted(isAccessGranted(requireStandalone, m.isMobile, sa, bp, enabled));
-  }, [enabled, requireStandalone, bypassStorageKey]);
+    setBypassed(readBypass(bypassStorageKey));
+  }, [bypassStorageKey]);
 
   useEffect(() => {
     const off = onStandaloneChange((s) => {
-      setStandalone(s);
       setGranted(isAccessGranted(requireStandalone, isMobileDevice, s, bypassed, enabled));
     });
     return off;
