@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Confirm } from '../../window/Confirm';
+import { Confirm } from '../../components/windowing/Confirm';
 
 export function ConfirmDisplay() {
   const [a, setA] = useState(false);

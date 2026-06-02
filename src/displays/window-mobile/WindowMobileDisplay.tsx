@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../pixi/PixiApp';
-import { createConfirm } from '../../window/PixiConfirm';
-import { showLoading } from '../../ui/Loading';
-import type { PixiConfirm } from '../../window/PixiConfirm';
+import { createConfirm } from '../../components/windowing/PixiConfirm';
+import { showLoading } from '../../components/loading/Loading';
+import type { PixiConfirm } from '../../components/windowing/PixiConfirm';
 import type { SubCanvas } from '../../pixi/SubCanvas';
 
 const TITLE_BAR_H = 22;

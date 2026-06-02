@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Window } from '../../window/Window';
+import { Window } from '../../components/windowing/Window';
 
 type SceneHandle = {
   destroy: () => void;

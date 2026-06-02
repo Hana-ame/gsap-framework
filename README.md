@@ -229,8 +229,8 @@ PWA gate 之外的 PIXI 失败有 3 层可见性：
 - `src/pwa/PwaGate.tsx` — gate 组件（enabled / requireStandalone / bypassStorageKey / rememberBypass / showContinue / fallback / onBypassChange）
 - `src/router/RouteSwitch.tsx` — 路由分发 + BackButton（route === 'launcher' 不显示 BackButton）
 - `src/router/routes.ts` — 路由表 + DEFAULT_ROUTE
-- `src/window/Window.tsx` — HTML Window + isInteractive
-- `src/window/PixiConfirm.ts` — `createConfirm` PIXI dialog
+- `src/components/windowing/Window.tsx` — HTML Window + isInteractive
+- `src/components/windowing/PixiConfirm.ts` — `createConfirm` PIXI dialog
 - `src/displays/window-mobile/WindowMobileDisplay.tsx` — 移动端堆叠 + trigger bar
 - `src/displays/pixi-confirm/PixiConfirmDisplay.tsx` — confirm 组件 playground
 - `src/displays/screen-size/ScreenSizeDisplay.tsx` — viewport/dpr/device info

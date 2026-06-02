@@ -1,6 +1,6 @@
 # Windowing Layer — NOTES
 
-`src/window/` 下的所有东西（HTML `Window.tsx` + PIXI `PixiWindow.ts`）共同构成「window 化层」。这层是整个项目的**基础设施** —— 每个 display 都有可能用，外部二次开发的人会依赖。
+`src/components/windowing/` 下的所有东西（HTML `Window.tsx` + PIXI `PixiWindow.ts`）共同构成「window 化层」。这层是整个项目的**组件库** —— 每个 display 都有可能用，外部二次开发的人会依赖。
 
 **polish 原则**：API 表面稳、内部实现可换、踩过的坑不能重蹈。
 
@@ -162,6 +162,7 @@ host.appendChild(canvas);
 - PIXI 版本重命名 `src/ui/Window.ts` → `src/ui/PixiWindow.ts`
 - HTML 版本放 `src/ui/Window.tsx`
 - 后来整个 window 化层挪到 `src/window/`：`src/window/Window.tsx` + `src/window/PixiWindow.ts`
+- 再后来挪到 `src/components/windowing/`：`src/components/windowing/Window.tsx` + `src/components/windowing/PixiWindow.ts`
 
 **教训**：
 - 同目录下不能有两个文件 `Window.ts` 和 `Window.tsx`（TS module resolution 会冲突）
@@ -331,23 +332,24 @@ Window 提供的只是**容器**和**事件路由之外的事**（drag / focus /
 如果以后要加（比如 modal、tooltip、context menu）：
 
 1. **复用 Window 的 drag / focus / z-order 模式**，不要重新发明
-2. **新文件放 `src/window/`**，不要散到 `src/ui/`
+2. **新文件放 `src/components/windowing/`**，不要散到 `src/ui/`
 3. **同目录下写 `.md`**，包括 call stack + API + scope + 注意事项
-4. **如果跟 Window 共享逻辑**，抽到 `src/window/internal/` 或共用 helper（现在还没到这步）
+4. **如果跟 Window 共享逻辑**，抽到 `src/components/windowing/internal/` 或共用 helper（现在还没到这步）
 5. **加新 prop 是 breaking**，先 bump version 再说
 
 ---
 
 ## 6. 相关文件
 
-- `src/window/Window.tsx` — HTML Window（React 组件）
-- `src/window/Window.md` — HTML Window API 文档
-- `src/window/PixiWindow.ts` — PIXI Window（createWindow + GameWindow extends SubCanvas）
-- `src/window/PixiWindow.md` — PIXI Window API 文档
-- `src/window/Confirm.tsx` — HTML 高层对话框（基于 `Window` + `dragMode="anywhere"`）
-- `src/window/Confirm.md` — Confirm API + 设计说明
-- `src/window/PixiConfirm.ts` — PIXI 高层对话框（基于 `SubCanvas` + `dragMode="anywhere"` + 手写 button hit-test）
-- `src/window/PixiConfirm.md` — PixiConfirm API + 实现说明
+- `src/components/windowing/Window.tsx` — HTML Window（React 组件）
+- `src/components/windowing/Window.md` — HTML Window API 文档
+- `src/components/windowing/PixiWindow.ts` — PIXI Window（createWindow + GameWindow extends SubCanvas）
+- `src/components/windowing/PixiWindow.md` — PIXI Window API 文档
+- `src/components/windowing/Confirm.tsx` — HTML 高层对话框（基于 `Window` + `dragMode="anywhere"`）
+- `src/components/windowing/Confirm.md` — Confirm API + 设计说明
+- `src/components/windowing/PixiConfirm.ts` — PIXI 高层对话框（基于 `SubCanvas` + `dragMode="anywhere"` + 手写 button hit-test）
+- `src/components/windowing/PixiConfirm.md` — PixiConfirm API + 实现说明
+- `src/components/windowing/PixiImage.ts` — async 图像加载器（placeholder + `PIXI.Assets.load` + contain-scaling），Confirm 内部用
 - `src/html-displays/confirm/ConfirmDisplay.tsx` — `#confirm` 路由 demo（HTML Confirm 实例）
 - `src/displays/pixi-confirm/PixiConfirmDisplay.tsx` — `#pixi-confirm` 路由 demo（PIXI Confirm 实例）
 - `src/three-displays/two-3d/Two3DDisplay.tsx` — 两个 3D window 的 display，演示 z-order + per-window click

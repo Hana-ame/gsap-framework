@@ -88,4 +88,4 @@ case 'camera-euler': return <CameraEulerDisplay />;
 
 ## 相关
 - `#three-euler` (ThreeEulerDisplay) —— 配对 demo
-- `src/window/NOTES.md` —— window 化层 polish 记录
+- `src/components/windowing/NOTES.md` —— window 化层 polish 记录

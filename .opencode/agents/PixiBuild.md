@@ -10,7 +10,7 @@ Use this agent when the user asks for any of:
 
 - Build, lint, or push a code change
 - Add a new display (route) or a new windowing-layer component
-- Move/rename files in `src/displays/`, `src/three-displays/`, `src/html-displays/`, `src/window/`
+- Move/rename files in `src/displays/`, `src/three-displays/`, `src/html-displays/`, `src/components/`
 - Fix a SubCanvas / event-routing / z-order bug
 - "在 pixi 里做 X" — anything in the PIXI canvas
 - Anything involving the #confirm, #pixi-confirm, #window, #two-3d, etc. routes
@@ -59,14 +59,18 @@ When the user curses, they're flagging that you screwed up. Do not be defensive.
 
 ```
 src/
+├── components/       UI component library (reusable, dependency-free, versioned)
+│   ├── windowing/    HTML Window, PIXI PixiWindow, Confirm, PixiConfirm, PixiImage
+│   │                 WINDOW_API_VERSION = '0.1.0'
+│   ├── head/         useHead hook + HeadConfig types
+│   └── loading/      PIXI loading overlay (showLoading/hide)
 ├── displays/         PIXI single-canvas (uses startPixiApp)
 ├── three-displays/   three.js — independent WebGL canvas per display
 ├── html-displays/    pure HTML — React components, no canvas
-├── window/           windowing layer (HTML Window, PIXI PixiWindow, Confirm variants)
-│                     WINDOW_API_VERSION = '0.1.0'
 ├── pixi/             PIXI infra (SubCanvas, EventBus, PixiApp, SubCanvasProxy)
-├── router/           hash router (table-driven, switch in RouteSwitch)
-└── ui/               misc UI helpers (Loading, etc.)
+├── three/            three.js infra (start3DApp, OrbitControls setup)
+├── pwa/              PWA gate (PwaGate, InstallPrompt, standalone, access, isMobile)
+└── router/           hash router (table-driven, switch in RouteSwitch)
 ```
 
 **When asked to add a new display, ask first**: which canvas? (PIXI / three / HTML). Place accordingly. Never mix.

@@ -1,8 +1,8 @@
 # Window (HTML)
 
-`src/window/Window.tsx` — React 组件，**多窗口 UI 的兼容层**。每个人都能用、都依赖的稳定 API 表面；内部实现可换。
+`src/components/windowing/Window.tsx` — React 组件，**多窗口 UI 的兼容层**。每个人都能用、都依赖的稳定 API 表面；内部实现可换。
 
-PIXI 版本在 `src/window/PixiWindow.ts`，是另一套（PIXI 容器 / SubCanvas），跟这个不冲突。
+PIXI 版本在 `src/components/windowing/PixiWindow.ts`，是另一套（PIXI 容器 / SubCanvas），跟这个不冲突。
 
 ## Versioning
 
@@ -149,7 +149,7 @@ return (
 ### 为什么 drag 用 setPointerCapture
 - 用户拖出触发元素（title bar 或 root）边界后事件还能继续
 - 不冒泡到 parent 或 sibling 的 Window
-- 跟 PIXI 的 GameWindow drag（`src/window/PixiWindow.ts`）的语义一致
+- 跟 PIXI 的 GameWindow drag（`src/components/windowing/PixiWindow.ts`）的语义一致
 
 ### 为什么 `dragMode` 在 root 和 title bar 各挂一套 handler
 - 不同模式要 stopPropagation 的对象不同：

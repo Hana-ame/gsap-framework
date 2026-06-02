@@ -1,7 +1,7 @@
 import { routeMap, DEFAULT_ROUTE, type Route } from './routes';
 import { useHashRoute } from './useHashRoute';
-import { useHead } from '../head/useHead';
-import type { HeadConfig } from '../head/types';
+import { useHead } from '../components/head/useHead';
+import type { HeadConfig } from '../components/head/types';
 
 interface DisplayWithHead {
   head?: HeadConfig;
