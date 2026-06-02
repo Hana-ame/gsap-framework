@@ -68,12 +68,16 @@ export class SubCanvas {
 
     this.stage = new PIXI.Container();
 
-    const posObserver = new PIXI.ObservablePoint((pt: { x: number; y: number }) => {
-      if (this._syncing) return;
-      this._bounds = { ...this._bounds, x: pt.x, y: pt.y };
-    }, this);
-    posObserver.x = opts.bounds.x;
-    posObserver.y = opts.bounds.y;
+    const posObserver = new PIXI.ObservablePoint(
+      {
+        _onUpdate: (pt: { x: number; y: number }) => {
+          if (this._syncing) return;
+          this._bounds = { ...this._bounds, x: pt.x, y: pt.y };
+        },
+      },
+      opts.bounds.x,
+      opts.bounds.y,
+    );
     this.stage.position = posObserver;
 
     if (this.parent) {
