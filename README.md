@@ -184,8 +184,8 @@ PWA gate 之外的 PIXI 失败有 3 层可见性：
 
 1. **SubCanvas 不 extends Container** — 独立类 + 代理到 `stage.position`
 2. **AABB 双向同步**：`ObservablePoint` callback + `_syncing` flag 防循环
-3. **`_subRegions` 私有字段**，`children` 代理到 stage
-4. **事件 alias**：`press↔pointerdown` / `move↔pointermove` / `release↔pointerup` / `leave↔pointerleave`
+3. **`_subRegions` 私有字段**，`children` 代理到 stage — SubCanvas 树是事件路由真源，PIXI 树是渲染顺序
+4. **tag-based drag**：子节点 `label === 'subcanvas-drag-handle'` 视为拖拽手柄；`dragMode: 'anywhere'` 时若没有 tagged child 则自动加一个 `zIndex=-1` 的透明 bg
 5. **PixiApp `destroyed` flag** 在 `init.then()` 里 short-circuit mount
 6. **Window anywhere drag** 不依赖 `stopPropagation`，target 直接 `closest('button, input, ...')` 检查
 7. **PwaGate 拦截时 children 不挂载** → 不创建 PIXI canvas → 不污染 body
@@ -194,6 +194,44 @@ PWA gate 之外的 PIXI 失败有 3 层可见性：
 10. **PIXI/THREE canvas 尺寸**：`position: fixed; inset: 0; width/height: 100%`，不用 `100vw` / `100vh`（mobile Safari 是 "large viewport" 会溢出）
 11. **HTML overlay 尺寸**：`position: absolute; top/right/bottom/left` inset，不用 `calc(100vh - Npx)`
 12. **Launcher 入口**是纯 HTML/CSS（不依赖 PIXI）—— 保证 WebGL 失败的设备上 home 仍可见；其他 display 可以是 PIXI（渐进增强）
+13. **拖拽通过 PIXI FederatedEvents**，不用 window 全局 pointer 监听；`app.stage.eventMode` 必须是 `'static'` 才能让 `app.stage.on('pointermove')` 收到冒泡上来的事件
+14. **可点击子节点用 PIXI 原生 hit-test**（`Container` + `eventMode='static'` + `hitArea` + 自己的 `pointerdown` + `stopPropagation`），不走 SubCanvas 的 `onPress` AABB 路由 — AABB 路由只服务于 `mountDisplays` 这种 legacy 可视化场景
+15. **`bringToFront` / `sendToBack` 用 sibling `zIndex` 扫描** + `parent.sortableChildren = true`，不用静态计数器 — 避免和 `anywhere` 模式的 bg `zIndex=-1` 冲突
+16. **SubCanvas 的 `addChild` 代理到 `stage.addChild` 同时检测 drag label**：`win.stage.addChild`（PIXI 原生）会绕过自动安装拖拽。tagged child 必须通过 `SubCanvas.addChild` 添加
+
+---
+
+## 踩过的坑（按问题分类，方便回查）
+
+### PIXI 拖拽
+
+- **drag 装好了但不响应**：`SubCanvas.addChild` 才是安装拖拽的入口；`win.stage.addChild` 会绕开。如果 `console.log('installDragOnHandle')` 一次都不打 → 走 PIXI 原生 addChild 了。**修法**：tagged child 一律用 `win.addChild(bar)`。
+- **pointerdown 触发了，pointermove 没反应**：`app.stage.eventMode` 没设成 `'static'`。PIXI v8 默认 `'auto'` 不会收到子节点冒泡上来的事件。**修法**：PixiApp init 里 `app.stage.eventMode = 'static'`。
+- **PIXI v8 Graphics hit-area 不稳**：复杂图形用 `Graphics` + `eventMode='static'` 命中测试会"打飞"。**修法**：用 `Container` 包一层 + 显式 `hitArea = new Rectangle(...)`，命中稳。
+
+### 部署 / 缓存
+
+- **Cloudflare Pages 灰度 deploy**：HTML 立即更新，子 bundle（`assets/xxx-[hash].js`）还在旧 hash 状态。**症状**：页面报 `Failed to fetch dynamically imported module`，MIME type `text/html` 404 页。**修法**：等 1-2 分钟；不要在 push 完立即 playwright 测。
+- **SW cache 撞 stale**：SW 是 `sim-v2`，network-first nav 仍然可能命中旧 cache。**症状**：本地改完的代码 push 后访问没生效。**修法**：`unregister` 一次 SW 再 reload；或 DevTools → Application → Clear storage。
+
+### 文件 / 路径
+
+- **Vite/tsc 静默接受错误路径**：`src/components/windowing/PixiWindow.ts` 写成 `from '../pixi/SubCanvas'` 解析成 `src/components/pixi/SubCanvas`（不存在），但 build 通过。**修法**：import 路径必须用相对 depth（`../../pixi/SubCanvas`），写完用真实 tsc 验证。
+
+### React 19
+
+- **`useHead` deps**：config 引用每次渲染都是新对象。**修法**：要么 `useMemo` 化 config，要么 dep 列表里写具体字段（`[config.title, config.description]`）。
+- **`useState` initializer 内副作用**（如读 `localStorage`）：在 SSR 下 `typeof window` 是 undefined。**修法**：用 `useEffect` 做副作用，或 `typeof window !== 'undefined'` 守卫。
+
+### 错误可见性
+
+- **PIXI 黑屏没报错**：四层诊断 `probeWebGL()` → `init.catch()` → `onReady` try-catch → 2s dev 健康检查。**不要清理这段**。
+- **`ErrorBoundary` 自包含**：不依赖 `__paintError` 全局，组件自己渲染红色 panel。
+
+### v8 PIXI 怪事
+
+- **`Container.position` setter 是 `this._position.copyFrom(value)`**：外部给 `_position._observer` 装的 observer 会被丢弃。**修法**：SubCanvas 用显式 `setBounds` / `setPosition` 同步。
+- **`getLocalPosition(parent)` 在 `'auto'` eventMode 上不可靠**：必须 `eventMode='static'`，否则 event 的 `target` 是错的。
 
 ---
 
@@ -217,7 +255,9 @@ PWA gate 之外的 PIXI 失败有 3 层可见性：
 
 ### In progress / 未决
 
-- **`SubCanvas.setBounds` 在 destroy 后被调**（29d37df 修过 ObservablePoint 之后，下一个崩点）—— 已加 `_destroyed` 守卫
+- ✅ **SubCanvas drag 系统重构完成**（commits 94d21b4..9a9075f）：clipToBounds / 死代码 / dragBounds / zIndex bringToFront / tag-based drag / 移除 grid+divide / 移除 event-alias layer
+- ✅ **PixiWindow + PixiConfirm 迁移到新 drag 系统**：用 `win.addChild(bar)` 触发自动安装 + 每个 button 自己的 `pointerdown` + `stopPropagation`
+- ✅ **PIXI drag 验证**（playwright 拖拽 Inventory 标题栏 / #pixi-confirm dialog）：drag 实际移动窗口
 - **Launcher input box 当前能用**（filter 真的过滤了，10 个 tile 中显示匹配的）
 - **PWA gate desktop 路径未测** — `InstallPrompt` 的 `!isMobile` 分支会显示 "requires a mobile device"
 
