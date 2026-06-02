@@ -21,7 +21,7 @@ export interface SubPointerEvent {
 type Listener = (e: SubPointerEvent) => void;
 
 export interface DragOptions {
-  bounds?: Rect;
+  bounds?: () => Rect | null;
   onDragStart?: (e: SubPointerEvent) => void;
   onDrag?: (e: SubPointerEvent, pos: { x: number; y: number }) => void;
   onDragEnd?: (e: SubPointerEvent) => void;
@@ -203,7 +203,7 @@ export class SubCanvas {
   }
 
   setDraggable(opts: DragOptions = {}): () => void {
-    const constraint = opts.bounds ?? this.parent?.bounds ?? null;
+    const getConstraint = opts.bounds ?? (() => this.parent?.bounds ?? null);
     const autoFront = opts.bringToFront !== false;
     let dragging = false;
     let sx = 0;
@@ -224,6 +224,7 @@ export class SubCanvas {
       if (!dragging) return;
       let nx = ox + (e.globalX - sx);
       let ny = oy + (e.globalY - sy);
+      const constraint = getConstraint();
       if (constraint) {
         nx = Math.max(0, Math.min(nx, constraint.width - this._bounds.width));
         ny = Math.max(0, Math.min(ny, constraint.height - this._bounds.height));
