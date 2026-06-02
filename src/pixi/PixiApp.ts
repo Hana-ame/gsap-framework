@@ -19,13 +19,10 @@ function listBodyCanvases(): HTMLCanvasElement[] {
 function assertSingleBodyCanvas(incoming?: HTMLCanvasElement): void {
   if (typeof document === 'undefined') return;
   const all = listBodyCanvases();
-  const others = incoming
-    ? all.filter((c) => c !== incoming)
-    : all;
+  const others = incoming ? all.filter((c) => c !== incoming) : all;
   if (others.length > 0) {
-    const msg = `[PixiApp] body 已有 ${others.length} 个 canvas，强制清理`;
     if (import.meta.env.DEV) {
-      console.warn(msg, others);
+      console.warn(`[PixiApp] body 已有 ${others.length} 个 canvas，强制清理`, others);
     }
     others.forEach((c) => {
       bodyCanvases.delete(c);
@@ -34,8 +31,89 @@ function assertSingleBodyCanvas(incoming?: HTMLCanvasElement): void {
   }
 }
 
+interface WebGLReport {
+  ok: boolean;
+  vendor?: string;
+  renderer?: string;
+  version?: string;
+  err?: string;
+}
+
+function probeWebGL(): WebGLReport {
+  if (typeof document === 'undefined') return { ok: false, err: 'no document' };
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = (canvas.getContext('webgl2') ||
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
+    if (!gl) return { ok: false, err: 'WebGL context creation failed' };
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    const vendor = dbg ? String(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL)) : '';
+    const renderer = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
+    const version = String(gl.getParameter(gl.VERSION) || '');
+    return { ok: true, vendor, renderer, version };
+  } catch (e) {
+    return { ok: false, err: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+function showFatalOverlay(title: string, body: string): void {
+  if (typeof document === 'undefined') return;
+  const el = document.createElement('div');
+  el.dataset.pixiFatal = '1';
+  el.style.cssText = [
+    'position:fixed',
+    'inset:0',
+    'z-index:2147483647',
+    'background:#1a0a14',
+    'color:#ffd0d0',
+    'display:flex',
+    'flex-direction:column',
+    'align-items:center',
+    'justify-content:center',
+    'padding:24px',
+    'font-family:ui-monospace,monospace',
+    'text-align:left',
+    'overflow:auto',
+    'gap:12px',
+  ].join(';');
+  const h = document.createElement('h1');
+  h.textContent = title;
+  h.style.cssText = 'margin:0;font-family:system-ui,sans-serif;font-size:1.1rem;';
+  const pre = document.createElement('pre');
+  pre.textContent = body;
+  pre.style.cssText = 'font-size:0.78rem;max-width:92vw;white-space:pre-wrap;background:#0a0a14;padding:12px;border-radius:8px;border:1px solid #4a1a1a;margin:0;';
+  const tip = document.createElement('p');
+  tip.textContent = 'Screenshot this and share — it tells us what the device refused.';
+  tip.style.cssText = 'font-family:system-ui,sans-serif;font-size:0.8rem;opacity:0.7;margin:0;';
+  el.appendChild(h);
+  el.appendChild(pre);
+  el.appendChild(tip);
+  document.body.appendChild(el);
+}
+
 export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => void {
   assertSingleBodyCanvas();
+
+  const report = probeWebGL();
+  if (!report.ok) {
+    showFatalOverlay(
+      'WebGL not available',
+      [
+        `error: ${report.err}`,
+        '',
+        'PIXI requires WebGL to render. This device or browser refused to create a context.',
+        '',
+        'device:',
+        `  userAgent: ${typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'}`,
+        `  platform: ${typeof navigator !== 'undefined' ? navigator.platform : 'unknown'}`,
+        `  maxTouchPoints: ${typeof navigator !== 'undefined' ? navigator.maxTouchPoints : '?'}`,
+        `  devicePixelRatio: ${typeof window !== 'undefined' ? window.devicePixelRatio : '?'}`,
+        `  inner: ${typeof window !== 'undefined' ? `${window.innerWidth}x${window.innerHeight}` : '?'}`,
+      ].join('\n'),
+    );
+    return () => {};
+  }
 
   const app = new PIXI.Application();
   let mounted = false;
@@ -58,15 +136,19 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
   });
   window.addEventListener('resize', onResize);
 
+  const initOpts: PIXI.ApplicationOptions = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: 0x000000,
+    antialias: true,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true,
+    preference: 'webgl',
+    hello: false,
+  };
+
   app
-    .init({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      backgroundColor: 0x000000,
-      antialias: true,
-      resolution: window.devicePixelRatio || 1,
-      autoDensity: true,
-    })
+    .init(initOpts)
     .then(() => {
       if (destroyed) {
         app.destroy(true, { children: true, texture: true });
@@ -80,18 +162,95 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       canvas.style.height = '100vh';
       canvas.style.display = 'block';
       canvas.style.zIndex = '0';
+      canvas.dataset.pixiReady = '1';
 
       assertSingleBodyCanvas(canvas);
       bodyCanvases.add(canvas);
       document.body.appendChild(canvas);
       mounted = true;
 
-      proxy = new SubCanvasProxy({ app });
-      onReady?.(proxy);
+      try {
+        app.start();
+      } catch {
+        // already started by default; ignore
+      }
+
+      try {
+        proxy = new SubCanvasProxy({ app });
+        onReady?.(proxy);
+        if (typeof app.ticker.maxFPS === 'number' && app.ticker.maxFPS > 0) {
+          // ok
+        }
+        app.ticker.addOnce(() => {
+          if (import.meta.env.DEV) {
+            console.log('[PixiApp] first tick fired', {
+              stageChildren: app.stage.children.length,
+              renderer: app.renderer.type,
+              size: { w: app.renderer.width, h: app.renderer.height },
+            });
+          }
+        });
+
+        if (import.meta.env.DEV) {
+          setTimeout(() => {
+            const c = app.canvas as HTMLCanvasElement;
+            if (!c) return;
+            try {
+              const tmp = document.createElement('canvas');
+              tmp.width = 32;
+              tmp.height = 32;
+              const ctx = tmp.getContext('2d');
+              if (!ctx) return;
+              ctx.drawImage(c, 0, 0, 32, 32);
+              const data = ctx.getImageData(0, 0, 32, 32).data;
+              let nonBlack = 0;
+              for (let i = 0; i < data.length; i += 4) {
+                if (data[i] > 16 || data[i + 1] > 16 || data[i + 2] > 16) nonBlack++;
+              }
+              console.log('[PixiApp] canvas sample', {
+                nonBlackPixels: nonBlack,
+                total: data.length / 4,
+                stageChildren: app.stage.children.length,
+              });
+              if (nonBlack === 0 && app.stage.children.length > 0) {
+                showFatalOverlay(
+                  'PIXI canvas is blank',
+                  `Stage has ${app.stage.children.length} children but rendered canvas is all-black at sample point. Renderer may have failed silently.`,
+                );
+              }
+            } catch (e) {
+              console.warn('[PixiApp] health check failed', e);
+            }
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('[PixiApp] onReady threw:', err);
+        showFatalOverlay(
+          'Display init failed',
+          `${err instanceof Error ? err.message : String(err)}\n\n${err instanceof Error ? err.stack || '' : ''}`,
+        );
+      }
     })
     .catch((err) => {
       if (destroyed) return;
-      console.error('Pixi 初始化失败:', err);
+      console.error('[PixiApp] init failed:', err);
+      const renderer = (app as { renderer?: { type?: string } }).renderer?.type;
+      showFatalOverlay(
+        'PIXI init failed',
+        [
+          `error: ${err instanceof Error ? err.message : String(err)}`,
+          `stack: ${err instanceof Error ? err.stack || '' : ''}`,
+          '',
+          `webgl: ${report.version || '?'}`,
+          `vendor: ${report.vendor || '?'}`,
+          `renderer: ${report.renderer || '?'}`,
+          `pixi-renderer: ${renderer || 'unknown (init failed before renderer created)'}`,
+          '',
+          `dpr: ${window.devicePixelRatio}`,
+          `viewport: ${window.innerWidth}x${window.innerHeight}`,
+          `ua: ${navigator.userAgent}`,
+        ].join('\n'),
+      );
     });
 
   return () => {
