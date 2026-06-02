@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas, type SubDragMode } from '../pixi/SubCanvas';
+import { SubCanvas, type SubDragMode } from '../../pixi/SubCanvas';
 
 const TITLE_BAR_H = 22;
 const CLOSE_BTN_R = 5;
@@ -52,7 +52,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   bar.eventMode = 'static';
   bar.label = DRAG_HANDLE_LABEL;
   bar.cursor = 'move';
-  win.stage.addChild(bar);
+  win.addChild(bar);
 
   const title = new PIXI.Text({
     text: opts.title,

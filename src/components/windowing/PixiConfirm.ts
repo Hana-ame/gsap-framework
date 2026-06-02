@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas } from '../pixi/SubCanvas';
+import { SubCanvas } from '../../pixi/SubCanvas';
 import { createLoadingImage, type PixiImageHandle } from './PixiImage';
 
 const TITLE_BAR_H = 22;
@@ -83,7 +83,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
   bar.eventMode = 'static';
   bar.label = DRAG_HANDLE_LABEL;
   bar.cursor = 'move';
-  win.stage.addChild(bar);
+  win.addChild(bar);
 
   const titleText = new PIXI.Text({
     text: opts.title,

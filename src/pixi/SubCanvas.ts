@@ -441,7 +441,6 @@ export class SubCanvas {
       const parent = this.stage.parent;
       if (!parent) return;
       const local = e.getLocalPosition(parent);
-      console.log('[SubCanvas drag onDown]', { local });
       dragging = true;
       startLocalX = local.x;
       startLocalY = local.y;
@@ -452,7 +451,6 @@ export class SubCanvas {
     };
 
     const onMove = (e: PIXI.FederatedPointerEvent) => {
-      console.log('[SubCanvas drag onMove]', { dragging, eTarget: e.target?.constructor?.name });
       if (!dragging) return;
       const parent = this.stage.parent;
       if (!parent) return;
