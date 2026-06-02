@@ -12,6 +12,7 @@ const POINTER_TYPES: SubPointerType[] = [
 export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => void {
   const app = new PIXI.Application();
   let mounted = false;
+  let destroyed = false;
   let proxy: SubCanvasProxy | null = null;
 
   const onResize = () => {
@@ -40,6 +41,10 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       autoDensity: true,
     })
     .then(() => {
+      if (destroyed) {
+        app.destroy(true, { children: true, texture: true });
+        return;
+      }
       const canvas = app.canvas as HTMLCanvasElement;
       canvas.style.position = 'fixed';
       canvas.style.top = '0';
@@ -47,6 +52,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       canvas.style.width = '100vw';
       canvas.style.height = '100vh';
       canvas.style.display = 'block';
+      canvas.style.zIndex = '0';
 
       document.body.appendChild(canvas);
       mounted = true;
@@ -55,18 +61,26 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       onReady?.(proxy);
     })
     .catch((err) => {
+      if (destroyed) return;
       console.error('Pixi 初始化失败:', err);
     });
 
   return () => {
+    destroyed = true;
     POINTER_TYPES.forEach((type) => {
       window.removeEventListener(type, makePointerHandler(type));
     });
     window.removeEventListener('resize', onResize);
     proxy?.destroyAll();
+    proxy = null;
     if (mounted) {
-      document.body.removeChild(app.canvas);
+      const c = app.canvas as HTMLCanvasElement | undefined;
+      if (c && c.parentNode) c.parentNode.removeChild(c);
     }
-    app.destroy(true, { children: true, texture: true });
+    try {
+      app.destroy(true, { children: true, texture: true });
+    } catch {
+      // already destroyed
+    }
   };
 }

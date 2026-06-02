@@ -61,6 +61,11 @@ export function Window({
     setInternalVisible(visible);
   }, [visible]);
 
+  const isInteractive = (el: EventTarget | null): boolean => {
+    if (!(el instanceof HTMLElement)) return false;
+    return !!el.closest('button, input, textarea, select, a, [role="button"], label');
+  };
+
   const handleTitleDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (dragMode !== 'title') return;
     if (!draggable) {
@@ -93,6 +98,7 @@ export function Window({
   const handleRootDownCapture = () => onFocus?.();
   const handleRootDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (dragMode !== 'anywhere' || !draggable) return;
+    if (isInteractive(e.target)) return;
     e.preventDefault();
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
     dragRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
