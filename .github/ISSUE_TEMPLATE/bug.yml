@@ -1,0 +1,70 @@
+name: Bug Report
+description: Report something broken in the sim app
+title: '[bug] '
+labels: ['bug', 'triage']
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please fill in the sections below.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear, concise description of the bug.
+      placeholder: I tapped X and saw Y instead of Z.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: I expected X to do Y.
+    validations:
+      required: true
+
+  - type: input
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. go to /#/launcher  2. tap tile 'Single'  3. ..."
+      render: shell
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-mode
+    attributes:
+      label: Install mode
+      description: Where is the app running?
+      options:
+        - PWA installed (standalone)
+        - Mobile browser (Safari/Chrome)
+        - Desktop browser
+        - Unknown
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device & OS
+      placeholder: iPhone 14 / iOS 17.5, Pixel 7 / Android 14, ...
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: Safari 17.5, Chrome 124, ...
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console / network errors
+      description: Paste any red errors or failed network requests.
+      render: text

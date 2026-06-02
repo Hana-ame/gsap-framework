@@ -1,0 +1,26 @@
+src/:
+  - label: 'source'
+src/pwa/:
+  - label: 'pwa'
+src/pixi/:
+  - label: 'pixi'
+src/three-displays/:
+  - label: 'three'
+src/window/:
+  - label: 'window'
+src/router/:
+  - label: 'router'
+src/displays/launcher/:
+  - label: 'launcher'
+src/displays/window-mobile/:
+  - label: 'mobile'
+
+.github/workflows/:
+  - label: 'ci'
+  - label: 'infra'
+package.json:
+  - label: 'dependencies'
+public/manifest.webmanifest:
+  - label: 'pwa'
+public/sw.js:
+  - label: 'pwa'

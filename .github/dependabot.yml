@@ -1,0 +1,32 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+      major:
+        applies-to: version-updates
+        update-types:
+          - major
+    labels:
+      - dependencies
+    ignore:
+      - dependency-name: pixi.js
+        versions:
+          - ">=9"
+      - dependency-name: react
+        versions:
+          - ">=20"
+    commit-message:
+      prefix: 'chore(deps)'
+    target-branch: sim
