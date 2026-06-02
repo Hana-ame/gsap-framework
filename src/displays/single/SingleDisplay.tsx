@@ -37,3 +37,11 @@ export function SingleDisplay() {
 
   return null;
 }
+
+SingleDisplay.head = {
+  title: 'Single Canvas — sim',
+  description: 'Full viewport PIXI canvas — mouse crosshair + click ripple + counter.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

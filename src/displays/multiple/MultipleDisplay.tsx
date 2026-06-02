@@ -63,3 +63,11 @@ export function MultipleDisplay() {
 
   return null;
 }
+
+MultipleDisplay.head = {
+  title: 'Multiple Canvases — sim',
+  description: '2x2 quadrant grid — each cell an independent PIXI sub-canvas.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

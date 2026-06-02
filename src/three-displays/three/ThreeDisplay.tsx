@@ -121,3 +121,11 @@ export function ThreeDisplay() {
 
   return null;
 }
+
+ThreeDisplay.head = {
+  title: '3D Scene — sim',
+  description: 'Three.js scene — Icosahedron + 8 bouncing cubes + click ground to spawn (FIFO 60).',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

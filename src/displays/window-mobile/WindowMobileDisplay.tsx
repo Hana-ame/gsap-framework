@@ -352,3 +352,12 @@ export function WindowMobileDisplay() {
     </div>
   );
 }
+
+WindowMobileDisplay.head = {
+  title: 'Mobile Window — sim',
+  description: 'Adaptive mobile layout — 5 confirm kinds via bottom trigger bar, drag-anywhere dialogs, async image preview.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+  ],
+};

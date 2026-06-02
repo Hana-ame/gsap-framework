@@ -255,3 +255,11 @@ const launcherCss = `
   border-top: 1px solid #1a1a2a;
 }
 `;
+
+LauncherDisplay.head = {
+  title: 'sim — apps',
+  description: 'Launcher home — tile grid of all 2D/3D/PWA demos.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

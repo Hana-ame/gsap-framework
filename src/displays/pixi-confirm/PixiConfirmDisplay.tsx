@@ -231,3 +231,11 @@ export function PixiConfirmDisplay() {
     </div>
   );
 }
+
+PixiConfirmDisplay.head = {
+  title: 'PIXI Confirm Playground — sim',
+  description: 'createConfirm component playground — 5 triggers (simple, custom, 3 buttons, X-only, image preview) testing drag-anywhere button exclusion.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

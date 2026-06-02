@@ -182,3 +182,11 @@ function mountIcoScene(canvas: HTMLCanvasElement): SceneHandle {
     setRotation: () => {},
   };
 }
+
+Two3DDisplay.head = {
+  title: 'Two 3D Views — sim',
+  description: 'Two HTML draggable windows each embedding an independent Three.js scene (TorusKnot + Icosahedron), EventBus cross-window sync.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

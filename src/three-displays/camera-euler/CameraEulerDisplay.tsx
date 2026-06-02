@@ -158,3 +158,11 @@ const hudStyle: CSSProperties = {
   pointerEvents: 'none',
   zIndex: 10,
 };
+
+CameraEulerDisplay.head = {
+  title: 'Camera Euler — sim',
+  description: 'Three.js camera with YXZ Euler order + pitch clamp ±80° — rotates through 8 HSL reference pillars around a central red target.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

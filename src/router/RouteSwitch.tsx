@@ -1,5 +1,11 @@
 import { routeMap, DEFAULT_ROUTE, type Route } from './routes';
 import { useHashRoute } from './useHashRoute';
+import { useHead } from '../head/useHead';
+import type { HeadConfig } from '../head/types';
+
+interface DisplayWithHead {
+  head?: HeadConfig;
+}
 
 function BackButton() {
   return (
@@ -28,6 +34,12 @@ function BackButton() {
       ← sim
     </button>
   );
+}
+
+function HeadForRoute({ route }: { route: Route }) {
+  const C = routeMap[route] as DisplayWithHead;
+  useHead(C?.head);
+  return null;
 }
 
 function renderRoute(route: Route) {
@@ -90,10 +102,16 @@ function renderRoute(route: Route) {
 export function RouteSwitch() {
   const route = useHashRoute();
   if (route === 'launcher') {
-    return renderRoute(route);
+    return (
+      <>
+        <HeadForRoute route={route} />
+        {renderRoute(route)}
+      </>
+    );
   }
   return (
     <>
+      <HeadForRoute route={route} />
       <BackButton />
       {renderRoute(route)}
     </>

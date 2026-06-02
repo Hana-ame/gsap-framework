@@ -201,3 +201,11 @@ export function ScreenSizeDisplay() {
 
   return null;
 }
+
+ScreenSizeDisplay.head = {
+  title: 'Screen Size — sim',
+  description: 'PIXI live readout: inner / visualViewport / screen / dpr / device info.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

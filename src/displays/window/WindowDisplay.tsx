@@ -86,3 +86,11 @@ export function WindowDisplay() {
 
   return null;
 }
+
+WindowDisplay.head = {
+  title: 'PIXI Window — sim',
+  description: 'Draggable PIXI window system — Inventory grid + Chat log + loading overlay.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

@@ -102,3 +102,11 @@ const triggerBtn: React.CSSProperties = {
   fontSize: 13,
   cursor: 'pointer',
 };
+
+ConfirmDisplay.head = {
+  title: 'HTML Confirm — sim',
+  description: 'HTML dialog playground on top of Window dragMode=anywhere — buttons stopPropagation so drag never fires.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};

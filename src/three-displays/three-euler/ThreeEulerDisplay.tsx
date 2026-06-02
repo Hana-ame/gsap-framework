@@ -175,3 +175,11 @@ const hudStyle: CSSProperties = {
   pointerEvents: 'none',
   zIndex: 10,
 };
+
+ThreeEulerDisplay.head = {
+  title: 'Ship Euler — sim',
+  description: 'Three.js ship model with YXZ Euler order + pitch clamp ±85° — demonstrates gimbal lock avoidance. HUD shows pitch/yaw/roll.',
+  meta: [
+    { name: 'theme-color', content: '#0a0a14' },
+  ],
+};
