@@ -397,12 +397,10 @@ export class SubCanvas {
       startBoundsX = this._bounds.x;
       startBoundsY = this._bounds.y;
       if (handlers.bringToFront) this.bringToFront();
-      console.log('[SubCanvas drag] onDown', { local, pid: e.pointerId, target: e.target?.constructor?.name });
       handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
     };
 
     const onMove = (e: PIXI.FederatedPointerEvent) => {
-      console.log('[SubCanvas drag] onMove', { dragging, target: e.target?.constructor?.name, pid: e.pointerId });
       if (!dragging) return;
       const parent = this.stage.parent;
       if (!parent) return;
@@ -425,12 +423,20 @@ export class SubCanvas {
     };
 
     handle.on('pointerdown', onDown);
+    handle.on('pointermove', onMove);
+    handle.on('pointerup', onUp);
+    handle.on('pointerupoutside', onUp);
+    handle.on('pointercancel', onUp);
     root.on('pointermove', onMove);
     root.on('pointerup', onUp);
     root.on('pointerupoutside', onUp);
 
     this._perHandleCleanups.set(handle, () => {
       handle.off('pointerdown', onDown);
+      handle.off('pointermove', onMove);
+      handle.off('pointerup', onUp);
+      handle.off('pointerupoutside', onUp);
+      handle.off('pointercancel', onUp);
       root.off('pointermove', onMove);
       root.off('pointerup', onUp);
       root.off('pointerupoutside', onUp);
