@@ -42,9 +42,6 @@ const clearOwnedExtras = (activeIds: Set<string>) => {
 };
 
 export function useHead(config: HeadConfig | undefined | null): void {
-  const title = config?.title;
-  const description = config?.description;
-  const meta = config?.meta;
   useEffect(() => {
     const head: HeadConfig = config ?? FALLBACK_HEAD;
     setTitle(head.title);
@@ -65,5 +62,5 @@ export function useHead(config: HeadConfig | undefined | null): void {
       setOwnedMetaTag(id, attrs);
     });
     clearOwnedExtras(ids);
-  }, [title, description, meta]);
+  }, [config]);
 }
