@@ -436,7 +436,10 @@ export class SubCanvas {
     let startBoundsX = 0;
     let startBoundsY = 0;
 
+    console.log('[SubCanvas] _installDragOnHandle', { label: handle.label, stageChildren: this.stage.children.length });
+
     const onDown = (e: PIXI.FederatedPointerEvent) => {
+      console.log('[SubCanvas] drag onDown');
       e.stopPropagation();
       const parent = this.stage.parent;
       if (!parent) return;
@@ -451,6 +454,7 @@ export class SubCanvas {
     };
 
     const onMove = (e: PIXI.FederatedPointerEvent) => {
+      console.log('[SubCanvas] drag onMove', { dragging });
       if (!dragging) return;
       const parent = this.stage.parent;
       if (!parent) return;
