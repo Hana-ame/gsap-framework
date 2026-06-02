@@ -158,6 +158,7 @@ export class SubCanvas {
   }
 
   setBounds(bounds: Rect): void {
+    if (this._destroyed) return;
     this._syncing = true;
     this._bounds = bounds;
     this.stage.position.set(bounds.x, bounds.y);
@@ -166,6 +167,7 @@ export class SubCanvas {
   }
 
   setPosition(x: number, y: number): void {
+    if (this._destroyed) return;
     this._syncing = true;
     this._bounds = { ...this._bounds, x, y };
     this.stage.position.set(x, y);
@@ -173,6 +175,7 @@ export class SubCanvas {
   }
 
   setSize(width: number, height: number): void {
+    if (this._destroyed) return;
     this._bounds = { ...this._bounds, width, height };
     this.resizeListeners.forEach((fn) => fn(this._bounds));
   }
