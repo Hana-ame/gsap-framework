@@ -82,36 +82,36 @@ export function ScreenSizeDisplay() {
 
       const title = new PIXI.Text({
         text: 'screen size',
-        style: { fontSize: 18, fill: 0x88aaff, fontFamily: 'monospace', fontWeight: '600' },
+        style: { fontSize: 14, fill: 0x88aaff, fontFamily: 'monospace', fontWeight: '600' },
       });
-      title.x = 16;
-      title.y = 16;
+      title.x = 12;
+      title.y = 10;
       title.eventMode = 'none';
       root.stage.addChild(title);
 
       const bigSize = new PIXI.Text({
         text: '',
-        style: { fontSize: 36, fill: 0xe6e6f0, fontFamily: 'monospace', fontWeight: '700' },
+        style: { fontSize: 26, fill: 0xe6e6f0, fontFamily: 'monospace', fontWeight: '700' },
       });
-      bigSize.x = 16;
-      bigSize.y = 48;
+      bigSize.x = 12;
+      bigSize.y = 30;
       bigSize.eventMode = 'none';
       root.stage.addChild(bigSize);
 
       const sub = new PIXI.Text({
         text: '',
-        style: { fontSize: 14, fill: 0x8a8a9a, fontFamily: 'monospace' },
+        style: { fontSize: 11, fill: 0x8a8a9a, fontFamily: 'monospace' },
       });
-      sub.x = 16;
-      sub.y = 96;
+      sub.x = 12;
+      sub.y = 62;
       sub.eventMode = 'none';
       root.stage.addChild(sub);
 
-      const tableX = 16;
-      const tableY = 140;
-      const rowH = 18;
-      const labelStyle = { fontSize: 12, fill: 0x8a8a9a, fontFamily: 'monospace' as const };
-      const valueStyle = { fontSize: 12, fill: 0xe6e6f0, fontFamily: 'monospace' as const };
+      const tableX = 12;
+      const tableY = 86;
+      let rowH = 15;
+      const labelStyle = { fontSize: 10, fill: 0x8a8a9a, fontFamily: 'monospace' as const };
+      const valueStyle = { fontSize: 10, fill: 0xe6e6f0, fontFamily: 'monospace' as const };
       const labels: PIXI.Text[] = [];
       const values: PIXI.Text[] = [];
       ROWS.forEach(([key], i) => {
@@ -148,16 +148,23 @@ export function ScreenSizeDisplay() {
       root.stage.addChild(diagText);
 
       const renderNow = (s: Snapshot) => {
+        const Wcur = window.innerWidth;
+        const Hcur = window.innerHeight;
+        rowH = Math.max(13, Math.min(18, Math.floor((Hcur - 86 - 80) / ROWS.length)));
         bigSize.text = `${s.innerW} x ${s.innerH}`;
-        sub.text = `dpr ${s.dpr} \u00b7 css ${s.visualVpW}\u00d7${s.visualVpH} \u00b7 screen ${s.screenW}\u00d7${s.screenH}`;
+        sub.text = `dpr ${s.dpr} \u00b7 css ${s.visualVpW}\u00d7${s.visualVpH} \u00b7 device ${s.screenW}\u00d7${s.screenH}`;
         ROWS.forEach(([_key, fn], i) => {
           values[i].text = String(fn(s));
+          labels[i].y = tableY + i * rowH;
+          values[i].y = tableY + i * rowH;
         });
+        uaText.style.wordWrapWidth = Wcur - 24;
+        uaText.x = 12;
         uaText.text = s.ua;
-        uaText.y = tableY + ROWS.length * rowH + 12;
-        const lines =
-          uaText.height > 0 ? Math.ceil(uaText.height / 12) : 1;
-        diagText.y = Math.min(H - 28, uaText.y + lines * 12 + 12);
+        uaText.y = tableY + ROWS.length * rowH + 8;
+        const uaLines = uaText.height > 0 ? Math.ceil(uaText.height / 11) : 1;
+        diagText.x = 12;
+        diagText.y = Math.min(Hcur - 22, uaText.y + uaLines * 11 + 8);
         diagText.text = `\u25CF ${s.ts}`;
       };
       renderNow(snapshot());

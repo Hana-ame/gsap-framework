@@ -156,10 +156,9 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       }
       const canvas = app.canvas as HTMLCanvasElement;
       canvas.style.position = 'fixed';
-      canvas.style.top = '0';
-      canvas.style.left = '0';
-      canvas.style.width = '100vw';
-      canvas.style.height = '100vh';
+      canvas.style.inset = '0';
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
       canvas.style.display = 'block';
       canvas.style.zIndex = '0';
       canvas.dataset.pixiReady = '1';

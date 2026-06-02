@@ -178,11 +178,19 @@ const launcherCss = `
 .launcher-grid {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px;
-  padding: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  padding: 12px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  align-content: start;
+}
+@media (min-width: 600px) {
+  .launcher-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 16px;
+  }
 }
 .launcher-tile {
   position: relative;
