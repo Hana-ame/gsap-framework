@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '../pixi/SubCanvas';
+import { createLoadingImage, type PixiImageHandle } from './PixiImage';
 
 const TITLE_BAR_H = 22;
 const CLOSE_BTN_R = 5;
@@ -135,47 +136,14 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
   const bodyBottom = opts.height - PADDING - BTN_H;
   const bodyW = opts.width - PADDING * 2;
   const bodyH = bodyBottom - bodyTop;
-  const bodyCx = opts.width / 2;
-  const bodyCy = bodyTop + bodyH / 2;
-
-  let imageSprite: PIXI.Sprite | null = null;
 
   const showMessage = (m: string) => {
     messageText.text = m;
     messageText.visible = true;
-    if (imageSprite) imageSprite.visible = false;
+    if (image) image.container.visible = false;
   };
 
-  const showImage = (url: string) => {
-    messageText.visible = false;
-    PIXI.Assets.load(url)
-      .then((texture) => {
-        if (win.destroyed) {
-          return;
-        }
-        if (!imageSprite) {
-          imageSprite = new PIXI.Sprite(texture);
-          imageSprite.eventMode = 'none';
-          win.stage.addChild(imageSprite);
-        } else {
-          imageSprite.texture = texture;
-        }
-        const maxW = opts.imageMaxWidth ?? bodyW;
-        const maxH = opts.imageMaxHeight ?? bodyH;
-        const scale = Math.min(maxW / texture.width, maxH / texture.height, 1);
-        imageSprite.scale.set(scale);
-        imageSprite.anchor.set(0.5);
-        imageSprite.x = bodyCx;
-        imageSprite.y = bodyCy;
-        imageSprite.visible = true;
-      })
-      .catch((err) => {
-        console.warn('[PixiConfirm] image load failed:', err);
-        if (!win.destroyed) {
-          showMessage(`(image load failed: ${err?.message ?? err})`);
-        }
-      });
-  };
+  let image: PixiImageHandle | null = null;
 
   if (opts.message && opts.message.length > 0) {
     messageText.visible = true;
@@ -183,7 +151,19 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     messageText.visible = false;
   }
   if (opts.image) {
-    showImage(opts.image);
+    image = createLoadingImage(win, {
+      url: opts.image,
+      x: PADDING,
+      y: bodyTop,
+      width: bodyW,
+      height: bodyH,
+      maxWidth: opts.imageMaxWidth,
+      maxHeight: opts.imageMaxHeight,
+      onError: (err) => {
+        console.warn('[PixiConfirm] image load failed:', err);
+      },
+    });
+    messageText.visible = false;
   }
 
   const buttonHits: ButtonHit[] = [];
@@ -335,7 +315,27 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     showMessage(m);
   };
   win.setImage = (url: string) => {
-    showImage(url);
+    if (image) {
+      image.setUrl(url);
+    } else {
+      image = createLoadingImage(win, {
+        url,
+        x: PADDING,
+        y: bodyTop,
+        width: bodyW,
+        height: bodyH,
+        maxWidth: opts.imageMaxWidth,
+        maxHeight: opts.imageMaxHeight,
+      });
+      messageText.visible = false;
+    }
+  };
+
+  const origDestroy = win.destroy.bind(win);
+  (win as unknown as { destroy: () => void }).destroy = () => {
+    image?.destroy();
+    image = null;
+    origDestroy();
   };
 
   return win;

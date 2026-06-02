@@ -1,0 +1,140 @@
+import * as PIXI from 'pixi.js';
+import type { SubCanvas } from '../pixi/SubCanvas';
+
+const DEFAULT_BG = 0x1a1a2a;
+const DEFAULT_BORDER = 0x2a2a3a;
+const DEFAULT_TEXT_COLOR = 0x888888;
+const DEFAULT_ERROR_COLOR = 0xff5577;
+const FONT = 'monospace';
+const TEXT_BASE = 12;
+
+export interface PixiImageOptions {
+  url: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  placeholderText?: string;
+  placeholderBg?: number;
+  placeholderBorder?: number;
+  placeholderTextColor?: number;
+  onLoad?: (texture: PIXI.Texture) => void;
+  onError?: (err: Error) => void;
+}
+
+export interface PixiImageHandle {
+  setUrl(url: string): void;
+  destroy(): void;
+  readonly destroyed: boolean;
+  readonly container: PIXI.Container;
+}
+
+export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): PixiImageHandle {
+  const container = new PIXI.Container();
+  container.x = opts.x;
+  container.y = opts.y;
+  container.eventMode = 'none';
+  parent.stage.addChild(container);
+
+  const maxW = opts.maxWidth ?? opts.width;
+  const maxH = opts.maxHeight ?? opts.height;
+  const phBg = opts.placeholderBg ?? DEFAULT_BG;
+  const phBorder = opts.placeholderBorder ?? DEFAULT_BORDER;
+  const phTextColor = opts.placeholderTextColor ?? DEFAULT_TEXT_COLOR;
+
+  let placeholder: PIXI.Container | null = null;
+  let sprite: PIXI.Sprite | null = null;
+  let currentToken = 0;
+  let destroyed = false;
+
+  const buildPlaceholder = (text: string, color: number) => {
+    if (placeholder) {
+      placeholder.destroy({ children: true });
+      placeholder = null;
+    }
+    const c = new PIXI.Container();
+    const bg = new PIXI.Graphics()
+      .rect(0, 0, opts.width, opts.height)
+      .fill({ color: phBg, alpha: 0.9 })
+      .stroke({ width: 1, color: phBorder });
+    bg.eventMode = 'none';
+    c.addChild(bg);
+    const t = new PIXI.Text({
+      text,
+      style: { fontSize: TEXT_BASE, fill: color, fontFamily: FONT },
+    });
+    t.x = (opts.width - t.width) / 2;
+    t.y = (opts.height - t.height) / 2;
+    t.eventMode = 'none';
+    c.addChild(t);
+    container.addChild(c);
+    placeholder = c;
+  };
+
+  const showSprite = (texture: PIXI.Texture) => {
+    if (placeholder) {
+      placeholder.destroy({ children: true });
+      placeholder = null;
+    }
+    if (sprite) {
+      sprite.destroy();
+      sprite = null;
+    }
+    const s = new PIXI.Sprite(texture);
+    s.eventMode = 'none';
+    s.anchor.set(0.5);
+    s.x = opts.width / 2;
+    s.y = opts.height / 2;
+    const scale = Math.min(maxW / texture.width, maxH / texture.height, 1);
+    s.scale.set(scale);
+    container.addChild(s);
+    sprite = s;
+  };
+
+  const load = (url: string) => {
+    const token = ++currentToken;
+    buildPlaceholder(opts.placeholderText ?? 'loading...', phTextColor);
+    PIXI.Assets.load(url)
+      .then((texture) => {
+        if (destroyed || token !== currentToken) return;
+        showSprite(texture);
+        opts.onLoad?.(texture);
+      })
+      .catch((err: unknown) => {
+        if (destroyed || token !== currentToken) return;
+        const msg = err instanceof Error ? err.message : String(err);
+        buildPlaceholder(`(load failed: ${msg})`, DEFAULT_ERROR_COLOR);
+        opts.onError?.(err instanceof Error ? err : new Error(msg));
+      });
+  };
+
+  load(opts.url);
+
+  return {
+    setUrl(url: string) {
+      if (destroyed) return;
+      load(url);
+    },
+    destroy() {
+      if (destroyed) return;
+      destroyed = true;
+      currentToken++;
+      if (placeholder) {
+        placeholder.destroy({ children: true });
+        placeholder = null;
+      }
+      if (sprite) {
+        sprite.destroy();
+        sprite = null;
+      }
+      if (container.parent) container.parent.removeChild(container);
+      container.destroy({ children: true });
+    },
+    get destroyed() {
+      return destroyed;
+    },
+    container,
+  };
+}
