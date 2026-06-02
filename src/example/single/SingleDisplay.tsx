@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../pixi/PixiApp';
-import { mountDisplays } from '../Displays';
+import { startPixiApp } from '../../framework/PixiApp';
+import { mountDisplays } from '../_shared/Displays';
 
 export function SingleDisplay() {
   useEffect(() => {

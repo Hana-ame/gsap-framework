@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import type { SubCanvas } from '../pixi/SubCanvas';
+import type { SubCanvas } from '../framework/SubCanvas';
 
 const DEFAULT_BG = 0x1a1a2a;
 const DEFAULT_BORDER = 0x2a2a3a;

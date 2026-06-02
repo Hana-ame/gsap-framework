@@ -14,11 +14,6 @@ const APPS: AppEntry[] = [
   { route: 'single', label: 'Single', hint: 'full viewport canvas', glyph: '\u25A3', accent: '#5a3a6a' },
   { route: 'multiple', label: 'Multiple', hint: '2x2 quadrant grid', glyph: '\u229E', accent: '#3a6a5a' },
   { route: 'window', label: 'Window', hint: 'draggable windows + chat', glyph: '\u25A2', accent: '#6a5a3a' },
-  { route: 'three', label: 'Three', hint: 'PIXI 3D scene', glyph: '\u25C7', accent: '#3a5a6a' },
-  { route: 'two-3d', label: 'Two 3D', hint: 'two synced 3D views', glyph: '\u25C8', accent: '#5a3a5a' },
-  { route: 'three-euler', label: 'Three Euler', hint: 'euler angle demo', glyph: '\u25CA', accent: '#3a6a3a' },
-  { route: 'camera-euler', label: 'Camera Euler', hint: 'camera rotation demo', glyph: '\u25C6', accent: '#6a3a3a' },
-  { route: 'confirm', label: 'Confirm', hint: 'html dialog playground', glyph: '?', accent: '#4a4a6a' },
   { route: 'pixi-confirm', label: 'Pixi Confirm', hint: 'pixi confirm with buttons', glyph: '!', accent: '#4a6a4a' },
 ];
 
@@ -257,8 +252,8 @@ const launcherCss = `
 `;
 
 LauncherDisplay.head = {
-  title: 'sim — apps',
-  description: 'Launcher home — tile grid of all 2D/3D/PWA demos.',
+  title: 'subcanvas — examples',
+  description: 'Launcher home — tile grid of all SubCanvas examples.',
   meta: [
     { name: 'theme-color', content: '#0a0a14' },
   ],

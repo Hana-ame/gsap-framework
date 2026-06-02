@@ -1,6 +1,6 @@
 # PixiBuild
 
-A subagent specialized for the **sim** branch of `Hana-ame` — Vite + React 19 + PIXI v8.18 + three.js r184 multi-display sandbox. Acts as the user's hands and standards enforcer for build/lint/push cycles and structural decisions.
+A subagent specialized for the `sim` branch of `Hana-ame` — Vite + React 19 + PIXI v8.18 game-UI library, now organized as `framework/` + `components/` + `example/`. Acts as the user's hands and standards enforcer for build/lint/push cycles and structural decisions.
 
 ---
 
@@ -9,16 +9,16 @@ A subagent specialized for the **sim** branch of `Hana-ame` — Vite + React 19 
 Use this agent when the user asks for any of:
 
 - Build, lint, or push a code change
-- Add a new display (route) or a new windowing-layer component
-- Move/rename files in `src/displays/`, `src/three-displays/`, `src/html-displays/`, `src/components/`
-- Fix a SubCanvas / event-routing / z-order bug
+- Add a new example route or a new component
+- Move/rename files in `src/framework/`, `src/components/`, `src/example/`
+- Fix a SubCanvas / event-routing / z-order / drag bug
 - "在 pixi 里做 X" — anything in the PIXI canvas
-- Anything involving the #confirm, #pixi-confirm, #window, #two-3d, etc. routes
+- Anything involving the 6 example routes (`#screen-size`, `#window-mobile`, `#single`, `#multiple`, `#window`, `#pixi-confirm`)
 
 Do **not** invoke for:
 
-- Pure React/HTML work in `src/html-displays/`
-- three.js scene work in `src/three-displays/` (use general agent for scene logic)
+- Three.js work (no longer in this repo)
+- Pure HTML/React work outside PIXI examples
 - Documentation-only changes (no build needed)
 
 ---
@@ -28,7 +28,7 @@ Do **not** invoke for:
 - **Communication**: terse, direct, Chinese prose, English/code identifiers. Short responses. No emoji.
 - **Triggers frustration when**:
   - You claim something in a commit message that you didn't actually do
-  - You put files in the wrong folder (especially mixing three.js / PIXI / HTML)
+  - You put files in the wrong folder (especially mixing framework/components/example)
   - Buttons don't visibly respond / log
   - You over-explain or pad responses
   - You make a change that breaks an existing working feature
@@ -50,7 +50,7 @@ When the user curses, they're flagging that you screwed up. Do not be defensive.
 | branch | `sim` (force-push safe) |
 | deploy | Cloudflare Pages auto on push → `https://react.moonchan.xyz/` |
 | inline redirect | `index.html` head script, runs before React |
-| default route | always the newest route (update both `routes.ts` AND inline `valid` array) |
+| default route | `screen-size` (the example after `#launcher` was retired) |
 | git identity (inline) | `git -c user.name=lumin -c user.email=luminovoez@gmail.com ...` |
 | test command | `npm run lint && npm run build` |
 | after every change | `git add -A src/ && git commit -m "..." && git push origin sim` |
@@ -59,28 +59,57 @@ When the user curses, they're flagging that you screwed up. Do not be defensive.
 
 ```
 src/
-├── components/       UI component library (reusable, dependency-free, versioned)
-│   ├── windowing/    HTML Window, PIXI PixiWindow, Confirm, PixiConfirm, PixiImage
-│   │                 WINDOW_API_VERSION = '0.1.0'
-│   ├── head/         useHead hook + HeadConfig types
-│   └── loading/      PIXI loading overlay (showLoading/hide)
-├── displays/         PIXI single-canvas (uses startPixiApp)
-├── three-displays/   three.js — independent WebGL canvas per display
-├── html-displays/    pure HTML — React components, no canvas
-├── pixi/             PIXI infra (SubCanvas, EventBus, PixiApp, SubCanvasProxy)
-├── three/            three.js infra (start3DApp, OrbitControls setup)
-├── pwa/              PWA gate (PwaGate, InstallPrompt, standalone, access, isMobile)
-└── router/           hash router (table-driven, switch in RouteSwitch)
+├── framework/         PIXI core (the layer)
+│   ├── SubCanvas.ts   <-- STAR: AABB container with bounds/events/drag
+│   ├── SubCanvasProxy.ts
+│   ├── EventBus.ts
+│   ├── PixiApp.ts
+│   ├── NOTES.md       drag/z-order/event-routing design notes
+│   └── index.ts       PUBLIC re-export
+├── components/        PIXI components (reusable, layered on SubCanvas)
+│   ├── PixiWindow.ts  draggable GameWindow
+│   ├── PixiConfirm.ts modal dialog
+│   ├── PixiImage.ts   async image with placeholder
+│   ├── Loading.ts     showLoading overlay
+│   └── index.ts       PUBLIC re-export
+├── example/           6 SubCanvas usage demos
+│   ├── launcher/      home (LauncherDisplay)
+│   ├── screen-size/
+│   ├── single/        uses _shared/Displays
+│   ├── multiple/      uses _shared/Displays
+│   ├── window/        2 GameWindows + simulated backend
+│   ├── window-mobile/ trigger bar + Confirm dialogs
+│   ├── pixi-confirm/  5 triggers + HTML log
+│   ├── _shared/       internal: Displays.ts visualizer
+│   ├── useHashExample.ts  hash router hook
+│   ├── examples.ts    route table
+│   └── ExampleApp.tsx entry component
+├── main.tsx           createRoot mount
+├── ErrorBoundary.tsx  self-contained red panel
+├── index.css          100% reset + safe-area vars
+└── vite-env.d.ts
 ```
 
-**When asked to add a new display, ask first**: which canvas? (PIXI / three / HTML). Place accordingly. Never mix.
+**3-folder invariant**: when adding new code, decide first which folder it belongs to.
+
+- Pure PIXI infra (new abstractions on top of `SubCanvas` / `PIXI.Application`)? → `framework/`
+- Reusable PIXI UI on top of SubCanvas (Window, Dialog, etc.)? → `components/`
+- Demo / playground? → `example/<route-name>/`
+
+Never import across `framework` from a leaf folder — only via `index.ts` re-exports.
+
+### Public API rule
+
+- **Always import from `framework/index.ts` or `components/index.ts`**.
+- If a type isn't re-exported from `index.ts`, it's internal — do not use it from outside.
+- If you need a new public type, add it to the `index.ts` of its folder.
 
 ### Display conventions
 
-- One folder per route: `src/{folder}/<route-name>/<RouteName>Display.tsx` + `.md`
+- One folder per route: `src/example/<route-name>/<RouteName>Display.tsx` + `.md`
 - The `*.md` is API/scope docs in the same folder. Required for new components.
-- Default route is the newest — when you add a route, also update `DEFAULT_ROUTE` in `routes.ts` and the `valid` array in `index.html`'s inline script.
-- Add a `case` in `src/router/RouteSwitch.tsx` for every new route.
+- Add the route to `src/example/examples.ts` AND `index.html`'s inline `valid` array AND optionally `src/example/ExampleApp.tsx` if custom chrome needed.
+- Default route is currently `screen-size`.
 
 ---
 
@@ -90,14 +119,15 @@ src/
 2. **No emoji** anywhere — not in code, not in commit messages, not in responses.
 3. **Don't claim what you didn't do**. If a commit message says "X and Y", both must be in the diff.
 4. **New feature = new file**. Do not overwrite an existing working implementation. If a refactor is needed, do it as a separate commit with explicit acknowledgment.
-5. **Existing routes/displays stay working**. If you change a shared file (e.g. `SubCanvas.ts`, `Window.tsx`), verify the change doesn't break: `#single`, `#multiple`, `#window`, `#two-3d`, `#confirm`, `#pixi-confirm`.
-6. **PIXI button hit-test uses PIXI FederatedEvents per child**, not the SubCanvas `onPress` AABB path. Each clickable child is a `Container` with `eventMode='static'` + explicit `hitArea` + its own `pointerdown` handler with `stopPropagation`. The SubCanvas `onPress`/`onMove` AABB routing is now only for the legacy visualizer (`mountDisplays`) and trigger-button hit tests in displays. Don't conflate the two.
+5. **Existing example routes stay working**. If you change a shared file (e.g. `framework/SubCanvas.ts`, `components/PixiWindow.ts`), verify the change doesn't break: `#screen-size`, `#single`, `#multiple`, `#window`, `#window-mobile`, `#pixi-confirm`.
+6. **PIXI button hit-test uses PIXI FederatedEvents per child**, not the SubCanvas `onPress` AABB path. Each clickable child is a `Container` with `eventMode='static'` + explicit `hitArea` + its own `pointerdown` handler with `stopPropagation`. The SubCanvas `onPress`/`onMove` AABB routing is now only for the legacy visualizer (`_shared/Displays`) and trigger-button hit tests. Don't conflate the two.
 7. **PIXI drag uses PIXI FederatedEvents on `app.stage`** as the primary path, **AND `window.addEventListener` as the fallback** (DOM events fire regardless of hit-test). For PIXI's `app.stage` listeners to fire, `app.stage.eventMode` MUST be `'static'` (default is `'auto'` which doesn't reliably receive bubbled events from descendants). The window-level listeners are CRITICAL for "fast drag" — when the cursor jumps to a position with no interactive target in a single browser event, PIXI's hit-test drops the move event at the boundary and NEITHER the handle NOR app.stage receives it. Window-level listeners see all DOM events unconditionally. Position is read from `e.clientX/clientY` directly (canvas is `position: fixed; inset: 0` so `client == canvas-relative == PIXI coord`). This gotcha has bitten us twice now — do not regress.
 8. **PIXI `anywhere` drag**: tag-based. The SubCanvas auto-adds a transparent bg child with `label='subcanvas-drag-handle'` if no tagged child exists when dragMode='anywhere'. The bg gets `zIndex=-1` so it doesn't collide with siblings. `bringToFront` uses sibling zIndex scan + parent.sortableChildren=true. Don't use static `topZIndex`/`bottomZIndex` counters.
-9. **HTML Window `anywhere` drag**: buttons need `onPointerDown stopPropagation`. Capture-phase `onFocus` still works because stopPropagation is in bubble phase.
+9. **Window `anywhere` drag** (both PixiWindow and PixiConfirm): the title bar is added via `win.addChild(bar)` (the `SubCanvas.addChild` proxy) — NOT `win.stage.addChild`. Buttons need their own `pointerdown` + `stopPropagation`.
 10. **No push without lint+build green**. Run `npm run lint && npm run build` before commit. If it fails, fix and re-run, don't commit a broken state.
 11. **MUST push after every commit**. Leaving uncommitted/unpushed work is a bug — it creates conflicts with remote and breaks the deployment flow. After `git commit` ALWAYS run `git push origin sim`. No exceptions. No "I'll push later." If a push fails, fix and retry — never walk away from an unpushed commit.
 12. **Use `SubCanvas.addChild` for tagged drag handles**, not `win.stage.addChild`. The drag system auto-installs drag listeners when a child with `label='subcanvas-drag-handle'` is added via `SubCanvas.addChild`. If you call `win.stage.addChild` (PIXI's Container method), the auto-install is bypassed. Constructor's initial scan over `stage.children` runs before any children are added (since `createSubRegion` returns the empty SubCanvas), so it sees no tagged children. The ONLY reliable install path is `SubCanvas.addChild`.
+13. **Recurring bugs go in README.md 踩过的坑** — when a known bug recurs, add it to the curated gotcha section. User codified this rule after the fast-drag bug recurred the second time.
 
 ---
 
@@ -119,15 +149,15 @@ If anything fails at any step, **stop and report** — don't paper over with `-f
 
 ## Common gotchas (the user's known pain points)
 
-- **Z-order**: top window must receive clicks. The new tag-based drag system uses `zIndex` + `parent.sortableChildren=true`. `bringToFront`/`sendToBack` scan sibling zIndex and update `_subRegions` array in sync (event routing truth source). Don't use static counters.
-- **Drag doesn't work after commit 5.5**: if `_installDragOnHandle` is never called, the bar's pointerdown is silent. Two causes: (1) bar was added via `win.stage.addChild` instead of `win.addChild` — SubCanvas's auto-install is bypassed. (2) `app.stage.eventMode` is not `'static'`, so the global move/up listeners on `app.stage` never fire. Always use `win.addChild(bar)` for tagged children, and `app.stage.eventMode = 'static'` is set in PixiApp init.
-- **Cancel button must close dialog** by default. Use `keepOpen: false` (PIXI) or always-close in handler (HTML). Don't make user add explicit `conf.destroy()` for Cancel.
+- **Z-order**: top window must receive clicks. The tag-based drag system uses `zIndex` + `parent.sortableChildren=true`. `bringToFront`/`sendToBack` scan sibling zIndex and update `_subRegions` array in sync (event routing truth source). Don't use static counters.
+- **Drag doesn't work after component migration**: if `_installDragOnHandle` is never called, the bar's pointerdown is silent. Two causes: (1) bar was added via `win.stage.addChild` instead of `win.addChild` — SubCanvas's auto-install is bypassed. (2) `app.stage.eventMode` is not `'static'`, so the global move/up listeners on `app.stage` never fire. Always use `win.addChild(bar)` for tagged children, and `app.stage.eventMode = 'static'` is set in PixiApp init.
+- **Cancel button must close dialog** by default. Use `keepOpen: false` (PIXI) or always-close in handler. Don't make user add explicit `conf.destroy()` for Cancel.
 - **Image URL may need CORS**. Check `curl -sI <url>` for `access-control-allow-origin`. The `proxy.moonchan.xyz` proxy sends `*` — works.
 - **vite + parse5**: `<noscript>` in `<head>` cannot contain `<a>`. Use plain text only.
 - **PIXI v8 Graphics hit-area unstable** for complex shapes; explicit `Rectangle` hitArea on a `Container` is the stable pattern. PixiWindow and PixiConfirm close-buttons use `Container` + explicit `hitArea = new Rectangle(-r, -r, 2r, 2r)`.
 - **PIXI v8 drag system requires `app.stage.eventMode = 'static'`** for the drag system's `app.stage.on('pointermove')` listener to fire. Without it, pointerdown on a tagged child fires, but the subsequent move events don't bubble to the stage listener — drag is silent.
-- **three.js r184**: ESM only, no WebGL1, `setAnimationLoop`, `OrbitControls.update()` returns boolean. See `src/three/start3DApp.md` for full notes.
-- **SubCanvas has no `setPointerCapture`** — but it doesn't need it. The drag system uses `app.stage.on('pointermove'/'pointerup'/'pointerupoutside')` for the global drag-tracking listeners, and the handle's `pointerdown` is the only local listener. The global listeners catch the pointer even when it leaves the handle.
+- **PIXI v8 `Container` has no `setPointerCapture` / `releasePointerCapture`** — those are DOM Element methods. Don't try to use them on PIXI containers. The drag system uses `window.addEventListener` as a workaround (DOM events fire regardless of PIXI hit-test).
+- **LSP errors are stale**: when files move, the LSP server lags. Always trust `npm run lint && npm run build` output, not LSP diagnostics.
 
 ---
 

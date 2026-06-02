@@ -1,87 +1,65 @@
 # src/ 概览
 
-## 入口
-
-| 文件 | 作用 |
-|---|---|
-| `main.tsx` | 应用入口，将 `<App />` 挂载到 `#root` |
-| `App.tsx` | 根组件，渲染 `<RouteSwitch />` |
-| `index.css` | 全局 CSS reset（全屏、黑底、overflow hidden） |
-| `vite-env.d.ts` | Vite 类型声明 + `.jsx` module 声明 |
-
-## router/ — 路由
-
 ```
-App → RouteSwitch → useHashRoute / routes → display components
+src/
+  main.tsx           createRoot → <ErrorBoundary><ExampleApp /></ErrorBoundary>
+  index.css          100% reset + safe-area vars
+  ErrorBoundary.tsx  red panel self-contained
+  vite-env.d.ts      Vite types
+
+  framework/         PIXI 核心层 (the layer)
+  components/        PIXI 组件
+  example/           6 个 SubCanvas 用法演示
 ```
 
-| 文件 | 作用 |
-|---|---|
-| `routes.ts` | 路由注册表：定义 route 名称、default、type guard、route → component 映射 |
-| `useHashRoute.ts` | Hook：监听 `hashchange`，返回当前 `Route` |
-| `RouteSwitch.tsx` | 根据 hash 从 `routeMap` 取对应组件渲染 |
-
-依赖链：`App → RouteSwitch → (routes + useHashRoute)`
-
-## displays/ — PIXI 展示组件
-
-```
-routes.ts → DisplayComponents
-```
-
-| 文件 | 作用 | 依赖 |
-|---|---|---|
-| `single/SingleDisplay.tsx` | 全屏单区域 PIXI 画布 | `PixiApp → Displays` |
-| `multiple/MultipleDisplay.tsx` | 2×2 四象限 PIXI 画布 | `PixiApp → Displays` |
-| `window/WindowDisplay.tsx` | PIXI 窗口系统（Inventory + Chat） | `PixiApp → PixiWindow, Loading` |
-| `Displays.ts` | 公用工具：挂载 PIXI 十字线、移动文字、点击涟漪 | `SubCanvas` |
-
-## three-displays/ — Three.js 展示组件
-
-```
-routes.ts → ThreeDisplayComponents
-```
-
-| 文件 | 作用 | 依赖 |
-|---|---|---|
-| `three/ThreeDisplay.tsx` | Three.js 场景（icosahedron + 弹跳方块 + 点击生成） | `start3DApp` |
-| `three-euler/ThreeEulerDisplay.tsx` | Three.js 飞船模型 Euler 角演示（mesh，YXZ 顺序 + pitch clamp） | 无内部依赖 |
-| `two-3d/Two3DDisplay.tsx` | 两个 React Window 内嵌 Three.js 场景（TorusKnot + Icosahedron） | `window/Window` |
-| `camera-euler/CameraEulerDisplay.tsx` | Three.js 相机 Euler 角演示（camera，YXZ 顺序 + pitch clamp） | 无内部依赖 |
-
-## pixi/ — PIXI 基础设施层
+## framework/ — PIXI 核心
 
 ```
 PixiApp → SubCanvasProxy → SubCanvas
-                      → EventBus
+                      → EventBus (proxy.bus)
 ```
 
 | 文件 | 作用 | 被依赖方 |
 |---|---|---|
-| `SubCanvas.ts` | **核心抽象**：PIXI 区域管理，bounds、pointer 路由、drag、grid/divide 布局、z-order | `Displays`, `PixiApp`, `SubCanvasProxy`, `Loading`, `PixiWindow`（5 处） |
-| `SubCanvasProxy.ts` | 顶层 proxy，管理所有 SubCanvas 区域，路由 pointer 事件 | `PixiApp` |
-| `EventBus.ts` | 类型化发布/订阅事件总线 | `SubCanvasProxy` |
-| `PixiApp.ts` | 初始化全屏 PIXI Application，绑定全局事件，返回 cleanup | `SingleDisplay`, `MultipleDisplay`, `WindowDisplay` |
+| `SubCanvas.ts` | **核心**。AABB 容器，bounds、event routing、tag-based drag、z-order、clipToBounds。 | `Displays`, `PixiApp`, `SubCanvasProxy`, `Loading`, `PixiWindow`, `PixiConfirm`, `PixiImage` (7 处) |
+| `SubCanvasProxy.ts` | 顶层 proxy。`createRegion` / `createSubRegion` / `routePointer` / `destroyAll`。 | `PixiApp` |
+| `EventBus.ts` | 类型化 pub-sub，跨 SubCanvas + 后台。 | `SubCanvasProxy` |
+| `PixiApp.ts` | `startPixiApp(onReady?)`：全屏 PIXI.Application + 4 个 window pointer 监听 + 自动 `app.stage.eventMode='static'`。 | 所有 example |
+| `index.ts` | 公开 re-export（**只 import 这个，不要 deep import**） | consumers |
+| `NOTES.md` | drag / z-order / event-routing 设计与踩过的坑 | — |
 
-## three/ — Three.js 基础设施
+## components/ — PIXI 组件
 
-| 文件 | 作用 | 被依赖方 |
+| 文件 | 作用 |
+|---|---|
+| `PixiWindow.ts` | `createWindow({ title, w, h, x, y, parent, dragMode })` — draggable GameWindow，title bar + close button + `content` sub-region。继承 SubCanvas。 |
+| `PixiConfirm.ts` | `createConfirm({ title, message?, imageUrl?, buttons, parent })` — modal dialog。message/image 互斥（image 优先）。按钮总是关闭（默认 `keepOpen: false`）。 |
+| `PixiImage.ts` | `createLoadingImage(parent, { url, ... })` — async PIXI image with placeholder + token-cancel。 |
+| `Loading.ts` | `showLoading(sc, text?)` — 半透明遮罩 + 旋转环。返回 `() => void` 停止。 |
+| `index.ts` | 公开 re-export |
+
+## example/ — 6 个 SubCanvas 用法
+
+```
+hash 路由 → useHashExample → examples.ts → ExampleApp → display
+```
+
+| 路由 | 文件 | 演示什么 |
 |---|---|---|
-| `start3DApp.ts` | 创建全屏 Three.js 场景（fog、OrbitControls、raycaster），返回 cleanup | `ThreeDisplay` |
+| (空 hash) | `launcher/LauncherDisplay.tsx` | tile grid 主页，带 filter |
+| `#screen-size` | `screen-size/ScreenSizeDisplay.tsx` | viewport / device / canvas 尺寸读出 |
+| `#window-mobile` | `window-mobile/WindowMobileDisplay.tsx` | 5 个 trigger 按钮弹 draggable Confirm 弹窗 |
+| `#single` | `single/SingleDisplay.tsx` | 全屏 canvas + `mountDisplays` (click ring + crosshair) |
+| `#multiple` | `multiple/MultipleDisplay.tsx` | 2×2 象限，每个一个 SubCanvas region |
+| `#window` | `window/WindowDisplay.tsx` | 2 个 GameWindow (Inventory + Chat) + 模拟 backend + bus 事件 |
+| `#pixi-confirm` | `pixi-confirm/PixiConfirmDisplay.tsx` | 5 个 trigger + HTML log overlay |
+| (shared) | `_shared/Displays.ts` | `#single` 和 `#multiple` 共用的 click ring + crosshair visualizer |
+| (entry) | `ExampleApp.tsx` | 路由分发（hash → component） |
+| (router) | `useHashExample.ts`, `examples.ts` | hash 监听 + 路由表 |
 
-## window/ — window 化层（**polish 重点**）
+## 关键约定
 
-多窗口 UI 的兼容层。每个人都能用、都依赖的稳定 API 表面。详见 [`window/NOTES.md`](window/NOTES.md)。
-
-| 文件 | 作用 | 被依赖方 |
-|---|---|---|
-| `Window.tsx` | HTML 可拖拽窗口（title bar、z-index via parent、focus、close、useId） | `Two3DDisplay` |
-| `PixiWindow.ts` | PIXI 可拖拽窗口（title bar、close、content sub-region），继承 SubCanvas | `WindowDisplay` |
-| `NOTES.md` | 踩过的坑、设计决策、polish checklist、破坏性变更检查 | — |
-
-## 架构要点
-
-- **两套独立渲染栈**：PIXI 栈（SubCanvas ← SubCanvasProxy ← PixiApp ← Displays/PixiWindow/Loading）和 Three.js 栈（start3DApp ← ThreeDisplay），互不依赖
-- **路由**：基于 hash 的 SPA 路由，`useHashRoute` 监听 `hashchange`
-- **核心模块**：`SubCanvas.ts` 被 5 个文件依赖，是整个 PIXI 体系的根基
-- **无循环依赖**：依赖图是干净的 DAG
+- **`framework/index.ts` 和 `components/index.ts` 是公开 API**。其他文件是 internal。如果某个类型没在 index.ts 导出，就别从内部用。
+- **`SubCanvas.addChild` 是 drag 唯一可靠的安装路径**。`win.stage.addChild` 绕开自动安装。
+- **drag 是双层** — PIXI `app.stage.on` + window `addEventListener`。详见 framework/NOTES.md。
+- **依赖图是干净 DAG**：framework ← components ← example，无循环。

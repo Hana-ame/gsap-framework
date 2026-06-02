@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../pixi/PixiApp';
-import { createWindow } from '../../components/windowing/PixiWindow';
-import { showLoading } from '../../components/loading/Loading';
+import { startPixiApp } from '../../framework/PixiApp';
+import { createWindow } from '../../components/PixiWindow';
+import { showLoading } from '../../components/Loading';
 
 export function WindowDisplay() {
   useEffect(() => {

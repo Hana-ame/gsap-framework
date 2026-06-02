@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas } from '../pixi/SubCanvas';
+import { SubCanvas } from '../../framework/SubCanvas';
 
 export function mountDisplays(sc: SubCanvas): () => void {
   const crosshair = new PIXI.Graphics();

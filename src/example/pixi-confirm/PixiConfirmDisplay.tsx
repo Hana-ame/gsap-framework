@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../pixi/PixiApp';
-import { createConfirm } from '../../components/windowing/PixiConfirm';
-import { showLoading } from '../../components/loading/Loading';
-import type { PixiConfirm } from '../../components/windowing/PixiConfirm';
+import { startPixiApp } from '../../framework/PixiApp';
+import { createConfirm } from '../../components/PixiConfirm';
+import { showLoading } from '../../components/Loading';
+import type { PixiConfirm } from '../../components/PixiConfirm';
 
 export function PixiConfirmDisplay() {
   const [log, setLog] = useState<string[]>([]);
