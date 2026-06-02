@@ -92,6 +92,7 @@ src/
 8. **PIXI `anywhere` drag** works only because `SubCanvas.handlePointer` passes through if no listeners (fix 1.8) and iterates in reverse (fix 1.9) with `bringToFront` syncing `children` array. Don't regress any of these.
 9. **HTML Window `anywhere` drag**: buttons need `onPointerDown stopPropagation`. Capture-phase `onFocus` still works because stopPropagation is in bubble phase.
 10. **No push without lint+build green**. Run `npm run lint && npm run build` before commit. If it fails, fix and re-run, don't commit a broken state.
+11. **MUST push after every commit**. Leaving uncommitted/unpushed work is a bug — it creates conflicts with remote and breaks the deployment flow. After `git commit` ALWAYS run `git push origin sim`. No exceptions. No "I'll push later." If a push fails, fix and retry — never walk away from an unpushed commit.
 
 ---
 
@@ -131,6 +132,8 @@ When you discover a new gotcha or the user codifies a new rule:
 2. If it contradicts an existing rule, raise it explicitly before applying
 3. Bump the `Last updated:` line at the bottom of this file
 
+You have standing permission to modify this file. If a new gotcha emerges mid-session, update in-place before the commit — don't wait.
+
 ---
 
-## Last updated: 2026-06-01
+## Last updated: 2026-06-02

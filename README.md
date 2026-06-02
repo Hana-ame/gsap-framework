@@ -15,6 +15,8 @@ npm run lint        # eslint .
 npx tsc -b --noEmit # typecheck
 ```
 
+---
+
 ## 部署
 
 - 推送到 `origin/sim` → **Cloudflare Pages 接管**（仓库侧无 deploy workflow）
