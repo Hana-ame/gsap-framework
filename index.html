@@ -22,11 +22,64 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-          navigator.serviceWorker.register('/sw.js').catch(function () {});
+          navigator.serviceWorker.register('/sw.js').then(function (reg) {
+            if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            reg.addEventListener('updatefound', function () {
+              var sw = reg.installing;
+              if (!sw) return;
+              sw.addEventListener('statechange', function () {
+                if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+                  if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            });
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+              if (window.__swReloading) return;
+              window.__swReloading = true;
+              window.location.reload();
+            });
+          }).catch(function () {});
+
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.addEventListener('message', function (e) {
+              if (e.data && e.data.type === 'SW_UPDATED') {
+                navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          }
         });
       }
     </script>
     <noscript>This app requires JavaScript.</noscript>
+    <script>
+      (function () {
+        function paintError(title, body) {
+          var el = document.getElementById('root') || document.body;
+          el.innerHTML = '';
+          var wrap = document.createElement('div');
+          wrap.style.cssText = 'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:#1a0a14;color:#ffd0d0;font-family:system-ui,sans-serif;text-align:center;z-index:2147483647;overflow:auto;';
+          var h = document.createElement('h1');
+          h.textContent = title;
+          h.style.cssText = 'font-size:1.2rem;margin:0 0 12px;';
+          var p = document.createElement('pre');
+          p.textContent = body;
+          p.style.cssText = 'font-size:0.85rem;max-width:90vw;white-space:pre-wrap;text-align:left;background:#0a0a14;padding:12px;border-radius:8px;border:1px solid #4a1a1a;';
+          wrap.appendChild(h);
+          wrap.appendChild(p);
+          el.appendChild(wrap);
+        }
+        window.__paintError = paintError;
+        window.addEventListener('error', function (e) {
+          var msg = (e.error && (e.error.stack || e.error.message)) || e.message || 'unknown error';
+          paintError('Runtime error', String(msg));
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          var r = e.reason;
+          var msg = r && (r.stack || r.message) ? (r.stack || r.message) : String(r);
+          paintError('Unhandled rejection', msg);
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

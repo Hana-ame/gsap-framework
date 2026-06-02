@@ -11,6 +11,8 @@ export interface PwaGateProps {
   requireStandalone?: StandaloneRequirement;
   enabled?: boolean;
   bypassStorageKey?: string | null;
+  rememberBypass?: boolean;
+  showContinue?: boolean;
   onBypassChange?: (bypassed: boolean) => void;
 }
 
@@ -53,6 +55,8 @@ export function PwaGate({
   requireStandalone = 'mobile-only',
   enabled = true,
   bypassStorageKey = null,
+  rememberBypass = true,
+  showContinue = true,
   onBypassChange,
 }: PwaGateProps) {
   const [granted, setGranted] = useState(false);
@@ -88,9 +92,9 @@ export function PwaGate({
     <InstallPrompt
       isMobile={isMobileDevice}
       onContinue={
-        bypassStorageKey
+        showContinue
           ? () => {
-              setBypass(bypassStorageKey, true);
+              if (rememberBypass) setBypass(bypassStorageKey, true);
               setBypassed(true);
               setGranted(true);
             }

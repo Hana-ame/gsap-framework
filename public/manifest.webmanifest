@@ -2,7 +2,7 @@
   "name": "sim",
   "short_name": "sim",
   "description": "PixiJS + React playground — draggable windows, 3D, confirm dialogs",
-  "start_url": "/#window-mobile",
+  "start_url": "/#launcher",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
