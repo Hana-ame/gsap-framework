@@ -525,44 +525,6 @@ export class SubCanvas {
     return sub;
   }
 
-  divide(opts: { direction: 'horizontal' | 'vertical'; ratios: number[] }): SubCanvas[] {
-    const total = opts.direction === 'horizontal' ? this._bounds.width : this._bounds.height;
-    const subs: SubCanvas[] = [];
-    let offset = 0;
-    opts.ratios.forEach((ratio) => {
-      const size = total * ratio;
-      const subBounds: Rect =
-        opts.direction === 'horizontal'
-          ? { x: offset, y: 0, width: size, height: this._bounds.height }
-          : { x: 0, y: offset, width: this._bounds.width, height: size };
-      subs.push(this.createSubRegion(subBounds));
-      offset += size;
-    });
-    return subs;
-  }
-
-  grid(opts: { rows: number; cols: number; gap?: number }): SubCanvas[] {
-    const gap = opts.gap ?? 0;
-    const totalGapX = gap * (opts.cols - 1);
-    const totalGapY = gap * (opts.rows - 1);
-    const cellW = (this._bounds.width - totalGapX) / opts.cols;
-    const cellH = (this._bounds.height - totalGapY) / opts.rows;
-    const subs: SubCanvas[] = [];
-    for (let r = 0; r < opts.rows; r++) {
-      for (let c = 0; c < opts.cols; c++) {
-        subs.push(
-          this.createSubRegion({
-            x: c * (cellW + gap),
-            y: r * (cellH + gap),
-            width: cellW,
-            height: cellH,
-          }),
-        );
-      }
-    }
-    return subs;
-  }
-
   handlePointer(type: SubPointerType, e: PointerEvent): boolean {
     if (this._destroyed) return false;
     const gb = this.globalBounds;
