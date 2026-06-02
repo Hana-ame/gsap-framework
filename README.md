@@ -208,6 +208,7 @@ PWA gate 之外的 PIXI 失败有 3 层可见性：
 - **drag 装好了但不响应**：`SubCanvas.addChild` 才是安装拖拽的入口；`win.stage.addChild` 会绕开。如果 `console.log('installDragOnHandle')` 一次都不打 → 走 PIXI 原生 addChild 了。**修法**：tagged child 一律用 `win.addChild(bar)`。
 - **pointerdown 触发了，pointermove 没反应**：`app.stage.eventMode` 没设成 `'static'`。PIXI v8 默认 `'auto'` 不会收到子节点冒泡上来的事件。**修法**：PixiApp init 里 `app.stage.eventMode = 'static'`。
 - **PIXI v8 Graphics hit-area 不稳**：复杂图形用 `Graphics` + `eventMode='static'` 命中测试会"打飞"。**修法**：用 `Container` 包一层 + 显式 `hitArea = new Rectangle(...)`，命中稳。
+- **快拖脱手（fast drag drop）**：用户或自动化用 `mouse.move` 单步跳到远处时，窗口不动。原因：PIXI v8 FederatedEvent **每个 move 都过 hit-test**；指针跳到无 interactive child 的位置时，事件 *不会* 分发给任何 listener — 既不发给 handle，也不发给 `app.stage`（即使 `eventMode='static'` 也不行，因为根本没有 target）。**症状**：`onDown` 触发，`onMove` 一次都不打，`onUp` 的 `target=undefined`。**修法**：drag 装两层 — PIXI 的 `app.stage.on('pointermove')` 当主路径（命中区在时同步），**同时 `window.addEventListener('pointermove')` 当 backup**（DOM pointer event 不做 hit-test，永远触发）。位置直接读 `e.clientX/clientY`（canvas 是 `position: fixed; inset: 0`，`client==canvas-relative==PIXI coord`）。`window` 监听器在 `onDown` 装、`onUp` 拆。**这是 PIXI v8 第二次踩了 — 第一次靠 `app.stage` 监听器绕过、第二次必须 fallback 到 DOM 级别。**
 
 ### 部署 / 缓存
 
