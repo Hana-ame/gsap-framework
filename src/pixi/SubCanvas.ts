@@ -397,10 +397,12 @@ export class SubCanvas {
       startBoundsX = this._bounds.x;
       startBoundsY = this._bounds.y;
       if (handlers.bringToFront) this.bringToFront();
+      console.log('[SubCanvas drag] onDown', { local, pid: e.pointerId, target: e.target?.constructor?.name });
       handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
     };
 
     const onMove = (e: PIXI.FederatedPointerEvent) => {
+      console.log('[SubCanvas drag] onMove', { dragging, target: e.target?.constructor?.name, pid: e.pointerId });
       if (!dragging) return;
       const parent = this.stage.parent;
       if (!parent) return;
