@@ -16,6 +16,10 @@ export function RouteSwitch() {
       const C = routeMap.window;
       return <C />;
     }
+    case 'window-mobile': {
+      const C = routeMap['window-mobile'];
+      return <C />;
+    }
     case 'three': {
       const C = routeMap.three;
       return <C />;

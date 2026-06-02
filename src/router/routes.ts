@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import { SingleDisplay } from '../displays/single/SingleDisplay';
 import { MultipleDisplay } from '../displays/multiple/MultipleDisplay';
 import { WindowDisplay } from '../displays/window/WindowDisplay';
+import { WindowMobileDisplay } from '../displays/window-mobile/WindowMobileDisplay';
 import { PixiConfirmDisplay } from '../displays/pixi-confirm/PixiConfirmDisplay';
 import { ThreeDisplay } from '../three-displays/three/ThreeDisplay';
 import { Two3DDisplay } from '../three-displays/two-3d/Two3DDisplay';
@@ -13,6 +14,7 @@ export const ROUTES = [
   'single',
   'multiple',
   'window',
+  'window-mobile',
   'three',
   'two-3d',
   'three-euler',
@@ -21,7 +23,7 @@ export const ROUTES = [
   'pixi-confirm',
 ] as const;
 export type Route = (typeof ROUTES)[number];
-export const DEFAULT_ROUTE: Route = 'pixi-confirm';
+export const DEFAULT_ROUTE: Route = 'window-mobile';
 
 export const isRoute = (r: string): r is Route =>
   (ROUTES as readonly string[]).includes(r);
@@ -30,6 +32,7 @@ export const routeMap: Record<Route, ComponentType> = {
   single: SingleDisplay,
   multiple: MultipleDisplay,
   window: WindowDisplay,
+  'window-mobile': WindowMobileDisplay,
   three: ThreeDisplay,
   'two-3d': Two3DDisplay,
   'three-euler': ThreeEulerDisplay,
