@@ -20,21 +20,23 @@ export interface SubPointerEvent {
 
 type Listener = (e: SubPointerEvent) => void;
 
-export interface DragOptions {
-  bounds?: () => Rect | null;
-  onDragStart?: (e: SubPointerEvent) => void;
-  onDrag?: (e: SubPointerEvent, pos: { x: number; y: number }) => void;
-  onDragEnd?: (e: SubPointerEvent) => void;
-  bringToFront?: boolean;
-}
+export type SubDragMode = 'title' | 'anywhere' | 'none';
 
 export interface SubCanvasOptions {
   rootApp: PIXI.Application;
   bounds: Rect;
   parent?: SubCanvas | null;
   clipToBounds?: boolean;
+  dragMode?: SubDragMode;
+  dragBounds?: () => Rect | null;
+  dragBringToFront?: boolean;
+  onDragStart?: (e: { x: number; y: number }) => void;
+  onDrag?: (e: { x: number; y: number }) => void;
+  onDragEnd?: (e: { x: number; y: number }) => void;
   onDestroy?: () => void;
 }
+
+const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
 
 const EVENT_ALIAS: Record<string, SubPointerType> = {
   press: 'pointerdown',
@@ -46,6 +48,14 @@ const EVENT_ALIAS: Record<string, SubPointerType> = {
   leave: 'pointerleave',
   pointerleave: 'pointerleave',
   pointerout: 'pointerleave',
+};
+
+type DragHandlers = {
+  onStart?: (p: { x: number; y: number }) => void;
+  onDrag?: (p: { x: number; y: number }) => void;
+  onEnd?: (p: { x: number; y: number }) => void;
+  getBounds?: () => Rect | null;
+  bringToFront: boolean;
 };
 
 export class SubCanvas {
@@ -60,6 +70,10 @@ export class SubCanvas {
   private _destroyed = false;
   private _syncing = false;
   private _mask: PIXI.Graphics | null = null;
+  private _bg: PIXI.Container | null = null;
+  private _dragHandles: WeakSet<PIXI.Container> = new WeakSet();
+  private _dragHandlers: DragHandlers | null = null;
+  private _perHandleCleanups: Map<PIXI.Container, () => void> = new Map();
   private onDestroy: () => void;
 
   constructor(opts: SubCanvasOptions) {
@@ -82,6 +96,25 @@ export class SubCanvas {
       this.parent.stage.addChild(this.stage);
     } else {
       this.rootApp.stage.addChild(this.stage);
+    }
+
+    if (opts.dragMode && opts.dragMode !== 'none') {
+      this._dragHandlers = {
+        onStart: opts.onDragStart,
+        onDrag: opts.onDrag,
+        onEnd: opts.onDragEnd,
+        getBounds: opts.dragBounds,
+        bringToFront: opts.dragBringToFront !== false,
+      };
+      if (opts.dragMode === 'anywhere') {
+        this._ensureDragBg();
+      }
+      for (const child of this.stage.children) {
+        if (child.label === DRAG_HANDLE_LABEL && !this._dragHandles.has(child)) {
+          this._dragHandles.add(child);
+          this._installDragOnHandle(child);
+        }
+      }
     }
   }
 
@@ -162,6 +195,7 @@ export class SubCanvas {
     this.stage.position.set(bounds.x, bounds.y);
     this._syncing = false;
     this.updateMask();
+    this.updateBgHitArea();
     this.resizeListeners.forEach((fn) => fn(bounds));
   }
 
@@ -177,6 +211,7 @@ export class SubCanvas {
     if (this._destroyed) return;
     this._bounds = { ...this._bounds, width, height };
     this.updateMask();
+    this.updateBgHitArea();
     this.resizeListeners.forEach((fn) => fn(this._bounds));
   }
 
@@ -214,53 +249,6 @@ export class SubCanvas {
     }
   }
 
-  setDraggable(opts: DragOptions = {}): () => void {
-    const getConstraint = opts.bounds ?? (() => this.parent?.bounds ?? null);
-    const autoFront = opts.bringToFront !== false;
-    let dragging = false;
-    let sx = 0;
-    let sy = 0;
-    let ox = 0;
-    let oy = 0;
-
-    const onDown = (e: SubPointerEvent) => {
-      dragging = true;
-      sx = e.globalX;
-      sy = e.globalY;
-      ox = this._bounds.x;
-      oy = this._bounds.y;
-      if (autoFront) this.bringToFront();
-      opts.onDragStart?.(e);
-    };
-    const onMove = (e: SubPointerEvent) => {
-      if (!dragging) return;
-      let nx = ox + (e.globalX - sx);
-      let ny = oy + (e.globalY - sy);
-      const constraint = getConstraint();
-      if (constraint) {
-        nx = Math.max(0, Math.min(nx, constraint.width - this._bounds.width));
-        ny = Math.max(0, Math.min(ny, constraint.height - this._bounds.height));
-      }
-      this.setPosition(nx, ny);
-      opts.onDrag?.(e, { x: nx, y: ny });
-    };
-    const onUp = (e: SubPointerEvent) => {
-      if (!dragging) return;
-      dragging = false;
-      opts.onDragEnd?.(e);
-    };
-
-    this.onPress(onDown);
-    this.onMove(onMove);
-    this.onRelease(onUp);
-
-    return () => {
-      this.off('pointerdown', onDown);
-      this.off('pointermove', onMove);
-      this.off('pointerup', onUp);
-    };
-  }
-
   on(event: string, fn: (...args: unknown[]) => void): this {
     const aliased = EVENT_ALIAS[event];
     if (aliased) {
@@ -282,7 +270,6 @@ export class SubCanvas {
       return this;
     }
     this.stage.once(event, fn as (...a: unknown[]) => void);
-    return this;
   }
 
   emit(event: string, ...args: unknown[]): boolean {
@@ -295,14 +282,27 @@ export class SubCanvas {
   }
 
   addChild<T extends PIXI.Container>(child: T): T {
-    return this.stage.addChild(child) as T;
+    const added = this.stage.addChild(child) as T;
+    if (this._dragHandlers && child.label === DRAG_HANDLE_LABEL && !this._dragHandles.has(child)) {
+      this._dragHandles.add(child);
+      this._installDragOnHandle(child);
+    }
+    return added;
   }
 
   removeChild<T extends PIXI.Container>(child: T): T {
+    if (this._dragHandles.has(child)) {
+      this._uninstallDragOnHandle(child);
+      this._dragHandles.delete(child);
+    }
     return this.stage.removeChild(child) as T;
   }
 
   removeChildren(): PIXI.Container[] {
+    this.stage.children.forEach((c) => {
+      if (this._dragHandles.has(c)) this._uninstallDragOnHandle(c);
+    });
+    this._dragHandles = new WeakSet();
     return this.stage.removeChildren();
   }
 
@@ -408,12 +408,114 @@ export class SubCanvas {
       .fill({ color: 0xffffff });
   }
 
-  createSubRegion(bounds: Rect, opts?: { clipToBounds?: boolean }): SubCanvas {
+  private updateBgHitArea(): void {
+    if (!this._bg) return;
+    this._bg.hitArea = new PIXI.Rectangle(0, 0, this._bounds.width, this._bounds.height);
+  }
+
+  private _ensureDragBg(): void {
+    if (this._bg) return;
+    const existing = this.stage.children.find((c) => c.label === DRAG_HANDLE_LABEL);
+    if (existing) return;
+    const bg = new PIXI.Container();
+    bg.label = DRAG_HANDLE_LABEL;
+    bg.eventMode = 'static';
+    bg.hitArea = new PIXI.Rectangle(0, 0, this._bounds.width, this._bounds.height);
+    bg.zIndex = -1;
+    this.stage.addChildAt(bg, 0);
+    this._bg = bg;
+  }
+
+  private _installDragOnHandle(handle: PIXI.Container): void {
+    if (!this._dragHandlers) return;
+    const handlers = this._dragHandlers;
+    const root = this.rootApp.stage;
+    let dragging = false;
+    let startLocalX = 0;
+    let startLocalY = 0;
+    let startBoundsX = 0;
+    let startBoundsY = 0;
+
+    const onDown = (e: PIXI.FederatedPointerEvent) => {
+      e.stopPropagation();
+      const parent = this.stage.parent;
+      if (!parent) return;
+      const local = e.getLocalPosition(parent);
+      dragging = true;
+      startLocalX = local.x;
+      startLocalY = local.y;
+      startBoundsX = this._bounds.x;
+      startBoundsY = this._bounds.y;
+      if (handlers.bringToFront) this.bringToFront();
+      handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
+    };
+
+    const onMove = (e: PIXI.FederatedPointerEvent) => {
+      if (!dragging) return;
+      const parent = this.stage.parent;
+      if (!parent) return;
+      const local = e.getLocalPosition(parent);
+      let nx = startBoundsX + (local.x - startLocalX);
+      let ny = startBoundsY + (local.y - startLocalY);
+      const constraint = handlers.getBounds?.() ?? this.parent?.bounds ?? null;
+      if (constraint) {
+        nx = Math.max(0, Math.min(nx, constraint.width - this._bounds.width));
+        ny = Math.max(0, Math.min(ny, constraint.height - this._bounds.height));
+      }
+      this.setPosition(nx, ny);
+      handlers.onDrag?.({ x: nx, y: ny });
+    };
+
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      handlers.onEnd?.({ x: this._bounds.x, y: this._bounds.y });
+    };
+
+    handle.on('pointerdown', onDown);
+    root.on('pointermove', onMove);
+    root.on('pointerup', onUp);
+    root.on('pointerupoutside', onUp);
+
+    this._perHandleCleanups.set(handle, () => {
+      handle.off('pointerdown', onDown);
+      root.off('pointermove', onMove);
+      root.off('pointerup', onUp);
+      root.off('pointerupoutside', onUp);
+    });
+  }
+
+  private _uninstallDragOnHandle(handle: PIXI.Container): void {
+    const cleanup = this._perHandleCleanups.get(handle);
+    if (cleanup) {
+      cleanup();
+      this._perHandleCleanups.delete(handle);
+    }
+  }
+
+  createSubRegion(
+    bounds: Rect,
+    opts?: {
+      clipToBounds?: boolean;
+      dragMode?: SubDragMode;
+      dragBounds?: () => Rect | null;
+      dragBringToFront?: boolean;
+      onDragStart?: (e: { x: number; y: number }) => void;
+      onDrag?: (e: { x: number; y: number }) => void;
+      onDragEnd?: (e: { x: number; y: number }) => void;
+    },
+  ): SubCanvas {
     const sub = new SubCanvas({
       rootApp: this.rootApp,
       bounds,
       parent: this,
       clipToBounds: opts?.clipToBounds,
+      dragMode: opts?.dragMode,
+      dragBounds: opts?.dragBounds,
+      dragBringToFront: opts?.dragBringToFront,
+      onDragStart: opts?.onDragStart,
+      onDrag: opts?.onDrag,
+      onDragEnd: opts?.onDragEnd,
       onDestroy: () => {
         const idx = this._subRegions.indexOf(sub);
         if (idx >= 0) this._subRegions.splice(idx, 1);
@@ -493,6 +595,8 @@ export class SubCanvas {
   destroy(_options?: { children?: boolean; texture?: boolean }): void {
     if (this._destroyed) return;
     this._destroyed = true;
+    for (const cleanup of this._perHandleCleanups.values()) cleanup();
+    this._perHandleCleanups.clear();
     [...this._subRegions].forEach((c) => c.destroy());
     this._subRegions = [];
     this.listeners.clear();
