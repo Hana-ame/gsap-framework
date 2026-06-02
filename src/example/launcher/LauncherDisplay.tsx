@@ -46,7 +46,7 @@ export function LauncherDisplay() {
       <style>{launcherCss}</style>
       <header className="launcher-header">
         <div className="launcher-title-row">
-          <h1 className="launcher-title">sim</h1>
+          <h1 className="launcher-title">subcanvas</h1>
           <span className="launcher-clock">{now}</span>
         </div>
         <div className="launcher-filter-row">
