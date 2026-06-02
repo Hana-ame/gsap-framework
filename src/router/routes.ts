@@ -10,9 +10,11 @@ import { ThreeEulerDisplay } from '../three-displays/three-euler/ThreeEulerDispl
 import { CameraEulerDisplay } from '../three-displays/camera-euler/CameraEulerDisplay';
 import { ConfirmDisplay } from '../html-displays/confirm/ConfirmDisplay';
 import { LauncherDisplay } from '../displays/launcher/LauncherDisplay';
+import { ScreenSizeDisplay } from '../displays/screen-size/ScreenSizeDisplay';
 
 export const ROUTES = [
   'launcher',
+  'screen-size',
   'single',
   'multiple',
   'window',
@@ -32,6 +34,7 @@ export const isRoute = (r: string): r is Route =>
 
 export const routeMap: Record<Route, ComponentType> = {
   launcher: LauncherDisplay,
+  'screen-size': ScreenSizeDisplay,
   single: SingleDisplay,
   multiple: MultipleDisplay,
   window: WindowDisplay,

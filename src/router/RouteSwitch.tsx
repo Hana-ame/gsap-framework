@@ -36,6 +36,10 @@ function renderRoute(route: Route) {
       const C = routeMap.launcher;
       return <C />;
     }
+    case 'screen-size': {
+      const C = routeMap['screen-size'];
+      return <C />;
+    }
     case 'single': {
       const C = routeMap.single;
       return <C />;

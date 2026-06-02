@@ -9,6 +9,7 @@ interface AppEntry {
 }
 
 const APPS: AppEntry[] = [
+  { route: 'screen-size', label: 'Screen Size', hint: 'viewport + device info', glyph: '\u29D6', accent: '#4a6a6a' },
   { route: 'window-mobile', label: 'Window Mobile', hint: 'adaptive stack + confirms', glyph: '\u25EB', accent: '#3a4a6a' },
   { route: 'single', label: 'Single', hint: 'full viewport canvas', glyph: '\u25A3', accent: '#5a3a6a' },
   { route: 'multiple', label: 'Multiple', hint: '2x2 quadrant grid', glyph: '\u229E', accent: '#3a6a5a' },
