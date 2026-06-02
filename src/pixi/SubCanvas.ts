@@ -69,18 +69,7 @@ export class SubCanvas {
     this.onDestroy = opts.onDestroy ?? (() => {});
 
     this.stage = new PIXI.Container();
-
-    const posObserver = new PIXI.ObservablePoint(
-      {
-        _onUpdate: (pt: { x: number; y: number }) => {
-          if (this._syncing) return;
-          this._bounds = { ...this._bounds, x: pt.x, y: pt.y };
-        },
-      },
-      opts.bounds.x,
-      opts.bounds.y,
-    );
-    this.stage.position = posObserver;
+    this.stage.position.set(opts.bounds.x, opts.bounds.y);
 
     if (opts.clipToBounds) {
       this._mask = new PIXI.Graphics();
