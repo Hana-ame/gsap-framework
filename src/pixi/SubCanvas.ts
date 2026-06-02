@@ -386,28 +386,8 @@ export class SubCanvas {
     let startBoundsX = 0;
     let startBoundsY = 0;
 
-    const tag = `drag#${Math.random().toString(36).slice(2, 6)}`;
-    const onDown = (e: PIXI.FederatedPointerEvent) => {
-      e.stopPropagation();
-      const parent = this.stage.parent;
-      if (!parent) return;
-      const local = e.getLocalPosition(parent);
-      dragging = true;
-      startLocalX = local.x;
-      startLocalY = local.y;
-      startBoundsX = this._bounds.x;
-      startBoundsY = this._bounds.y;
-      if (handlers.bringToFront) this.bringToFront();
-      console.log(tag, 'onDown target=' + e.target?.constructor?.name, 'local=', local.x, local.y, 'pid=' + e.pointerId);
-      handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
-    };
-
-    const onMove = (e: PIXI.FederatedPointerEvent) => {
-      if (!dragging) return;
-      const parent = this.stage.parent;
-      if (!parent) return;
-      const local = e.getLocalPosition(parent);
-      console.log(tag, 'onMove target=' + e.target?.constructor?.name, 'local=', local.x, local.y);
+    const applyDrag = (clientX: number, clientY: number) => {
+      const local = { x: clientX, y: clientY };
       let nx = startBoundsX + (local.x - startLocalX);
       let ny = startBoundsY + (local.y - startLocalY);
       const constraint = handlers.getBounds?.() ?? this.parent?.bounds ?? null;
@@ -419,31 +399,63 @@ export class SubCanvas {
       handlers.onDrag?.({ x: nx, y: ny });
     };
 
-    const onUp = (e: PIXI.FederatedPointerEvent) => {
+    const onDown = (e: PIXI.FederatedPointerEvent) => {
+      e.stopPropagation();
+      const parent = this.stage.parent;
+      if (!parent) return;
+      const local = e.getLocalPosition(parent);
+      dragging = true;
+      startLocalX = local.x;
+      startLocalY = local.y;
+      startBoundsX = this._bounds.x;
+      startBoundsY = this._bounds.y;
+      if (handlers.bringToFront) this.bringToFront();
+      window.addEventListener('pointermove', onWindowMove);
+      window.addEventListener('pointerup', onWindowUp);
+      window.addEventListener('pointercancel', onWindowUp);
+      handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
+    };
+
+    const onWindowMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      applyDrag(e.clientX, e.clientY);
+    };
+
+    const onWindowUp = () => {
       if (!dragging) return;
       dragging = false;
-      console.log(tag, 'onUp target=' + e.target?.constructor?.name);
+      window.removeEventListener('pointermove', onWindowMove);
+      window.removeEventListener('pointerup', onWindowUp);
+      window.removeEventListener('pointercancel', onWindowUp);
       handlers.onEnd?.({ x: this._bounds.x, y: this._bounds.y });
     };
 
+    const onPxiMove = (e: PIXI.FederatedPointerEvent) => {
+      if (!dragging) return;
+      const parent = this.stage.parent;
+      if (!parent) return;
+      const local = e.getLocalPosition(parent);
+      applyDrag(local.x, local.y);
+    };
+
+    const onPxiUp = () => {
+      if (!dragging) return;
+      onWindowUp();
+    };
+
     handle.on('pointerdown', onDown);
-    handle.on('pointermove', onMove);
-    handle.on('pointerup', onUp);
-    handle.on('pointerupoutside', onUp);
-    handle.on('pointercancel', onUp);
-    root.on('pointermove', onMove);
-    root.on('pointerup', onUp);
-    root.on('pointerupoutside', onUp);
+    root.on('pointermove', onPxiMove);
+    root.on('pointerup', onPxiUp);
+    root.on('pointerupoutside', onPxiUp);
 
     this._perHandleCleanups.set(handle, () => {
       handle.off('pointerdown', onDown);
-      handle.off('pointermove', onMove);
-      handle.off('pointerup', onUp);
-      handle.off('pointerupoutside', onUp);
-      handle.off('pointercancel', onUp);
-      root.off('pointermove', onMove);
-      root.off('pointerup', onUp);
-      root.off('pointerupoutside', onUp);
+      root.off('pointermove', onPxiMove);
+      root.off('pointerup', onPxiUp);
+      root.off('pointerupoutside', onPxiUp);
+      window.removeEventListener('pointermove', onWindowMove);
+      window.removeEventListener('pointerup', onWindowUp);
+      window.removeEventListener('pointercancel', onWindowUp);
     });
   }
 
