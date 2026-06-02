@@ -1,287 +1,248 @@
 import { useEffect, useState } from 'react';
-import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../pixi/PixiApp';
-import type { SubCanvas } from '../../pixi/SubCanvas';
 
 interface AppEntry {
   route: string;
   label: string;
   hint: string;
   glyph: string;
-  accent: number;
+  accent: string;
 }
 
 const APPS: AppEntry[] = [
-  { route: 'window-mobile', label: 'Window Mobile', hint: 'adaptive stack + confirms', glyph: '◫', accent: 0x3a4a6a },
-  { route: 'single', label: 'Single', hint: 'full viewport canvas', glyph: '▣', accent: 0x5a3a6a },
-  { route: 'multiple', label: 'Multiple', hint: '2x2 quadrant grid', glyph: '⊞', accent: 0x3a6a5a },
-  { route: 'window', label: 'Window', hint: 'draggable windows + chat', glyph: '▢', accent: 0x6a5a3a },
-  { route: 'three', label: 'Three', hint: 'PIXI 3D scene', glyph: '◇', accent: 0x3a5a6a },
-  { route: 'two-3d', label: 'Two 3D', hint: 'two synced 3D views', glyph: '◈', accent: 0x5a3a5a },
-  { route: 'three-euler', label: 'Three Euler', hint: 'euler angle demo', glyph: '◊', accent: 0x3a6a3a },
-  { route: 'camera-euler', label: 'Camera Euler', hint: 'camera rotation demo', glyph: '◆', accent: 0x6a3a3a },
-  { route: 'confirm', label: 'Confirm', hint: 'html dialog playground', glyph: '?', accent: 0x4a4a6a },
-  { route: 'pixi-confirm', label: 'Pixi Confirm', hint: 'pixi confirm with buttons', glyph: '!', accent: 0x4a6a4a },
+  { route: 'window-mobile', label: 'Window Mobile', hint: 'adaptive stack + confirms', glyph: '\u25EB', accent: '#3a4a6a' },
+  { route: 'single', label: 'Single', hint: 'full viewport canvas', glyph: '\u25A3', accent: '#5a3a6a' },
+  { route: 'multiple', label: 'Multiple', hint: '2x2 quadrant grid', glyph: '\u229E', accent: '#3a6a5a' },
+  { route: 'window', label: 'Window', hint: 'draggable windows + chat', glyph: '\u25A2', accent: '#6a5a3a' },
+  { route: 'three', label: 'Three', hint: 'PIXI 3D scene', glyph: '\u25C7', accent: '#3a5a6a' },
+  { route: 'two-3d', label: 'Two 3D', hint: 'two synced 3D views', glyph: '\u25C8', accent: '#5a3a5a' },
+  { route: 'three-euler', label: 'Three Euler', hint: 'euler angle demo', glyph: '\u25CA', accent: '#3a6a3a' },
+  { route: 'camera-euler', label: 'Camera Euler', hint: 'camera rotation demo', glyph: '\u25C6', accent: '#6a3a3a' },
+  { route: 'confirm', label: 'Confirm', hint: 'html dialog playground', glyph: '?', accent: '#4a4a6a' },
+  { route: 'pixi-confirm', label: 'Pixi Confirm', hint: 'pixi confirm with buttons', glyph: '!', accent: '#4a6a4a' },
 ];
 
-const TILE_W = 150;
-const TILE_H = 110;
-const TILE_GAP_X = 12;
-const TILE_GAP_Y = 12;
-const SIDE_MARGIN = 16;
-const TOP_BAR_H = 140;
-const TILE_INNER_PAD = 14;
-const INPUT_BOX_H = 40;
-const BUTTON_W = 84;
-const BUTTON_GAP = 8;
-const INPUT_BOX_W_RATIO = 0.7;
-
-function readSafeBottom(): number {
-  const v = getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom');
-  return parseFloat(v) || 0;
-}
-
-interface Scene {
-  root: SubCanvas;
-  bg: PIXI.Graphics;
-  title: PIXI.Text;
-  inputBg: PIXI.Graphics;
-  inputText: PIXI.Text;
-  buttonBg: PIXI.Graphics;
-  buttonText: PIXI.Text;
-  statusText: PIXI.Text;
-  tilesLayer: PIXI.Container;
-}
-
-function buildInputBox(scene: Scene, W: number) {
-  const inputW = Math.round(W * INPUT_BOX_W_RATIO) - BUTTON_GAP;
-  scene.inputBg
-    .clear()
-    .roundRect(0, 0, inputW, INPUT_BOX_H, 8)
-    .fill({ color: 0x14141f, alpha: 0.95 })
-    .stroke({ width: 1, color: 0x2a2a3a });
-  scene.inputBg.x = SIDE_MARGIN;
-  scene.inputBg.y = 80;
-  scene.inputText.x = SIDE_MARGIN + 14;
-  scene.inputText.y = 80 + (INPUT_BOX_H - scene.inputText.height) / 2;
-
-  const bx = SIDE_MARGIN + inputW + BUTTON_GAP;
-  scene.buttonBg
-    .clear()
-    .roundRect(0, 0, BUTTON_W, INPUT_BOX_H, 8)
-    .fill({ color: 0x3a4a6a })
-    .stroke({ width: 1, color: 0x4a5a7a });
-  scene.buttonBg.x = bx;
-  scene.buttonBg.y = 80;
-  scene.buttonText.x = bx + (BUTTON_W - scene.buttonText.width) / 2;
-  scene.buttonText.y = 80 + (INPUT_BOX_H - scene.buttonText.height) / 2;
-}
-
-function buildTile(app: AppEntry, x: number, y: number): PIXI.Container {
-  const c = new PIXI.Container();
-  c.x = x;
-  c.y = y;
-
-  const bg = new PIXI.Graphics()
-    .roundRect(0, 0, TILE_W, TILE_H, 10)
-    .fill({ color: 0x14141f, alpha: 0.92 })
-    .stroke({ width: 1, color: 0x2a2a3a });
-  c.addChild(bg);
-
-  const accent = new PIXI.Graphics()
-    .roundRect(TILE_INNER_PAD, TILE_INNER_PAD, 36, 36, 8)
-    .fill({ color: app.accent });
-  c.addChild(accent);
-
-  const glyph = new PIXI.Text({
-    text: app.glyph,
-    style: { fontSize: 22, fill: 0xffffff, fontFamily: 'monospace' },
-  });
-  glyph.x = TILE_INNER_PAD + (36 - glyph.width) / 2;
-  glyph.y = TILE_INNER_PAD + (36 - glyph.height) / 2;
-  c.addChild(glyph);
-
-  const label = new PIXI.Text({
-    text: app.label,
-    style: { fontSize: 13, fill: 0xe6e6f0, fontFamily: 'monospace' },
-  });
-  label.x = TILE_INNER_PAD;
-  label.y = 62;
-  c.addChild(label);
-
-  const hint = new PIXI.Text({
-    text: app.hint,
-    style: { fontSize: 10, fill: 0x888, fontFamily: 'monospace', wordWrap: true, wordWrapWidth: TILE_W - 28 },
-  });
-  hint.x = TILE_INNER_PAD;
-  hint.y = 80;
-  c.addChild(hint);
-
-  return c;
-}
-
-function rebuildTiles(scene: Scene, W: number, viewportH: number, scrollY: number) {
-  scene.tilesLayer.removeChildren().forEach((c) => c.destroy({ children: true }));
-  const usableW = W - SIDE_MARGIN * 2;
-  const cols = Math.max(1, Math.floor((usableW + TILE_GAP_X) / (TILE_W + TILE_GAP_X)));
-  const rows = Math.max(1, Math.ceil(APPS.length / cols));
-  const contentH = rows * TILE_H + (rows - 1) * TILE_GAP_Y;
-  const maxScroll = Math.max(0, contentH - (viewportH - TOP_BAR_H - 20 - readSafeBottom()));
-  const clampedScroll = Math.max(0, Math.min(scrollY, maxScroll));
-  APPS.forEach((app, i) => {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    const x = SIDE_MARGIN + col * (TILE_W + TILE_GAP_X);
-    const y = TOP_BAR_H + 20 - clampedScroll + row * (TILE_H + TILE_GAP_Y);
-    scene.tilesLayer.addChild(buildTile(app, x, y));
-  });
-  scene.statusText.text = `${APPS.length} routes · tap a tile to launch`;
-  scene.statusText.style.fill = 0x8a8a9a;
-  return { contentH, maxScroll, clampedScroll };
+function accentToText(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.5 ? '#0a0a14' : '#e6e6f0';
 }
 
 export function LauncherDisplay() {
-  const [, setBump] = useState(0);
+  const [filter, setFilter] = useState('');
+  const [now, setNow] = useState(() => new Date().toLocaleTimeString());
 
   useEffect(() => {
-    let scrollY = 0;
-    let cleanupResize: (() => void) | null = null;
-    let sceneRef: Scene | null = null;
-    let contentHRef = 0;
-    let maxScrollRef = 0;
-    const cleanups: (() => void)[] = [];
-
-    const onWheel = (e: WheelEvent) => {
-      if (!sceneRef) return;
-      e.preventDefault();
-      const H = window.innerHeight;
-      const usableH = H - TOP_BAR_H - 20 - readSafeBottom();
-      if (contentHRef <= usableH) return;
-      scrollY = Math.max(0, Math.min(maxScrollRef, scrollY + e.deltaY));
-      rebuildTiles(sceneRef, window.innerWidth, H, scrollY);
-    };
-
-    const onPress = (e: { globalX: number; globalY: number }) => {
-      if (!sceneRef) return;
-      const btn = sceneRef.buttonBg.getBounds();
-      if (
-        e.globalX >= btn.x &&
-        e.globalX <= btn.x + btn.width &&
-        e.globalY >= btn.y &&
-        e.globalY <= btn.y + btn.height
-      ) {
-        setBump((b) => b + 1);
-        if (sceneRef) {
-          sceneRef.statusText.text = 'input disabled — tap a tile';
-          sceneRef.statusText.style.fill = 0xffaa66;
-        }
-        return;
-      }
-      for (let i = 0; i < sceneRef.tilesLayer.children.length; i++) {
-        const child = sceneRef.tilesLayer.getChildAt(i) as PIXI.Container;
-        const cb = child.getBounds();
-        if (
-          e.globalX >= cb.x &&
-          e.globalX <= cb.x + cb.width &&
-          e.globalY >= cb.y &&
-          e.globalY <= cb.y + cb.height
-        ) {
-          const app = APPS[i];
-          if (app) {
-            window.location.hash = `#${app.route}`;
-            return;
-          }
-        }
-      }
-    };
-
-    const destroy = startPixiApp((proxy) => {
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-      const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-
-      const bg = new PIXI.Graphics().rect(0, 0, W, H).fill({ color: 0x0a0a14 });
-      bg.eventMode = 'none';
-      root.stage.addChild(bg);
-
-      const title = new PIXI.Text({
-        text: 'sim',
-        style: { fontSize: 28, fill: 0x88aaff, fontFamily: 'monospace' },
-      });
-      title.x = SIDE_MARGIN;
-      title.y = 16;
-      title.eventMode = 'none';
-      root.stage.addChild(title);
-
-      const inputBg = new PIXI.Graphics();
-      inputBg.eventMode = 'none';
-      root.stage.addChild(inputBg);
-
-      const inputText = new PIXI.Text({
-        text: 'filter input disabled (tap Go or a tile)',
-        style: { fontSize: 12, fill: 0x666, fontFamily: 'monospace' },
-      });
-      inputText.eventMode = 'none';
-      root.stage.addChild(inputText);
-
-      const buttonBg = new PIXI.Graphics();
-      buttonBg.eventMode = 'none';
-      root.stage.addChild(buttonBg);
-
-      const buttonText = new PIXI.Text({
-        text: 'Go',
-        style: { fontSize: 15, fill: 0xffffff, fontFamily: 'monospace' },
-      });
-      buttonText.eventMode = 'none';
-      root.stage.addChild(buttonText);
-
-      const statusText = new PIXI.Text({
-        text: `${APPS.length} routes · tap a tile to launch`,
-        style: { fontSize: 11, fill: 0x8a8a9a, fontFamily: 'monospace' },
-      });
-      statusText.x = SIDE_MARGIN;
-      statusText.y = 126;
-      statusText.eventMode = 'none';
-      root.stage.addChild(statusText);
-
-      const tilesLayer = new PIXI.Container();
-      tilesLayer.eventMode = 'none';
-      root.stage.addChild(tilesLayer);
-
-      const scene: Scene = { root, bg, title, inputBg, inputText, buttonBg, buttonText, statusText, tilesLayer };
-      sceneRef = scene;
-
-      buildInputBox(scene, W);
-      const r0 = rebuildTiles(scene, W, H, 0);
-      contentHRef = r0.contentH;
-      maxScrollRef = r0.maxScroll;
-
-      root.onPress(onPress);
-      cleanups.push(() => root.off('pointerdown', onPress));
-
-      window.addEventListener('wheel', onWheel, { passive: false });
-      cleanups.push(() => window.removeEventListener('wheel', onWheel));
-
-      cleanupResize = proxy.onWindowResize(() => {
-        if (!sceneRef) return;
-        const W2 = window.innerWidth;
-        const H2 = window.innerHeight;
-        sceneRef.root.setBounds({ x: 0, y: 0, width: W2, height: H2 });
-        sceneRef.bg.clear().rect(0, 0, W2, H2).fill({ color: 0x0a0a14 });
-        buildInputBox(sceneRef, W2);
-        scrollY = 0;
-        const r = rebuildTiles(sceneRef, W2, H2, 0);
-        contentHRef = r.contentH;
-        maxScrollRef = r.maxScroll;
-      });
-    });
-
-    return () => {
-      cleanups.forEach((c) => c());
-      cleanupResize?.();
-      destroy();
-    };
+    const t = setInterval(() => setNow(new Date().toLocaleTimeString()), 1000);
+    return () => clearInterval(t);
   }, []);
 
-  return null;
+  const q = filter.trim().toLowerCase();
+  const visible = q
+    ? APPS.filter(
+        (a) => a.label.toLowerCase().includes(q) || a.hint.toLowerCase().includes(q) || a.route.includes(q),
+      )
+    : APPS;
+
+  return (
+    <div className="launcher-root">
+      <style>{launcherCss}</style>
+      <header className="launcher-header">
+        <div className="launcher-title-row">
+          <h1 className="launcher-title">sim</h1>
+          <span className="launcher-clock">{now}</span>
+        </div>
+        <div className="launcher-filter-row">
+          <input
+            type="search"
+            inputMode="search"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            placeholder={`filter ${APPS.length} routes\u2026`}
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="launcher-filter"
+            aria-label="Filter routes"
+          />
+          <span className="launcher-count">{visible.length}/{APPS.length}</span>
+        </div>
+      </header>
+
+      <main className="launcher-grid" role="list">
+        {visible.map((app) => (
+          <button
+            key={app.route}
+            type="button"
+            role="listitem"
+            onClick={() => {
+              window.location.hash = `#${app.route}`;
+            }}
+            className="launcher-tile"
+            style={{
+              background: `linear-gradient(160deg, ${app.accent} 0%, #0a0a14 130%)`,
+              borderColor: app.accent,
+              color: accentToText(app.accent),
+            }}
+          >
+            <span className="launcher-glyph" aria-hidden>
+              {app.glyph}
+            </span>
+            <span className="launcher-label">{app.label}</span>
+            <span className="launcher-hint">{app.hint}</span>
+            <span className="launcher-route" aria-hidden>
+              #{app.route}
+            </span>
+          </button>
+        ))}
+        {visible.length === 0 && (
+          <div className="launcher-empty">no routes match &ldquo;{filter}&rdquo;</div>
+        )}
+      </main>
+
+      <footer className="launcher-footer">
+        {q ? `filter: ${filter}` : 'tap a tile to launch'}
+      </footer>
+    </div>
+  );
 }
+
+const launcherCss = `
+.launcher-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a14;
+  color: #e6e6f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding-top: var(--safe-top, 0px);
+  padding-bottom: var(--safe-bottom, 0px);
+  padding-left: var(--safe-left, 0px);
+  padding-right: var(--safe-right, 0px);
+  overflow: hidden;
+}
+.launcher-header {
+  flex: 0 0 auto;
+  padding: 16px;
+  border-bottom: 1px solid #1a1a2a;
+}
+.launcher-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.launcher-title {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #88aaff;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.launcher-clock {
+  font-size: 0.75rem;
+  opacity: 0.55;
+}
+.launcher-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.launcher-filter {
+  flex: 1;
+  background: #14141f;
+  border: 1px solid #2a2a3a;
+  color: #e6e6f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.launcher-filter:focus {
+  border-color: #4a6a9a;
+  background: #18182a;
+}
+.launcher-count {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  min-width: 4ch;
+  text-align: right;
+}
+.launcher-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.launcher-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 14px;
+  min-height: 110px;
+  border: 1px solid;
+  border-radius: 10px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform 80ms ease, box-shadow 120ms ease;
+}
+.launcher-tile:active {
+  transform: scale(0.97);
+}
+.launcher-tile:focus-visible {
+  outline: 2px solid #88aaff;
+  outline-offset: 2px;
+}
+.launcher-glyph {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+.launcher-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.launcher-hint {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  line-height: 1.3;
+}
+.launcher-route {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-size: 0.65rem;
+  opacity: 0.45;
+}
+.launcher-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 32px 12px;
+  opacity: 0.6;
+  font-size: 0.9rem;
+}
+.launcher-footer {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  font-size: 0.7rem;
+  text-align: center;
+  opacity: 0.55;
+  border-top: 1px solid #1a1a2a;
+}
+`;

@@ -2,7 +2,6 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
-  fallback?: (err: Error, reset: () => void) => ReactNode;
 }
 
 interface State {
@@ -23,27 +22,81 @@ export class ErrorBoundary extends Component<Props, State> {
   reset = () => this.setState({ err: null });
 
   render() {
-    if (this.state.err) {
-      if (this.props.fallback) return this.props.fallback(this.state.err, this.reset);
-      const w = window as unknown as { __paintError?: (t: string, b: string) => void };
-      if (w.__paintError) {
-        w.__paintError(
-          'App crashed',
-          (this.state.err.stack || this.state.err.message) + '\n\nTap anywhere to retry.',
-        );
-      }
-      return (
-        <div
+    if (!this.state.err) return this.props.children;
+    const e = this.state.err;
+    const body = `${e.name || 'Error'}: ${e.message || 'unknown'}\n\n${e.stack || ''}`;
+    return (
+      <div
+        role="alert"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 2147483647,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          background: '#1a0a14',
+          color: '#ffd0d0',
+          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+          textAlign: 'left',
+          overflow: 'auto',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        <h1
+          style={{
+            fontSize: '1.1rem',
+            margin: '0 0 8px',
+            fontFamily: 'system-ui, sans-serif',
+          }}
+        >
+          App crashed
+        </h1>
+        <p
+          style={{
+            fontSize: '0.85rem',
+            margin: '0 0 16px',
+            opacity: 0.85,
+            fontFamily: 'system-ui, sans-serif',
+          }}
+        >
+          Tap the message to copy · tap outside to retry
+        </p>
+        <pre
+          onClick={() => navigator.clipboard?.writeText(body).catch(() => {})}
+          style={{
+            fontSize: '0.8rem',
+            maxWidth: '90vw',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+            background: '#0a0a14',
+            padding: '12px',
+            borderRadius: '8px',
+            border: '1px solid #4a1a1a',
+            margin: 0,
+          }}
+        >
+          {body}
+        </pre>
+        <button
+          type="button"
           onClick={this.reset}
           style={{
-            position: 'fixed',
-            inset: 0,
+            marginTop: 16,
             background: 'transparent',
-            zIndex: 2147483646,
+            color: '#ffd0d0',
+            border: '1px solid #ffd0d0',
+            borderRadius: 8,
+            padding: '10px 20px',
+            fontSize: '0.9rem',
+            cursor: 'pointer',
           }}
-        />
-      );
-    }
-    return this.props.children;
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 }
