@@ -21,6 +21,8 @@ export interface FullscreenManager {
 const LERP = 0.15;
 const SNAP = 0.5;
 const DRAG_THRESHOLD = 4;
+// Swipe-to-close: if not zoomed and drag-distance exceeds this, close.
+const CLOSE_DRAG_THRESHOLD = 80;
 
 export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManager {
   const container = new PIXI.Container();
@@ -175,6 +177,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     isDragging = false;
     lastTapMs = 0;
     suppressClose = false;
+    pointerDownOnSprite = false;
 
     texW = ev.texW;
     texH = ev.texH;
@@ -208,7 +211,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     } else {
       sprite = new PIXI.Sprite(ev.texture);
       sprite.anchor.set(0.5);
-      sprite.eventMode = 'none';
+      sprite.eventMode = 'static';
       container.addChild(sprite);
     }
     sprite.x = thumbGlobalX + thumbW / 2;
@@ -229,20 +232,36 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   };
 
   // --- interaction ---
-  // Double-tap detection: close starts immediately on pointerup, but if
-  // the next pointerdown arrives within DBL_TAP_MS, the closing animation
-  // is cancelled and toggleZoom runs instead. Since the LERP (0.15) is
-  // slow, the sprite barely moves before the cancel — perceived as instant.
+  // Three rules:
+  //   1. Single click on overlay (outside image) = close immediately
+  //   2. Single click on sprite (image) = nothing
+  //   3. Double click on sprite = toggle zoom in/out
+  // Distinguish sprite vs overlay via PIXI federated event target:
+  //   sprite has eventMode='static' → e.target === sprite for image clicks
+  //   overlay has eventMode='none'  → e.target === container for overlay clicks
+  let pointerDownOnSprite = false;
+
   container.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     e.originalEvent?.stopPropagation();
 
+    pointerDownOnSprite = e.target === sprite;
+
+    if (!pointerDownOnSprite) {
+      // Rule 1: overlay click → close immediately.
+      hide();
+      return;
+    }
+
+    // Rule 2 & 3: sprite click.
+    // If a closing animation is still running, ignore sprite clicks.
+    if (onAnimDone) return;
+
     const now = performance.now();
     if (lastTapMs > 0 && now - lastTapMs < DBL_TAP_MS) {
-      // Second tap in quick succession → double-tap → toggle zoom.
-      lastTapMs = 0; // reset to prevent triple-tap re-detection
+      // Rule 3: second tap in quick succession → toggle zoom.
+      lastTapMs = 0; // prevent triple-tap re-detection
       suppressClose = true;
-      // Cancel any closing animation that hide() started.
       if (animating) {
         proxy.ticker.remove(tick);
         animating = false;
@@ -254,6 +273,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     lastTapMs = now;
     suppressClose = false;
 
+    // Track for potential drag (only meaningful when zoomed).
     dragStartGlobalX = e.globalX;
     dragStartGlobalY = e.globalY;
     dragOriginX = sprite.x;
@@ -264,37 +284,55 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   container.on('globalpointermove', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     if (!(e.buttons & 1)) { isDragging = false; return; }
+    const dx = e.globalX - dragStartGlobalX;
+    const dy = e.globalY - dragStartGlobalY;
+    const distSq = dx * dx + dy * dy;
     if (!isDragging) {
-      const dx = e.globalX - dragStartGlobalX;
-      const dy = e.globalY - dragStartGlobalY;
-      if (dx * dx + dy * dy > DRAG_THRESHOLD * DRAG_THRESHOLD) {
-        if (zoomed) {
-          isDragging = true;
-          if (animating) {
-            proxy.ticker.remove(tick);
-            animating = false;
-          }
+      if (distSq > DRAG_THRESHOLD * DRAG_THRESHOLD) {
+        isDragging = true;
+        if (animating) {
+          proxy.ticker.remove(tick);
+          animating = false;
         }
+      } else {
+        return;
       }
     }
-    if (isDragging && zoomed) {
-      const dx = e.globalX - dragStartGlobalX;
-      const dy = e.globalY - dragStartGlobalY;
+    if (zoomed) {
+      // Rule: pan when zoomed.
       sprite.x = dragOriginX + dx;
       sprite.y = dragOriginY + dy;
       targetX = sprite.x;
       targetY = sprite.y;
       clampSprite();
+    } else {
+      // Rule 4: swipe-to-close when not zoomed.
+      sprite.x = dragOriginX + dx;
+      sprite.y = dragOriginY + dy;
+      if (distSq > CLOSE_DRAG_THRESHOLD * CLOSE_DRAG_THRESHOLD) {
+        isDragging = false;
+        hide();
+      }
     }
   });
 
   container.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     e.originalEvent?.stopPropagation();
-    if (isDragging) { isDragging = false; return; }
-    // If this pointerup follows a double-tap zoom, skip closing.
+    if (!pointerDownOnSprite) return; // rule 1 handled on pointerdown
+    if (isDragging) {
+      isDragging = false;
+      if (!zoomed) {
+        // Swipe under close threshold — bounce back to center.
+        targetX = window.innerWidth / 2;
+        targetY = window.innerHeight / 2;
+        targetScale = fitScale;
+        startAnim();
+      }
+      return;
+    }
     if (suppressClose) { suppressClose = false; return; }
-    hide();
+    // Rule 2: single click on sprite → nothing.
   });
   container.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
