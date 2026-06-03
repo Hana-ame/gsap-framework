@@ -6,3 +6,5 @@ export { createConfirm } from './PixiConfirm';
 export type { PixiConfirm, PixiConfirmOptions, PixiConfirmButton, PixiConfirmResult } from './PixiConfirm';
 export { createLoadingImage } from './PixiImage';
 export type { PixiImageHandle, PixiImageOptions } from './PixiImage';
+export { createScrollable } from './Scrollable';
+export type { Scrollable, ScrollableOptions } from './Scrollable';
