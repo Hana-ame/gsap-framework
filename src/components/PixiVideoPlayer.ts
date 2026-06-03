@@ -170,7 +170,7 @@ export function createVideoPlayer(
   seekHit.hitArea = new PIXI.Rectangle(barX, barY - 4, barW, barH + 8);
   ctrl.addChild(seekHit);
 
-  // ── CORE VIDEO INIT (完全同步，无 async/await 隐患) ──
+  // ── CORE VIDEO INIT ──
   const htmlVideo = document.createElement('video');
   htmlVideo.crossOrigin = 'anonymous';
   htmlVideo.playsInline = true;
@@ -185,8 +185,8 @@ export function createVideoPlayer(
   const videoTexture = new PIXI.Texture({ source: videoSource });
 
   videoSprite.texture = videoTexture;
-  // 不在 texture 加载前设 sprite.width/height，否则 scale 基于 1x1 默认值算错
-  // 改为在 loadedmetadata 之后设
+  // 初始設 scale 為 0，等 loadedmetadata 拿到真實尺寸後再計算正確的 scale
+  videoSprite.scale.set(0, 0);
 
   // ── seek events ──
   function onSeekDown(e: PIXI.FederatedPointerEvent) {
@@ -218,7 +218,6 @@ export function createVideoPlayer(
   }
   seekHit.on('pointerdown', onSeekDown);
 
-  // 同步触发播放，避免浏览器报 NotAllowedError
   function doPlayAction() {
     if (htmlVideo.paused) {
       htmlVideo.play().catch((e) => dbg(`Play rejected: ${e.message}`));
@@ -241,14 +240,24 @@ export function createVideoPlayer(
 
   let fallbackAttempted = false;
 
-  // 使用命名函数以便 destroy 时 removeEventListener
+  function adjustSpriteScale() {
+    // 從 htmlVideo 直接讀取真實影片尺寸，不依賴 PIXI 內部狀態
+    const vw = htmlVideo.videoWidth;
+    const vh = htmlVideo.videoHeight;
+    if (vw > 0 && vh > 0) {
+      videoSprite.scale.set(width / vw, height / vh);
+      dbg(`adjustSpriteScale vw=${vw} vh=${vh} sx=${videoSprite.scale.x} sy=${videoSprite.scale.y}`);
+    } else {
+      // fallback：等下次事件再試
+      dbg(`adjustSpriteScale: invalid dimensions vw=${vw} vh=${vh}`);
+    }
+  }
+
   const onLoadedMeta = () => {
     if (destroyed) return;
     duration = htmlVideo.duration || 0;
-    // texture 已有真实尺寸，此时设 sprite 宽高 scale 计算正确
-    videoSprite.width = width;
-    videoSprite.height = height;
-    dbg(`loadedmetadata duration=${duration} vw=${videoSprite.width} vh=${videoSprite.height}`);
+    adjustSpriteScale();
+    dbg(`loadedmetadata duration=${duration}`);
     onLoad?.();
   };
 
@@ -256,6 +265,8 @@ export function createVideoPlayer(
     if (destroyed) return;
     curTime = htmlVideo.currentTime;
     if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
+    // 如果 scale 尚未正確設定 (例如 loadedmetadata 錯失)，補設
+    if (videoSprite.scale.x === 0) adjustSpriteScale();
     const pct = duration > 0 ? curTime / duration : 0;
     drawProgress(pct);
     timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
@@ -288,7 +299,6 @@ export function createVideoPlayer(
     const code = htmlVideo.error?.code;
     dbg(`Native video error code: ${code}`);
 
-    // CORS 或代理导致拦截时，无缝开启 Blob 获取模式
     if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || code === MediaError.MEDIA_ERR_NETWORK) {
       fallbackAttempted = true;
       dbg('Attempting Blob fetch fallback...');
@@ -300,7 +310,6 @@ export function createVideoPlayer(
         const mp4Blob = new Blob([rawBlob], { type: 'video/mp4' });
         objectUrl = URL.createObjectURL(mp4Blob);
 
-        // 更换 Blob 地址，重新拉起
         htmlVideo.src = objectUrl;
         htmlVideo.load();
         if (autoplay) htmlVideo.play().catch(()=>{});
@@ -311,7 +320,6 @@ export function createVideoPlayer(
     }
 
     if (destroyed) return;
-    // 如果 Blob 降级也失败了，再呈现报错界面
     onError?.(new Error(`Video error ${code}`));
     const errText = new PIXI.Text({ text: 'Load failed', style: { fontSize: 11, fill: 0xff6666, fontFamily: 'monospace' } });
     errText.x = (width - errText.width) / 2;
@@ -326,7 +334,11 @@ export function createVideoPlayer(
   htmlVideo.addEventListener('pause', onPause);
   htmlVideo.addEventListener('error', onVideoError);
 
-  // 触发原生加载
+  // 如果影片已緩存，loadedmetadata 可能已觸發，補檢查
+  if (htmlVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && htmlVideo.videoWidth > 0) {
+    onLoadedMeta();
+  }
+
   htmlVideo.src = url;
   htmlVideo.load();
   if (autoplay) htmlVideo.play().catch(()=>{});
@@ -341,7 +353,7 @@ export function createVideoPlayer(
       if (destroyed) return;
       destroyed = true;
 
-      // 1. unbind video event handlers FIRST (prevent callbacks on half-destroyed gfx)
+      // 1. 先摘事件監聽
       htmlVideo.removeEventListener('loadedmetadata', onLoadedMeta);
       htmlVideo.removeEventListener('timeupdate', onTimeUpdate);
       htmlVideo.removeEventListener('seeked', onSeeked);
@@ -349,23 +361,23 @@ export function createVideoPlayer(
       htmlVideo.removeEventListener('pause', onPause);
       htmlVideo.removeEventListener('error', onVideoError);
 
-      // 2. stop the video engine
+      // 2. 停掉影片（不放走 audio）
       htmlVideo.pause();
-      htmlVideo.src = '';
-      htmlVideo.load();
+      htmlVideo.removeAttribute('src');
+      // 不清空 child source 元素，也不調 load()——避免觸發多餘事件
 
-      // 3. PIXI cleanup
+      // 3. 清理 PIXI 場景
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
+      if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
 
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-
-      try { videoTexture.destroy(true); } catch { /* ok */ }
-      try { videoSource.destroy(); } catch { /* ok */ }
-
+      // 4. 先卸載場景圖（sprite 不再引用 texture）
       if (root.parent) root.parent.removeChild(root);
       root.destroy({ children: true });
+
+      // 5. 最後清理 texture/source（已無 sprite 引用，安全）
+      try { videoTexture.destroy(true); } catch { /* ok */ }
     },
     setControlsVisible(v: boolean) {
       controlsVisible = v;
