@@ -119,8 +119,14 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     const token = ++currentToken;
     lastError = null;
     buildPlaceholder(opts.placeholderText ?? 'loading...', phTextColor);
+    const timeout = setTimeout(() => {
+      if (destroyed || token !== currentToken) return;
+      buildError('timeout');
+      opts.onError?.(new Error('timeout'));
+    }, 15000);
     PIXI.Assets.load(url)
       .then((texture) => {
+        clearTimeout(timeout);
         if (destroyed || token !== currentToken) return;
         if (!texture || texture.width === 0 || texture.height === 0) {
           buildError('empty texture');
@@ -131,6 +137,7 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
         opts.onLoad?.(texture);
       })
       .catch((err: unknown) => {
+        clearTimeout(timeout);
         if (destroyed || token !== currentToken) return;
         const msg = err instanceof Error ? err.message : String(err);
         buildError(msg);

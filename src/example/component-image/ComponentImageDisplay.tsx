@@ -28,8 +28,8 @@ const SOURCES: Omit<Slot, 'status'>[] = [
   },
   {
     label: 'D · network error',
-    url: 'https://this-domain-does-not-exist-abc123.invalid/image.jpg',
-    note: 'DNS failure → error placeholder',
+    url: 'https://httpbin.org/status/404',
+    note: '404 → error placeholder',
   },
 ];
 
@@ -58,7 +58,7 @@ export function ComponentImageDisplay() {
       const baseX = 60;
       const baseY = 110;
       const gap = 20;
-      SOURCES.forEach((s, i) => {
+      SOURCES.forEach((_, i) => {
         const col = i % 2;
         const row = Math.floor(i / 2);
         const slot = sc.createSubRegion({
@@ -70,7 +70,7 @@ export function ComponentImageDisplay() {
         slotRefs.current[i] = slot;
 
         const title = new PIXI.Text({
-          text: s.label,
+          text: SOURCES[i].label,
           style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace' },
         });
         title.x = 4;
@@ -78,13 +78,36 @@ export function ComponentImageDisplay() {
         slot.stage.addChild(title);
 
         const note = new PIXI.Text({
-          text: s.note,
+          text: SOURCES[i].note,
           style: { fontSize: 10, fill: 0x888888, fontFamily: 'monospace' },
         });
         note.x = 4;
         note.y = SLOT_H + 4;
         slot.stage.addChild(note);
+
+        const src = SOURCES[i];
+        const h = createLoadingImage(slot, {
+          url: src.url,
+          x: 4,
+          y: 4,
+          width: SLOT_W - 8,
+          height: SLOT_H - 8,
+          showErrorHint: true,
+          onLoad: () => {
+            setSlots((arr) =>
+              arr.map((s, idx) => (idx === i ? { ...s, status: 'loaded' } : s)),
+            );
+          },
+          onError: (e) => {
+            setSlots((arr) =>
+              arr.map((s, idx) => (idx === i ? { ...s, status: 'error' } : s)),
+            );
+            console.log(`[showcase] slot ${i} error:`, e);
+          },
+        });
+        handleRefs.current[i] = h;
       });
+      setSlots((arr) => arr.map((s) => ({ ...s, status: 'loading' })));
     });
 
     return () => {
