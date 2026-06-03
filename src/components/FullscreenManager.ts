@@ -61,12 +61,14 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   const snap = (v: number, t: number) => Math.abs(v - t) < SNAP;
 
-  const tick = () => {
+  const tick = (ticker?: PIXI.Ticker) => {
     if (!sprite || destroyed) return;
-    sprite.x += (targetX - sprite.x) * LERP;
-    sprite.y += (targetY - sprite.y) * LERP;
+    const dt = ticker?.deltaTime ?? 1;
+    const f = Math.min(LERP * dt, 1);
+    sprite.x += (targetX - sprite.x) * f;
+    sprite.y += (targetY - sprite.y) * f;
     const cs = sprite.scale.x;
-    sprite.scale.set(cs + (targetScale - cs) * LERP);
+    sprite.scale.set(cs + (targetScale - cs) * f);
     if (
       snap(sprite.x, targetX) && snap(sprite.y, targetY) &&
       snap(sprite.scale.x, targetScale)
@@ -232,7 +234,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     isDragging = false;
   });
 
-  proxy.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+  container.on('globalpointermove', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     if (!isDragging) {
       const dx = e.globalX - dragStartGlobalX;
@@ -289,7 +291,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       if (clickTimer) clearTimeout(clickTimer);
       if (animating) proxy.ticker.remove(tick);
       unsubShow();
-      proxy.stage.off('pointermove');
+      container.off('globalpointermove');
       container.off('pointerdown');
       container.off('pointerup');
       container.off('pointerupoutside');
