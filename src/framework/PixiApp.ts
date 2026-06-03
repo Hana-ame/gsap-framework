@@ -41,18 +41,32 @@ interface WebGLReport {
 
 function probeWebGL(): WebGLReport {
   if (typeof document === 'undefined') return { ok: false, err: 'no document' };
+  const canvas = document.createElement('canvas');
+  // Explicitly release the test context to avoid context exhaustion when
+  // PIXI Application.init creates its own context immediately after.
+  const release = (gl: WebGLRenderingContext | null) => {
+    if (!gl) return;
+    try {
+      const ext = gl.getExtension('WEBGL_lose_context');
+      if (ext) ext.loseContext();
+    } catch { /* ignore */ }
+  };
   try {
-    const canvas = document.createElement('canvas');
-    const gl = (canvas.getContext('webgl2') ||
-      canvas.getContext('webgl') ||
-      canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null;
-    if (!gl) return { ok: false, err: 'WebGL context creation failed' };
+    const gl = (canvas.getContext('webgl2', { failIfMajorPerformanceCaveat: false }) ||
+      canvas.getContext('webgl', { failIfMajorPerformanceCaveat: false }) ||
+      canvas.getContext('experimental-webgl', { failIfMajorPerformanceCaveat: false })) as WebGLRenderingContext | null;
+    if (!gl) {
+      release(null);
+      return { ok: false, err: 'WebGL context creation failed' };
+    }
     const dbg = gl.getExtension('WEBGL_debug_renderer_info');
     const vendor = dbg ? String(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL)) : '';
     const renderer = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
     const version = String(gl.getParameter(gl.VERSION) || '');
+    release(gl);
     return { ok: true, vendor, renderer, version };
   } catch (e) {
+    release(null);
     return { ok: false, err: e instanceof Error ? e.message : String(e) };
   }
 }
@@ -97,22 +111,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
 
   const report = probeWebGL();
   if (!report.ok) {
-    showFatalOverlay(
-      'WebGL not available',
-      [
-        `error: ${report.err}`,
-        '',
-        'PIXI requires WebGL to render. This device or browser refused to create a context.',
-        '',
-        'device:',
-        `  userAgent: ${typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'}`,
-        `  platform: ${typeof navigator !== 'undefined' ? navigator.platform : 'unknown'}`,
-        `  maxTouchPoints: ${typeof navigator !== 'undefined' ? navigator.maxTouchPoints : '?'}`,
-        `  devicePixelRatio: ${typeof window !== 'undefined' ? window.devicePixelRatio : '?'}`,
-        `  inner: ${typeof window !== 'undefined' ? `${window.innerWidth}x${window.innerHeight}` : '?'}`,
-      ].join('\n'),
-    );
-    return () => {};
+    console.warn('[PixiApp] WebGL probe failed, trying init with fallback renderer', report.err);
   }
 
   const app = new PIXI.Application();
@@ -144,6 +143,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
     resolution: window.devicePixelRatio || 1,
     autoDensity: true,
     preference: 'webgl',
+    powerPreference: 'high-performance',
     hello: false,
   };
 
