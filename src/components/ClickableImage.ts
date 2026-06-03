@@ -10,11 +10,14 @@ export interface ClickableImageOptions {
   overlayColor?: number;
   overlayAlpha?: number;
   zoomFactor?: number;
+  onExpand?: () => void;
 }
 
 export interface ClickableImage {
   readonly stage: PIXI.Container;
+  readonly isExpanded: boolean;
   setUrl(url: string): void;
+  collapse(): void;
   destroy(): void;
   readonly destroyed: boolean;
 }
@@ -119,23 +122,19 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     }
   };
 
+  const clampDim = (v: number, imgDim: number, viewDim: number): number => {
+    if (imgDim <= viewDim) return 0;
+    const excess = imgDim - viewDim;
+    return Math.max(-excess / 2, Math.min(v, excess / 2));
+  };
+
   const clampStage = () => {
     if (!sprite || !zoomed) return;
     const pw = window.innerWidth;
     const ph = window.innerHeight;
     const sc = sprite.scale.x;
-    const imgW = texW * sc;
-    const imgH = texH * sc;
-    const minX = pw / 2 - imgW / 2;
-    const maxX = -pw / 2 + imgW / 2;
-    const minY = ph / 2 - imgH / 2;
-    const maxY = -ph / 2 + imgH / 2;
-    const cx = Math.max(minX, Math.min(targetX, maxX));
-    const cy = Math.max(minY, Math.min(targetY, maxY));
-    if (cx !== targetX || cy !== targetY) {
-      targetX = cx;
-      targetY = cy;
-    }
+    targetX = clampDim(targetX, texW * sc, pw);
+    targetY = clampDim(targetY, texH * sc, ph);
   };
 
   const destroyOverlay = () => {
@@ -175,6 +174,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const goFullScreen = () => {
     if (!sprite) return;
+    opts.onExpand?.();
     expanded = true;
     zoomed = false;
     justOpened = true;
@@ -298,6 +298,17 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     if (isDragging) { isDragging = false; return; }
   });
 
+  const collapse = () => {
+    if (!expanded || destroyed) return;
+    if (animating) {
+      parent.ticker.remove(tick);
+      animating = false;
+      onAnimDone = null;
+    }
+    // Snap to current position, then go to thumb
+    goToThumb();
+  };
+
   const load = (url: string) => {
     PIXI.Assets.load(url).then((texture) => {
       if (destroyed) return;
@@ -322,10 +333,12 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   return {
     stage,
+    get isExpanded() { return expanded; },
     setUrl(url: string) {
       if (destroyed) return;
       load(url);
     },
+    collapse,
     destroy() {
       if (destroyed) return;
       destroyed = true;
