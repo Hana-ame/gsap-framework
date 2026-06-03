@@ -106,7 +106,7 @@ function showFatalOverlay(title: string, body: string): void {
   document.body.appendChild(el);
 }
 
-export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => void {
+export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) | void): () => void {
   assertSingleBodyCanvas();
 
   const report = probeWebGL();
@@ -118,6 +118,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
   let mounted = false;
   let destroyed = false;
   let proxy: SubCanvasProxy | null = null;
+  let innerCleanup: (() => void) | undefined;
 
   const onResize = () => {
     if (!mounted) return;
@@ -178,7 +179,8 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
 
       try {
         proxy = new SubCanvasProxy({ app });
-        onReady?.(proxy);
+        const returned = onReady?.(proxy);
+        if (typeof returned === 'function') innerCleanup = returned;
         if (typeof app.ticker.maxFPS === 'number' && app.ticker.maxFPS > 0) {
           // ok
         }
@@ -260,14 +262,13 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
       window.removeEventListener(type, makePointerHandler(type));
     });
     window.removeEventListener('resize', onResize);
+    innerCleanup?.();
     proxy?.destroyAll();
     proxy = null;
+    // Let app.destroy handle canvas removal (removeView=true) to avoid
+    // NotFoundError from double-removal.
     if (mounted) {
-      const c = app.canvas as HTMLCanvasElement | undefined;
-      if (c && c.parentNode) {
-        c.parentNode.removeChild(c);
-        bodyCanvases.delete(c);
-      }
+      bodyCanvases.delete(app.canvas as HTMLCanvasElement);
     }
     try {
       app.destroy(true, { children: true, texture: true });
