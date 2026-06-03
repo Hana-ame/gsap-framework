@@ -48,7 +48,13 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
   const tick = (ticker: PIXI.Ticker) => {
     if (removed) return;
     t += ticker.deltaMS / 1000;
-    spinner.clear();
+    try {
+      spinner.clear();
+    } catch {
+      // spinner was destroyed by parent SubCanvas — stop ticking
+      removed = true;
+      return;
+    }
     for (let i = 0; i < 8; i++) {
       const a = (i / 8) * Math.PI * 2 - t * 2;
       const x = Math.cos(a) * 14;

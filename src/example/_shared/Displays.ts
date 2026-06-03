@@ -59,7 +59,9 @@ export function mountDisplays(sc: SubCanvas): () => void {
     clickLayer.addChild(label);
 
     let t = 0;
+    let ringRemoved = false;
     const tick = (ticker: PIXI.Ticker) => {
+      if (ringRemoved) return;
       t += ticker.deltaMS / 700;
       if (t >= 1) {
         sc.ticker.remove(tick);
@@ -67,7 +69,13 @@ export function mountDisplays(sc: SubCanvas): () => void {
       }
       const r = 6 + t * 26;
       const a = 1 - t;
-      ring.clear();
+      try {
+        ring.clear();
+      } catch {
+        ringRemoved = true;
+        sc.ticker.remove(tick);
+        return;
+      }
       ring.setStrokeStyle({ width: 2, color: 0xff00ff, alpha: a });
       ring.circle(x, y, r).stroke();
     };

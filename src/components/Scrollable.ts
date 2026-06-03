@@ -76,6 +76,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
   };
 
   const updateScrollbar = () => {
+    if (destroyed) return;
     if (scrollbarV) {
       const ratio = h / Math.max(contentH, h);
       const barH = Math.max(20, h * ratio);
@@ -95,6 +96,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
   };
 
   const apply = () => {
+    if (destroyed) return;
     content.x = -scrollX;
     content.y = -scrollY;
     if (scrollbarV) scrollbarV.visible = dir === 'vertical' && contentH > h;
@@ -103,6 +105,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
   };
 
   const recalc = () => {
+    if (destroyed) return;
     let maxW = 0;
     let maxH = 0;
     for (const child of content.children) {
@@ -118,7 +121,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     apply();
   };
 
-  stage.on('wheel', (e: PIXI.FederatedWheelEvent) => {
+  const onWheel = (e: PIXI.FederatedWheelEvent) => {
     e.stopPropagation();
     if (dir === 'vertical') {
       scrollY += e.deltaY;
@@ -127,7 +130,8 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     }
     clamp();
     apply();
-  });
+  };
+  stage.on('wheel', onWheel);
 
   let dragging = false;
   let dragStartX = 0;
@@ -176,12 +180,14 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
       return { width: w, height: h };
     },
     scrollTo(x: number, y: number) {
+      if (destroyed) return;
       scrollX = x;
       scrollY = y;
       clamp();
       apply();
     },
     scrollBy(dx: number, dy: number) {
+      if (destroyed) return;
       scrollX += dx;
       scrollY += dy;
       clamp();
@@ -191,6 +197,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      stage.off('wheel', onWheel);
       stage.off('pointermove', onMove);
       stage.off('pointerup', onUp);
       stage.off('pointerupoutside', onUp);
