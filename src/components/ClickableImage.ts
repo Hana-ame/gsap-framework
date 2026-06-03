@@ -18,6 +18,9 @@ export interface ClickableImage {
 
 type Mode = 'thumb' | 'fit' | 'zoom';
 
+const LERP = 0.15;
+const SNAP = 0.5;
+
 export function createClickableImage(parent: SubCanvas, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
   stage.x = opts.x;
@@ -33,6 +36,13 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   let texW = 0;
   let texH = 0;
   let destroyed = false;
+
+  let targetStageX = opts.x;
+  let targetStageY = opts.y;
+  let targetSpriteX = thumbW / 2;
+  let targetSpriteY = thumbH / 2;
+  let targetScale = 1;
+  let animating = false;
 
   const placeholder = new PIXI.Graphics()
     .rect(0, 0, thumbW, thumbH)
@@ -63,29 +73,61 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const zoomScale = () => fitScale() * 2;
 
+  const snap = (v: number, target: number) => Math.abs(v - target) < SNAP;
+
+  const tick = () => {
+    if (!sprite || destroyed) return;
+    stage.x += (targetStageX - stage.x) * LERP;
+    stage.y += (targetStageY - stage.y) * LERP;
+    sprite.x += (targetSpriteX - sprite.x) * LERP;
+    sprite.y += (targetSpriteY - sprite.y) * LERP;
+    const cs = sprite.scale.x;
+    sprite.scale.set(cs + (targetScale - cs) * LERP);
+    if (
+      snap(stage.x, targetStageX) && snap(stage.y, targetStageY) &&
+      snap(sprite.x, targetSpriteX) && snap(sprite.y, targetSpriteY) &&
+      snap(sprite.scale.x, targetScale)
+    ) {
+      stage.x = targetStageX;
+      stage.y = targetStageY;
+      sprite.x = targetSpriteX;
+      sprite.y = targetSpriteY;
+      sprite.scale.set(targetScale);
+      parent.ticker.remove(tick);
+      animating = false;
+    }
+  };
+
+  const startAnim = () => {
+    if (!animating) {
+      animating = true;
+      parent.ticker.add(tick);
+    }
+  };
+
   const applyMode = () => {
     if (!sprite) return;
     const pw = parent.bounds.width;
     const ph = parent.bounds.height;
     sprite.anchor.set(0.5);
     if (mode === 'thumb') {
-      stage.x = opts.x;
-      stage.y = opts.y;
-      sprite.x = thumbW / 2;
-      sprite.y = thumbH / 2;
-      const s = Math.min(thumbW / texW, thumbH / texH, 1);
-      sprite.scale.set(s);
+      targetStageX = opts.x;
+      targetStageY = opts.y;
+      targetSpriteX = thumbW / 2;
+      targetSpriteY = thumbH / 2;
+      targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
       stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
       stage.cursor = 'pointer';
     } else {
-      stage.x = 0;
-      stage.y = 0;
-      sprite.x = pw / 2;
-      sprite.y = ph / 2;
-      sprite.scale.set(mode === 'fit' ? fitScale() : zoomScale());
+      targetStageX = 0;
+      targetStageY = 0;
+      targetSpriteX = pw / 2;
+      targetSpriteY = ph / 2;
+      targetScale = mode === 'fit' ? fitScale() : zoomScale();
       stage.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
       stage.cursor = 'grab';
     }
+    startAnim();
   };
 
   let clickTimer: ReturnType<typeof setTimeout> | null = null;
@@ -121,8 +163,8 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
       dragging = true;
       dragStartX = e.globalX;
       dragStartY = e.globalY;
-      origX = sprite?.x ?? 0;
-      origY = sprite?.y ?? 0;
+      origX = sprite?.x ?? targetSpriteX;
+      origY = sprite?.y ?? targetSpriteY;
       stage.cursor = 'grabbing';
     }
     applyMode();
@@ -132,8 +174,10 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     if (!dragging || !sprite) return;
     const dx = e.globalX - dragStartX;
     const dy = e.globalY - dragStartY;
-    sprite.x = origX + dx;
-    sprite.y = origY + dy;
+    targetSpriteX = origX + dx;
+    targetSpriteY = origY + dy;
+    sprite.x = targetSpriteX;
+    sprite.y = targetSpriteY;
   };
 
   const onUp = () => {
@@ -175,6 +219,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
       if (destroyed) return;
       destroyed = true;
       if (clickTimer) clearTimeout(clickTimer);
+      if (animating) parent.ticker.remove(tick);
       stage.off('pointermove', onMove);
       stage.off('pointerup', onUp);
       stage.off('pointerupoutside', onUp);
