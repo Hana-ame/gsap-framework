@@ -157,6 +157,7 @@ class SubCanvas {
 
 ### PIXI v8 坑
 - **Graphics destroy 后 immediate recreate 在同一 callstack 报 `_callContextMethod → clear` null**：PIXI v8 的 render batch 在帧末 flush；若 `destroy()` 释放了 GraphicsContext，然后同一事件处理中 `new Graphics()` 再 `.fill()`，renderer flush 旧 frame 时尝试访问已 null 的 context，报 `TypeError: Cannot read properties of null (reading 'clear')`。**修法**：复用 object 用 `.clear().rect().fill()` 而不是 destroy+new。FullscreenManager `show()` 已踩过。
+- **父级 SubCanvas destroy → 子 Graphics context null → tick/event handler 仍调用 `.clear()` 报相同 null 错**：`sc.destroy()` 通过 `stage.destroy()` 连带销毁所有 Graphics 子对象（context=null）。但 `Ticker` 上的 tick 函数或 PIXI event handler 若未及时移除，后续帧仍尝试 `.clear()` → crash。**修法**：(1) destroy 前 `off()` 所有 listener；(2) public 方法（如 `scrollTo` / `recalc`）加 `if (destroyed) return` 守卫；(3) tick 内 `try { graphics.clear() } catch { /* 已销毁，停止 tick */ }`。Scrollable/Loading/Displays 已统一修。
 - **Graphics mask 不 `.fill()` 则全隐藏**：PIXI v8 要求 `new Graphics().rect(...).fill({ color: 0xffffff })` — 空 path 的 Graphics 作为 mask 会 **隐藏所有内容**。这个 bug 在 Scrollable 和 PixiImage 的 mask 上都出现过。
 - **`eventMode='passive'` 是 v8 默认值**（不同于 v7 的 `'auto'`）。不设 `'static'` 的 Container 不响应 PIXI FederatedEvent，也不转发给子级。
 - **`Container` 没有 `setPointerCapture/releasePointerCapture`**：那是 DOM Element 方法。PIXI 需要 window 级 listener 替代。
