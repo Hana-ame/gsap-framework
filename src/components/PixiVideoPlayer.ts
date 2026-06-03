@@ -13,6 +13,7 @@ export interface PixiVideoPlayerOptions {
   showControls?: boolean;
   onLoad?: () => void;
   onError?: (e: Error) => void;
+  onDebug?: (msg: string) => void;
 }
 
 export interface PixiVideoPlayerHandle {
@@ -55,7 +56,13 @@ export function createVideoPlayer(
     showControls: showControlsOpt = true,
     onLoad,
     onError,
+    onDebug,
   } = opts;
+
+  function dbg(msg: string) {
+    console.log(`[PixiVideoPlayer] ${msg}`);
+    onDebug?.(msg);
+  }
 
   let destroyed = false;
   let videoTexture: PIXI.Texture | null = null;
@@ -68,6 +75,8 @@ export function createVideoPlayer(
   let curTime = 0;
   let loadCancelled = false;
   let isLoading = false;
+
+  dbg(`create x=${x} y=${y} w=${width} h=${height} url=${url.slice(0,60)}...`);
 
   // ── scene graph ──
   const root = new PIXI.Container();
@@ -245,6 +254,7 @@ export function createVideoPlayer(
   seekHit.on('pointerdown', onSeekDown);
 
   function doPlayAction() {
+    dbg(`doPlayAction htmlVideo=${!!htmlVideo} paused=${htmlVideo?.paused} destroyed=${destroyed}`);
     if (!htmlVideo) {
       loadAndPlay(true);
       return;
@@ -284,16 +294,19 @@ export function createVideoPlayer(
 
   // ── loading ──
   async function loadAndPlay(forcePlay = false) {
+    dbg(`loadAndPlay forcePlay=${forcePlay} isLoading=${isLoading} loadCancelled=${loadCancelled} htmlVideo=${!!htmlVideo}`);
     if (loadCancelled || isLoading) return;
 
     // already loaded — just play if needed
     if (htmlVideo) {
+      dbg('loadAndPlay: already loaded, just play');
       if (autoplay || forcePlay) htmlVideo.play().catch(() => {});
       return;
     }
 
     isLoading = true;
     try {
+      dbg('Assets.load start...');
       const texture = await PIXI.Assets.load({
         src: url,
         data: {
@@ -304,8 +317,10 @@ export function createVideoPlayer(
           playsinline: true,
         },
       });
+      dbg(`Assets.load done texture=${!!texture} source=${texture.source.constructor.name}`);
 
       if (loadCancelled || destroyed) {
+        dbg('loadAndPlay: cancelled after load');
         try { texture.destroy(); } catch { /* ok */ }
         return;
       }
@@ -317,6 +332,7 @@ export function createVideoPlayer(
 
       const src = texture.source as PIXI.VideoSource;
       htmlVideo = src.resource;
+      dbg(`htmlVideo obtained=${!!htmlVideo}`);
       if (!htmlVideo) throw new Error('no HTMLVideoElement');
 
       htmlVideo.loop = loop;
@@ -324,44 +340,63 @@ export function createVideoPlayer(
 
       // Metadata may have already fired if loaded from cache
       duration = htmlVideo.duration || 0;
+      dbg(`initial duration=${duration} readyState=${htmlVideo.readyState} paused=${htmlVideo.paused}`);
       htmlVideo.addEventListener('loadedmetadata', () => {
         duration = htmlVideo?.duration || 0;
+        dbg(`loadedmetadata duration=${duration}`);
       });
 
-      function syncUI() {
+      htmlVideo.addEventListener('timeupdate', () => {
         if (!htmlVideo || destroyed) return;
         curTime = htmlVideo.currentTime;
         if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
         const pct = duration > 0 ? curTime / duration : 0;
         drawProgress(pct);
         timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-      }
+      });
 
-      htmlVideo.addEventListener('timeupdate', syncUI);
-      htmlVideo.addEventListener('seeked', syncUI);
+      htmlVideo.addEventListener('seeked', () => {
+        if (!htmlVideo || destroyed) return;
+        curTime = htmlVideo.currentTime;
+        if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
+        const pct = duration > 0 ? curTime / duration : 0;
+        drawProgress(pct);
+        timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
+      });
 
       htmlVideo.addEventListener('play', () => {
+        dbg('native video play event');
         paused = false;
         drawPlayIcon(true);
         cpb.visible = false;
       });
 
       htmlVideo.addEventListener('pause', () => {
+        dbg(`native video pause event currentTime=${htmlVideo?.currentTime}`);
         paused = true;
         drawPlayIcon(false);
         cpb.visible = true;
       });
 
       htmlVideo.addEventListener('ended', () => {
+        dbg('native video ended event');
         paused = true;
         drawPlayIcon(false);
         cpb.visible = true;
       });
 
-      syncUI();
+      // initial UI sync
+      curTime = htmlVideo.currentTime;
+      if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
+      const initPct = duration > 0 ? curTime / duration : 0;
+      drawProgress(initPct);
+      timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
+      dbg(`initial sync curTime=${curTime} duration=${duration} pct=${initPct}`);
 
       if (autoplay || forcePlay) {
-        await htmlVideo.play().catch(() => {});
+        dbg('calling htmlVideo.play()...');
+        await htmlVideo.play().catch((e) => dbg(`play() rejected: ${e.message}`));
+        dbg(`htmlVideo.play() done paused=${htmlVideo.paused}`);
       } else {
         htmlVideo.pause();
         paused = true;
@@ -371,6 +406,7 @@ export function createVideoPlayer(
 
       onLoad?.();
     } catch (err) {
+      dbg(`loadAndPlay error: ${err instanceof Error ? err.message : String(err)}`);
       if (loadCancelled || destroyed) return;
       const msg = err instanceof Error ? err.message : String(err);
       onError?.(err instanceof Error ? err : new Error(msg));
@@ -384,6 +420,7 @@ export function createVideoPlayer(
       root.addChild(errText);
     } finally {
       isLoading = false;
+      dbg('loadAndPlay done');
     }
   }
 
