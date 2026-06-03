@@ -44,7 +44,9 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
   sc.stage.addChild(label);
 
   let t = 0;
+  let removed = false;
   const tick = (delta: { deltaMS: number }) => {
+    if (removed) return;
     t += delta.deltaMS / 1000;
     spinner.clear();
     for (let i = 0; i < 8; i++) {
@@ -57,6 +59,7 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
   if (showSpinner) sc.ticker.add(tick);
 
   return () => {
+    removed = true;
     sc.ticker.remove(tick);
     sc.stage.removeChild(overlay);
     sc.stage.removeChild(spinner);
