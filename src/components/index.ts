@@ -8,3 +8,5 @@ export { createLoadingImage } from './PixiImage';
 export type { PixiImageHandle, PixiImageOptions } from './PixiImage';
 export { createScrollable } from './Scrollable';
 export type { Scrollable, ScrollableOptions } from './Scrollable';
+export { createClickableImage } from './ClickableImage';
+export type { ClickableImage, ClickableImageOptions } from './ClickableImage';
