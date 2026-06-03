@@ -13,7 +13,7 @@ Use this agent when the user asks for any of:
 - Move/rename files in `src/framework/`, `src/components/`, `src/example/`
 - Fix a SubCanvas / event-routing / z-order / drag bug
 - "在 pixi 里做 X" — anything in the PIXI canvas
-- Anything involving the 14 example routes (`#screen-size`, `#window-mobile`, `#single`, `#multiple`, `#window`, `#pixi-confirm`, `#component-window`, `#component-confirm`, `#component-image`, `#component-loading`, `#component-bus`, `#component-scrollable`, `#component-clickable-image`)
+- Anything involving the 15 example routes (`#screen-size`, `#window-mobile`, `#single`, `#multiple`, `#window`, `#pixi-confirm`, `#component-window`, `#component-confirm`, `#component-image`, `#component-loading`, `#component-bus`, `#component-scrollable`, `#component-clickable-image`, `#component-scrollable-image`)
 
 Do **not** invoke for:
 
