@@ -249,11 +249,18 @@ export class SubCanvas {
   }
 
   removeChildren(): PIXI.Container[] {
-    this.stage.children.forEach((c) => {
-      if (this._dragHandles.has(c)) this._uninstallDragOnHandle(c);
+    const internal = new Set<PIXI.Container>();
+    if (this._mask) internal.add(this._mask);
+    if (this._bg) internal.add(this._bg);
+    const toRemove = this.stage.children.filter((c) => !internal.has(c));
+    toRemove.forEach((c) => {
+      if (this._dragHandles.has(c)) {
+        this._uninstallDragOnHandle(c);
+        this._dragHandles.delete(c);
+      }
     });
-    this._dragHandles = new WeakSet();
-    return this.stage.removeChildren();
+    toRemove.forEach((c) => this.stage.removeChild(c));
+    return toRemove;
   }
 
   getChildAt(index: number): PIXI.Container {

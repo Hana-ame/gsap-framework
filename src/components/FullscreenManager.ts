@@ -244,6 +244,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   container.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     e.originalEvent?.stopPropagation();
+    e.originalEvent?.preventDefault(); // block browser native double-tap zoom
 
     pointerDownOnSprite = e.target === sprite;
 

@@ -116,8 +116,10 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     PIXI.Assets.load({ src: url }).then((texture) => {
       if (destroyed) return;
       if (!texture || texture.width === 0 || texture.height === 0) return;
-      if (sprite) { sprite.destroy(); sprite = null; }
+      if (sprite) { sprite.removeFromParent(); sprite.destroy(); sprite = null; }
+      placeholder.removeFromParent();
       placeholder.destroy();
+      placeholderText.removeFromParent();
       placeholderText.destroy();
       loadedTexture = texture;
       texW = texture.width;

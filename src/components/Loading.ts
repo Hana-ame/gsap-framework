@@ -53,6 +53,7 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
     } catch {
       // spinner was destroyed by parent SubCanvas — stop ticking
       removed = true;
+      sc.ticker.remove(tick);
       return;
     }
     for (let i = 0; i < 8; i++) {

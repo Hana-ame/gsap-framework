@@ -4,6 +4,7 @@ import { SubCanvas } from '../../framework/SubCanvas';
 export function mountDisplays(sc: SubCanvas): () => void {
   const crosshair = new PIXI.Graphics();
   const clickLayer = new PIXI.Container();
+  let crosshairAlive = true;
 
   const moveText = new PIXI.Text({
     text: 'move: -',
@@ -27,6 +28,7 @@ export function mountDisplays(sc: SubCanvas): () => void {
   let clickCount = 0;
 
   sc.onMove((e) => {
+    if (!crosshairAlive) return;
     const x = e.x;
     const y = e.y;
 
@@ -85,6 +87,7 @@ export function mountDisplays(sc: SubCanvas): () => void {
   });
 
   return () => {
+    crosshairAlive = false;
     sc.stage.removeChild(crosshair);
     sc.stage.removeChild(clickLayer);
     sc.stage.removeChild(moveText);
