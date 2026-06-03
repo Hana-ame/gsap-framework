@@ -20,6 +20,12 @@ export interface ClickableImage {
   readonly destroyed: boolean;
 }
 
+interface ClickState {
+  downGlobal: { x: number; y: number };
+  downTexture: PIXI.Texture;
+  downBounds: { x: number; y: number; width: number; height: number };
+}
+
 export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
   stage.x = opts.x;
@@ -54,25 +60,19 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   stage.addChild(placeholderText);
 
   // Click-threshold detection: fullscreen fires only on pointerdown+up without drag
-  let downGlobal: { x: number; y: number } | null = null;
-  let downTexture: PIXI.Texture | null = null;
+  let clickState: ClickState | null = null;
   let clickCleanup: (() => void) | null = null;
 
   const cancelClick = () => {
     if (clickCleanup) { clickCleanup(); clickCleanup = null; }
-    downGlobal = null;
-    downTexture = null;
-  };
-
-  const cleanupListeners = () => {
-    if (clickCleanup) { clickCleanup(); clickCleanup = null; }
+    clickState = null;
   };
 
   const emitFullscreen = () => {
-    if (!downTexture) return;
-    const gb = parent.globalBounds;
+    if (!clickState) return;
+    const gb = clickState.downBounds;
     const ev: FullscreenShowEvent = {
-      texture: downTexture,
+      texture: clickState.downTexture,
       texW,
       texH,
       thumbGlobalX: gb.x + opts.x,
@@ -87,34 +87,40 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   };
 
   const onWinMove = (e: PointerEvent) => {
-    if (!downGlobal) return;
-    const dx = e.clientX - downGlobal.x;
-    const dy = e.clientY - downGlobal.y;
+    if (!clickState) return;
+    const dx = e.clientX - clickState.downGlobal.x;
+    const dy = e.clientY - clickState.downGlobal.y;
     if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
       cancelClick();
     }
   };
 
   const onWinUp = () => {
-    if (downGlobal) {
-      // Click detected (no drag) — emit fullscreen
-      emitFullscreen();
+    if (clickState) {
+      try { emitFullscreen(); } catch (e) { console.warn('[ClickableImage] emitFullscreen threw', e); }
     }
+    cancelClick();
+  };
+
+  const onWinCancel = () => {
     cancelClick();
   };
 
   stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
     if (!loadedTexture) return;
     e.stopPropagation();
-    downGlobal = { x: e.globalX, y: e.globalY };
-    downTexture = loadedTexture;
+    clickState = {
+      downGlobal: { x: e.globalX, y: e.globalY },
+      downTexture: loadedTexture,
+      downBounds: { ...parent.globalBounds },
+    };
     window.addEventListener('pointermove', onWinMove);
     window.addEventListener('pointerup', onWinUp);
-    window.addEventListener('pointercancel', onWinUp);
+    window.addEventListener('pointercancel', onWinCancel);
     clickCleanup = () => {
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
-      window.removeEventListener('pointercancel', onWinUp);
+      window.removeEventListener('pointercancel', onWinCancel);
     };
   });
 
@@ -147,7 +153,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      cleanupListeners();
+      cancelClick();
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },
