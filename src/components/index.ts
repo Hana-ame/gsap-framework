@@ -12,3 +12,5 @@ export { createClickableImage } from './ClickableImage';
 export type { ClickableImage, ClickableImageOptions } from './ClickableImage';
 export { createFullscreenManager } from './FullscreenManager';
 export type { FullscreenManager, FullscreenShowEvent } from './FullscreenManager';
+export { createVideoPlayer } from './PixiVideoPlayer';
+export type { PixiVideoPlayerHandle, PixiVideoPlayerOptions } from './PixiVideoPlayer';
