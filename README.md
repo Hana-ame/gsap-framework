@@ -6,7 +6,7 @@ PIXI 8 game-UI shell. SubCanvas is the core abstraction: a region of a shared `P
 src/
   framework/    PIXI core. SubCanvas is the star. Public API: index.ts.
   components/   PIXI components (Window, Confirm, Image, Loading, Scrollable, ClickableImage, FullscreenManager). Public API: index.ts.
-  example/      14 routes demonstrating SubCanvas usage. Launcher is the home.
+  example/      16 routes demonstrating SubCanvas usage. Launcher is the home.
 ```
 
 Deploy: `https://react.moonchan.xyz/` (Cloudflare Pages auto on push to `sim`).
@@ -62,7 +62,7 @@ stop();
 | `FullscreenManager.ts` | Singleton overlay manager, listens for `'fullscreen:show'` on bus, handles zoom/drag/close. |
 | `index.ts` | Public re-exports. |
 
-### `src/example/` — 14 routes
+### `src/example/` — 16 routes
 
 | route | what it shows |
 |---|---|
@@ -174,6 +174,15 @@ class SubCanvas {
 - **Cloudflare Pages 灰度 deploy**：HTML 立即更新，子 bundle（`assets/xxx-[hash].js`）还在旧 hash 状态。**症状**：页面报 `Failed to fetch dynamically imported module`。**修法**：等 1-2 分钟；不要 push 完立即 playwright 测。
 - **SW cache 撞 stale**：SW 是 `sim-v2`，network-first nav 仍然可能命中旧 cache。**修法**：`unregister` 一次 SW 再 reload。
 
+### 销毁时序 / 浏览器后退
+- **`startPixiApp` 忽略 `onReady` 返回值**：route 组件在 `onReady` 里返回的清理函数（删除 window 监听器、destroy imgs/fm 等）从未被调用。后退时 `proxy.destroyAll()` 先销毁所有 Graphics → 残留的 `window 'pointermove'` 监听器触发 → 在已销毁 Graphics 上调 `.clear()` → `_callContextMethod` crash。**修法**：`startPixiApp` 捕获 `onReady` 返回值并存在 `innerCleanup` 闭包里，`stop()` 时 `innerCleanup?.(); proxy?.destroyAll();` 顺序执行。PixiApp.ts line 266。
+- **canvas 双重 DOM removeChild**：`stop()` 手工 `c.parentNode.removeChild(c)` + `app.destroy(true, ...)` 再次移除同一 canvas → `NotFoundError: Failed to execute 'removeChild' on 'Node'`。**修法**：移除手工删除，全部交给 `app.destroy(true, ...)` 统一处理。
+- **route 内部清理函数不执行 = window 监听器泄漏**：`onWindowDown/onWindowMove/onWindowUp` 挂在 `window.addEventListener` 上，受作用域闭包保护，永远不会 GC。后退重进同一 route 时重复注册，前一实例的 listener 在旧 scope 上永久残留。**根因**同上（`startPixiApp` 忽略返回值）。
+- **ClickableImage placeholder destroy 后仍在 stage.children 中**：`Assets.load()` 的 `.then` 里调 `placeholder.destroy()` 但未先 `removeFromParent()`。PIXI 下帧渲染遍历 children 时访问 null GraphicsContext → crash（`_callContextMethod: clear` on null）。**修法**：`placeholder.removeFromParent(); placeholder.destroy();`（placeholderText 同理）。
+- **`SubCanvas.removeChildren()` 泄漏 `_mask` 和 `_bg`**：原实现 `return this.stage.removeChildren()` 把框架内部的 mask Graphics 和 drag 背景 container 也返回给外部。外部代码调 `.destroy()` 会永久删除内部遮罩和拖拽背景。**修法**：过滤 `${this._mask}` 和 `${this._bg}`，只返回业务子对象。
+- **`Loading.ts` catch 后 ticker 泄漏**：`spinner.clear()` 在 `try` 中，catch 设 `removed=true` 但没 `sc.ticker.remove(tick)` → tick 函数驻留在 ticker 上每帧跑还占内存。**修法**：catch 块加 `sc.ticker.remove(tick)`。
+- **`Displays.ts` crosshair 无 destroy guard**：`sc.onMove` 回调直接 `crosshair.clear()`，`mountDisplays` 返回的 cleanup 销毁 crosshair 后，`onMove` 仍可能触发 → crash。**修法**：`let crosshairAlive = true` + `if (!crosshairAlive) return;`。
+
 ### v8 PIXI 怪事
 - **`Container.position` setter 是 `this._position.copyFrom(value)`**：外部 observer 会被丢弃。**修法**：用 `setBounds` / `setPosition` / `setSize` 同步。
 - **`getLocalPosition(parent)` 在 `'auto'` eventMode 上不可靠**：必须 `eventMode='static'`。
@@ -189,6 +198,6 @@ class SubCanvas {
 ## Tags / milestones
 
 | tag | state |
-|---|---|
+|---|---|---|
 | `v0.1.0-pre-restruct` | Pre-restruct archive (PIXI+HTML mix, fast-drag fix landed). |
-| (current `sim` HEAD) | 3-folder restructure (`framework` / `components` / `example`). |
+| `v0.2.0` | Stability round: browser-back crash, ClickableImage destroy order, innerCleanup, Graphics lifecycle guards. |
