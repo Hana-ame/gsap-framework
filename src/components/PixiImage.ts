@@ -63,12 +63,21 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     c.addChild(bg);
     const t = new PIXI.Text({
       text,
-      style: { fontSize: TEXT_BASE, fill: color, fontFamily: FONT },
+      style: {
+        fontSize: TEXT_BASE,
+        fill: color,
+        fontFamily: FONT,
+        wordWrap: true,
+        wordWrapWidth: opts.width - 16,
+      },
     });
     t.x = (opts.width - t.width) / 2;
     t.y = (opts.height - t.height) / 2;
     t.eventMode = 'none';
     c.addChild(t);
+    const mask = new PIXI.Graphics().rect(0, 0, opts.width, opts.height);
+    c.addChild(mask);
+    c.mask = mask;
     container.addChild(c);
     placeholder = c;
   };

@@ -12,24 +12,24 @@ interface Slot {
 
 const SOURCES: Omit<Slot, 'status'>[] = [
   {
-    label: 'A · working (small)',
-    url: 'https://proxy.moonchan.xyz/insecure/plain/https://wx1.sinaimg.cn/orj360/0064XrJqly1hxzl6k43frj30u0140tk6.jpg',
-    note: 'real sinaimg via moonchan proxy',
+    label: 'A · proxy sinaimg (small)',
+    url: 'https://proxy.moonchan.xyz/mw2000/007Y7SRMly1idrdc5nzp2j310o1m2agv.jpg?proxy_host=wx4.sinaimg.cn&proxy_referer=https%3A%2F%2Fweibo.com%2F',
+    note: 'via moonchan proxy, auto-referer',
   },
   {
-    label: 'B · working (large)',
-    url: 'https://proxy.moonchan.xyz/insecure/plain/https://wx3.sinaimg.cn/large/0064XrJqly1hxzl6k43frj30u0140tk6.jpg',
-    note: 'square crop, contain-fitted',
+    label: 'B · proxy sinaimg (large)',
+    url: 'https://proxy.moonchan.xyz/mw690/6dd57921ly1idq2o0vvfhj210m1eyh9o.jpg?proxy_host=wx4.sinaimg.cn&proxy_referer=https://weibo.com',
+    note: 'contain-fitted to slot',
   },
   {
-    label: 'C · 404 error',
+    label: 'C · upload.moonchan.xyz',
+    url: 'https://upload.moonchan.xyz/api/01LLWEUU5HPWM4U4SXOBAY3Y6KJFHKJR3N/image.webp',
+    note: 'direct upload, no CORS',
+  },
+  {
+    label: 'D · 404 error',
     url: 'https://proxy.moonchan.xyz/insecure/plain/this-does-not-exist.jpg',
     note: 'placeholder stays',
-  },
-  {
-    label: 'D · no referrer (CORS)',
-    url: 'https://i0.hdslb.com/bfs/album/da0c1cd6d4a8a4a4f3a4f3a4f3a4f3a4.jpg',
-    note: 'direct bfs URL, likely 403',
   },
 ];
 

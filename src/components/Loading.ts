@@ -4,6 +4,7 @@ import { SubCanvas } from '../framework/SubCanvas';
 export interface LoadingOptions {
   text?: string;
   spinnerColor?: number;
+  showSpinner?: boolean;
   overlayColor?: number;
   overlayAlpha?: number;
 }
@@ -11,6 +12,7 @@ export interface LoadingOptions {
 export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): () => void {
   const o: LoadingOptions = typeof opts === 'string' ? { text: opts } : opts;
   const text = o.text ?? 'Loading...';
+  const showSpinner = o.showSpinner !== false;
   const spinnerColor = o.spinnerColor ?? 0xffffff;
   const overlayColor = o.overlayColor ?? 0x000000;
   const overlayAlpha = o.overlayAlpha ?? 0.5;
@@ -25,17 +27,19 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
   sc.stage.addChild(overlay);
 
   const spinner = new PIXI.Graphics();
-  spinner.x = W / 2;
-  spinner.y = H / 2 - 10;
-  spinner.eventMode = 'none';
-  sc.stage.addChild(spinner);
+  if (showSpinner) {
+    spinner.x = W / 2;
+    spinner.y = H / 2 - 10;
+    spinner.eventMode = 'none';
+    sc.stage.addChild(spinner);
+  }
 
   const label = new PIXI.Text({
     text,
     style: { fontSize: 12, fill: 0xffffff, fontFamily: 'monospace' },
   });
   label.x = (W - label.width) / 2;
-  label.y = H / 2 + 18;
+  label.y = showSpinner ? H / 2 + 18 : (H - label.height) / 2;
   label.eventMode = 'none';
   sc.stage.addChild(label);
 
@@ -50,7 +54,7 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
       spinner.circle(x, y, 3).fill({ color: spinnerColor, alpha: (i + 1) / 8 });
     }
   };
-  sc.ticker.add(tick);
+  if (showSpinner) sc.ticker.add(tick);
 
   return () => {
     sc.ticker.remove(tick);

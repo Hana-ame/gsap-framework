@@ -69,7 +69,7 @@ export function ComponentLoadingDisplay() {
             <button
               className="btn"
               disabled={busy}
-              onClick={() => fire('text-only', { text: 'no spinner\ntext only' })}
+              onClick={() => fire('text-only', { text: 'no spinner\ntext only', showSpinner: false })}
             >
               text only
             </button>
