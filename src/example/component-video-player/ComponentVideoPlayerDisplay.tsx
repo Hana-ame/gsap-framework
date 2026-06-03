@@ -5,9 +5,7 @@ import type { PixiVideoPlayerHandle } from '../../components/PixiVideoPlayer';
 import type { SubCanvas } from '../../framework/SubCanvas';
 
 // 稳定、支持跨域且允许 Range 请求的测试 MP4
-const STABLE_MP4_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-// 备用极速测试 MP4 (Mozilla MDN)
-// const STABLE_MP4_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4';
+const STABLE_MP4_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4';
 
 export function ComponentVideoPlayerDisplay() {
   const [log, setLog] = useState<string[]>([]);
@@ -90,7 +88,7 @@ export function ComponentVideoPlayerDisplay() {
       >
         <div style={{ color: '#88aaff', marginBottom: 4, fontWeight: 'bold' }}>PixiVideoPlayer Test</div>
         <div style={{ color: '#aaa', marginBottom: 8, fontSize: 9 }}>
-          Source: Google Cloud Storage
+          Source: MDN (cc0-videos)
         </div>
         {log.map((line, i) => (
           <div key={i} style={{ color: line.includes('Error') ? '#ff6666' : i === 0 ? '#fff' : '#777' }}>
