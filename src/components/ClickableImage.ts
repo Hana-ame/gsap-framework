@@ -9,6 +9,7 @@ export interface ClickableImageOptions {
   height: number;
   overlayColor?: number;
   overlayAlpha?: number;
+  zoomFactor?: number;
 }
 
 export interface ClickableImage {
@@ -20,7 +21,8 @@ export interface ClickableImage {
 
 const LERP = 0.15;
 const SNAP = 0.5;
-
+const CLICK_MS = 300;
+const DRAG_THRESHOLD = 4;
 
 export function createClickableImage(parent: SubCanvas, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
@@ -46,6 +48,22 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   let targetSpriteY = thumbH / 2;
   let targetScale = 1;
   let animating = false;
+  let onAnimDone: (() => void) | null = null;
+
+  let zoomed = false;
+  let fitScale = 1;
+  const zoomFactor = opts.zoomFactor ?? 2;
+  let isDragging = false;
+  let dragStartGlobalX = 0;
+  let dragStartGlobalY = 0;
+  let dragOriginX = 0;
+  let dragOriginY = 0;
+  let clickTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const getThumbGlobalPos = (): { x: number; y: number } => {
+    const gb = parent.globalBounds;
+    return { x: gb.x + opts.x, y: gb.y + opts.y };
+  };
 
   const placeholder = new PIXI.Graphics()
     .rect(0, 0, thumbW, thumbH)
@@ -85,6 +103,11 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
       sprite.scale.set(targetScale);
       parent.ticker.remove(tick);
       animating = false;
+      if (onAnimDone) {
+        const cb = onAnimDone;
+        onAnimDone = null;
+        cb();
+      }
     }
   };
 
@@ -95,6 +118,25 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     }
   };
 
+  const clampStage = () => {
+    if (!sprite || !zoomed) return;
+    const pw = window.innerWidth;
+    const ph = window.innerHeight;
+    const sc = sprite.scale.x;
+    const imgW = texW * sc;
+    const imgH = texH * sc;
+    const minX = pw / 2 - imgW / 2;
+    const maxX = -pw / 2 + imgW / 2;
+    const minY = ph / 2 - imgH / 2;
+    const maxY = -ph / 2 + imgH / 2;
+    const cx = Math.max(minX, Math.min(targetX, maxX));
+    const cy = Math.max(minY, Math.min(targetY, maxY));
+    if (cx !== targetX || cy !== targetY) {
+      targetX = cx;
+      targetY = cy;
+    }
+  };
+
   const destroyOverlay = () => {
     if (!overlay) return;
     if (overlay.parent) overlay.parent.removeChild(overlay);
@@ -102,11 +144,41 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     overlay = null;
   };
 
+  const toggleZoom = (gx: number, gy: number) => {
+    if (!sprite) return;
+    if (zoomed) {
+      zoomed = false;
+      targetX = 0;
+      targetY = 0;
+      targetScale = fitScale;
+      sprite.x = window.innerWidth / 2;
+      sprite.y = window.innerHeight / 2;
+      startAnim();
+    } else {
+      zoomed = true;
+      const pw = window.innerWidth;
+      const ph = window.innerHeight;
+      const zf = zoomFactor;
+      const newScale = fitScale * zf;
+      const nx = (gx - pw / 2) * (1 - zf);
+      const ny = (gy - ph / 2) * (1 - zf);
+      targetX = nx;
+      targetY = ny;
+      targetScale = newScale;
+      clampStage();
+      sprite.x = pw / 2;
+      sprite.y = ph / 2;
+      startAnim();
+    }
+  };
+
   const goFullScreen = () => {
     if (!sprite) return;
+    expanded = true;
+    zoomed = false;
     const pw = window.innerWidth;
     const ph = window.innerHeight;
-    expanded = true;
+    fitScale = Math.min(pw / texW, ph / texH, 1);
 
     const ovColor = opts.overlayColor ?? 0x000000;
     const ovAlpha = opts.overlayAlpha ?? 0.6;
@@ -115,39 +187,112 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     overlay.eventMode = 'none';
     parent.rootApp.stage.addChildAt(overlay, 0);
 
+    const global = getThumbGlobalPos();
+    parent.rootApp.stage.addChild(stage);
+    stage.x = global.x;
+    stage.y = global.y;
+    sprite.anchor.set(0.5);
+    sprite.x = thumbW / 2;
+    sprite.y = thumbH / 2;
+
     targetX = 0;
     targetY = 0;
     targetSpriteX = pw / 2;
     targetSpriteY = ph / 2;
-    targetScale = Math.min(pw / texW, ph / texH, 1);
+    targetScale = fitScale;
     stage.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
     stage.cursor = 'pointer';
-    parent.rootApp.stage.addChild(stage);
     startAnim();
   };
 
   const goToThumb = () => {
     if (!sprite) return;
     expanded = false;
-    destroyOverlay();
-    targetX = opts.x;
-    targetY = opts.y;
+    zoomed = false;
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+
+    const global = getThumbGlobalPos();
+    targetX = global.x;
+    targetY = global.y;
     targetSpriteX = thumbW / 2;
     targetSpriteY = thumbH / 2;
     targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
-    stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
-    stage.cursor = 'pointer';
-    parent.stage.addChild(stage);
+
+    onAnimDone = () => {
+      destroyOverlay();
+      stage.x = opts.x;
+      stage.y = opts.y;
+      sprite.anchor.set(0.5);
+      sprite.x = thumbW / 2;
+      sprite.y = thumbH / 2;
+      stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
+      stage.cursor = 'pointer';
+      parent.stage.addChild(stage);
+    };
+
     startAnim();
   };
 
-  stage.on('pointerdown', () => {
+  // --- interaction ---
+  const root = parent.rootApp.stage;
+
+  stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
     if (!sprite) return;
-    if (expanded) {
-      goToThumb();
-    } else {
+    if (!expanded) {
       goFullScreen();
+      return;
     }
+    dragStartGlobalX = e.globalX;
+    dragStartGlobalY = e.globalY;
+    dragOriginX = stage.x;
+    dragOriginY = stage.y;
+    isDragging = false;
+  });
+
+  root.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+    if (!expanded || !sprite) return;
+    if (!isDragging) {
+      const dx = e.globalX - dragStartGlobalX;
+      const dy = e.globalY - dragStartGlobalY;
+      if (dx * dx + dy * dy > DRAG_THRESHOLD * DRAG_THRESHOLD) {
+        if (zoomed) {
+          isDragging = true;
+          if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+          if (animating) {
+            parent.ticker.remove(tick);
+            animating = false;
+          }
+        }
+      }
+    }
+    if (isDragging && zoomed) {
+      const dx = e.globalX - dragStartGlobalX;
+      const dy = e.globalY - dragStartGlobalY;
+      targetX = dragOriginX + dx;
+      targetY = dragOriginY + dy;
+      clampStage();
+      stage.x = targetX;
+      stage.y = targetY;
+    }
+  });
+
+  root.on('pointerup', () => {
+    if (!expanded || !sprite) return;
+    if (isDragging) { isDragging = false; return; }
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      toggleZoom(dragStartGlobalX, dragStartGlobalY);
+    } else {
+      clickTimer = setTimeout(() => {
+        clickTimer = null;
+        goToThumb();
+      }, CLICK_MS);
+    }
+  });
+  root.on('pointerupoutside', () => {
+    if (!expanded || !sprite) return;
+    if (isDragging) { isDragging = false; return; }
   });
 
   const load = (url: string) => {
@@ -181,7 +326,11 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      if (clickTimer) clearTimeout(clickTimer);
       if (animating) parent.ticker.remove(tick);
+      root.off('pointermove');
+      root.off('pointerup');
+      root.off('pointerupoutside');
       destroyOverlay();
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
