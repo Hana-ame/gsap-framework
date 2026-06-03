@@ -26,12 +26,22 @@ createConfirm({
   draggable?: boolean;       // default true
   dragMode?: 'title' | 'anywhere' | 'none';
   closable?: boolean;        // default true
+  keepOpen?: boolean;        // default false；选项级阻止所有按钮自动 destroy
   okText?: string;
   cancelText?: string;
   buttons?: PixiConfirmButton[];
   onResult?: (result: PixiConfirmResult, confirm: PixiConfirm) => void;
   onClose?: () => void;
 })
+
+// PixiConfirmButton
+interface {
+  label: string;
+  onClick?: (confirm: PixiConfirm) => void;
+  primary?: boolean;    // 主色高亮
+  keepOpen?: boolean;   // 默认 false；按钮级阻止自动 destroy
+}
 ```
 
 `result` is `'ok'` if the clicked button label matches `okText`, `'cancel'` if it matches `cancelText`, otherwise the raw label string.
+

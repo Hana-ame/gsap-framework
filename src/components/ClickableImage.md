@@ -25,8 +25,8 @@ createClickableImage(parent, bus, opts)
 load(url)
   ├─ PIXI.Assets.load(url)
   │    .then(texture => {
-  │      ├─ 销毁 placeholder
-  │      ├─ 创建 sprite (anchor=0.5, 居中, fit-to-thumb)
+  │      ├─ 销毁 placeholder + placeholderText
+  │      ├─ 创建 sprite (原始 anchor=0, 手动计算居中, fit-to-thumb)
   │      ├─ stage.addChild(sprite)
   │      ├─ loadedTexture = texture
   │      └─ stage.hitArea = 缩略图尺寸 (保留)

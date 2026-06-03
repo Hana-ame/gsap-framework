@@ -59,8 +59,8 @@ export function mountDisplays(sc: SubCanvas): () => void {
     clickLayer.addChild(label);
 
     let t = 0;
-    const tick = (delta: { deltaMS: number }) => {
-      t += delta.deltaMS / 700;
+    const tick = (ticker: PIXI.Ticker) => {
+      t += ticker.deltaMS / 700;
       if (t >= 1) {
         sc.ticker.remove(tick);
         return;

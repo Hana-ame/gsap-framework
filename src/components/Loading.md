@@ -43,6 +43,7 @@ function showLoading(
 interface LoadingOptions {
   text?: string;                // 默认 'Loading...'
   spinnerColor?: number;         // 默认 0xffffff
+  showSpinner?: boolean;         // 默认 true；false = 纯文字+遮罩，无旋转动画
   overlayColor?: number;         // 默认 0x000000
   overlayAlpha?: number;         // 默认 0.5
 }

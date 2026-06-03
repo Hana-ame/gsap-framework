@@ -28,8 +28,9 @@ interface PixiConfirmOptions {
   x?: number;
   y?: number;
   draggable?: boolean;          // 默认 true
-  dragMode?: 'title' | 'anywhere';  // 默认 'title'
+  dragMode?: 'title' | 'anywhere' | 'none';  // 默认 'title'
   closable?: boolean;           // 默认 true（X = cancel）
+  keepOpen?: boolean;           // 默认 false：选项级，所有按钮点击后不自动 destroy
   onClose?: () => void;         // X 关闭前回调；不传则 destroy()
   okText?: string;              // 默认 'OK'，label === okText 时 onResult('ok')
   cancelText?: string;          // 默认 'Cancel'，label === cancelText 时 onResult('cancel')
@@ -58,8 +59,9 @@ interface PixiConfirm extends SubCanvas {
 
 ## `dragMode` 在 PIXI 下的语义
 
-- `'title'`：只有 y ≤ TITLE_BAR_H 的按压开 drag（行为同 `PixiWindow`）
-- `'anywhere'`：整面按压都开 drag —— **但** button 区域优先（点击 button 调 `onClick`/`onResult` 不开 drag）
+- `'title'`（默认）：只有标题栏（label='subcanvas-drag-handle'）的按压开 drag（行为同 `PixiWindow`）
+- `'anywhere'`：整面按压都开 drag —— **但** button 区域优先（button 用 PIXI pointerdown + stopPropagation 拦截，不开 drag）
+- `'none'`：完全不可拖动
 
 ## 使用
 
@@ -146,7 +148,9 @@ createConfirm({
 - **dragMode='anywhere' 时 button 拦 drag**：因为 hit-test 在 drag 判定之前，button 命中就直接 `return` 不会进 drag 流程。
 - **drag 期间挂 window 全局 listener**（同 `PixiWindow` 的 1.6 修法）：PIXI 没有 `setPointerCapture`，鼠标移出窗口 bounds 后 SubCanvas 收不到事件，drag 就卡住。详见 `NOTES.md` 1.6。
 - **message 自动 word-wrap**：用 `PIXI.TextStyle` 的 `wordWrap: true` + `wordWrapWidth = width - PADDING * 2`。
-- **点击后自动 destroy（`keepOpen: false`）**：onClick / onResult 跑完，若 `!keepOpen` 就 `win.destroy()`。Cancel 按钮无 onClick 也能关，对齐 HTML `Confirm` 行为。X 关闭按钮不受 `keepOpen` 影响（X 永远关）。
+- **点击后自动 destroy（`keepOpen: false`）**：onClick / onResult 跑完，若按钮的 `!keepOpen && !opts.keepOpen` 就 `win.destroy()`。Cancel 按钮无 onClick 也能关，对齐 HTML `Confirm` 行为。
+- **X 关闭按钮受 `opts.keepOpen` 影响**：当 `opts.keepOpen === true` 时，点击 X 不产生任何效果（不调用 onResult，不 destroy）。这是代码当前行为 — 如果需要 X 永远关，不要设 `opts.keepOpen`，用按钮级 `keepOpen: true` 替代。
+- **按钮级 `keepOpen: true`**：单个按钮上设 `keepOpen: true` 时，该按钮不自动 destroy；`opts.keepOpen` 不影响按钮级控制。
 - **图片 vs message 二选一**：两者都给时 image 覆盖 message 显示；调用 `setMessage` 切回文字（image 隐藏），调用 `setImage` 切回图片（message 隐藏）。同一时刻只有一个可见。
 
 ## Scope

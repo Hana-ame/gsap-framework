@@ -106,7 +106,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     let maxW = 0;
     let maxH = 0;
     for (const child of content.children) {
-      const b = child.getBounds();
+      const b = child.getBounds().rectangle;
       const right = child.x + b.width;
       const bottom = child.y + b.height;
       if (right > maxW) maxW = right;

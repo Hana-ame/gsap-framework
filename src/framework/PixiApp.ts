@@ -182,7 +182,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => void): () => v
         if (typeof app.ticker.maxFPS === 'number' && app.ticker.maxFPS > 0) {
           // ok
         }
-        app.ticker.addOnce(() => {
+        app.ticker.addOnce((_ticker: PIXI.Ticker) => {
           if (import.meta.env.DEV) {
             console.log('[PixiApp] first tick fired', {
               stageChildren: app.stage.children.length,

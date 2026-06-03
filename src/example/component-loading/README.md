@@ -13,8 +13,11 @@ showLoading(sc: SubCanvas, opts?: LoadingOptions | string)
 
 ```ts
 interface LoadingOptions {
-  text?: string;          // default 'Loading...'
-  spinnerColor?: number;  // default 0x88aaff
+  text?: string;            // default 'Loading...'
+  spinnerColor?: number;    // default 0xffffff
+  showSpinner?: boolean;    // default true；false = 纯文字+遮罩
+  overlayColor?: number;    // default 0x000000
+  overlayAlpha?: number;    // default 0.5
 }
 ```
 

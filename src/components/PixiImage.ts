@@ -124,7 +124,7 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
       buildError('timeout');
       opts.onError?.(new Error('timeout'));
     }, 15000);
-    PIXI.Assets.load(url)
+    PIXI.Assets.load({ src: url })
       .then((texture) => {
         clearTimeout(timeout);
         if (destroyed || token !== currentToken) return;

@@ -67,7 +67,7 @@ new SubCanvas({
   onDestroy?: () => void,
 })
 ```
-不要直接 `new SubCanvas` — 必须通过 `SubCanvasProxy.createRegion` 或某个 `SubCanvas.createSubRegion / divide / grid` 创建。
+不要直接 `new SubCanvas` — 必须通过 `SubCanvasProxy.createRegion` 或 `SubCanvas.createSubRegion` 创建。
 
 ### 只读属性
 | 属性 | 类型 | 说明 |
@@ -83,10 +83,10 @@ new SubCanvas({
 | `destroyed` | `boolean` | 已 destroy 标志 |
 
 ### PIXI 兼容代理（顶层 API 无感知）
-所有这些都代理到内部 `stage`，但写时跟 PIXI Container 完全一样：
+所有这些都代理到内部 `stage`，写时跟 PIXI Container 完全一样：
 
 **变换属性**
-- `position: ObservablePoint`（带 callback，AABB 双向同步）
+- `position: ObservablePoint`
 - `scale: ObservablePoint`、`pivot: ObservablePoint`
 - `rotation: number`、`angle: number`
 - `alpha: number`、`visible: boolean`、`tint: number`
@@ -95,44 +95,35 @@ new SubCanvas({
 - `label: string`
 
 **Children**
-- `addChild<T>(c: T): T`
-- `removeChild<T>(c: T): T`
+- `addChild<T>(c: T): T` — 自动安装 drag handle 监听（label='subcanvas-drag-handle'）
+- `removeChild<T>(c: T): T` — 自动清理 drag handle 监听
 - `removeChildren(): Container[]`
 - `getChildAt(i): Container`、`getChildByLabel(label)`
-- `children: readonly Container[]`（注意：返回 `stage` 的 PIXI children；SubCanvas 子区域用 `getChildren()` 或 `subRegions`）
-
-**事件（EventEmitter 风格，跟 PIXI 一致）**
-- `on(event, fn)` — 路由到 SubCanvas 路由（`pointerdown`/`move`/`up`/`leave`）或转发到 `stage.on`
-- `once(event, fn)`、`off(event, fn)`、`emit(event, ...args)`
-- 事件名 alias：`press`/`pointerdown`、`move`/`pointermove`、`release`/`pointerup`、`leave`/`pointerleave`
+- `children: readonly Container[]`（注意：返回 `stage` 的 PIXI children；SubCanvas 子区域用 `subRegions`）
 
 **销毁**
-- `destroy(options?: { children?, texture? })` — 幂等，递归子 SubCanvas + stage.destroy
+- `destroy(options?: { children?, texture? })` — 幂等，清理所有 drag handle + 递归子 SubCanvas + stage.destroy
 
-**AABB 同步规则**
-- `sc.position.set(x, y)` → ObservablePoint callback 触发 → `bounds` 同步更新
-- `sc.setPosition(x, y)` / `sc.setBounds(rect)` → 改 `bounds` + `stage.position`，用 `_syncing` flag 防止 callback 循环
-- 两个方向都不会死循环
-- **所以 AABB 是 source of truth，但用户用 PIXI 风格的 `position.set` 也能改它**
-
-### 派生 / 划分
+### 子区域管理
 ```ts
-createSubRegion(bounds: Rect): SubCanvas          // 直接创建子区域
-divide({ direction, ratios }): SubCanvas[]        // 线性切分（horizontal/vertical）
-grid({ rows, cols, gap? }): SubCanvas[]           // 网格切分
+createSubRegion(bounds: Rect, opts?): SubCanvas    // 直接创建子区域（opts 见下方）
+subRegions: readonly SubCanvas[]                   // 子区域只读数组
+getChildren(): SubCanvas[]                         // 同 subRegions，返回浅拷贝
 ```
 
 ### 事件
 ```ts
 onPress(fn)   / onMove(fn)   / onRelease(fn)   / onLeave(fn)   // 链式，返回 this
-off(type, fn)                                                  // 移除单个
+offPointer(type, fn)                                            // 移除单个监听器
 ```
 回调签名：
 ```ts
 (e: SubPointerEvent) => void
 // SubPointerEvent = { type, x, y, globalX, globalY, originalEvent }
 ```
-`x/y` 是 **本地坐标**（相对此 SubCanvas 的 stage）；`globalX/globalY` 是 viewport 坐标。
+`x/y` 是 **本地坐标**（相对此 SubCanvas 的 stage）；`globalX/globalY` 是 viewport 坐标（同 `e.clientX/Y`）。
+
+**注意**：这些事件通过 SubCanvas `handlePointer` AABB 路由分发，不是 PIXI FederatedEvent。点击按钮等 PIXI 子对象不会触发 SubCanvas 的 `onPress`（它们走 PIXI 事件系统）。只有 `eventMode='static'` + `hitArea` 明确设置的 PIXI children 需要自己挂 `pointerdown`。
 
 ### 布局
 ```ts
@@ -150,20 +141,33 @@ setSize(width: number, height: number): void      // 只改大小，触发 onRes
 bringToFront(): void                              // 移到 parent.stage.children 末尾（最上层）
 sendToBack(): void                                // 移到 0 位（最下层）
 ```
-**渲染顺序 = 命中顺序**：后画的在上层 + 后被命中。`createSubRegion` 的顺序就是 z-order；想换序调 `bringToFront`。
+**渲染顺序 = 命中顺序**：后画的在上层 + 后被命中。`createSubRegion` 的顺序就是 z-order；想换序调 `bringToFront`/`sendToBack`。
 
-### 拖动
+实现：使用 `parent.sortableChildren = true` + sibling zIndex 扫描。同时同步更新 `parent._subRegions` 数组（事件路由的 truth source），保证子区域数组顺序 = 渲染顺序。
+
+### 拖动（构造选项）
+拖动通过 `createSubRegion` 的 `opts` 传入：
+
 ```ts
-setDraggable(opts?: {
-  bounds?: Rect;                                  // 拖动范围（默认 parent.bounds）
-  onDragStart?: (e: SubPointerEvent) => void;
-  onDrag?: (e: SubPointerEvent, pos: { x, y }) => void;
-  onDragEnd?: (e: SubPointerEvent) => void;
-  bringToFront?: boolean;                         // 拖动时是否置顶，默认 true
-}): () => void                                    // 返回 cleanup
+type SubDragMode = 'title' | 'anywhere' | 'none';
+
+createSubRegion(bounds, {
+  dragMode?: SubDragMode;                // 'none' = 不可拖动（默认不传 = 不可拖动）
+  dragBounds?: () => Rect | null;        // 拖动约束范围（默认 parent.bounds）
+  dragBringToFront?: boolean;            // 拖动时是否置顶，默认 true
+  onDragStart?: (p: { x, y }) => void;
+  onDrag?: (p: { x, y }) => void;
+  onDragEnd?: (p: { x, y }) => void;
+})
 ```
-**实现**：内部注册 `onPress` / `onMove` / `onRelease`，在 `onPress` 时记起点，`onMove` 时算 delta 并 `setPosition`，自动 clamp 到 `bounds`。
-**注意**：用了 `setDraggable` 就别再在同一个 SubCanvas 上手动写 `onPress` 处理拖动 — 会冲突；其他用途的 onPress 仍然可以共存。
+
+**实现**：在 `SubCanvas` 构造函数中初始化 drag handlers。扫描 `stage.children` 中 label=`'subcanvas-drag-handle'` 的 child → 在其上安装 `pointerdown` → 按 `dragMode`：`'title'` 只响应 handle child 上的按下；`'anywhere'` 自动添加全透明 bg child（label='subcanvas-drag-handle'，zIndex=-1）使整个表面可拖。
+
+**拖动事件流**：`handle.on('pointerdown')` 启动 → 挂 `window.addEventListener('pointermove'/'pointerup')`（DOM 级事件，无视 PIXI hit-test 边界问题）+ `app.stage.on('pointermove'/'pointerup')`（PIXI 级，handle 同 frame 事件）。位置取 `e.clientX/Y`（canvas 全屏，client=canvas 坐标）。
+
+**constraint clamp**：每帧在 `dragBounds` 内 clamp `setPosition`，保证窗口不被拖出父级。
+
+**注意**：用了 `dragMode` 就别在同一个 SubCanvas 上手动写 `onPress` 处理拖动 — built-in drag 和手动拖动会冲突；但其他用途的 onPress（如点击检测）可以共存。
 
 ### 生命周期
 ```ts
@@ -184,10 +188,16 @@ sc.stage.addChild(g);
 sc.onPress((e) => console.log('clicked at', e.x, e.y));
 ```
 
-### 2×2 网格
+### 2×2 网格（手动划分子区域）
 ```ts
 const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-const cells = root.grid({ rows: 2, cols: 2, gap: 4 });
+const cells = [0, 1, 2, 3].map((i) => {
+  const col = i % 2, row = Math.floor(i / 2);
+  return root.createSubRegion({
+    x: col * (W / 2) + 2, y: row * (H / 2) + 2,
+    width: W / 2 - 4, height: H / 2 - 4,
+  });
+});
 
 cells.forEach((cell, i) => {
   cell.onPress((e) => console.log(`cell ${i}:`, e.x, e.y));
@@ -197,7 +207,13 @@ cells.forEach((cell, i) => {
 ### 响应窗口 resize
 ```ts
 const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-const cells = root.grid({ rows: 2, cols: 2 });
+const cells = [0, 1, 2, 3].map((i) => {
+  const col = i % 2, row = Math.floor(i / 2);
+  return root.createSubRegion({
+    x: col * (W / 2), y: row * (H / 2),
+    width: W / 2, height: H / 2,
+  });
+});
 
 const border = new PIXI.Graphics();
 cells[0].stage.addChild(border);
@@ -208,8 +224,11 @@ cells[0].onResize((b) => {
 const layout = (W: number, H: number) => {
   root.setBounds({ x: 0, y: 0, width: W, height: H });
   cells.forEach((c, i) => {
-    const row = Math.floor(i / 2), col = i % 2;
-    c.setBounds({ x: col * (W / 2), y: row * (H / 2), width: W / 2, height: H / 2 });
+    const col = i % 2, row = Math.floor(i / 2);
+    c.setBounds({
+      x: col * (W / 2), y: row * (H / 2),
+      width: W / 2, height: H / 2,
+    });
   });
 };
 layout(W, H);
@@ -246,7 +265,9 @@ sc.destroy();         // 单个销毁
 2. **事件冒泡是叶子优先**：嵌套时点击子区域，父级的 `onPress` 不会触发（子级 return true）。
 3. **`globalBounds` 是 getter**，每次访问都递归算，O(depth)。频繁访问请自行缓存。
 4. **PIXI v8.18**：渲染器类型是 `PIXI.Renderer`（联合类型 WebGL/WebGPU/Canvas），不是已删除的 `PIXI.IRenderer`。
-5. **没有 z-order API**：兄弟节点的命中顺序 = `createSubRegion` 的顺序；后建的在上层（PIXI 渲染顺序），也后被命中。要换 z-order 用 `parent.stage.setChildIndex(sc.stage, idx)`。
-6. **没有裁切 mask**：超出 bounds 的内容不会被裁掉，会画到屏幕外（暂时按设计如此；如需裁切可手动 `stage.mask = new Graphics().rect(0,0,w,h).fill(0xffffff)`，但 PIXI v8 的 `Graphics.fill(0xffffff)` 当 mask 需要 `renderable = false`）。
+5. **z-order 用 `bringToFront`/`sendToBack`**：内部用 sibling zIndex 扫描 + `parent.sortableChildren = true`。同时同步更新 `_subRegions` 数组（事件路由的 truth source）。不要直接操作 `parent.stage.setChildIndex`，会破坏事件路由。
+6. **`clipToBounds` 是构造选项**：传 `clipToBounds: true` 后 SubCanvas 自动创建裁切 mask（`PIXI.Graphics` + `.fill({ color: 0xffffff })`，mask 必须 fill 否则全隐藏）。仅构造时设置，不可运行时更改。
 7. **`destroy()` 幂等**：重复调用安全；`destroyed` getter 用来跳过已销毁实例的逻辑。
 8. **`setBounds` 不会通知子级**：但子级的 `globalBounds` 动态算，所以指针命中仍然正确；子级若需要重新画自己（如重画边框），在子级上注册 `onResize`。
+9. **拖动使用 DOM `window.addEventListener` 作为 fallback**：PIXI 的 FederatedEvent 在鼠标快速移出 canvas 时可能丢失移动事件。挂 window 级 `pointermove`/`pointerup` 保证拖动不卡住。这是已知痛点（见 README.md 踩过的坑）。
+10. **`addChild` 自动安装 drag handle**：当 `dragMode` 非 `'none'` 时，调用 `sc.addChild(child)` 后，如果 child 的 `label === 'subcanvas-drag-handle'`，自动在其上安装 `pointerdown` 事件。不要用 `win.stage.addChild(bar)`（绕过自动安装）。

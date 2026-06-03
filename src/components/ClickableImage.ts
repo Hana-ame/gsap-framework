@@ -72,7 +72,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   });
 
   const load = (url: string) => {
-    PIXI.Assets.load(url).then((texture) => {
+    PIXI.Assets.load({ src: url }).then((texture) => {
       if (destroyed) return;
       if (!texture || texture.width === 0 || texture.height === 0) return;
       if (sprite) { sprite.destroy(); sprite = null; }
