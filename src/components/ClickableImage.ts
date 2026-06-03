@@ -51,6 +51,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   let onAnimDone: (() => void) | null = null;
 
   let zoomed = false;
+  let justOpened = false;
   let fitScale = 1;
   const zoomFactor = opts.zoomFactor ?? 2;
   let isDragging = false;
@@ -176,6 +177,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     if (!sprite) return;
     expanded = true;
     zoomed = false;
+    justOpened = true;
     const pw = window.innerWidth;
     const ph = window.innerHeight;
     fitScale = Math.min(pw / texW, ph / texH, 1);
@@ -278,6 +280,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   root.on('pointerup', () => {
     if (!expanded || !sprite) return;
+    if (justOpened) { justOpened = false; return; }
     if (isDragging) { isDragging = false; return; }
     if (clickTimer) {
       clearTimeout(clickTimer);
