@@ -72,6 +72,8 @@ export function createVideoPlayer(
   let controlsVisible = showControlsOpt;
   let hideTimer: ReturnType<typeof setTimeout> | null = null;
   let curTime = 0;
+  let videoSource: PIXI.VideoSource | null = null;
+  let videoTexture: PIXI.Texture | null = null;
 
   // ── scene graph ──
   const root = new PIXI.Container();
@@ -90,29 +92,29 @@ export function createVideoPlayer(
 
   const bg = new PIXI.Graphics().rect(0, 0, width, height).fill({ color: 0x1a1a2e });
   root.addChild(bg);
+  bg.zIndex = 0;
 
   const videoSprite = new PIXI.Sprite();
+  videoSprite.zIndex = 1;
   root.addChild(videoSprite);
 
-  // ── center play button ──
   const cpb = new PIXI.Container();
   cpb.eventMode = 'static';
   cpb.cursor = 'pointer';
   cpb.x = width / 2;
   cpb.y = height / 2;
   cpb.hitArea = new PIXI.Circle(0, 0, 32);
-
   const cpbBg = new PIXI.Graphics().circle(0, 0, 32).fill({ color: 0x000000, alpha: 0.55 });
   cpb.addChild(cpbBg);
-
   const cpbTri = new PIXI.Graphics().poly([-10, -8, -10, 8, 8, 0]).fill({ color: 0xffffff });
   cpb.addChild(cpbTri);
   root.addChild(cpb);
+  cpb.zIndex = 2;
 
-  // ── controls bar ──
   const ctrl = new PIXI.Container();
   ctrl.y = height - CTRL_H;
   root.addChild(ctrl);
+  ctrl.zIndex = 3;
 
   const ctrlBg = new PIXI.Graphics().rect(0, 0, width, CTRL_H).fill({ color: 0x0a0a14, alpha: 0.85 });
   ctrl.addChild(ctrlBg);
@@ -121,10 +123,8 @@ export function createVideoPlayer(
   playBtn.eventMode = 'static';
   playBtn.cursor = 'pointer';
   playBtn.hitArea = new PIXI.Circle(CTRL_H / 2, CTRL_H / 2, BTN_R);
-
   const playBtnBg = new PIXI.Graphics().circle(CTRL_H / 2, CTRL_H / 2, BTN_R).fill({ color: 0xffffff });
   playBtn.addChild(playBtnBg);
-
   const playIcon = new PIXI.Graphics();
   playBtn.addChild(playIcon);
 
@@ -170,22 +170,35 @@ export function createVideoPlayer(
   seekHit.hitArea = new PIXI.Rectangle(barX, barY - 4, barW, barH + 8);
   ctrl.addChild(seekHit);
 
-  // ── CORE VIDEO INIT ──
+  // ── VIDEO SETUP ──
   const htmlVideo = document.createElement('video');
   htmlVideo.crossOrigin = 'anonymous';
   htmlVideo.playsInline = true;
   htmlVideo.muted = muted;
   htmlVideo.loop = loop;
 
-  const videoSource = new PIXI.VideoSource({
+  // 【关键】将 video 挂到 DOM 上（隐藏），强制浏览器解码视频帧
+  // 不在 DOM 中的 video 在 Chrome/Safari 上会被跳过画面解码（省电），导致有声音无画面
+  htmlVideo.style.position = 'absolute';
+  htmlVideo.style.opacity = '0';
+  htmlVideo.style.pointerEvents = 'none';
+  htmlVideo.style.width = '1px';
+  htmlVideo.style.height = '1px';
+  document.body.appendChild(htmlVideo);
+
+  // VideoSource 在 src 设置前创建，其 load() 中原有对空 video 的 source.load()
+  // Firefox 对此会触发 error 事件，导致 VideoSource 内部 _onError 被调用，
+  // 将 error listener 移除并 reject 内部 promise。
+  // 后续真正加载时 canplay 仍可正确触发 _mediaReady → resize + updateFrame，
+  // 因此不阻止此流程。
+  videoSource = new PIXI.VideoSource({
     resource: htmlVideo,
     autoPlay: autoplay,
     updateFPS: 30,
   });
-  const videoTexture = new PIXI.Texture({ source: videoSource });
-
+  videoTexture = new PIXI.Texture({ source: videoSource });
   videoSprite.texture = videoTexture;
-  // 初始設 scale 為 0，等 loadedmetadata 拿到真實尺寸後再計算正確的 scale
+  // 初始 scale 为 0，等 loadedmetadata 拿到真实尺寸后设置
   videoSprite.scale.set(0, 0);
 
   // ── seek events ──
@@ -241,15 +254,11 @@ export function createVideoPlayer(
   let fallbackAttempted = false;
 
   function adjustSpriteScale() {
-    // 從 htmlVideo 直接讀取真實影片尺寸，不依賴 PIXI 內部狀態
     const vw = htmlVideo.videoWidth;
     const vh = htmlVideo.videoHeight;
     if (vw > 0 && vh > 0) {
       videoSprite.scale.set(width / vw, height / vh);
       dbg(`adjustSpriteScale vw=${vw} vh=${vh} sx=${videoSprite.scale.x} sy=${videoSprite.scale.y}`);
-    } else {
-      // fallback：等下次事件再試
-      dbg(`adjustSpriteScale: invalid dimensions vw=${vw} vh=${vh}`);
     }
   }
 
@@ -265,7 +274,6 @@ export function createVideoPlayer(
     if (destroyed) return;
     curTime = htmlVideo.currentTime;
     if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
-    // 如果 scale 尚未正確設定 (例如 loadedmetadata 錯失)，補設
     if (videoSprite.scale.x === 0) adjustSpriteScale();
     const pct = duration > 0 ? curTime / duration : 0;
     drawProgress(pct);
@@ -309,7 +317,6 @@ export function createVideoPlayer(
         const rawBlob = await resp.blob();
         const mp4Blob = new Blob([rawBlob], { type: 'video/mp4' });
         objectUrl = URL.createObjectURL(mp4Blob);
-
         htmlVideo.src = objectUrl;
         htmlVideo.load();
         if (autoplay) htmlVideo.play().catch(()=>{});
@@ -334,7 +341,7 @@ export function createVideoPlayer(
   htmlVideo.addEventListener('pause', onPause);
   htmlVideo.addEventListener('error', onVideoError);
 
-  // 如果影片已緩存，loadedmetadata 可能已觸發，補檢查
+  // 检查缓存：video 可能已加载完毕
   if (htmlVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && htmlVideo.videoWidth > 0) {
     onLoadedMeta();
   }
@@ -353,7 +360,7 @@ export function createVideoPlayer(
       if (destroyed) return;
       destroyed = true;
 
-      // 1. 先摘事件監聽
+      // 1. 摘掉我们自己的事件监听
       htmlVideo.removeEventListener('loadedmetadata', onLoadedMeta);
       htmlVideo.removeEventListener('timeupdate', onTimeUpdate);
       htmlVideo.removeEventListener('seeked', onSeeked);
@@ -361,23 +368,29 @@ export function createVideoPlayer(
       htmlVideo.removeEventListener('pause', onPause);
       htmlVideo.removeEventListener('error', onVideoError);
 
-      // 2. 停掉影片（不放走 audio）
-      htmlVideo.pause();
-      htmlVideo.removeAttribute('src');
-      // 不清空 child source 元素，也不調 load()——避免觸發多餘事件
+      // 2. 【关键】先销毁 VideoSource，它会在内部 removeEventListener 摘掉
+      //    PIXI 绑在 video 上的所有监听（play/pause/seeked/error 等），
+      //    并调用 pause() + src="" + load() 杀掉解码管线。
+      //    之后 video 再抛出任何事件都不会触达 PIXI 已置 null 的内部对象。
+      try { videoSource?.destroy(); } catch { /* ok */ }
 
-      // 3. 清理 PIXI 場景
+      // 3. 从 DOM 中移除 video 元素，彻底阻断渲染和解码
+      if (htmlVideo.parentNode) {
+        htmlVideo.parentNode.removeChild(htmlVideo);
+      }
+
+      // 4. 清理 blob URL
+      if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
+
+      // 5. 清理 PIXI 场景（texture 此时已 safe，sprite 不再引用）
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
-      if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
 
-      // 4. 先卸載場景圖（sprite 不再引用 texture）
+      try { videoTexture?.destroy(true); } catch { /* ok */ }
+
       if (root.parent) root.parent.removeChild(root);
       root.destroy({ children: true });
-
-      // 5. 最後清理 texture/source（已無 sprite 引用，安全）
-      try { videoTexture.destroy(true); } catch { /* ok */ }
     },
     setControlsVisible(v: boolean) {
       controlsVisible = v;
