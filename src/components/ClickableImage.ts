@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import type { SubCanvas } from '../framework/SubCanvas';
+import type { SubCanvas, SubPointerEvent } from '../framework/SubCanvas';
 import type { EventBus } from '../framework/EventBus';
 import type { FullscreenShowEvent } from './FullscreenManager';
 
@@ -20,11 +20,7 @@ export interface ClickableImage {
   readonly destroyed: boolean;
 }
 
-interface ClickState {
-  downGlobal: { x: number; y: number };
-  downTexture: PIXI.Texture;
-  downBounds: { x: number; y: number; width: number; height: number };
-}
+const CLICK_THRESHOLD_PX = 4;
 
 export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
@@ -43,6 +39,12 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   let texW = 0;
   let texH = 0;
 
+  // Press/release click-threshold state
+  let pressGlobalX = 0;
+  let pressGlobalY = 0;
+  let pressTexture: PIXI.Texture | null = null;
+  let pressBounds = { x: 0, y: 0, width: 0, height: 0 };
+
   const placeholder = new PIXI.Graphics()
     .rect(0, 0, thumbW, thumbH)
     .fill({ color: 0x1a1a2a })
@@ -59,26 +61,38 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   placeholderText.eventMode = 'none';
   stage.addChild(placeholderText);
 
-  // Click-threshold detection: fullscreen fires only on pointerdown+up without drag
-  let clickState: ClickState | null = null;
-  let clickCleanup: (() => void) | null = null;
-
-  const cancelClick = () => {
-    if (clickCleanup) { clickCleanup(); clickCleanup = null; }
-    clickState = null;
+  const onPress = (e: SubPointerEvent) => {
+    if (!loadedTexture) return;
+    const rx = e.x - opts.x;
+    const ry = e.y - opts.y;
+    if (rx < 0 || rx > thumbW || ry < 0 || ry > thumbH) return;
+    pressGlobalX = e.x;
+    pressGlobalY = e.y;
+    pressTexture = loadedTexture;
+    pressBounds = {
+      x: parent.globalBounds.x + opts.x,
+      y: parent.globalBounds.y + opts.y,
+      width: thumbW,
+      height: thumbH,
+    };
   };
 
-  const emitFullscreen = () => {
-    if (!clickState) return;
-    const gb = clickState.downBounds;
+  const onRelease = (e: SubPointerEvent) => {
+    if (!pressTexture) return;
+    const texture = pressTexture;
+    const bounds = pressBounds;
+    pressTexture = null;
+    const dx = e.x - pressGlobalX;
+    const dy = e.y - pressGlobalY;
+    if (Math.abs(dx) > CLICK_THRESHOLD_PX || Math.abs(dy) > CLICK_THRESHOLD_PX) return;
     const ev: FullscreenShowEvent = {
-      texture: clickState.downTexture,
+      texture,
       texW,
       texH,
-      thumbGlobalX: gb.x + opts.x,
-      thumbGlobalY: gb.y + opts.y,
-      thumbW,
-      thumbH,
+      thumbGlobalX: bounds.x,
+      thumbGlobalY: bounds.y,
+      thumbW: bounds.width,
+      thumbH: bounds.height,
       overlayColor: opts.overlayColor,
       overlayAlpha: opts.overlayAlpha,
       zoomFactor: opts.zoomFactor,
@@ -86,43 +100,8 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     bus.emit('fullscreen:show', ev);
   };
 
-  const onWinMove = (e: PointerEvent) => {
-    if (!clickState) return;
-    const dx = e.clientX - clickState.downGlobal.x;
-    const dy = e.clientY - clickState.downGlobal.y;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
-      cancelClick();
-    }
-  };
-
-  const onWinUp = () => {
-    if (clickState) {
-      try { emitFullscreen(); } catch (e) { console.warn('[ClickableImage] emitFullscreen threw', e); }
-    }
-    cancelClick();
-  };
-
-  const onWinCancel = () => {
-    cancelClick();
-  };
-
-  stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-    if (!loadedTexture) return;
-    e.stopPropagation();
-    clickState = {
-      downGlobal: { x: e.globalX, y: e.globalY },
-      downTexture: loadedTexture,
-      downBounds: { ...parent.globalBounds },
-    };
-    window.addEventListener('pointermove', onWinMove);
-    window.addEventListener('pointerup', onWinUp);
-    window.addEventListener('pointercancel', onWinCancel);
-    clickCleanup = () => {
-      window.removeEventListener('pointermove', onWinMove);
-      window.removeEventListener('pointerup', onWinUp);
-      window.removeEventListener('pointercancel', onWinCancel);
-    };
-  });
+  parent.onPress(onPress);
+  parent.onRelease(onRelease);
 
   const load = (url: string) => {
     PIXI.Assets.load({ src: url }).then((texture) => {
@@ -153,7 +132,8 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      cancelClick();
+      parent.offPointer('pointerdown', onPress);
+      parent.offPointer('pointerup', onRelease);
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },
