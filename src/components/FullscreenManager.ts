@@ -50,11 +50,17 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   // Zoom & drag
   let zoomed = false;
   let fitScale = 1;
+  let zoomFactor = 2;
   let isDragging = false;
   let dragStartGlobalX = 0;
   let dragStartGlobalY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  // Double-tap detection — timestamp of last pointerdown; 0 means reset.
+  let lastTapMs = 0;
+  // Set on double-tap to prevent the immediately following pointerup from closing.
+  let suppressClose = false;
+  const DBL_TAP_MS = 300;
 
   const snap = (v: number, t: number) => Math.abs(v - t) < SNAP;
 
@@ -136,6 +142,28 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     startAnim();
   };
 
+  const toggleZoom = (gx: number, gy: number) => {
+    if (!sprite) return;
+    const pw = window.innerWidth;
+    const ph = window.innerHeight;
+    if (zoomed) {
+      zoomed = false;
+      targetX = pw / 2;
+      targetY = ph / 2;
+      targetScale = fitScale;
+      startAnim();
+    } else {
+      zoomed = true;
+      const zf = zoomFactor;
+      const newScale = fitScale * zf;
+      targetX = pw / 2 + (gx - pw / 2) * (1 - zf);
+      targetY = ph / 2 + (gy - ph / 2) * (1 - zf);
+      targetScale = newScale;
+      clampSprite();
+      startAnim();
+    }
+  };
+
   const show = (ev: FullscreenShowEvent) => {
     if (destroyed) return;
     if (animating) {
@@ -145,6 +173,8 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     }
     zoomed = false;
     isDragging = false;
+    lastTapMs = 0;
+    suppressClose = false;
 
     texW = ev.texW;
     texH = ev.texH;
@@ -152,6 +182,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     thumbGlobalY = ev.thumbGlobalY;
     thumbW = ev.thumbW;
     thumbH = ev.thumbH;
+    zoomFactor = ev.zoomFactor ?? 2;
     const pw = window.innerWidth;
     const ph = window.innerHeight;
     fitScale = Math.min(pw / texW, ph / texH, 1);
@@ -198,11 +229,31 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   };
 
   // --- interaction ---
+  // Double-tap detection: close starts immediately on pointerup, but if
+  // the next pointerdown arrives within DBL_TAP_MS, the closing animation
+  // is cancelled and toggleZoom runs instead. Since the LERP (0.15) is
+  // slow, the sprite barely moves before the cancel — perceived as instant.
   container.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
-    // consume native event so SubCanvas AABB routing (window listeners)
-    // doesn't fire ClickableImage handlers underneath
     e.originalEvent?.stopPropagation();
+
+    const now = performance.now();
+    if (lastTapMs > 0 && now - lastTapMs < DBL_TAP_MS) {
+      // Second tap in quick succession → double-tap → toggle zoom.
+      lastTapMs = 0; // reset to prevent triple-tap re-detection
+      suppressClose = true;
+      // Cancel any closing animation that hide() started.
+      if (animating) {
+        proxy.ticker.remove(tick);
+        animating = false;
+        onAnimDone = null;
+      }
+      toggleZoom(e.globalX, e.globalY);
+      return;
+    }
+    lastTapMs = now;
+    suppressClose = false;
+
     dragStartGlobalX = e.globalX;
     dragStartGlobalY = e.globalY;
     dragOriginX = sprite.x;
@@ -212,9 +263,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   container.on('globalpointermove', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
-    // must check button state — globalpointermove fires for ALL pointer
-    // moves, not only when button is pressed; without this check a move
-    // after pointerup (no button) can re-enter drag mode via threshold.
     if (!(e.buttons & 1)) { isDragging = false; return; }
     if (!isDragging) {
       const dx = e.globalX - dragStartGlobalX;
@@ -244,6 +292,8 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     if (!active || !sprite) return;
     e.originalEvent?.stopPropagation();
     if (isDragging) { isDragging = false; return; }
+    // If this pointerup follows a double-tap zoom, skip closing.
+    if (suppressClose) { suppressClose = false; return; }
     hide();
   });
   container.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
