@@ -10,3 +10,5 @@ export { createScrollable } from './Scrollable';
 export type { Scrollable, ScrollableOptions } from './Scrollable';
 export { createClickableImage } from './ClickableImage';
 export type { ClickableImage, ClickableImageOptions } from './ClickableImage';
+export { createFullscreenManager } from './FullscreenManager';
+export type { FullscreenManager, FullscreenShowEvent } from './FullscreenManager';

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
-import { createClickableImage, type ClickableImage } from '../../components';
+import { createClickableImage, createFullscreenManager, type ClickableImage } from '../../components';
 
 const IMAGES = [
   { url: 'https://proxy.moonchan.xyz/mw2000/007Y7SRMly1idrdc5nzp2j310o1m2agv.jpg?proxy_host=wx4.sinaimg.cn&proxy_referer=https%3A%2F%2Fweibo.com%2F', label: 'A' },
@@ -37,8 +37,11 @@ export function ComponentClickableImageDisplay() {
       header.eventMode = 'none';
       sc.stage.addChild(header);
 
+      const fm = createFullscreenManager(proxy);
+
       const startX = GAP;
       const startY = 50;
+      const allImgs: ClickableImage[] = [];
       IMAGES.forEach((img, i) => {
         const col = i % COLS;
         const row = Math.floor(i / COLS);
@@ -55,20 +58,23 @@ export function ComponentClickableImageDisplay() {
         sc.stage.addChild(label);
 
         const panel = sc.createSubRegion({ x, y, width: THUMB, height: THUMB });
-        const ci = createClickableImage(panel, {
+        const ci = createClickableImage(panel, proxy.bus, {
           url: img.url,
           x: 0,
           y: 0,
           width: THUMB,
           height: THUMB,
         });
-        imgsRef.current.push(ci);
+        allImgs.push(ci);
       });
+      imgsRef.current = allImgs;
+
+      return () => {
+        allImgs.forEach((img) => img.destroy());
+        fm.destroy();
+      };
     });
-    return () => {
-      imgsRef.current.forEach((img) => img.destroy());
-      stop();
-    };
+    return stop;
   }, []);
 
   return null;
