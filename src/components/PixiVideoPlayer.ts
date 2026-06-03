@@ -185,8 +185,8 @@ export function createVideoPlayer(
   const videoTexture = new PIXI.Texture({ source: videoSource });
 
   videoSprite.texture = videoTexture;
-  videoSprite.width = width;
-  videoSprite.height = height;
+  // 不在 texture 加载前设 sprite.width/height，否则 scale 基于 1x1 默认值算错
+  // 改为在 loadedmetadata 之后设
 
   // ── seek events ──
   function onSeekDown(e: PIXI.FederatedPointerEvent) {
@@ -241,43 +241,50 @@ export function createVideoPlayer(
 
   let fallbackAttempted = false;
 
-  htmlVideo.addEventListener('loadedmetadata', () => {
+  // 使用命名函数以便 destroy 时 removeEventListener
+  const onLoadedMeta = () => {
+    if (destroyed) return;
     duration = htmlVideo.duration || 0;
-    dbg(`loadedmetadata duration=${duration}`);
+    // texture 已有真实尺寸，此时设 sprite 宽高 scale 计算正确
+    videoSprite.width = width;
+    videoSprite.height = height;
+    dbg(`loadedmetadata duration=${duration} vw=${videoSprite.width} vh=${videoSprite.height}`);
     onLoad?.();
-  });
+  };
 
-  htmlVideo.addEventListener('timeupdate', () => {
+  const onTimeUpdate = () => {
     if (destroyed) return;
     curTime = htmlVideo.currentTime;
     if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
     const pct = duration > 0 ? curTime / duration : 0;
     drawProgress(pct);
     timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-  });
+  };
 
-  htmlVideo.addEventListener('seeked', () => {
+  const onSeeked = () => {
     if (destroyed) return;
     curTime = htmlVideo.currentTime;
     const pct = duration > 0 ? curTime / duration : 0;
     drawProgress(pct);
     timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-  });
+  };
 
-  htmlVideo.addEventListener('play', () => {
+  const onPlay = () => {
+    if (destroyed) return;
     paused = false;
     drawPlayIcon(true);
     cpb.visible = false;
-  });
+  };
 
-  htmlVideo.addEventListener('pause', () => {
+  const onPause = () => {
+    if (destroyed) return;
     paused = true;
     drawPlayIcon(false);
     cpb.visible = true;
-  });
+  };
 
-  htmlVideo.addEventListener('error', async () => {
-    if (fallbackAttempted || destroyed) return;
+  const onVideoError = async () => {
+    if (destroyed || fallbackAttempted) return;
     const code = htmlVideo.error?.code;
     dbg(`Native video error code: ${code}`);
 
@@ -287,6 +294,7 @@ export function createVideoPlayer(
       dbg('Attempting Blob fetch fallback...');
       try {
         const resp = await fetch(url);
+        if (destroyed) return;
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const rawBlob = await resp.blob();
         const mp4Blob = new Blob([rawBlob], { type: 'video/mp4' });
@@ -302,13 +310,21 @@ export function createVideoPlayer(
       }
     }
 
+    if (destroyed) return;
     // 如果 Blob 降级也失败了，再呈现报错界面
     onError?.(new Error(`Video error ${code}`));
     const errText = new PIXI.Text({ text: 'Load failed', style: { fontSize: 11, fill: 0xff6666, fontFamily: 'monospace' } });
     errText.x = (width - errText.width) / 2;
     errText.y = (height - errText.height) / 2;
     root.addChild(errText);
-  });
+  };
+
+  htmlVideo.addEventListener('loadedmetadata', onLoadedMeta);
+  htmlVideo.addEventListener('timeupdate', onTimeUpdate);
+  htmlVideo.addEventListener('seeked', onSeeked);
+  htmlVideo.addEventListener('play', onPlay);
+  htmlVideo.addEventListener('pause', onPause);
+  htmlVideo.addEventListener('error', onVideoError);
 
   // 触发原生加载
   htmlVideo.src = url;
@@ -324,14 +340,30 @@ export function createVideoPlayer(
     destroy() {
       if (destroyed) return;
       destroyed = true;
+
+      // 1. unbind video event handlers FIRST (prevent callbacks on half-destroyed gfx)
+      htmlVideo.removeEventListener('loadedmetadata', onLoadedMeta);
+      htmlVideo.removeEventListener('timeupdate', onTimeUpdate);
+      htmlVideo.removeEventListener('seeked', onSeeked);
+      htmlVideo.removeEventListener('play', onPlay);
+      htmlVideo.removeEventListener('pause', onPause);
+      htmlVideo.removeEventListener('error', onVideoError);
+
+      // 2. stop the video engine
+      htmlVideo.pause();
+      htmlVideo.src = '';
+      htmlVideo.load();
+
+      // 3. PIXI cleanup
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
 
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+
       try { videoTexture.destroy(true); } catch { /* ok */ }
       try { videoSource.destroy(); } catch { /* ok */ }
 
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
       if (root.parent) root.parent.removeChild(root);
       root.destroy({ children: true });
     },
