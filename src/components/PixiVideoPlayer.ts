@@ -292,6 +292,117 @@ export function createVideoPlayer(
   ctrl.visible = showControlsOpt;
   if (showControlsOpt) showCtrlsTmp();
 
+  // ── helpers: custom video element loader (bypass PIXI.Assets.load for detailed error info) ──
+  function mediaErrorReason(video: HTMLVideoElement): string {
+    const code = video.error?.code;
+    if (code === MediaError.MEDIA_ERR_ABORTED) return 'ABORTED(1)';
+    if (code === MediaError.MEDIA_ERR_NETWORK) return 'NETWORK(2)';
+    if (code === MediaError.MEDIA_ERR_DECODE) return 'DECODE(3)';
+    if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) return 'SRC_NOT_SUPPORTED(4)';
+    return `unknown(${code})`;
+  }
+
+  function loadVideoElement(): Promise<HTMLVideoElement> {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.crossOrigin = 'anonymous';
+      video.preload = 'auto';
+      video.muted = muted;
+      video.loop = loop;
+      video.playsInline = true;
+
+      const onCanPlay = () => {
+        cleanup();
+        dbg(`video canplay readyState=${video.readyState} w=${video.videoWidth} h=${video.videoHeight}`);
+        resolve(video);
+      };
+      const onError = () => {
+        cleanup();
+        const reason = mediaErrorReason(video);
+        dbg(`video error code=${video.error?.code} reason=${reason}`);
+        reject(new Error(`VideoError: ${reason}`));
+      };
+      function cleanup() {
+        video.removeEventListener('canplay', onCanPlay);
+        video.removeEventListener('error', onError);
+      }
+
+      video.addEventListener('canplay', onCanPlay);
+      video.addEventListener('error', onError);
+
+      // Check if already ready (cached)
+      if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA && video.videoWidth > 0) {
+        cleanup();
+        resolve(video);
+        return;
+      }
+
+      video.src = url;
+      video.load();
+    });
+  }
+
+  function attachVideoListeners() {
+    if (!htmlVideo) return;
+    htmlVideo.loop = loop;
+    htmlVideo.muted = muted;
+
+    duration = htmlVideo.duration || 0;
+    dbg(`initial duration=${duration} readyState=${htmlVideo.readyState} paused=${htmlVideo.paused}`);
+
+    htmlVideo.addEventListener('loadedmetadata', () => {
+      duration = htmlVideo?.duration || 0;
+      dbg(`loadedmetadata duration=${duration}`);
+    });
+
+    htmlVideo.addEventListener('timeupdate', () => {
+      if (!htmlVideo || destroyed) return;
+      curTime = htmlVideo.currentTime;
+      if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
+      const pct = duration > 0 ? curTime / duration : 0;
+      drawProgress(pct);
+      timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
+    });
+
+    htmlVideo.addEventListener('seeked', () => {
+      if (!htmlVideo || destroyed) return;
+      curTime = htmlVideo.currentTime;
+      if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
+      const pct = duration > 0 ? curTime / duration : 0;
+      drawProgress(pct);
+      timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
+    });
+
+    htmlVideo.addEventListener('play', () => {
+      dbg('native video play event');
+      paused = false;
+      drawPlayIcon(true);
+      cpb.visible = false;
+    });
+
+    htmlVideo.addEventListener('pause', () => {
+      dbg(`native video pause event currentTime=${htmlVideo?.currentTime}`);
+      paused = true;
+      drawPlayIcon(false);
+      cpb.visible = true;
+    });
+
+    htmlVideo.addEventListener('ended', () => {
+      dbg('native video ended event');
+      paused = true;
+      drawPlayIcon(false);
+      cpb.visible = true;
+    });
+
+    // initial UI sync
+    curTime = htmlVideo.currentTime;
+    if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
+    const initPct = duration > 0 ? curTime / duration : 0;
+    drawProgress(initPct);
+    timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
+    dbg(`initial sync curTime=${curTime} duration=${duration} pct=${initPct}`);
+  }
+
   // ── loading ──
   async function loadAndPlay(forcePlay = false) {
     dbg(`loadAndPlay forcePlay=${forcePlay} isLoading=${isLoading} loadCancelled=${loadCancelled} htmlVideo=${!!htmlVideo}`);
@@ -306,96 +417,42 @@ export function createVideoPlayer(
 
     isLoading = true;
     try {
-      dbg('Assets.load start...');
-      const texture = await PIXI.Assets.load({
-        src: url,
-        data: {
-          muted,
-          loop,
-          autoPlay: autoplay || forcePlay,
-          crossorigin: 'anonymous',
-          playsinline: true,
-        },
-      });
-      dbg(`Assets.load done texture=${!!texture} source=${texture.source.constructor.name}`);
+      dbg('loadVideoElement start...');
+      const video = await loadVideoElement();
+      dbg(`loadVideoElement done readyState=${video.readyState} duration=${video.duration}`);
 
       if (loadCancelled || destroyed) {
         dbg('loadAndPlay: cancelled after load');
-        try { texture.destroy(); } catch { /* ok */ }
+        video.removeAttribute('src');
+        video.load();
         return;
       }
+
+      // Create PIXI VideoSource + Texture from the loaded video element
+      const source = new PIXI.VideoSource({
+        resource: video,
+        autoPlay: false,
+        autoLoad: false,
+        playsinline: true,
+        updateFPS: 30,
+      });
+      dbg('VideoSource created, calling source.load()...');
+      await source.load();
+      dbg('VideoSource.load() done');
+
+      const texture = new PIXI.Texture({ source });
 
       videoTexture = texture;
       videoSprite.texture = texture;
       videoSprite.width = width;
       videoSprite.height = height;
 
-      const src = texture.source as PIXI.VideoSource;
-      htmlVideo = src.resource;
-      dbg(`htmlVideo obtained=${!!htmlVideo}`);
-      if (!htmlVideo) throw new Error('no HTMLVideoElement');
-
-      htmlVideo.loop = loop;
-      htmlVideo.muted = muted;
-
-      // Metadata may have already fired if loaded from cache
-      duration = htmlVideo.duration || 0;
-      dbg(`initial duration=${duration} readyState=${htmlVideo.readyState} paused=${htmlVideo.paused}`);
-      htmlVideo.addEventListener('loadedmetadata', () => {
-        duration = htmlVideo?.duration || 0;
-        dbg(`loadedmetadata duration=${duration}`);
-      });
-
-      htmlVideo.addEventListener('timeupdate', () => {
-        if (!htmlVideo || destroyed) return;
-        curTime = htmlVideo.currentTime;
-        if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
-        const pct = duration > 0 ? curTime / duration : 0;
-        drawProgress(pct);
-        timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-      });
-
-      htmlVideo.addEventListener('seeked', () => {
-        if (!htmlVideo || destroyed) return;
-        curTime = htmlVideo.currentTime;
-        if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
-        const pct = duration > 0 ? curTime / duration : 0;
-        drawProgress(pct);
-        timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-      });
-
-      htmlVideo.addEventListener('play', () => {
-        dbg('native video play event');
-        paused = false;
-        drawPlayIcon(true);
-        cpb.visible = false;
-      });
-
-      htmlVideo.addEventListener('pause', () => {
-        dbg(`native video pause event currentTime=${htmlVideo?.currentTime}`);
-        paused = true;
-        drawPlayIcon(false);
-        cpb.visible = true;
-      });
-
-      htmlVideo.addEventListener('ended', () => {
-        dbg('native video ended event');
-        paused = true;
-        drawPlayIcon(false);
-        cpb.visible = true;
-      });
-
-      // initial UI sync
-      curTime = htmlVideo.currentTime;
-      if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
-      const initPct = duration > 0 ? curTime / duration : 0;
-      drawProgress(initPct);
-      timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-      dbg(`initial sync curTime=${curTime} duration=${duration} pct=${initPct}`);
+      htmlVideo = video;
+      attachVideoListeners();
 
       if (autoplay || forcePlay) {
         dbg('calling htmlVideo.play()...');
-        await htmlVideo.play().catch((e) => dbg(`play() rejected: ${e.message}`));
+        await htmlVideo.play().catch((e: Error) => dbg(`play() rejected: ${e.message}`));
         dbg(`htmlVideo.play() done paused=${htmlVideo.paused}`);
       } else {
         htmlVideo.pause();
@@ -412,7 +469,7 @@ export function createVideoPlayer(
       onError?.(err instanceof Error ? err : new Error(msg));
 
       const errText = new PIXI.Text({
-        text: 'Video load failed',
+        text: 'Video load failed: ' + (err instanceof Error ? err.message : 'unknown'),
         style: { fontSize: 14, fill: 0xff6666, fontFamily: 'monospace' },
       });
       errText.x = (width - errText.width) / 2;
