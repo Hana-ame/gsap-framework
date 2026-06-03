@@ -27,9 +27,9 @@ const SOURCES: Omit<Slot, 'status'>[] = [
     note: 'direct upload, no CORS',
   },
   {
-    label: 'D · 404 error',
-    url: 'https://proxy.moonchan.xyz/insecure/plain/this-does-not-exist.jpg',
-    note: 'placeholder stays',
+    label: 'D · network error',
+    url: 'https://this-domain-does-not-exist-abc123.invalid/image.jpg',
+    note: 'DNS failure → error placeholder',
   },
 ];
 

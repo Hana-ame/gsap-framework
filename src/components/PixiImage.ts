@@ -108,6 +108,11 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     PIXI.Assets.load(url)
       .then((texture) => {
         if (destroyed || token !== currentToken) return;
+        if (!texture || texture.width === 0 || texture.height === 0) {
+          buildPlaceholder('(load failed: empty texture)', DEFAULT_ERROR_COLOR);
+          opts.onError?.(new Error('empty texture'));
+          return;
+        }
         showSprite(texture);
         opts.onLoad?.(texture);
       })

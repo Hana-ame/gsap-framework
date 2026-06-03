@@ -77,7 +77,8 @@ export function ComponentConfirmDisplay() {
           title: 'keepOpen',
           message: 'click 3 times, then auto-close',
           parent: scRef.current,
-          buttons: [{ label: 'click me', keepOpen: true }],
+          keepOpen: true,
+          buttons: [{ label: 'click me' }],
           onResult: (r) => {
             count++;
             append(`keepOpen click #${count} (result=${r})`);

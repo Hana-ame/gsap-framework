@@ -33,6 +33,7 @@ export interface PixiConfirmOptions {
   draggable?: boolean;
   dragMode?: 'title' | 'anywhere' | 'none';
   closable?: boolean;
+  keepOpen?: boolean;
   onClose?: () => void;
   okText?: string;
   cancelText?: string;
@@ -121,6 +122,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     closeBtn.addChild(xMark);
     closeBtn.on('pointerdown', (e) => {
       e.stopPropagation();
+      if (opts.keepOpen) return;
       opts.onResult?.('cancel', win);
       if (opts.onClose) opts.onClose();
       else win.destroy();
@@ -180,7 +182,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     else if (b.label === cancelText) result = 'cancel';
     b.onClick?.(win);
     opts.onResult?.(result, win);
-    if (!b.keepOpen) {
+    if (!b.keepOpen && !opts.keepOpen) {
       win.destroy();
     }
   };
