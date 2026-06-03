@@ -10,7 +10,6 @@ export interface ClickableImageOptions {
   overlayColor?: number;
   overlayAlpha?: number;
   zoomFactor?: number;
-  onExpand?: () => void;
 }
 
 export interface ClickableImage {
@@ -26,6 +25,8 @@ const LERP = 0.15;
 const SNAP = 0.5;
 const CLICK_MS = 300;
 const DRAG_THRESHOLD = 4;
+
+let singletonCollapse: (() => void) | null = null;
 
 export function createClickableImage(parent: SubCanvas, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
@@ -174,7 +175,8 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const goFullScreen = () => {
     if (!sprite) return;
-    opts.onExpand?.();
+    if (singletonCollapse) singletonCollapse();
+    singletonCollapse = collapse;
     expanded = true;
     zoomed = false;
     justOpened = true;
@@ -300,6 +302,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const collapse = () => {
     if (!expanded || destroyed) return;
+    if (singletonCollapse === collapse) singletonCollapse = null;
     if (animating) {
       parent.ticker.remove(tick);
       animating = false;
@@ -358,6 +361,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      if (singletonCollapse === collapse) singletonCollapse = null;
       if (clickTimer) clearTimeout(clickTimer);
       if (animating) parent.ticker.remove(tick);
       root.off('pointermove');

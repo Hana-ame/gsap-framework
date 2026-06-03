@@ -37,9 +37,6 @@ export function ComponentClickableImageDisplay() {
       header.eventMode = 'none';
       sc.stage.addChild(header);
 
-      const allImgs: ClickableImage[] = [];
-      let expandedIdx = -1;
-
       const startX = GAP;
       const startY = 50;
       IMAGES.forEach((img, i) => {
@@ -64,16 +61,9 @@ export function ComponentClickableImageDisplay() {
           y: 0,
           width: THUMB,
           height: THUMB,
-          onExpand: () => {
-            if (expandedIdx >= 0 && expandedIdx !== i) {
-              allImgs[expandedIdx].collapse();
-            }
-            expandedIdx = i;
-          },
         });
-        allImgs.push(ci);
+        imgsRef.current.push(ci);
       });
-      imgsRef.current = allImgs;
     });
     return () => {
       imgsRef.current.forEach((img) => img.destroy());
