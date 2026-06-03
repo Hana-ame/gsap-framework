@@ -352,10 +352,23 @@ export class SubCanvas {
 
   private updateMask(): void {
     if (!this._mask) return;
-    this._mask
-      .clear()
-      .rect(0, 0, this._bounds.width, this._bounds.height)
-      .fill({ color: 0xffffff });
+    try {
+      this._mask
+        .clear()
+        .rect(0, 0, this._bounds.width, this._bounds.height)
+        .fill({ color: 0xffffff });
+    } catch {
+      // _mask Graphics was destroyed by an unexpected path (e.g. parent
+      // stage.destroy cascading, or removeChildren + external destroy).
+      // Recreate the mask so clipToBounds still works.
+      if (this._mask.parent) this._mask.parent.removeChild(this._mask);
+      this._mask = new PIXI.Graphics();
+      this._mask
+        .rect(0, 0, this._bounds.width, this._bounds.height)
+        .fill({ color: 0xffffff });
+      this.stage.addChild(this._mask);
+      this.stage.mask = this._mask;
+    }
   }
 
   private updateBgHitArea(): void {
