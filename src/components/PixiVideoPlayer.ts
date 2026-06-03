@@ -67,6 +67,7 @@ export function createVideoPlayer(
   let hideTimer: ReturnType<typeof setTimeout> | null = null;
   let curTime = 0;
   let loadCancelled = false;
+  let isLoading = false;
 
   // ── scene graph ──
   const root = new PIXI.Container();
@@ -80,6 +81,12 @@ export function createVideoPlayer(
     .fill({ color: 0xffffff });
   root.addChild(mask);
   root.mask = mask;
+
+  // hover hit (placed before controls so controls render on top)
+  const hoverHit = new PIXI.Container();
+  hoverHit.eventMode = 'static';
+  hoverHit.hitArea = new PIXI.Rectangle(0, 0, width, height);
+  root.addChild(hoverHit);
 
   // placeholder background
   const bg = new PIXI.Graphics()
@@ -197,35 +204,35 @@ export function createVideoPlayer(
   seekHit.hitArea = new PIXI.Rectangle(barX, barY - 4, barW, barH + 8);
   ctrl.addChild(seekHit);
 
-  const barOrigin = new PIXI.Point();
-  function pokeBarOrigin() {
-    const g = ctrl.toGlobal(new PIXI.Point(barX, barY));
-    barOrigin.x = g.x;
-    barOrigin.y = g.y;
-  }
-  pokeBarOrigin();
-
-  function updateProgress(clientX: number) {
-    const relX = clientX - barOrigin.x;
-    const pct = Math.max(0, Math.min(1, relX / barW));
-    if (htmlVideo && duration > 0) {
-      htmlVideo.currentTime = pct * duration;
-    }
-  }
-
   // ── events ──
   function onSeekDown(e: PIXI.FederatedPointerEvent) {
     if (!htmlVideo || duration <= 0) return;
     seeking = true;
-    pokeBarOrigin();
-    updateProgress(e.client.x);
+
+    const pt = ctrl.toLocal(e.global);
+    const relX = pt.x - barX;
+    const pct = Math.max(0, Math.min(1, relX / barW));
+    htmlVideo.currentTime = pct * duration;
+
     window.addEventListener('pointermove', onWinMove);
     window.addEventListener('pointerup', onWinUp);
   }
 
   function onWinMove(e: PointerEvent) {
     if (!seeking || !htmlVideo) return;
-    updateProgress(e.clientX);
+
+    // convert DOM clientX to PIXI global coordinate
+    const canvas = parent.canvas;
+    const rect = canvas.getBoundingClientRect();
+    const res = parent.rootApp.renderer.resolution || 1;
+    const globalX = (e.clientX - rect.left) * (canvas.width / rect.width / res);
+
+    const pt = ctrl.toLocal({ x: globalX, y: 0 });
+    const relX = pt.x - barX;
+    const pct = Math.max(0, Math.min(1, relX / barW));
+    if (duration > 0) {
+      htmlVideo.currentTime = pct * duration;
+    }
   }
 
   function onWinUp() {
@@ -239,7 +246,7 @@ export function createVideoPlayer(
 
   function doPlayAction() {
     if (!htmlVideo) {
-      loadAndPlay();
+      loadAndPlay(true);
       return;
     }
     if (htmlVideo.paused) {
@@ -260,11 +267,6 @@ export function createVideoPlayer(
   });
 
   // ── controls show/hide ──
-  const hoverHit = new PIXI.Container();
-  hoverHit.eventMode = 'static';
-  hoverHit.hitArea = new PIXI.Rectangle(0, 0, width, height);
-  root.addChild(hoverHit);
-
   function showCtrlsTmp() {
     ctrl.visible = true;
     if (hideTimer) clearTimeout(hideTimer);
@@ -281,26 +283,33 @@ export function createVideoPlayer(
   if (showControlsOpt) showCtrlsTmp();
 
   // ── loading ──
-  async function loadAndPlay() {
-    if (loadCancelled) return;
+  async function loadAndPlay(forcePlay = false) {
+    if (loadCancelled || isLoading) return;
+
+    // already loaded — just play if needed
+    if (htmlVideo) {
+      if (autoplay || forcePlay) htmlVideo.play().catch(() => {});
+      return;
+    }
+
+    isLoading = true;
     try {
       const texture = await PIXI.Assets.load({
         src: url,
-        type: 'video',
         data: {
           muted,
           loop,
-          autoPlay: false,
-          autoLoad: true,
-          crossorigin: true,
+          autoPlay: autoplay || forcePlay,
+          crossorigin: 'anonymous',
           playsinline: true,
-          updateFPS: 30,
         },
       });
+
       if (loadCancelled || destroyed) {
-        texture.destroy(true);
+        try { texture.destroy(); } catch { /* ok */ }
         return;
       }
+
       videoTexture = texture;
       videoSprite.texture = texture;
       videoSprite.width = width;
@@ -313,6 +322,8 @@ export function createVideoPlayer(
       htmlVideo.loop = loop;
       htmlVideo.muted = muted;
 
+      // Metadata may have already fired if loaded from cache
+      duration = htmlVideo.duration || 0;
       htmlVideo.addEventListener('loadedmetadata', () => {
         duration = htmlVideo?.duration || 0;
       });
@@ -320,6 +331,7 @@ export function createVideoPlayer(
       function syncUI() {
         if (!htmlVideo || destroyed) return;
         curTime = htmlVideo.currentTime;
+        if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
         const pct = duration > 0 ? curTime / duration : 0;
         drawProgress(pct);
         timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
@@ -346,13 +358,12 @@ export function createVideoPlayer(
         cpb.visible = true;
       });
 
-      // start playback if autoplay, otherwise show paused state with center button
-      if (autoplay) {
+      syncUI();
+
+      if (autoplay || forcePlay) {
         await htmlVideo.play().catch(() => {});
       } else {
-        // force pause: the texture might autoPlay due to VideoSource default
         htmlVideo.pause();
-        // prevent the default autoPlay from kicking in
         paused = true;
         drawPlayIcon(false);
         cpb.visible = true;
@@ -371,6 +382,8 @@ export function createVideoPlayer(
       errText.x = (width - errText.width) / 2;
       errText.y = (height - errText.height) / 2;
       root.addChild(errText);
+    } finally {
+      isLoading = false;
     }
   }
 
@@ -382,7 +395,7 @@ export function createVideoPlayer(
   const handle: PixiVideoPlayerHandle = {
     play() {
       if (destroyed) return;
-      if (!htmlVideo) { loadAndPlay(); return; }
+      if (!htmlVideo) { loadAndPlay(true); return; }
       htmlVideo.play().catch(() => {});
     },
     pause() {
@@ -391,7 +404,7 @@ export function createVideoPlayer(
     },
     toggle() {
       if (destroyed) return;
-      if (!htmlVideo) { loadAndPlay(); return; }
+      if (!htmlVideo) { loadAndPlay(true); return; }
       if (htmlVideo.paused) {
         htmlVideo.play().catch(() => {});
       } else {
@@ -410,10 +423,12 @@ export function createVideoPlayer(
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
       if (videoTexture) {
-        videoTexture.destroy(true);
+        try { videoTexture.destroy(); } catch { /* ok */ }
         videoTexture = null;
       }
-      root.removeFromParent();
+      if (root.parent) {
+        root.parent.removeChild(root);
+      }
       root.destroy({ children: true });
     },
     setControlsVisible(v: boolean) {
