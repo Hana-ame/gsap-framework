@@ -54,7 +54,7 @@ export function ComponentBusDisplay() {
         dragMode: 'anywhere',
       });
       let sendN = 0;
-      const sendBtn = makeButton('emit ping', 12, 12, () => {
+      const sendBtn = makeButton('emit ping', 12, 40, () => {
         const n = ++sendN;
         const payload: BusPayload = { from: 'sender', text: `ping #${n}`, n };
         busRef.current?.emit<BusPayload>('ping', payload);
@@ -62,11 +62,11 @@ export function ComponentBusDisplay() {
       });
       sendRef.current.stage.addChild(sendBtn);
       const sendHint = new PIXI.Text({
-        text: 'click to emit, drag anywhere',
+        text: 'click to emit · drag anywhere',
         style: { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' },
       });
       sendHint.x = 12;
-      sendHint.y = 50;
+      sendHint.y = 78;
       sendRef.current.stage.addChild(sendHint);
 
       recvRef.current = createWindow({

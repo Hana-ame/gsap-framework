@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow, type GameWindowOptions } from '../../components';
@@ -7,30 +7,9 @@ type WinKey = 'A' | 'B' | 'C';
 const KEYS: WinKey[] = ['A', 'B', 'C'];
 
 const WINDOW_SPECS: Record<WinKey, Omit<GameWindowOptions, 'parent'>> = {
-  A: {
-    title: 'A · title drag (default)',
-    x: 40,
-    y: 80,
-    width: 320,
-    height: 220,
-    dragMode: 'title',
-  },
-  B: {
-    title: 'B · anywhere drag',
-    x: 380,
-    y: 80,
-    width: 320,
-    height: 220,
-    dragMode: 'anywhere',
-  },
-  C: {
-    title: 'C · fixed (dragMode: none)',
-    x: 720,
-    y: 80,
-    width: 320,
-    height: 220,
-    dragMode: 'none',
-  },
+  A: { title: 'A · title drag', x: 40, y: 80, width: 320, height: 220, dragMode: 'title' },
+  B: { title: 'B · anywhere drag', x: 380, y: 80, width: 320, height: 220, dragMode: 'anywhere' },
+  C: { title: 'C · fixed', x: 720, y: 80, width: 320, height: 220, dragMode: 'none' },
 };
 
 const HINTS: Record<WinKey, string> = {
@@ -45,58 +24,56 @@ const PRESET: Record<WinKey, { x: number; y: number }> = {
   C: { x: 780, y: 300 },
 };
 
+const BTN_W = 64;
+const BTN_H = 24;
+const ROW_H = 28;
+const COL_GAP = 6;
+
+function makeBtn(label: string, onClick: () => void): PIXI.Container {
+  const c = new PIXI.Container();
+  c.eventMode = 'static';
+  c.cursor = 'pointer';
+  const g = new PIXI.Graphics().roundRect(0, 0, BTN_W, BTN_H, 4).fill(0x14141f).stroke({ color: 0x2a2a3a, width: 1 });
+  c.addChild(g);
+  const t = new PIXI.Text({ text: label, style: { fontSize: 10, fill: 0xe6e6f0, fontFamily: 'monospace' } });
+  t.x = (BTN_W - t.width) / 2;
+  t.y = (BTN_H - t.height) / 2;
+  c.addChild(t);
+  c.hitArea = new PIXI.Rectangle(0, 0, BTN_W, BTN_H);
+  c.on('pointerdown', (e) => { e.stopPropagation(); onClick(); });
+  return c;
+}
+
+function setBtnEnabled(btn: PIXI.Container, enabled: boolean) {
+  btn.alpha = enabled ? 1 : 0.35;
+  btn.eventMode = enabled ? 'static' : 'none';
+}
+
 function addContent(win: GameWindow, hint: string) {
-  const text = new PIXI.Text({
-    text: hint,
-    style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace' },
-  });
+  const text = new PIXI.Text({ text: hint, style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace' } });
   text.x = 14;
   text.y = 50;
   win.stage.addChild(text);
 }
 
+interface Btns { close: PIXI.Container; open: PIXI.Container; reopen: PIXI.Container; preset: PIXI.Container; }
+
 export function ComponentWindowDisplay() {
   const scRef = useRef<SubCanvas | null>(null);
-  const refs = useRef<Record<WinKey, GameWindow | null>>({ A: null, B: null, C: null });
-  const [open, setOpen] = useState<Record<WinKey, boolean>>({ A: true, B: true, C: true });
+  const panelRef = useRef<SubCanvas | null>(null);
+  const wins = useRef<Record<WinKey, GameWindow | null>>({ A: null, B: null, C: null });
   const lastPos = useRef<Record<WinKey, { x: number; y: number } | null>>({ A: null, B: null, C: null });
+  const btns = useRef<Record<WinKey, Btns>>({ A: null!, B: null!, C: null! });
 
-  useEffect(() => {
-    const stop = startPixiApp((proxy: SubCanvasProxy) => {
-      const sc = proxy.createRegion({
-        x: 0,
-        y: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-      scRef.current = sc;
-      for (const k of KEYS) {
-        refs.current[k] = createWindow({ ...WINDOW_SPECS[k], parent: sc });
-        addContent(refs.current[k], HINTS[k]);
-      }
-    });
-    return () => {
-      for (const k of KEYS) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        refs.current[k]?.destroy();
-      }
-      stop();
-    };
-  }, []);
-
-  const ref = (k: WinKey) => {
-    if (k === 'A') return refs.current.A;
-    if (k === 'B') return refs.current.B;
-    return refs.current.C;
-  };
+  const ref = (k: WinKey) => wins.current[k];
 
   const doClose = (k: WinKey) => {
     const win = ref(k);
     if (!win) return;
     lastPos.current[k] = { x: Math.round(win.bounds.x), y: Math.round(win.bounds.y) };
     win.destroy();
-    refs.current[k] = null;
-    setOpen((o) => ({ ...o, [k]: false }));
+    wins.current[k] = null;
+    syncBtns();
   };
 
   const doOpen = (k: WinKey, pos?: { x: number; y: number }) => {
@@ -104,51 +81,97 @@ export function ComponentWindowDisplay() {
     const spec = { ...WINDOW_SPECS[k], parent: scRef.current };
     if (pos) { spec.x = pos.x; spec.y = pos.y; }
     const win = createWindow(spec);
-    refs.current[k] = win;
+    wins.current[k] = win;
     addContent(win, HINTS[k]);
-    setOpen((o) => ({ ...o, [k]: true }));
+    syncBtns();
   };
 
-  return (
-    <>
-      <style>{css}</style>
-      <div className="overlay">
-        <div className="panel">
-          <div className="panel-title">PixiWindow.ts</div>
-          <div className="panel-hint">
-            createWindow({'{ title, x, y, width, height, parent, dragMode }'})
-            <br />
-            dragMode: 'title' | 'anywhere' | 'none'
-          </div>
-          <div className="grid">
-            {KEYS.map((k) => (
-              <div key={k} className="ctrl">
-                <span className="tag">win {k}</span>
-                <button className="btn" onClick={() => doClose(k)} disabled={!open[k]}>close</button>
-                <button className="btn" onClick={() => doOpen(k)} disabled={open[k]}>open</button>
-                <button
-                  className="btn"
-                  disabled={open[k] || !lastPos.current[k]}
-                  onClick={() => doOpen(k, lastPos.current[k]!)}
-                  title="reopen where it was last closed"
-                >
-                  reopen here
-                </button>
-                <button
-                  className="btn"
-                  disabled={open[k]}
-                  onClick={() => doOpen(k, PRESET[k])}
-                  title="open at preset position"
-                >
-                  preset
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  const syncBtns = () => {
+    for (const k of KEYS) {
+      const b = btns.current[k];
+      if (!b) continue;
+      const isOpen = ref(k) != null;
+      setBtnEnabled(b.close, isOpen);
+      setBtnEnabled(b.open, !isOpen);
+      setBtnEnabled(b.reopen, !isOpen && lastPos.current[k] != null);
+      setBtnEnabled(b.preset, !isOpen);
+    }
+  };
+
+  useEffect(() => {
+    const stop = startPixiApp((proxy: SubCanvasProxy) => {
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const sc = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      scRef.current = sc;
+
+      const pH = 130;
+      const panel = sc.createSubRegion({ x: 0, y: H - pH, width: W, height: pH });
+      panelRef.current = panel;
+      const bg = new PIXI.Graphics().rect(0, 0, W, pH).fill({ color: 0x0a0a14, alpha: 0.92 });
+      bg.eventMode = 'none';
+      panel.stage.addChild(bg);
+
+      const title = new PIXI.Text({ text: 'PixiWindow.ts', style: { fontSize: 13, fill: 0x88aaff, fontFamily: 'monospace' } });
+      title.x = 14;
+      title.y = 8;
+      title.eventMode = 'none';
+      panel.stage.addChild(title);
+
+      const hint = new PIXI.Text({
+        text: "createWindow({ title, x, y, w, h, parent, dragMode })  dragMode: 'title' | 'anywhere' | 'none'",
+        style: { fontSize: 10, fill: 0x888888, fontFamily: 'monospace' },
+      });
+      hint.x = 14;
+      hint.y = 26;
+      hint.eventMode = 'none';
+      panel.stage.addChild(hint);
+
+      KEYS.forEach((k, i) => {
+        const rowY = 48 + i * ROW_H;
+        const label = new PIXI.Text({ text: `win ${k}`, style: { fontSize: 11, fill: 0x88aaff, fontFamily: 'monospace' } });
+        label.x = 14;
+        label.y = rowY + 4;
+        label.eventMode = 'none';
+        panel.stage.addChild(label);
+
+        const col0 = 60;
+        const close = makeBtn('close', () => doClose(k));
+        close.x = col0;
+        close.y = rowY;
+        panel.stage.addChild(close);
+
+        const open = makeBtn('open', () => doOpen(k));
+        open.x = col0 + BTN_W + COL_GAP;
+        open.y = rowY;
+        panel.stage.addChild(open);
+
+        const reopen = makeBtn('reopen', () => doOpen(k, lastPos.current[k] ?? undefined));
+        reopen.x = col0 + (BTN_W + COL_GAP) * 2;
+        reopen.y = rowY;
+        panel.stage.addChild(reopen);
+
+        const preset = makeBtn('preset', () => doOpen(k, PRESET[k]));
+        preset.x = col0 + (BTN_W + COL_GAP) * 3;
+        preset.y = rowY;
+        panel.stage.addChild(preset);
+
+        btns.current[k] = { close, open, reopen, preset };
+      });
+
+      for (const k of KEYS) {
+        wins.current[k] = createWindow({ ...WINDOW_SPECS[k], parent: sc });
+        addContent(wins.current[k], HINTS[k]);
+      }
+      syncBtns();
+    });
+    return () => {
+      for (const k of KEYS) wins.current[k]?.destroy();
+      stop();
+    };
+  }, []);
+
+  return null;
 }
 
 ComponentWindowDisplay.head = {
@@ -156,30 +179,3 @@ ComponentWindowDisplay.head = {
   description: 'Showcase: createWindow() with title/anywhere/none drag modes.',
   meta: [{ name: 'theme-color', content: '#0a0a14' }],
 };
-
-const css = `
-.overlay {
-  position: fixed; inset: 0; z-index: 50;
-  pointer-events: none; display: flex; align-items: flex-end;
-  justify-content: center; padding-bottom: 24px;
-}
-.panel {
-  pointer-events: auto; background: rgba(10,10,20,0.88);
-  border: 1px solid #2a2a3a; border-radius: 10px;
-  padding: 14px 18px; font-family: ui-monospace, SFMono-Regular, monospace;
-  color: #e6e6f0; min-width: 520px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-.panel-title { font-size: 0.85rem; color: #88aaff; margin-bottom: 4px; }
-.panel-hint { font-size: 0.72rem; opacity: 0.65; margin-bottom: 12px; line-height: 1.5; white-space: pre-wrap; }
-.grid { display: flex; flex-direction: column; gap: 6px; }
-.ctrl { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; }
-.tag { color: #88aaff; min-width: 40px; }
-.btn {
-  background: #14141f; border: 1px solid #2a2a3a; color: #e6e6f0;
-  border-radius: 6px; padding: 5px 9px; font: inherit; font-size: 0.72rem;
-  cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
-}
-.btn:hover:not(:disabled) { border-color: #4a6a9a; background: #18182a; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-`;

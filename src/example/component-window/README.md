@@ -1,6 +1,6 @@
 # ComponentWindowDisplay
 
-Showcase for `createWindow()` from `components/PixiWindow.ts`. Demonstrates the three drag modes side by side.
+Showcase for `createWindow()` from `components/PixiWindow.ts`. All UI is PIXI SubCanvas (no HTML overlay).
 
 ## What it shows
 
@@ -10,7 +10,13 @@ Showcase for `createWindow()` from `components/PixiWindow.ts`. Demonstrates the 
 | B      | `anywhere`   | drag from anywhere inside the window         |
 | C      | `none`       | fixed position, cannot be dragged            |
 
-Each window can be closed and reopened from the bottom panel.
+## Buttons (PIXI SubCanvas panel)
+
+Each window row has 4 buttons:
+- **close** — destroy the window, remember its last position
+- **open** — reopen at the default position
+- **reopen** — reopen where it was last closed (disabled if never closed)
+- **preset** — open at a hardcoded preset coordinate
 
 ## API
 
