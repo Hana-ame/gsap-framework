@@ -227,6 +227,9 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   // --- interaction ---
   container.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
+    // consume native event so SubCanvas AABB routing (window listeners)
+    // doesn't fire ClickableImage handlers underneath
+    e.originalEvent?.stopPropagation();
     dragStartGlobalX = e.globalX;
     dragStartGlobalY = e.globalY;
     dragOriginX = sprite.x;
@@ -236,6 +239,10 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   container.on('globalpointermove', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
+    // must check button state — globalpointermove fires for ALL pointer
+    // moves, not only when button is pressed; without this check a move
+    // after pointerup (no button) can re-enter drag mode via threshold.
+    if (!(e.buttons & 1)) { isDragging = false; return; }
     if (!isDragging) {
       const dx = e.globalX - dragStartGlobalX;
       const dy = e.globalY - dragStartGlobalY;
@@ -261,8 +268,9 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     }
   });
 
-  container.on('pointerup', () => {
+  container.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
+    e.originalEvent?.stopPropagation();
     if (isDragging) { isDragging = false; return; }
     if (clickTimer) {
       clearTimeout(clickTimer);
@@ -275,7 +283,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       }, CLICK_MS);
     }
   });
-  container.on('pointerupoutside', () => {
+  container.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     if (isDragging) { isDragging = false; return; }
   });
