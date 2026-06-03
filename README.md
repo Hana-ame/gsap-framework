@@ -79,6 +79,9 @@ stop();
 | `#component-bus` | Sender + Receiver windows communicating via EventBus pub-sub. |
 | `#component-scrollable` | Vertical (50 lines), horizontal (20 cards), no-scrollbar vertical. |
 | `#component-clickable-image` | Four thumbnails + FullscreenManager singleton overlay (zoom/drag/close). |
+| `#component-scrollable-image` | 16 thumbnails in scrollable panel, clickable images + FullscreenManager (zoom/drag/close). |
+| `#component-picture-drag` | Draggable SubCanvas with an image, click-threshold detection via window listeners, bus emit. |
+| `#component-text-input` | Text input component (pending implementation). |
 
 `_shared/Displays.ts` is the visualizer shared by `#single` and `#multiple`.
 
@@ -153,6 +156,7 @@ class SubCanvas {
 - **快拖脱手（fast drag drop，第二次踩）**：PIXI v8 FederatedEvent 每次 move 都过 hit-test；指针跳到无 interactive child 位置时，事件 **既不发给 handle 也不发给 `app.stage`**。`onDown` 触发，`onMove` 一次都不打，`onUp.target=undefined`。**修法**：双层监听 — PIXI `app.stage.on('pointermove')`（命中区在时同步）+ `window.addEventListener('pointermove')`（DOM event 不过 hit-test，永远触发）。位置直接读 `e.clientX/clientY`（canvas 是 `position: fixed; inset: 0`，`client == canvas-relative == PIXI coord`）。详见 `framework/NOTES.md` 1.6。
 
 ### PIXI v8 坑
+- **Graphics destroy 后 immediate recreate 在同一 callstack 报 `_callContextMethod → clear` null**：PIXI v8 的 render batch 在帧末 flush；若 `destroy()` 释放了 GraphicsContext，然后同一事件处理中 `new Graphics()` 再 `.fill()`，renderer flush 旧 frame 时尝试访问已 null 的 context，报 `TypeError: Cannot read properties of null (reading 'clear')`。**修法**：复用 object 用 `.clear().rect().fill()` 而不是 destroy+new。FullscreenManager `show()` 已踩过。
 - **Graphics mask 不 `.fill()` 则全隐藏**：PIXI v8 要求 `new Graphics().rect(...).fill({ color: 0xffffff })` — 空 path 的 Graphics 作为 mask 会 **隐藏所有内容**。这个 bug 在 Scrollable 和 PixiImage 的 mask 上都出现过。
 - **`eventMode='passive'` 是 v8 默认值**（不同于 v7 的 `'auto'`）。不设 `'static'` 的 Container 不响应 PIXI FederatedEvent，也不转发给子级。
 - **`Container` 没有 `setPointerCapture/releasePointerCapture`**：那是 DOM Element 方法。PIXI 需要 window 级 listener 替代。
@@ -172,6 +176,7 @@ class SubCanvas {
 ### v8 PIXI 怪事
 - **`Container.position` setter 是 `this._position.copyFrom(value)`**：外部 observer 会被丢弃。**修法**：用 `setBounds` / `setPosition` / `setSize` 同步。
 - **`getLocalPosition(parent)` 在 `'auto'` eventMode 上不可靠**：必须 `eventMode='static'`。
+- **`pointerup` on 子 Container vs on stage 不一样**：`proxy.stage.on('pointerup')` 捕获所有 canvas 上的 pointerup，包括 sibling 子树冒泡来的。`container.on('pointerup')` 只捕获直接在 container 或其 children 上的。FM 用 stage-level 时，点击缩略图触发的 bus emit → show() 之后，同一个 pointerup 冒泡进 stage handler 消费了 `justOpened`。修法：`container.on('pointerup')` + 移除 `justOpened`。
 
 ## CI / Deploy
 
