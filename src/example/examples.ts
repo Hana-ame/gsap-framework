@@ -12,6 +12,7 @@ import { ComponentLoadingDisplay } from './component-loading/ComponentLoadingDis
 import { ComponentBusDisplay } from './component-bus/ComponentBusDisplay';
 import { ComponentScrollableDisplay } from './component-scrollable/ComponentScrollableDisplay';
 import { ComponentClickableImageDisplay } from './component-clickable-image/ComponentClickableImageDisplay';
+import { ComponentScrollableImageDisplay } from './component-scrollable-image/ComponentScrollableImageDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -27,6 +28,7 @@ export const EXAMPLES = [
   'component-bus',
   'component-scrollable',
   'component-clickable-image',
+  'component-scrollable-image',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -48,4 +50,5 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-bus': ComponentBusDisplay,
   'component-scrollable': ComponentScrollableDisplay,
   'component-clickable-image': ComponentClickableImageDisplay,
+  'component-scrollable-image': ComponentScrollableImageDisplay,
 };
