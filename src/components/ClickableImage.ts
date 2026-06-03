@@ -185,7 +185,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     overlay = new PIXI.Graphics();
     overlay.rect(0, 0, pw, ph).fill({ color: ovColor, alpha: ovAlpha });
     overlay.eventMode = 'none';
-    parent.rootApp.stage.addChildAt(overlay, 0);
+    parent.rootApp.stage.addChild(overlay);
 
     const global = getThumbGlobalPos();
     parent.rootApp.stage.addChild(stage);
