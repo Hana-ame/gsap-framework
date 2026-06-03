@@ -114,8 +114,8 @@ const destroy = startPixiApp((proxy) => {
 ```ts
 const destroy = startPixiApp((proxy) => {
   const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-  // root 是顶层；root.createSubRegion / divide / grid 出来的全是 root 的 children
-  const children = root.grid({ rows: 2, cols: 2 });
+  // root 是顶层；root.createSubRegion 出来的全是 root 的 children
+  const children = [0,1,2,3].map(i => root.createSubRegion({ x: col*i, y: row*i, width: W/2, height: H/2 }));
   // children 不出现在 topCanvases 里 — 只 root 在
   // 销毁时 root.destroy() 会级联销毁 children
 });

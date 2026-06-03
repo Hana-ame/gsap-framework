@@ -13,7 +13,7 @@ Use this agent when the user asks for any of:
 - Move/rename files in `src/framework/`, `src/components/`, `src/example/`
 - Fix a SubCanvas / event-routing / z-order / drag bug
 - "在 pixi 里做 X" — anything in the PIXI canvas
-- Anything involving the 6 example routes (`#screen-size`, `#window-mobile`, `#single`, `#multiple`, `#window`, `#pixi-confirm`)
+- Anything involving the 14 example routes (`#screen-size`, `#window-mobile`, `#single`, `#multiple`, `#window`, `#pixi-confirm`, `#component-window`, `#component-confirm`, `#component-image`, `#component-loading`, `#component-bus`, `#component-scrollable`, `#component-clickable-image`)
 
 Do **not** invoke for:
 
@@ -57,38 +57,11 @@ When the user curses, they're flagging that you screwed up. Do not be defensive.
 
 ### Folder taxonomy (the rules)
 
-```
-src/
-├── framework/         PIXI core (the layer)
-│   ├── SubCanvas.ts   <-- STAR: AABB container with bounds/events/drag
-│   ├── SubCanvasProxy.ts
-│   ├── EventBus.ts
-│   ├── PixiApp.ts
-│   ├── NOTES.md       drag/z-order/event-routing design notes
-│   └── index.ts       PUBLIC re-export
-├── components/        PIXI components (reusable, layered on SubCanvas)
-│   ├── PixiWindow.ts  draggable GameWindow
-│   ├── PixiConfirm.ts modal dialog
-│   ├── PixiImage.ts   async image with placeholder
-│   ├── Loading.ts     showLoading overlay
-│   └── index.ts       PUBLIC re-export
-├── example/           6 SubCanvas usage demos
-│   ├── launcher/      home (LauncherDisplay)
-│   ├── screen-size/
-│   ├── single/        uses _shared/Displays
-│   ├── multiple/      uses _shared/Displays
-│   ├── window/        2 GameWindows + simulated backend
-│   ├── window-mobile/ trigger bar + Confirm dialogs
-│   ├── pixi-confirm/  5 triggers + HTML log
-│   ├── _shared/       internal: Displays.ts visualizer
-│   ├── useHashExample.ts  hash router hook
-│   ├── examples.ts    route table
-│   └── ExampleApp.tsx entry component
-├── main.tsx           createRoot mount
-├── ErrorBoundary.tsx  self-contained red panel
-├── index.css          100% reset + safe-area vars
-└── vite-env.d.ts
-```
+Run `ls src/` to see current structure. Three folders:
+
+- `framework/` — PIXI core (SubCanvas, Proxy, EventBus, PixiApp). Public via `index.ts`.
+- `components/` — Reusable PIXI UI components (Window, Confirm, Image, Loading, Scrollable, ClickableImage, FullscreenManager). Public via `index.ts`.
+- `example/` — Demo routes per component/feature. Each route is one folder.
 
 **3-folder invariant**: when adding new code, decide first which folder it belongs to.
 
@@ -137,11 +110,11 @@ For any non-trivial task:
 
 1. `todowrite` if 3+ steps
 2. Make the change
-3. `npm run lint`
+3. `npm run lint`（CI 处理 typecheck/build）
 4. `git add -A src/` (only the files you changed — no `git add .` of unrelated changes from other sessions)
 5. `git -c user.name=lumin -c user.email=luminovoez@gmail.com commit -m "<scoped message that only describes what you actually did>"`
 6. `git push origin sim`
-7. One-line confirmation: `Build ✓ lint ✓ push ✓ (<short-sha>)` + a single-line note about what shipped
+7. One-line confirmation: `lint ✓ push ✓ (<short-sha>)` + a single-line note about what shipped
 
 If anything fails at any step, **stop and report** — don't paper over with `-f` or `--no-verify` unless the user asks.
 
@@ -157,6 +130,9 @@ If anything fails at any step, **stop and report** — don't paper over with `-f
 - **PIXI v8 Graphics hit-area unstable** for complex shapes; explicit `Rectangle` hitArea on a `Container` is the stable pattern. PixiWindow and PixiConfirm close-buttons use `Container` + explicit `hitArea = new Rectangle(-r, -r, 2r, 2r)`.
 - **PIXI v8 drag system requires `app.stage.eventMode = 'static'`** for the drag system's `app.stage.on('pointermove')` listener to fire. Without it, pointerdown on a tagged child fires, but the subsequent move events don't bubble to the stage listener — drag is silent.
 - **PIXI v8 `Container` has no `setPointerCapture` / `releasePointerCapture`** — those are DOM Element methods. Don't try to use them on PIXI containers. The drag system uses `window.addEventListener` as a workaround (DOM events fire regardless of PIXI hit-test).
+- **PIXI v8 Graphics mask must `.fill()`**: `new Graphics().rect(0,0,w,h).fill({ color: 0xffffff })` — an empty-path Graphics (no .fill()) as mask hides ALL content. This bit us in Scrollable.ts and PixiImage.ts.
+- **PIXI v8 default eventMode is 'passive'** (not 'auto' as in v7). Containers with `eventMode='passive'` don't receive any PIXI FederatedEvents. Always set `'static'` for interactive children.
+- **`PIXI.Assets.load` can resolve with width=0 or height=0 texture** — always check `texture.width === 0 || texture.height === 0` after load.
 - **LSP errors are stale**: when files move, the LSP server lags. Always trust `npm run lint` output, not LSP diagnostics. CI will catch typecheck/build errors.
 
 ---
