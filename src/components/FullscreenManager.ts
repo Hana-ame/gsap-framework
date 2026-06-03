@@ -47,7 +47,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   let targetScale = 1;
   let animating = false;
   let onAnimDone: (() => void) | null = null;
-  let justOpened = false;
 
   // Zoom & drag
   let zoomed = false;
@@ -162,16 +161,12 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   const show = (ev: FullscreenShowEvent) => {
     if (destroyed) return;
-    // Immediate teardown — do NOT call hide() which starts async animation.
-    // A stale hide animation's onAnimDone would override active/sprite set below.
     if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
     if (animating) {
       proxy.ticker.remove(tick);
       animating = false;
       onAnimDone = null;
     }
-    if (sprite) { container.removeChild(sprite); sprite.destroy(); sprite = null; }
-    destroyOverlay();
     zoomed = false;
     isDragging = false;
 
@@ -181,7 +176,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     thumbGlobalY = ev.thumbGlobalY;
     thumbW = ev.thumbW;
     thumbH = ev.thumbH;
-    zoomed = false;
     zoomFactor = ev.zoomFactor ?? 2;
 
     const pw = window.innerWidth;
@@ -189,23 +183,34 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     fitScale = Math.min(pw / texW, ph / texH, 1);
     const thumbScale = Math.min(thumbW / texW, thumbH / texH, 1);
 
+    // Reuse overlay — clear+redraw instead of destroy+recreate to avoid
+    // PIXI GraphicsContext null reference in the render batch.
     const ovColor = ev.overlayColor ?? 0x000000;
     const ovAlpha = ev.overlayAlpha ?? 0.6;
-    overlay = new PIXI.Graphics();
-    overlay.rect(0, 0, pw, ph).fill({ color: ovColor, alpha: ovAlpha });
-    overlay.eventMode = 'none';
-    container.addChild(overlay);
+    if (overlay) {
+      overlay.clear().rect(0, 0, pw, ph).fill({ color: ovColor, alpha: ovAlpha });
+    } else {
+      overlay = new PIXI.Graphics();
+      overlay.rect(0, 0, pw, ph).fill({ color: ovColor, alpha: ovAlpha });
+      overlay.eventMode = 'none';
+      container.addChild(overlay);
+    }
 
-    sprite = new PIXI.Sprite(ev.texture);
-    sprite.anchor.set(0.5);
+    // Reuse sprite — swap texture instead of destroy+recreate.
+    if (sprite) {
+      sprite.texture = ev.texture;
+      sprite.anchor.set(0.5);
+    } else {
+      sprite = new PIXI.Sprite(ev.texture);
+      sprite.anchor.set(0.5);
+      sprite.eventMode = 'none';
+      container.addChild(sprite);
+    }
     sprite.x = thumbGlobalX + thumbW / 2;
     sprite.y = thumbGlobalY + thumbH / 2;
     sprite.scale.set(thumbScale);
-    sprite.eventMode = 'none';
-    container.addChild(sprite);
 
     active = true;
-    justOpened = true;
     container.visible = true;
     container.eventMode = 'static';
     container.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
@@ -254,9 +259,8 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     }
   });
 
-  proxy.stage.on('pointerup', () => {
+  container.on('pointerup', () => {
     if (!active || !sprite) return;
-    if (justOpened) { justOpened = false; return; }
     if (isDragging) { isDragging = false; return; }
     if (clickTimer) {
       clearTimeout(clickTimer);
@@ -269,7 +273,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       }, CLICK_MS);
     }
   });
-  proxy.stage.on('pointerupoutside', () => {
+  container.on('pointerupoutside', () => {
     if (!active || !sprite) return;
     if (isDragging) { isDragging = false; return; }
   });
@@ -286,8 +290,9 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       if (animating) proxy.ticker.remove(tick);
       unsubShow();
       proxy.stage.off('pointermove');
-      proxy.stage.off('pointerup');
-      proxy.stage.off('pointerupoutside');
+      container.off('pointerdown');
+      container.off('pointerup');
+      container.off('pointerupoutside');
       destroyOverlay();
       if (sprite) { container.removeChild(sprite); sprite.destroy(); }
       if (container.parent) container.parent.removeChild(container);
