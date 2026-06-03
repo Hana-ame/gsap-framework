@@ -135,6 +135,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       destroyOverlay();
       if (sprite) { container.removeChild(sprite); sprite.destroy(); sprite = null; }
       proxy.bus.emit('fullscreen:hide');
+      proxy.bus.emit('fullscreen:inactive');
     };
     startAnim();
   };
@@ -213,6 +214,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     sprite.scale.set(thumbScale);
 
     active = true;
+    proxy.bus.emit('fullscreen:active');
     container.visible = true;
     container.eventMode = 'static';
     container.hitArea = new PIXI.Rectangle(0, 0, pw, ph);

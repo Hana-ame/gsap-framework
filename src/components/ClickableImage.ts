@@ -61,7 +61,15 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   placeholderText.eventMode = 'none';
   stage.addChild(placeholderText);
 
+  // Track whether FullscreenManager is active — when FM is on top,
+  // AABB routing still receives pointer events (window listeners bypass
+  // PIXI event consumption), so we must guard the emit ourselves.
+  let fullscreenActive = false;
+  const unsubActive = bus.on('fullscreen:active', () => { fullscreenActive = true; });
+  const unsubInactive = bus.on('fullscreen:inactive', () => { fullscreenActive = false; });
+
   const onPress = (e: SubPointerEvent) => {
+    if (fullscreenActive) return;
     if (!loadedTexture) return;
     const rx = e.x - opts.x;
     const ry = e.y - opts.y;
@@ -78,6 +86,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   };
 
   const onRelease = (e: SubPointerEvent) => {
+    if (fullscreenActive) return;
     if (!pressTexture) return;
     const texture = pressTexture;
     const bounds = pressBounds;
@@ -132,6 +141,8 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      unsubActive();
+      unsubInactive();
       parent.offPointer('pointerdown', onPress);
       parent.offPointer('pointerup', onRelease);
       if (stage.parent) stage.parent.removeChild(stage);
