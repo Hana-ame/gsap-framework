@@ -14,7 +14,8 @@
     <script>
       (function () {
         var valid = ['#screen-size', '#window-mobile', '#single', '#multiple', '#window', '#pixi-confirm', '#component-window', '#component-confirm', '#component-image', '#component-loading', '#component-bus'];
-        if (valid.indexOf(window.location.hash) < 0) {
+        var h = window.location.hash;
+        if (h && h !== '#' && valid.indexOf(h) < 0) {
           window.location.replace('#');
         }
       })();

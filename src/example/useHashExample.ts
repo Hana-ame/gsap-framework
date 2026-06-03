@@ -1,18 +1,15 @@
 import { useEffect, useState, useCallback } from 'react';
-import { DEFAULT_EXAMPLE, isExample, type Example } from './examples';
+import { isExample, type Example } from './examples';
 
-export function useHashExample(): Example {
-  const compute = useCallback((): Example => {
+export function useHashExample(): Example | null {
+  const compute = useCallback((): Example | null => {
     const h = window.location.hash.slice(1);
-    return isExample(h) ? h : DEFAULT_EXAMPLE;
+    return isExample(h) ? h : null;
   }, []);
 
-  const [example, setExample] = useState<Example>(compute);
+  const [example, setExample] = useState<Example | null>(compute);
 
   useEffect(() => {
-    if (!isExample(window.location.hash.slice(1))) {
-      window.location.replace(`#${DEFAULT_EXAMPLE}`);
-    }
     const onChange = () => setExample(compute());
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
