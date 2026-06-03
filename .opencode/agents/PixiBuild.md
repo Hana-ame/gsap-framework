@@ -52,7 +52,7 @@ When the user curses, they're flagging that you screwed up. Do not be defensive.
 | inline redirect | `index.html` head script, runs before React |
 | default route | `screen-size` (the example after `#launcher` was retired) |
 | git identity (inline) | `git -c user.name=lumin -c user.email=luminovoez@gmail.com ...` |
-| test command | `npm run lint && npm run build` |
+| test command | `npm run lint` |
 | after every change | `git add -A src/ && git commit -m "..." && git push origin sim` |
 
 ### Folder taxonomy (the rules)
@@ -124,7 +124,7 @@ Never import across `framework` from a leaf folder — only via `index.ts` re-ex
 7. **PIXI drag uses PIXI FederatedEvents on `app.stage`** as the primary path, **AND `window.addEventListener` as the fallback** (DOM events fire regardless of hit-test). For PIXI's `app.stage` listeners to fire, `app.stage.eventMode` MUST be `'static'` (default is `'auto'` which doesn't reliably receive bubbled events from descendants). The window-level listeners are CRITICAL for "fast drag" — when the cursor jumps to a position with no interactive target in a single browser event, PIXI's hit-test drops the move event at the boundary and NEITHER the handle NOR app.stage receives it. Window-level listeners see all DOM events unconditionally. Position is read from `e.clientX/clientY` directly (canvas is `position: fixed; inset: 0` so `client == canvas-relative == PIXI coord`). This gotcha has bitten us twice now — do not regress.
 8. **PIXI `anywhere` drag**: tag-based. The SubCanvas auto-adds a transparent bg child with `label='subcanvas-drag-handle'` if no tagged child exists when dragMode='anywhere'. The bg gets `zIndex=-1` so it doesn't collide with siblings. `bringToFront` uses sibling zIndex scan + parent.sortableChildren=true. Don't use static `topZIndex`/`bottomZIndex` counters.
 9. **Window `anywhere` drag** (both PixiWindow and PixiConfirm): the title bar is added via `win.addChild(bar)` (the `SubCanvas.addChild` proxy) — NOT `win.stage.addChild`. Buttons need their own `pointerdown` + `stopPropagation`.
-10. **No push without lint+build green**. Run `npm run lint && npm run build` before commit. If it fails, fix and re-run, don't commit a broken state.
+10. **No push without lint green**. Run `npm run lint` before commit. If it fails, fix and re-run, don't commit a broken state. Do NOT run `npm run build` locally — let CI check typecheck/build errors and Cloudflare deploy.
 11. **MUST push after every commit**. Leaving uncommitted/unpushed work is a bug — it creates conflicts with remote and breaks the deployment flow. After `git commit` ALWAYS run `git push origin sim`. No exceptions. No "I'll push later." If a push fails, fix and retry — never walk away from an unpushed commit.
 12. **Use `SubCanvas.addChild` for tagged drag handles**, not `win.stage.addChild`. The drag system auto-installs drag listeners when a child with `label='subcanvas-drag-handle'` is added via `SubCanvas.addChild`. If you call `win.stage.addChild` (PIXI's Container method), the auto-install is bypassed. Constructor's initial scan over `stage.children` runs before any children are added (since `createSubRegion` returns the empty SubCanvas), so it sees no tagged children. The ONLY reliable install path is `SubCanvas.addChild`.
 13. **Recurring bugs go in README.md 踩过的坑** — when a known bug recurs, add it to the curated gotcha section. User codified this rule after the fast-drag bug recurred the second time.
@@ -137,7 +137,7 @@ For any non-trivial task:
 
 1. `todowrite` if 3+ steps
 2. Make the change
-3. `npm run lint && npm run build`
+3. `npm run lint`
 4. `git add -A src/` (only the files you changed — no `git add .` of unrelated changes from other sessions)
 5. `git -c user.name=lumin -c user.email=luminovoez@gmail.com commit -m "<scoped message that only describes what you actually did>"`
 6. `git push origin sim`
@@ -157,7 +157,7 @@ If anything fails at any step, **stop and report** — don't paper over with `-f
 - **PIXI v8 Graphics hit-area unstable** for complex shapes; explicit `Rectangle` hitArea on a `Container` is the stable pattern. PixiWindow and PixiConfirm close-buttons use `Container` + explicit `hitArea = new Rectangle(-r, -r, 2r, 2r)`.
 - **PIXI v8 drag system requires `app.stage.eventMode = 'static'`** for the drag system's `app.stage.on('pointermove')` listener to fire. Without it, pointerdown on a tagged child fires, but the subsequent move events don't bubble to the stage listener — drag is silent.
 - **PIXI v8 `Container` has no `setPointerCapture` / `releasePointerCapture`** — those are DOM Element methods. Don't try to use them on PIXI containers. The drag system uses `window.addEventListener` as a workaround (DOM events fire regardless of PIXI hit-test).
-- **LSP errors are stale**: when files move, the LSP server lags. Always trust `npm run lint && npm run build` output, not LSP diagnostics.
+- **LSP errors are stale**: when files move, the LSP server lags. Always trust `npm run lint` output, not LSP diagnostics. CI will catch typecheck/build errors.
 
 ---
 
