@@ -174,6 +174,16 @@ class SubCanvas {
 - **Cloudflare Pages 灰度 deploy**：HTML 立即更新，子 bundle（`assets/xxx-[hash].js`）还在旧 hash 状态。**症状**：页面报 `Failed to fetch dynamically imported module`。**修法**：等 1-2 分钟；不要 push 完立即 playwright 测。
 - **SW cache 撞 stale**：SW 是 `sim-v2`，network-first nav 仍然可能命中旧 cache。**修法**：`unregister` 一次 SW 再 reload。
 
+### 事件架构 / 设计辩论
+- **FullscreenManager 点击穿透 → bus 守卫方案替代 `stopPropagation`**：FM 的 overlay 在 PIXI 层叠最上层（`eventMode='static'`），足以拦截 PIXI FederatedEvent 传到下方 ClickableImage。但 SubCanvas AABB 路由走独立的 `window.addEventListener` 监听同一份原生 PointerEvent，PIXI 的 `e.originalEvent?.stopPropagation()` 不可靠 — PIXI v8 部分事件路径下 `originalEvent` 可能为 null。**结论**：FM 发射 `'fullscreen:active'` / `'fullscreen:inactive'` 总线事件，ClickableImage 订阅并设置 `fullscreenActive` 标志，在 `onPress`/`onRelease` 中守卫。完全解耦 DOM 事件传播。（commit dc391c1）
+- **`show()` 覆盖 `hide()` 的 onAnimDone 竞争**：当 `show()` 在 `hide()` 动画进行中被调用时，旧的 `onAnimDone` 回调仍会触发 → 销毁新 sprite → 损坏 `active`/`isDragging` 状态。**结论**：`show()` 开头必须 `animating → proxy.ticker.remove(tick); onAnimDone = null` 清除所有待处理动画回调后再创建新内容。
+- **FullscreenManager globalpointermove 无按钮检测**：`globalpointermove` 对所有指针移动触发，不要求按钮按下。`pointerup` 重置 `isDragging=false` 后，一次无辜的 move 就可以超过阈值重新进入拖拽模式。**结论**：`globalpointermove` 开头 `if (!(e.buttons & 1)) { isDragging = false; return; }`。（commit 63a5d67）
+- **Graphics.clear() 防御的三种模式**：PIXI v8 下 Graphics 被 destroy 后 context=null，任何 `.clear()` 调用 crash。
+  1. **Scrollable 风格**：`destroyed` 布尔 flag + public 方法入口守卫（`if (destroyed) return;`）。适合有明确生命周期的长寿命组件。
+  2. **Loading/Displays 风格**：tick 函数内 `try { graphics.clear() } catch { /* 已销毁 */ }`。适合 tick 驱动的临时图形，父销毁不通知。
+  3. **SubCanvas.updateMask 风格**：try-catch + catch 内重建。适合框架内部必须持续工作的对象。
+  参见 commit 9607c33 / c4372d3。
+
 ### 销毁时序 / 浏览器后退
 - **`startPixiApp` 忽略 `onReady` 返回值**：route 组件在 `onReady` 里返回的清理函数（删除 window 监听器、destroy imgs/fm 等）从未被调用。后退时 `proxy.destroyAll()` 先销毁所有 Graphics → 残留的 `window 'pointermove'` 监听器触发 → 在已销毁 Graphics 上调 `.clear()` → `_callContextMethod` crash。**修法**：`startPixiApp` 捕获 `onReady` 返回值并存在 `innerCleanup` 闭包里，`stop()` 时 `innerCleanup?.(); proxy?.destroyAll();` 顺序执行。PixiApp.ts line 266。
 - **canvas 双重 DOM removeChild**：`stop()` 手工 `c.parentNode.removeChild(c)` + `app.destroy(true, ...)` 再次移除同一 canvas → `NotFoundError: Failed to execute 'removeChild' on 'Node'`。**修法**：移除手工删除，全部交给 `app.destroy(true, ...)` 统一处理。
