@@ -48,20 +48,22 @@ function snapshot(): Snapshot {
   };
 }
 
-const ROWS: Array<[string, (s: Snapshot) => string | number]> = [
-  ['inner', (s) => `${s.innerW} x ${s.innerH}`],
-  ['visualViewport', (s) => `${s.visualVpW} x ${s.visualVpH}`],
-  ['screen', (s) => `${s.screenW} x ${s.screenH}`],
-  ['dpr', (s) => s.dpr],
-  ['maxTouchPoints', (s) => s.maxTouch],
-  ['hardwareConcurrency', (s) => s.hwConcurrency],
-  ['deviceMemory(GB)', (s) => s.mem],
-  ['connection', (s) => s.conn],
-  ['online', (s) => (s.online ? 'yes' : 'no')],
-  ['standalone', (s) => (s.standalone ? 'yes' : 'no')],
-  ['lang', (s) => s.lang],
-  ['ts', (s) => s.ts],
-];
+  let rendererName = '?';
+  const ROWS: Array<[string, (s: Snapshot) => string | number]> = [
+    ['inner', (s) => `${s.innerW} x ${s.innerH}`],
+    ['visualViewport', (s) => `${s.visualVpW} x ${s.visualVpH}`],
+    ['screen', (s) => `${s.screenW} x ${s.screenH}`],
+    ['dpr', (s) => s.dpr],
+    ['renderer', () => rendererName],
+    ['maxTouchPoints', (s) => s.maxTouch],
+    ['hardwareConcurrency', (s) => s.hwConcurrency],
+    ['deviceMemory(GB)', (s) => s.mem],
+    ['connection', (s) => s.conn],
+    ['online', (s) => (s.online ? 'yes' : 'no')],
+    ['standalone', (s) => (s.standalone ? 'yes' : 'no')],
+    ['lang', (s) => s.lang],
+    ['ts', (s) => s.ts],
+  ];
 
 export function ScreenSizeDisplay() {
   useEffect(() => {
@@ -72,6 +74,7 @@ export function ScreenSizeDisplay() {
 
     const destroy = startPixiApp((proxy) => {
       if (!mounted) return;
+      rendererName = proxy.renderer.name;
       const W = window.innerWidth;
       const H = window.innerHeight;
       const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
