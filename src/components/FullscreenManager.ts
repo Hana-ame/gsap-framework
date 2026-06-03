@@ -20,7 +20,6 @@ export interface FullscreenManager {
 
 const LERP = 0.15;
 const SNAP = 0.5;
-const CLICK_MS = 300;
 const DRAG_THRESHOLD = 4;
 
 export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManager {
@@ -51,13 +50,11 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   // Zoom & drag
   let zoomed = false;
   let fitScale = 1;
-  let zoomFactor = 2;
   let isDragging = false;
   let dragStartGlobalX = 0;
   let dragStartGlobalY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
-  let clickTimer: ReturnType<typeof setTimeout> | null = null;
 
   const snap = (v: number, t: number) => Math.abs(v - t) < SNAP;
 
@@ -118,7 +115,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   const hide = () => {
     if (!active || destroyed) return;
-    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
     if (animating) {
       proxy.ticker.remove(tick);
       animating = false;
@@ -140,31 +136,8 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     startAnim();
   };
 
-  const toggleZoom = (gx: number, gy: number) => {
-    if (!sprite) return;
-    const pw = window.innerWidth;
-    const ph = window.innerHeight;
-    if (zoomed) {
-      zoomed = false;
-      targetX = pw / 2;
-      targetY = ph / 2;
-      targetScale = fitScale;
-      startAnim();
-    } else {
-      zoomed = true;
-      const zf = zoomFactor;
-      const newScale = fitScale * zf;
-      targetX = pw / 2 + (gx - pw / 2) * (1 - zf);
-      targetY = ph / 2 + (gy - ph / 2) * (1 - zf);
-      targetScale = newScale;
-      clampSprite();
-      startAnim();
-    }
-  };
-
   const show = (ev: FullscreenShowEvent) => {
     if (destroyed) return;
-    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
     if (animating) {
       proxy.ticker.remove(tick);
       animating = false;
@@ -179,8 +152,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     thumbGlobalY = ev.thumbGlobalY;
     thumbW = ev.thumbW;
     thumbH = ev.thumbH;
-    zoomFactor = ev.zoomFactor ?? 2;
-
     const pw = window.innerWidth;
     const ph = window.innerHeight;
     fitScale = Math.min(pw / texW, ph / texH, 1);
@@ -251,7 +222,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       if (dx * dx + dy * dy > DRAG_THRESHOLD * DRAG_THRESHOLD) {
         if (zoomed) {
           isDragging = true;
-          if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
           if (animating) {
             proxy.ticker.remove(tick);
             animating = false;
@@ -274,16 +244,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     if (!active || !sprite) return;
     e.originalEvent?.stopPropagation();
     if (isDragging) { isDragging = false; return; }
-    if (clickTimer) {
-      clearTimeout(clickTimer);
-      clickTimer = null;
-      toggleZoom(dragStartGlobalX, dragStartGlobalY);
-    } else {
-      clickTimer = setTimeout(() => {
-        clickTimer = null;
-        hide();
-      }, CLICK_MS);
-    }
+    hide();
   });
   container.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
@@ -298,7 +259,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      if (clickTimer) clearTimeout(clickTimer);
       if (animating) proxy.ticker.remove(tick);
       unsubShow();
       container.off('globalpointermove');
