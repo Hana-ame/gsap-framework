@@ -1,143 +1,167 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../framework/PixiApp';
-import { createVideoPlayer } from '../../components/PixiVideoPlayer';
-import type { PixiVideoPlayerHandle } from '../../components/PixiVideoPlayer';
+import { createVideoPlayer, createScrollable } from '../../components';
+import type { PixiVideoPlayerHandle, Scrollable } from '../../components';
 import type { SubCanvas } from '../../framework/SubCanvas';
 
-// 稳定、支持跨域且允许 Range 请求的测试 MP4
 const STABLE_MP4_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4';
 
+const HUD_W = 248;
+const HUD_H = 300;
+const LOG_MAX = 100;
+
 export function ComponentVideoPlayerDisplay() {
-  const [log, setLog] = useState<string[]>([]);
-  const logRef = useRef<string[]>([]);
-  const playerRef = useRef<PixiVideoPlayerHandle | null>(null);
-
-  const appendLog = (msg: string) => {
-    const next = [`${new Date().toLocaleTimeString()} ${msg}`, ...logRef.current].slice(0, 10);
-    logRef.current = next;
-    setLog(next);
-  };
-
   useEffect(() => {
     let root: SubCanvas | null = null;
-    let offResize: (() => void) | null = null;
+    let hudRegion: SubCanvas | null = null;
+    let btnRegion: SubCanvas | null = null;
+    let scrollableLog: Scrollable | null = null;
+    let player: PixiVideoPlayerHandle | null = null;
+    const logTexts: PIXI.Text[] = [];
 
     const destroyApp = startPixiApp((proxy) => {
-      root = proxy.createRegion({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight });
+      // full-screen region for everything
+      root = proxy.createRegion({
+        x: 0, y: 0, width: window.innerWidth, height: window.innerHeight,
+      });
 
-      const w = Math.min(window.innerWidth - 40, 640);
-      const h = (w * 9) / 16;
-      const x = (window.innerWidth - w) / 2;
-      const y = (window.innerHeight - h) / 2 - 20;
+      // video player dimensions
+      const vw = Math.min(window.innerWidth - 40, 640);
+      const vh = (vw * 9) / 16;
+      const vx = (window.innerWidth - vw) / 2;
+      const vy = (window.innerHeight - vh) / 2 - 20;
 
-      appendLog(`Mounting video player (${w}x${h})`);
-
-      playerRef.current = createVideoPlayer(root, {
+      player = createVideoPlayer(root, {
         url: STABLE_MP4_URL,
-        x,
-        y,
-        width: w,
-        height: h,
-        autoplay: false,
-        loop: true,
-        muted: false, // 允许出声
+        x: vx, y: vy, width: vw, height: vh,
+        autoplay: false, loop: true, muted: false,
         showControls: true,
-        onLoad: () => appendLog('Video loaded successfully!'),
-        onError: (e) => appendLog(`Error: ${e.message}`),
         onDebug: (msg) => {
-          // 只打印部分关键信息，避免刷屏
-          if (msg.includes('error') || msg.includes('fallback') || msg.includes('done')) {
-            appendLog(`[DBG] ${msg}`);
+          if (!scrollableLog) return;
+          const t = new PIXI.Text({
+            text: `${new Date().toLocaleTimeString()} ${msg}`,
+            style: { fontSize: 10, fill: 0xbbccff, fontFamily: 'monospace' },
+          });
+          logTexts.push(t);
+          scrollableLog.content.addChild(t);
+          let ly = 0;
+          for (const child of scrollableLog.content.children) {
+            (child as PIXI.Text).y = ly;
+            ly += 14;
           }
-        }
+          while (logTexts.length > LOG_MAX) {
+            const old = logTexts.shift();
+            if (old?.parent) old.parent.removeChild(old);
+            old?.destroy();
+          }
+          scrollableLog.recalc();
+          scrollableLog.scrollTo(0, scrollableLog.bounds.height);
+        },
       });
 
-      offResize = proxy.onWindowResize(() => {
-        if (!root) return;
-        root.setBounds({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight });
+      // ── HUD panel as a SubCanvas region ──
+      const hudX = window.innerWidth - HUD_W - 12;
+      const hudY = 12;
+
+      hudRegion = proxy.createRegion({
+        x: hudX,
+        y: hudY,
+        width: HUD_W,
+        height: HUD_H,
       });
+
+      // background
+      const hudBg = new PIXI.Graphics()
+        .roundRect(0, 0, HUD_W, HUD_H, 4)
+        .fill({ color: 0x0d0d18, alpha: 0.92 });
+      hudBg.stroke({ width: 1, color: 0x2a2a3a });
+      hudRegion.stage.addChild(hudBg);
+
+      // title
+      const hudTitle = new PIXI.Text({
+        text: 'PixiVideoPlayer Test',
+        style: { fontSize: 11, fill: 0x88aaff, fontFamily: 'monospace', fontWeight: 'bold' },
+      });
+      hudTitle.x = 8;
+      hudTitle.y = 6;
+      hudRegion.stage.addChild(hudTitle);
+
+      // source line
+      const hudSrc = new PIXI.Text({
+        text: 'Source: MDN (cc0-videos)',
+        style: { fontSize: 9, fill: 0x777, fontFamily: 'monospace' },
+      });
+      hudSrc.x = 8;
+      hudSrc.y = 22;
+      hudRegion.stage.addChild(hudSrc);
+
+      // scrollable log inside HUD region
+      const scX = 6;
+      const scY = 36;
+      const scW = HUD_W - 12;
+      const scH = HUD_H - scY - 6;
+
+      scrollableLog = createScrollable(hudRegion, {
+        width: scW,
+        height: scH,
+        direction: 'vertical',
+        scrollbar: true,
+      });
+      scrollableLog.stage.x = scX;
+      scrollableLog.stage.y = scY;
+
+      // ── external control buttons as a SubCanvas region ──
+      const btnW = 140;
+      const btnH = 28;
+      const btnGap = 6;
+      const totalW = btnW * 2 + btnGap;
+      const btnX = (window.innerWidth - totalW) / 2;
+      const btnY = window.innerHeight - 48;
+
+      btnRegion = proxy.createRegion({
+        x: btnX,
+        y: btnY,
+        width: totalW,
+        height: btnH,
+      });
+
+      function pixiBtn(label: string, xOff: number, onClick: () => void) {
+        const c = new PIXI.Container();
+        c.eventMode = 'static';
+        c.cursor = 'pointer';
+        c.hitArea = new PIXI.Rectangle(0, 0, btnW, btnH);
+        c.x = xOff;
+        const bg = new PIXI.Graphics()
+          .roundRect(0, 0, btnW, btnH, 4)
+          .fill({ color: 0x1a1a2e, alpha: 0.9 });
+        bg.stroke({ width: 1, color: 0x446 });
+        c.addChild(bg);
+        const lbl = new PIXI.Text({
+          text: label,
+          style: { fontSize: 11, fill: 0xffffff, fontFamily: 'monospace' },
+        });
+        lbl.x = (btnW - lbl.width) / 2;
+        lbl.y = (btnH - lbl.height) / 2;
+        c.addChild(lbl);
+        c.on('pointerdown', onClick);
+        btnRegion!.stage.addChild(c);
+      }
+
+      pixiBtn('Ext: Play/Pause', 0, () => player?.toggle());
+      pixiBtn('Ext: Restart', btnW + btnGap, () => player?.seek(0));
     });
 
     return () => {
-      offResize?.();
-      playerRef.current?.destroy();
+      scrollableLog?.destroy();
+      // destroy SubCanvases in reverse order
+      btnRegion?.destroy();
+      hudRegion?.destroy();
       destroyApp();
     };
   }, []);
 
-  return (
-    <>
-      {/* HUD & Logs */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 28,
-          right: 12,
-          maxWidth: 240,
-          background: 'rgba(13, 13, 24, 0.92)',
-          border: '1px solid #2a2a3a',
-          borderRadius: 4,
-          padding: 8,
-          color: '#ddd',
-          fontFamily: 'ui-monospace, monospace',
-          fontSize: 10,
-          lineHeight: 1.4,
-          zIndex: 9999,
-          pointerEvents: 'none',
-        }}
-      >
-        <div style={{ color: '#88aaff', marginBottom: 4, fontWeight: 'bold' }}>PixiVideoPlayer Test</div>
-        <div style={{ color: '#aaa', marginBottom: 8, fontSize: 9 }}>
-          Source: MDN (cc0-videos)
-        </div>
-        {log.map((line, i) => (
-          <div key={i} style={{ color: line.includes('Error') ? '#ff6666' : i === 0 ? '#fff' : '#777' }}>
-            {line}
-          </div>
-        ))}
-      </div>
-
-      {/* External Controls (Optional) */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 24,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: 12,
-          zIndex: 9999,
-        }}
-      >
-        <button
-          onClick={() => playerRef.current?.toggle()}
-          style={{
-            background: '#1a1a2e',
-            border: '1px solid #446',
-            color: '#fff',
-            padding: '6px 16px',
-            borderRadius: 4,
-            cursor: 'pointer',
-          }}
-        >
-          Ext: Play/Pause
-        </button>
-        <button
-          onClick={() => playerRef.current?.seek(0)}
-          style={{
-            background: '#1a1a2e',
-            border: '1px solid #446',
-            color: '#fff',
-            padding: '6px 16px',
-            borderRadius: 4,
-            cursor: 'pointer',
-          }}
-        >
-          Ext: Restart
-        </button>
-      </div>
-    </>
-  );
+  return <></>;
 }
 
 ComponentVideoPlayerDisplay.head = {
