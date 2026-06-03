@@ -53,11 +53,26 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   placeholderText.eventMode = 'none';
   stage.addChild(placeholderText);
 
-  stage.on('pointerdown', () => {
-    if (!loadedTexture) return;
+  // Click-threshold detection: fullscreen fires only on pointerdown+up without drag
+  let downGlobal: { x: number; y: number } | null = null;
+  let downTexture: PIXI.Texture | null = null;
+  let clickCleanup: (() => void) | null = null;
+
+  const cancelClick = () => {
+    if (clickCleanup) { clickCleanup(); clickCleanup = null; }
+    downGlobal = null;
+    downTexture = null;
+  };
+
+  const cleanupListeners = () => {
+    if (clickCleanup) { clickCleanup(); clickCleanup = null; }
+  };
+
+  const emitFullscreen = () => {
+    if (!downTexture) return;
     const gb = parent.globalBounds;
     const ev: FullscreenShowEvent = {
-      texture: loadedTexture,
+      texture: downTexture,
       texW,
       texH,
       thumbGlobalX: gb.x + opts.x,
@@ -69,6 +84,38 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
       zoomFactor: opts.zoomFactor,
     };
     bus.emit('fullscreen:show', ev);
+  };
+
+  const onWinMove = (e: PointerEvent) => {
+    if (!downGlobal) return;
+    const dx = e.clientX - downGlobal.x;
+    const dy = e.clientY - downGlobal.y;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      cancelClick();
+    }
+  };
+
+  const onWinUp = () => {
+    if (downGlobal) {
+      // Click detected (no drag) — emit fullscreen
+      emitFullscreen();
+    }
+    cancelClick();
+  };
+
+  stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+    if (!loadedTexture) return;
+    e.stopPropagation();
+    downGlobal = { x: e.globalX, y: e.globalY };
+    downTexture = loadedTexture;
+    window.addEventListener('pointermove', onWinMove);
+    window.addEventListener('pointerup', onWinUp);
+    window.addEventListener('pointercancel', onWinUp);
+    clickCleanup = () => {
+      window.removeEventListener('pointermove', onWinMove);
+      window.removeEventListener('pointerup', onWinUp);
+      window.removeEventListener('pointercancel', onWinUp);
+    };
   });
 
   const load = (url: string) => {
@@ -100,6 +147,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      cleanupListeners();
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },

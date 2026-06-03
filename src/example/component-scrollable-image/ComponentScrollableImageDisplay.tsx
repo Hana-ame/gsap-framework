@@ -133,19 +133,31 @@ export function ComponentScrollableImageDisplay() {
         applyScroll();
       });
 
-      // drag — uses window listener fallback (same pattern as SubCanvas drag)
+      // Fullscreen state guard — drag only when fullscreen is not active
+      let fullscreenActive = false;
+      const unsubShow = proxy.bus.on('fullscreen:show', () => { fullscreenActive = true; });
+      const unsubHide = proxy.bus.on('fullscreen:hide', () => { fullscreenActive = false; });
+
+      // drag — window-level pointerdown bypasses PIXI event system,
+      // so it works even when starting from a clickable image
       let dragging = false;
       let dragStartGlobalY = 0;
       let dragStartScrollY = 0;
 
-      panel.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+      const onWindowDown = (e: PointerEvent) => {
+        if (fullscreenActive) return;
+        const gb = panel.globalBounds;
+        const gx = e.clientX;
+        const gy = e.clientY;
+        if (gx < gb.x || gx > gb.x + gb.width) return;
+        if (gy < gb.y || gy > gb.y + gb.height) return;
         dragging = true;
-        dragStartGlobalY = e.globalY;
+        dragStartGlobalY = gy;
         dragStartScrollY = scrollY;
         window.addEventListener('pointermove', onWindowMove);
         window.addEventListener('pointerup', onWindowUp);
         window.addEventListener('pointercancel', onWindowUp);
-      });
+      };
 
       const onWindowMove = (e: PointerEvent) => {
         if (!dragging) return;
@@ -160,6 +172,8 @@ export function ComponentScrollableImageDisplay() {
         window.removeEventListener('pointerup', onWindowUp);
         window.removeEventListener('pointercancel', onWindowUp);
       };
+
+      window.addEventListener('pointerdown', onWindowDown);
 
       // scrollbar
       const scrollbar = new PIXI.Graphics();
@@ -180,9 +194,12 @@ export function ComponentScrollableImageDisplay() {
       return () => {
         imgs.forEach((img) => img.destroy());
         fm.destroy();
+        window.removeEventListener('pointerdown', onWindowDown);
         window.removeEventListener('pointermove', onWindowMove);
         window.removeEventListener('pointerup', onWindowUp);
         window.removeEventListener('pointercancel', onWindowUp);
+        unsubShow();
+        unsubHide();
       };
     });
     return stop;

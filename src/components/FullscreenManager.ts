@@ -133,6 +133,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       container.visible = false;
       destroyOverlay();
       if (sprite) { container.removeChild(sprite); sprite.destroy(); sprite = null; }
+      proxy.bus.emit('fullscreen:hide');
     };
     startAnim();
   };
