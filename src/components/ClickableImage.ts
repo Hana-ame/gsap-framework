@@ -24,6 +24,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   stage.x = opts.x;
   stage.y = opts.y;
   stage.eventMode = 'static';
+  stage.hitArea = new PIXI.Rectangle(0, 0, opts.width, opts.height);
   stage.cursor = 'pointer';
   parent.stage.addChild(stage);
 
@@ -90,19 +91,6 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     }
   };
 
-  const goToThumb = () => {
-    if (!sprite) return;
-    expanded = false;
-    targetX = opts.x;
-    targetY = opts.y;
-    targetSpriteX = thumbW / 2;
-    targetSpriteY = thumbH / 2;
-    targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
-    stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
-    stage.cursor = 'pointer';
-    startAnim();
-  };
-
   const goFullScreen = () => {
     if (!sprite) return;
     const pw = parent.bounds.width;
@@ -115,7 +103,21 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     targetScale = Math.min(pw / texW, ph / texH, 1);
     stage.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
     stage.cursor = 'pointer';
-    stage.parent?.addChild(stage);
+    parent.rootApp.stage.addChild(stage);
+    startAnim();
+  };
+
+  const goToThumb = () => {
+    if (!sprite) return;
+    expanded = false;
+    targetX = opts.x;
+    targetY = opts.y;
+    targetSpriteX = thumbW / 2;
+    targetSpriteY = thumbH / 2;
+    targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
+    stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
+    stage.cursor = 'pointer';
+    parent.stage.addChild(stage);
     startAnim();
   };
 

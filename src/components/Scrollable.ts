@@ -32,6 +32,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
 
   const stage = new PIXI.Container();
   stage.eventMode = 'static';
+  stage.hitArea = new PIXI.Rectangle(0, 0, w, h);
   parent.stage.addChild(stage);
 
   const mask = new PIXI.Graphics().rect(0, 0, w, h);

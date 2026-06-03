@@ -29,7 +29,7 @@ export function ComponentClickableImageDisplay() {
       scRef.current = sc;
 
       const header = new PIXI.Text({
-        text: 'ClickableImage — click: fit · double-click: zoom · drag: pan',
+        text: 'ClickableImage — click: expand to full viewport · click again: return to thumb',
         style: { fontSize: 14, fill: 0x88aaff, fontFamily: 'monospace' },
       });
       header.x = GAP;

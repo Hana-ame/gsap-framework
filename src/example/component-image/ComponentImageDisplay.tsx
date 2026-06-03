@@ -28,8 +28,8 @@ const SOURCES: Omit<Slot, 'status'>[] = [
   },
   {
     label: 'D · network error',
-    url: 'https://httpbin.org/status/404',
-    note: '404 → error placeholder',
+    url: 'https://0.0.0.0/nonexistent.jpg',
+    note: 'connection refused → error placeholder',
   },
 ];
 
