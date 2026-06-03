@@ -45,9 +45,9 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
 
   let t = 0;
   let removed = false;
-  const tick = (delta: { deltaMS: number }) => {
+  const tick = (ticker: PIXI.Ticker) => {
     if (removed) return;
-    t += delta.deltaMS / 1000;
+    t += ticker.deltaMS / 1000;
     spinner.clear();
     for (let i = 0; i < 8; i++) {
       const a = (i / 8) * Math.PI * 2 - t * 2;
