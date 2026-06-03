@@ -79,7 +79,7 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     t.y = (opts.height - t.height) / 2;
     t.eventMode = 'none';
     c.addChild(t);
-    const mask = new PIXI.Graphics().rect(0, 0, opts.width, opts.height);
+    const mask = new PIXI.Graphics().rect(0, 0, opts.width, opts.height).fill({ color: 0xffffff });
     c.addChild(mask);
     c.mask = mask;
     container.addChild(c);

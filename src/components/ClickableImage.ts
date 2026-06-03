@@ -93,8 +93,8 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const goFullScreen = () => {
     if (!sprite) return;
-    const pw = parent.bounds.width;
-    const ph = parent.bounds.height;
+    const pw = window.innerWidth;
+    const ph = window.innerHeight;
     expanded = true;
     targetX = 0;
     targetY = 0;
