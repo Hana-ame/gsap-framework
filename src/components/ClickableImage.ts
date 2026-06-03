@@ -305,8 +305,24 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
       animating = false;
       onAnimDone = null;
     }
-    // Snap to current position, then go to thumb
-    goToThumb();
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    expanded = false;
+    zoomed = false;
+    destroyOverlay();
+    if (stage.parent && stage.parent !== parent.stage) {
+      stage.parent.removeChild(stage);
+    }
+    stage.x = opts.x;
+    stage.y = opts.y;
+    stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
+    stage.cursor = 'pointer';
+    if (sprite) {
+      sprite.anchor.set(0.5);
+      sprite.x = thumbW / 2;
+      sprite.y = thumbH / 2;
+      sprite.scale.set(Math.min(thumbW / texW, thumbH / texH, 1));
+    }
+    parent.stage.addChild(stage);
   };
 
   const load = (url: string) => {
