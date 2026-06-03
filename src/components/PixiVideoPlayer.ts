@@ -67,6 +67,7 @@ export function createVideoPlayer(
   let destroyed = false;
   let videoTexture: PIXI.Texture | null = null;
   let htmlVideo: HTMLVideoElement | null = null;
+  let objectUrl: string | null = null; // 用于存放 blob url 以便销毁时释放内存
   let paused = true;
   let duration = 0;
   let seeking = false;
@@ -84,26 +85,22 @@ export function createVideoPlayer(
   root.y = y;
   parent.stage.addChild(root);
 
-  // clip mask
   const mask = new PIXI.Graphics()
     .rect(0, 0, width, height)
     .fill({ color: 0xffffff });
   root.addChild(mask);
   root.mask = mask;
 
-  // hover hit (placed before controls so controls render on top)
   const hoverHit = new PIXI.Container();
   hoverHit.eventMode = 'static';
   hoverHit.hitArea = new PIXI.Rectangle(0, 0, width, height);
   root.addChild(hoverHit);
 
-  // placeholder background
   const bg = new PIXI.Graphics()
     .rect(0, 0, width, height)
     .fill({ color: 0x1a1a2e });
   root.addChild(bg);
 
-  // video sprite
   const videoSprite = new PIXI.Sprite();
   root.addChild(videoSprite);
 
@@ -132,13 +129,11 @@ export function createVideoPlayer(
   ctrl.y = height - CTRL_H;
   root.addChild(ctrl);
 
-  // bar background
   const ctrlBg = new PIXI.Graphics()
     .rect(0, 0, width, CTRL_H)
     .fill({ color: 0x0a0a14, alpha: 0.85 });
   ctrl.addChild(ctrlBg);
 
-  // ── play/pause button ──
   const playBtn = new PIXI.Container();
   playBtn.eventMode = 'static';
   playBtn.cursor = 'pointer';
@@ -174,7 +169,6 @@ export function createVideoPlayer(
   drawPlayIcon(false);
   ctrl.addChild(playBtn);
 
-  // ── time text ──
   const timeText = new PIXI.Text({
     text: '--:-- / --:--',
     style: { fontSize: 11, fill: 0xcccccc, fontFamily: 'monospace' },
@@ -183,7 +177,6 @@ export function createVideoPlayer(
   timeText.y = (CTRL_H - timeText.height) / 2;
   ctrl.addChild(timeText);
 
-  // ── progress bar ──
   const barX = CTRL_H + 6;
   const barY = CTRL_H / 2 - 3;
   const barW = width - barX - TIME_W - 16;
@@ -206,14 +199,12 @@ export function createVideoPlayer(
     }
   }
 
-  // seek hit area
   const seekHit = new PIXI.Container();
   seekHit.eventMode = 'static';
   seekHit.cursor = 'pointer';
   seekHit.hitArea = new PIXI.Rectangle(barX, barY - 4, barW, barH + 8);
   ctrl.addChild(seekHit);
 
-  // ── events ──
   function onSeekDown(e: PIXI.FederatedPointerEvent) {
     if (!htmlVideo || duration <= 0) return;
     seeking = true;
@@ -229,8 +220,6 @@ export function createVideoPlayer(
 
   function onWinMove(e: PointerEvent) {
     if (!seeking || !htmlVideo) return;
-
-    // convert DOM clientX to PIXI global coordinate
     const canvas = parent.canvas;
     const rect = canvas.getBoundingClientRect();
     const res = parent.rootApp.renderer.resolution || 1;
@@ -276,7 +265,6 @@ export function createVideoPlayer(
     doPlayAction();
   });
 
-  // ── controls show/hide ──
   function showCtrlsTmp() {
     ctrl.visible = true;
     if (hideTimer) clearTimeout(hideTimer);
@@ -292,7 +280,7 @@ export function createVideoPlayer(
   ctrl.visible = showControlsOpt;
   if (showControlsOpt) showCtrlsTmp();
 
-  // ── helpers: custom video element loader (bypass PIXI.Assets.load for detailed error info) ──
+  // ── helpers ──
   function mediaErrorReason(video: HTMLVideoElement): string {
     const code = video.error?.code;
     if (code === MediaError.MEDIA_ERR_ABORTED) return 'ABORTED(1)';
@@ -302,6 +290,7 @@ export function createVideoPlayer(
     return `unknown(${code})`;
   }
 
+  // 核心修复区：原生加载 + 智能 Fetch Blob 降级
   function loadVideoElement(): Promise<HTMLVideoElement> {
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');
@@ -316,12 +305,54 @@ export function createVideoPlayer(
         dbg(`video canplay readyState=${video.readyState} w=${video.videoWidth} h=${video.videoHeight}`);
         resolve(video);
       };
-      const onError = () => {
+
+      const onError = async () => {
         cleanup();
         const reason = mediaErrorReason(video);
         dbg(`video error code=${video.error?.code} reason=${reason}`);
+
+        // 当因为代理 Range/MimeType 支持不好导致抛出不可读错误时，立刻启动 fetch 降级机制
+        if (video.error?.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || video.error?.code === MediaError.MEDIA_ERR_NETWORK) {
+          dbg('Attempting Blob fetch fallback to bypass proxy strictness...');
+          try {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+            const rawBlob = await resp.blob();
+            // 关键：强制类型重写，防止代理服务器返回的 application/octet-stream 毒害 Blob
+            const mp4Blob = new Blob([rawBlob], { type: 'video/mp4' });
+            objectUrl = URL.createObjectURL(mp4Blob);
+
+            const fbVideo = document.createElement('video');
+            fbVideo.preload = 'auto';
+            fbVideo.muted = muted;
+            fbVideo.loop = loop;
+            fbVideo.playsInline = true;
+            // 降级使用本地 blob 时不能加 crossOrigin，否则安全策略会报错
+
+            fbVideo.addEventListener('canplay', () => {
+              dbg(`Blob video canplay w=${fbVideo.videoWidth} h=${fbVideo.videoHeight}`);
+              resolve(fbVideo);
+            }, { once: true });
+
+            fbVideo.addEventListener('error', () => {
+              reject(new Error(`Blob VideoError: ${mediaErrorReason(fbVideo)}`));
+            }, { once: true });
+
+            fbVideo.src = objectUrl;
+            fbVideo.load();
+            return;
+          } catch (fetchErr) {
+            const errStr = fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+            dbg(`Blob fetch fallback failed: ${errStr}`);
+            reject(new Error(`VideoError: ${reason} (Blob fallback failed: ${errStr})`));
+            return;
+          }
+        }
+
         reject(new Error(`VideoError: ${reason}`));
       };
+
       function cleanup() {
         video.removeEventListener('canplay', onCanPlay);
         video.removeEventListener('error', onError);
@@ -330,7 +361,7 @@ export function createVideoPlayer(
       video.addEventListener('canplay', onCanPlay);
       video.addEventListener('error', onError);
 
-      // Check if already ready (cached)
+      // 检查如果已缓存直接放行
       if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA && video.videoWidth > 0) {
         cleanup();
         resolve(video);
@@ -394,13 +425,11 @@ export function createVideoPlayer(
       cpb.visible = true;
     });
 
-    // initial UI sync
     curTime = htmlVideo.currentTime;
     if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
     const initPct = duration > 0 ? curTime / duration : 0;
     drawProgress(initPct);
     timeText.text = `${fmt(curTime)} / ${fmt(duration)}`;
-    dbg(`initial sync curTime=${curTime} duration=${duration} pct=${initPct}`);
   }
 
   // ── loading ──
@@ -408,7 +437,6 @@ export function createVideoPlayer(
     dbg(`loadAndPlay forcePlay=${forcePlay} isLoading=${isLoading} loadCancelled=${loadCancelled} htmlVideo=${!!htmlVideo}`);
     if (loadCancelled || isLoading) return;
 
-    // already loaded — just play if needed
     if (htmlVideo) {
       dbg('loadAndPlay: already loaded, just play');
       if (autoplay || forcePlay) htmlVideo.play().catch(() => {});
@@ -428,7 +456,6 @@ export function createVideoPlayer(
         return;
       }
 
-      // Create PIXI VideoSource + Texture from the loaded video element
       const source = new PIXI.VideoSource({
         resource: video,
         autoPlay: false,
@@ -441,7 +468,6 @@ export function createVideoPlayer(
       dbg('VideoSource.load() done');
 
       const texture = new PIXI.Texture({ source });
-
       videoTexture = texture;
       videoSprite.texture = texture;
       videoSprite.width = width;
@@ -453,7 +479,6 @@ export function createVideoPlayer(
       if (autoplay || forcePlay) {
         dbg('calling htmlVideo.play()...');
         await htmlVideo.play().catch((e: Error) => dbg(`play() rejected: ${e.message}`));
-        dbg(`htmlVideo.play() done paused=${htmlVideo.paused}`);
       } else {
         htmlVideo.pause();
         paused = true;
@@ -469,8 +494,8 @@ export function createVideoPlayer(
       onError?.(err instanceof Error ? err : new Error(msg));
 
       const errText = new PIXI.Text({
-        text: 'Video load failed: ' + (err instanceof Error ? err.message : 'unknown'),
-        style: { fontSize: 14, fill: 0xff6666, fontFamily: 'monospace' },
+        text: 'Video load failed: \n' + msg,
+        style: { fontSize: 11, fill: 0xff6666, fontFamily: 'monospace' },
       });
       errText.x = (width - errText.width) / 2;
       errText.y = (height - errText.height) / 2;
@@ -519,6 +544,10 @@ export function createVideoPlayer(
       if (videoTexture) {
         try { videoTexture.destroy(); } catch { /* ok */ }
         videoTexture = null;
+      }
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+        objectUrl = null;
       }
       if (root.parent) {
         root.parent.removeChild(root);
