@@ -23,6 +23,7 @@ const APPS: AppEntry[] = [
   { route: 'component-scrollable', label: 'Component: Scrollable', hint: 'wheel / drag / touch / scrollbar', glyph: '\u21F5', accent: '#6a4a3a' },
   { route: 'component-clickable-image', label: 'Component: ClickableImage', hint: 'click zoom / double-click / drag pan', glyph: '\u2316', accent: '#3a6a6a' },
   { route: 'component-scrollable-image', label: 'Component: ScrollableImage', hint: 'scrollable gallery + fullscreen viewer', glyph: '\u29C9', accent: '#5a3a5a' },
+  { route: 'component-picture-drag', label: 'Component: PictureDrag', hint: 'draggable picture + click position via bus', glyph: '\u29D6', accent: '#4a5a3a' },
 ];
 
 function accentToText(hex: string): string {
