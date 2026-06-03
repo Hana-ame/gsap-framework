@@ -56,7 +56,7 @@ export function ComponentPictureDragDisplay() {
         PIXI.Assets.load({ src: IMG_URL }).then((texture: PIXI.Texture) => {
           if (pic.destroyed) return;
           if (!texture || texture.width === 0 || texture.height === 0) return;
-          if (sprite) { imgLayer.removeChild(sprite); sprite.destroy(); }
+          if (sprite) { sprite.destroy(); }
           sprite = new PIXI.Sprite(texture);
           sprite.eventMode = 'none';
           const scale = Math.min(PIC_W / texture.width, PIC_H / texture.height, 1);
@@ -82,21 +82,53 @@ export function ComponentPictureDragDisplay() {
         dot.visible = true;
       };
 
-      // click — AABB routing, does not interfere with PIXI drag handle
-      pic.onPress((e) => {
-        const pos = { x: e.x, y: e.y };
-        info.text = `clicked at (${pos.x.toFixed(0)}, ${pos.y.toFixed(0)})`;
-        showDot(pos.x, pos.y);
-        proxy.bus.emit('picture:click', pos);
-      });
+      // Click detection via window-level listeners (independent of PIXI drag system).
+      // On pointerdown inside bounds: record position relative to SubCanvas.
+      // On pointerup: only if pointer stayed within 4px of start (no drag), treat as click.
+      let downGlobal: { x: number; y: number } | null = null;
+      let downLocal: { x: number; y: number } | null = null;
 
-      const unsub = proxy.bus.on('picture:click', () => {
-        // bus available for external hooks
-      });
+      const onDown = (e: PointerEvent) => {
+        const gb = pic.globalBounds;
+        const gx = e.clientX;
+        const gy = e.clientY;
+        if (gx < gb.x || gx > gb.x + gb.width) return;
+        if (gy < gb.y || gy > gb.y + gb.height) return;
+        downGlobal = { x: gx, y: gy };
+        downLocal = { x: gx - gb.x, y: gy - gb.y };
+      };
+
+      const onUp = (e: PointerEvent) => {
+        if (!downGlobal) return;
+        const dx = e.clientX - downGlobal.x;
+        const dy = e.clientY - downGlobal.y;
+        if (Math.abs(dx) <= 4 && Math.abs(dy) <= 4) {
+          const pos = downLocal!;
+          info.text = `clicked at (${pos.x.toFixed(0)}, ${pos.y.toFixed(0)})`;
+          showDot(pos.x, pos.y);
+          proxy.bus.emit('picture:click', pos);
+        }
+        downGlobal = null;
+        downLocal = null;
+      };
+
+      const onCancel = () => {
+        downGlobal = null;
+        downLocal = null;
+      };
+
+      window.addEventListener('pointerdown', onDown);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onCancel);
+
+      const unsub = proxy.bus.on('picture:click', () => {});
 
       return () => {
         unsub();
-        if (sprite) { imgLayer.removeChild(sprite); sprite.destroy(); }
+        window.removeEventListener('pointerdown', onDown);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onCancel);
+        if (sprite) { sprite.destroy(); }
         pic.destroy();
       };
     });
