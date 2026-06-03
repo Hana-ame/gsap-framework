@@ -33,7 +33,7 @@ function BackButton() {
 
 export function ExampleApp() {
   const example = useHashExample();
-  if (example === DEFAULT_EXAMPLE || !example) {
+  if (!example) {
     return <LauncherDisplay />;
   }
   const C = exampleMap[example];
