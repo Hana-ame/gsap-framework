@@ -16,8 +16,6 @@ export interface ClickableImage {
   readonly destroyed: boolean;
 }
 
-type Mode = 'thumb' | 'fit' | 'zoom';
-
 const LERP = 0.15;
 const SNAP = 0.5;
 
@@ -31,14 +29,14 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const thumbW = opts.width;
   const thumbH = opts.height;
-  let mode: Mode = 'thumb';
+  let expanded = false;
   let sprite: PIXI.Sprite | null = null;
   let texW = 0;
   let texH = 0;
   let destroyed = false;
 
-  let targetStageX = opts.x;
-  let targetStageY = opts.y;
+  let targetX = opts.x;
+  let targetY = opts.y;
   let targetSpriteX = thumbW / 2;
   let targetSpriteY = thumbH / 2;
   let targetScale = 1;
@@ -60,36 +58,23 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   placeholderText.eventMode = 'none';
   stage.addChild(placeholderText);
 
-  const hitArea = new PIXI.Graphics().rect(0, 0, thumbW, thumbH);
-  hitArea.eventMode = 'none';
-  stage.addChild(hitArea);
-
-  const fitScale = () => {
-    if (!sprite) return 1;
-    const pw = parent.bounds.width;
-    const ph = parent.bounds.height;
-    return Math.min(pw / texW, ph / texH, 2);
-  };
-
-  const zoomScale = () => fitScale() * 2;
-
-  const snap = (v: number, target: number) => Math.abs(v - target) < SNAP;
+  const snap = (v: number, t: number) => Math.abs(v - t) < SNAP;
 
   const tick = () => {
     if (!sprite || destroyed) return;
-    stage.x += (targetStageX - stage.x) * LERP;
-    stage.y += (targetStageY - stage.y) * LERP;
+    stage.x += (targetX - stage.x) * LERP;
+    stage.y += (targetY - stage.y) * LERP;
     sprite.x += (targetSpriteX - sprite.x) * LERP;
     sprite.y += (targetSpriteY - sprite.y) * LERP;
     const cs = sprite.scale.x;
     sprite.scale.set(cs + (targetScale - cs) * LERP);
     if (
-      snap(stage.x, targetStageX) && snap(stage.y, targetStageY) &&
+      snap(stage.x, targetX) && snap(stage.y, targetY) &&
       snap(sprite.x, targetSpriteX) && snap(sprite.y, targetSpriteY) &&
       snap(sprite.scale.x, targetScale)
     ) {
-      stage.x = targetStageX;
-      stage.y = targetStageY;
+      stage.x = targetX;
+      stage.y = targetY;
       sprite.x = targetSpriteX;
       sprite.y = targetSpriteY;
       sprite.scale.set(targetScale);
@@ -105,90 +90,43 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     }
   };
 
-  const applyMode = () => {
+  const goToThumb = () => {
     if (!sprite) return;
-    const pw = parent.bounds.width;
-    const ph = parent.bounds.height;
-    sprite.anchor.set(0.5);
-    if (mode === 'thumb') {
-      targetStageX = opts.x;
-      targetStageY = opts.y;
-      targetSpriteX = thumbW / 2;
-      targetSpriteY = thumbH / 2;
-      targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
-      stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
-      stage.cursor = 'pointer';
-    } else {
-      targetStageX = 0;
-      targetStageY = 0;
-      targetSpriteX = pw / 2;
-      targetSpriteY = ph / 2;
-      targetScale = mode === 'fit' ? fitScale() : zoomScale();
-      stage.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
-      stage.cursor = 'grab';
-    }
+    expanded = false;
+    targetX = opts.x;
+    targetY = opts.y;
+    targetSpriteX = thumbW / 2;
+    targetSpriteY = thumbH / 2;
+    targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
+    stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
+    stage.cursor = 'pointer';
     startAnim();
   };
 
-  let clickTimer: ReturnType<typeof setTimeout> | null = null;
-  let dragging = false;
-  let dragStartX = 0;
-  let dragStartY = 0;
-  let origX = 0;
-  let origY = 0;
+  const goFullScreen = () => {
+    if (!sprite) return;
+    const pw = parent.bounds.width;
+    const ph = parent.bounds.height;
+    expanded = true;
+    targetX = 0;
+    targetY = 0;
+    targetSpriteX = pw / 2;
+    targetSpriteY = ph / 2;
+    targetScale = Math.min(pw / texW, ph / texH, 1);
+    stage.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
+    stage.cursor = 'pointer';
+    stage.parent?.addChild(stage);
+    startAnim();
+  };
 
-  stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-    if (mode === 'thumb') {
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-        clickTimer = null;
-        mode = 'zoom';
-      } else {
-        clickTimer = setTimeout(() => {
-          clickTimer = null;
-          mode = 'fit';
-          applyMode();
-        }, 250);
-      }
+  stage.on('pointerdown', () => {
+    if (!sprite) return;
+    if (expanded) {
+      goToThumb();
     } else {
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-        clickTimer = null;
-        mode = 'thumb';
-      } else {
-        clickTimer = setTimeout(() => {
-          clickTimer = null;
-        }, 250);
-      }
-      dragging = true;
-      dragStartX = e.globalX;
-      dragStartY = e.globalY;
-      origX = sprite?.x ?? targetSpriteX;
-      origY = sprite?.y ?? targetSpriteY;
-      stage.cursor = 'grabbing';
+      goFullScreen();
     }
-    applyMode();
   });
-
-  const onMove = (e: PIXI.FederatedPointerEvent) => {
-    if (!dragging || !sprite) return;
-    const dx = e.globalX - dragStartX;
-    const dy = e.globalY - dragStartY;
-    targetSpriteX = origX + dx;
-    targetSpriteY = origY + dy;
-    sprite.x = targetSpriteX;
-    sprite.y = targetSpriteY;
-  };
-
-  const onUp = () => {
-    dragging = false;
-    if (mode !== 'thumb') stage.cursor = 'grab';
-  };
-
-  stage.on('pointermove', onMove);
-  stage.on('pointerup', onUp);
-  stage.on('pointerupoutside', onUp);
-  stage.on('pointercancel', onUp);
 
   const load = (url: string) => {
     PIXI.Assets.load(url).then((texture) => {
@@ -197,13 +135,16 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
       if (sprite) { sprite.destroy(); sprite = null; }
       placeholder.destroy();
       placeholderText.destroy();
-      hitArea.destroy();
       texW = texture.width;
       texH = texture.height;
       sprite = new PIXI.Sprite(texture);
       sprite.eventMode = 'none';
+      sprite.anchor.set(0.5);
+      sprite.x = thumbW / 2;
+      sprite.y = thumbH / 2;
+      sprite.scale.set(Math.min(thumbW / texW, thumbH / texH, 1));
       stage.addChild(sprite);
-      applyMode();
+      stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
     }).catch(() => {});
   };
 
@@ -218,12 +159,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      if (clickTimer) clearTimeout(clickTimer);
       if (animating) parent.ticker.remove(tick);
-      stage.off('pointermove', onMove);
-      stage.off('pointerup', onUp);
-      stage.off('pointerupoutside', onUp);
-      stage.off('pointercancel', onUp);
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },
