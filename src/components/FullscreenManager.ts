@@ -162,9 +162,18 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   const show = (ev: FullscreenShowEvent) => {
     if (destroyed) return;
-    hide(); // close any current view first
+    // Immediate teardown — do NOT call hide() which starts async animation.
+    // A stale hide animation's onAnimDone would override active/sprite set below.
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    if (animating) {
+      proxy.ticker.remove(tick);
+      animating = false;
+      onAnimDone = null;
+    }
     if (sprite) { container.removeChild(sprite); sprite.destroy(); sprite = null; }
     destroyOverlay();
+    zoomed = false;
+    isDragging = false;
 
     texW = ev.texW;
     texH = ev.texH;
