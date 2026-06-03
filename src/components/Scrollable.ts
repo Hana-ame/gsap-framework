@@ -38,6 +38,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
   stage.addChild(mask);
 
   const content = new PIXI.Container();
+  content.eventMode = 'none';
   content.mask = mask;
   stage.addChild(content);
 

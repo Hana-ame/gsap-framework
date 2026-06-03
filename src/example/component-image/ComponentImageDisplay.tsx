@@ -41,6 +41,7 @@ export function ComponentImageDisplay() {
   const [slots, setSlots] = useState<Slot[]>(() =>
     SOURCES.map((s) => ({ ...s, status: 'idle' })),
   );
+  const [errorHint, setErrorHint] = useState(true);
   const slotRefs = useRef<(SubCanvas | null)[]>([]);
   const handleRefs = useRef<(PixiImageHandle | null)[]>([]);
 
@@ -109,6 +110,7 @@ export function ComponentImageDisplay() {
         y: 4,
         width: SLOT_W - 8,
         height: SLOT_H - 8,
+        showErrorHint: true,
         onLoad: () => {
           setSlots((arr) =>
             arr.map((s, idx) => (idx === i ? { ...s, status: 'loaded' } : s)),
@@ -133,6 +135,14 @@ export function ComponentImageDisplay() {
     setSlots((arr) =>
       arr.map((s, idx) => (idx === i ? { ...s, status: 'idle' } : s)),
     );
+  }, []);
+
+  const toggleErrorHint = useCallback(() => {
+    setErrorHint((prev) => {
+      const next = !prev;
+      handleRefs.current.forEach((h) => h?.setErrorHintVisible(next));
+      return next;
+    });
   }, []);
 
   return (
@@ -164,6 +174,12 @@ export function ComponentImageDisplay() {
               </button>
             </div>
           ))}
+          <div className="row" style={{ marginTop: 10 }}>
+            <span className="tag">error hint</span>
+            <button className="btn" onClick={toggleErrorHint}>
+              {errorHint ? 'ON' : 'OFF'}
+            </button>
+          </div>
         </div>
       </div>
     </>

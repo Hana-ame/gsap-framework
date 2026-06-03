@@ -21,6 +21,7 @@ const APPS: AppEntry[] = [
   { route: 'component-loading', label: 'Component: Loading', hint: 'showLoading + custom color', glyph: '\u21BB', accent: '#5a6a3a' },
   { route: 'component-bus', label: 'Component: Bus', hint: 'EventBus pub-sub', glyph: '\u21C4', accent: '#3a6a4a' },
   { route: 'component-scrollable', label: 'Component: Scrollable', hint: 'wheel / drag / touch / scrollbar', glyph: '\u21F5', accent: '#6a4a3a' },
+  { route: 'component-clickable-image', label: 'Component: ClickableImage', hint: 'click zoom / double-click / drag pan', glyph: '\u2316', accent: '#3a6a6a' },
 ];
 
 function accentToText(hex: string): string {

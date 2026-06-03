@@ -20,12 +20,14 @@ export interface PixiImageOptions {
   placeholderBg?: number;
   placeholderBorder?: number;
   placeholderTextColor?: number;
+  showErrorHint?: boolean;
   onLoad?: (texture: PIXI.Texture) => void;
   onError?: (err: Error) => void;
 }
 
 export interface PixiImageHandle {
   setUrl(url: string): void;
+  setErrorHintVisible(visible: boolean): void;
   destroy(): void;
   readonly destroyed: boolean;
   readonly container: PIXI.Container;
@@ -48,6 +50,8 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
   let sprite: PIXI.Sprite | null = null;
   let currentToken = 0;
   let destroyed = false;
+  let errorHintVisible = opts.showErrorHint ?? true;
+  let lastError: string | null = null;
 
   const buildPlaceholder = (text: string, color: number) => {
     if (placeholder) {
@@ -102,14 +106,24 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     sprite = s;
   };
 
+  const buildError = (msg: string) => {
+    lastError = msg;
+    if (errorHintVisible) {
+      buildPlaceholder(`(load failed: ${msg})`, DEFAULT_ERROR_COLOR);
+    } else {
+      buildPlaceholder('(load failed)', DEFAULT_ERROR_COLOR);
+    }
+  };
+
   const load = (url: string) => {
     const token = ++currentToken;
+    lastError = null;
     buildPlaceholder(opts.placeholderText ?? 'loading...', phTextColor);
     PIXI.Assets.load(url)
       .then((texture) => {
         if (destroyed || token !== currentToken) return;
         if (!texture || texture.width === 0 || texture.height === 0) {
-          buildPlaceholder('(load failed: empty texture)', DEFAULT_ERROR_COLOR);
+          buildError('empty texture');
           opts.onError?.(new Error('empty texture'));
           return;
         }
@@ -119,7 +133,7 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
       .catch((err: unknown) => {
         if (destroyed || token !== currentToken) return;
         const msg = err instanceof Error ? err.message : String(err);
-        buildPlaceholder(`(load failed: ${msg})`, DEFAULT_ERROR_COLOR);
+        buildError(msg);
         opts.onError?.(err instanceof Error ? err : new Error(msg));
       });
   };
@@ -130,6 +144,17 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     setUrl(url: string) {
       if (destroyed) return;
       load(url);
+    },
+    setErrorHintVisible(visible: boolean) {
+      if (destroyed) return;
+      errorHintVisible = visible;
+      if (lastError) {
+        if (visible) {
+          buildPlaceholder(`(load failed: ${lastError})`, DEFAULT_ERROR_COLOR);
+        } else {
+          buildPlaceholder('(load failed)', DEFAULT_ERROR_COLOR);
+        }
+      }
     },
     destroy() {
       if (destroyed) return;
