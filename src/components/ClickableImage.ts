@@ -20,7 +20,7 @@ export interface ClickableImage {
 
 const LERP = 0.15;
 const SNAP = 0.5;
-const DBL_CLICK_MS = 300;
+
 
 export function createClickableImage(parent: SubCanvas, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
@@ -39,7 +39,6 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   let texH = 0;
   let destroyed = false;
   let overlay: PIXI.Graphics | null = null;
-  let clickTimer: ReturnType<typeof setTimeout> | null = null;
 
   let targetX = opts.x;
   let targetY = opts.y;
@@ -98,7 +97,6 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
 
   const destroyOverlay = () => {
     if (!overlay) return;
-    overlay.off('pointerdown');
     if (overlay.parent) overlay.parent.removeChild(overlay);
     overlay.destroy();
     overlay = null;
@@ -113,14 +111,9 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     const ovColor = opts.overlayColor ?? 0x000000;
     const ovAlpha = opts.overlayAlpha ?? 0.6;
     overlay = new PIXI.Graphics();
-    overlay.eventMode = 'static';
-    overlay.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
     overlay.rect(0, 0, pw, ph).fill({ color: ovColor, alpha: ovAlpha });
-    overlay.cursor = 'pointer';
+    overlay.eventMode = 'none';
     parent.rootApp.stage.addChildAt(overlay, 0);
-    overlay.on('pointerdown', () => {
-      if (expanded) goToThumb();
-    });
 
     targetX = 0;
     targetY = 0;
@@ -152,16 +145,8 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     if (!sprite) return;
     if (expanded) {
       goToThumb();
-      return;
-    }
-    if (clickTimer) {
-      clearTimeout(clickTimer);
-      clickTimer = null;
-      goFullScreen();
     } else {
-      clickTimer = setTimeout(() => {
-        clickTimer = null;
-      }, DBL_CLICK_MS);
+      goFullScreen();
     }
   });
 
@@ -196,7 +181,6 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      if (clickTimer) clearTimeout(clickTimer);
       if (animating) parent.ticker.remove(tick);
       destroyOverlay();
       if (stage.parent) stage.parent.removeChild(stage);
