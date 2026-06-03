@@ -7,6 +7,8 @@ export interface ClickableImageOptions {
   y: number;
   width: number;
   height: number;
+  overlayColor?: number;
+  overlayAlpha?: number;
 }
 
 export interface ClickableImage {
@@ -18,6 +20,7 @@ export interface ClickableImage {
 
 const LERP = 0.15;
 const SNAP = 0.5;
+const DBL_CLICK_MS = 300;
 
 export function createClickableImage(parent: SubCanvas, opts: ClickableImageOptions): ClickableImage {
   const stage = new PIXI.Container();
@@ -35,6 +38,8 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   let texW = 0;
   let texH = 0;
   let destroyed = false;
+  let overlay: PIXI.Graphics | null = null;
+  let clickTimer: ReturnType<typeof setTimeout> | null = null;
 
   let targetX = opts.x;
   let targetY = opts.y;
@@ -91,11 +96,32 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     }
   };
 
+  const destroyOverlay = () => {
+    if (!overlay) return;
+    overlay.off('pointerdown');
+    if (overlay.parent) overlay.parent.removeChild(overlay);
+    overlay.destroy();
+    overlay = null;
+  };
+
   const goFullScreen = () => {
     if (!sprite) return;
     const pw = window.innerWidth;
     const ph = window.innerHeight;
     expanded = true;
+
+    const ovColor = opts.overlayColor ?? 0x000000;
+    const ovAlpha = opts.overlayAlpha ?? 0.6;
+    overlay = new PIXI.Graphics();
+    overlay.eventMode = 'static';
+    overlay.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
+    overlay.rect(0, 0, pw, ph).fill({ color: ovColor, alpha: ovAlpha });
+    overlay.cursor = 'pointer';
+    parent.rootApp.stage.addChildAt(overlay, 0);
+    overlay.on('pointerdown', () => {
+      if (expanded) goToThumb();
+    });
+
     targetX = 0;
     targetY = 0;
     targetSpriteX = pw / 2;
@@ -110,6 +136,7 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
   const goToThumb = () => {
     if (!sprite) return;
     expanded = false;
+    destroyOverlay();
     targetX = opts.x;
     targetY = opts.y;
     targetSpriteX = thumbW / 2;
@@ -125,8 +152,16 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     if (!sprite) return;
     if (expanded) {
       goToThumb();
-    } else {
+      return;
+    }
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
       goFullScreen();
+    } else {
+      clickTimer = setTimeout(() => {
+        clickTimer = null;
+      }, DBL_CLICK_MS);
     }
   });
 
@@ -161,7 +196,9 @@ export function createClickableImage(parent: SubCanvas, opts: ClickableImageOpti
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      if (clickTimer) clearTimeout(clickTimer);
       if (animating) parent.ticker.remove(tick);
+      destroyOverlay();
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },
