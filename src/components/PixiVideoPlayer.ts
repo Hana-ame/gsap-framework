@@ -171,14 +171,15 @@ export function createVideoPlayer(
   ctrl.addChild(seekHit);
 
   // ── VIDEO SETUP ──
+  // 参照 PixiJS 官方 loadVideoTextures 流程：先设 src → 等 canplay → 再建 VideoSource
+  // 空 src 时创建 VideoSource 会在 Firefox 上触发 error 事件导致 listener 被移除
   const htmlVideo = document.createElement('video');
   htmlVideo.crossOrigin = 'anonymous';
   htmlVideo.playsInline = true;
   htmlVideo.muted = muted;
   htmlVideo.loop = loop;
 
-  // 【关键】将 video 挂到 DOM 上（隐藏），强制浏览器解码视频帧
-  // 不在 DOM 中的 video 在 Chrome/Safari 上会被跳过画面解码（省电），导致有声音无画面
+  // 挂到 DOM 防止 Chrome/Safari 跳过画面解码
   htmlVideo.style.position = 'absolute';
   htmlVideo.style.opacity = '0';
   htmlVideo.style.pointerEvents = 'none';
@@ -186,20 +187,47 @@ export function createVideoPlayer(
   htmlVideo.style.height = '1px';
   document.body.appendChild(htmlVideo);
 
-  // VideoSource 在 src 设置前创建，其 load() 中原有对空 video 的 source.load()
-  // Firefox 对此会触发 error 事件，导致 VideoSource 内部 _onError 被调用，
-  // 将 error listener 移除并 reject 内部 promise。
-  // 后续真正加载时 canplay 仍可正确触发 _mediaReady → resize + updateFrame，
-  // 因此不阻止此流程。
-  videoSource = new PIXI.VideoSource({
-    resource: htmlVideo,
-    autoPlay: autoplay,
-    updateFPS: 30,
-  });
-  videoTexture = new PIXI.Texture({ source: videoSource });
-  videoSprite.texture = videoTexture;
-  // 初始 scale 为 0，等 loadedmetadata 拿到真实尺寸后设置
-  videoSprite.scale.set(0, 0);
+  let videoReady = false;
+
+  function initVideoSource() {
+    if (videoReady) return;
+    videoReady = true;
+    videoSource = new PIXI.VideoSource({
+      resource: htmlVideo,
+      autoPlay: autoplay,
+      updateFPS: 30,
+    });
+    videoTexture = new PIXI.Texture({ source: videoSource });
+    videoSprite.texture = videoTexture;
+    adjustSpriteScale();
+
+    if (!autoplay) {
+      const prevMuted = htmlVideo.muted;
+      htmlVideo.muted = true;
+      htmlVideo.play().then(() => {
+        if (destroyed) return;
+        htmlVideo.pause();
+        htmlVideo.currentTime = 0;
+        htmlVideo.muted = prevMuted;
+        dbg('primed first frame');
+      }).catch(() => {
+        if (destroyed) return;
+        htmlVideo.muted = prevMuted;
+        dbg('first-frame prime rejected');
+      });
+    }
+  }
+
+  // 已缓存时 canplay 可能不触发，检查 readyState
+  if (htmlVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+    initVideoSource();
+  } else {
+    htmlVideo.addEventListener('canplay', initVideoSource, { once: true });
+  }
+
+  // 先设 src，再 load()
+  htmlVideo.src = url;
+  htmlVideo.load();
 
   // ── seek events ──
   function onSeekDown(e: PIXI.FederatedPointerEvent) {
@@ -340,15 +368,6 @@ export function createVideoPlayer(
   htmlVideo.addEventListener('play', onPlay);
   htmlVideo.addEventListener('pause', onPause);
   htmlVideo.addEventListener('error', onVideoError);
-
-  // 检查缓存：video 可能已加载完毕
-  if (htmlVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && htmlVideo.videoWidth > 0) {
-    onLoadedMeta();
-  }
-
-  htmlVideo.src = url;
-  htmlVideo.load();
-  if (autoplay) htmlVideo.play().catch(()=>{});
 
   // ── handle ──
   const handle: PixiVideoPlayerHandle = {
