@@ -179,12 +179,15 @@ export function createVideoPlayer(
   htmlVideo.muted = muted;
   htmlVideo.loop = loop;
 
-  // 挂到 DOM 防止 Chrome/Safari 跳过画面解码
+  // 挂到 DOM 防止 Chrome 跳过画面解码
+  // 1px 极小元素 + opacity:0 会让 Chrome 判定为"不可见"，严重降帧解码 → 画面卡顿
+  // 用 off-screen 定位 + 合理尺寸，Chrome 不会 throttle
   htmlVideo.style.position = 'absolute';
-  htmlVideo.style.opacity = '0';
+  htmlVideo.style.left = '-9999px';
+  htmlVideo.style.top = '0';
+  htmlVideo.style.width = `${width}px`;
+  htmlVideo.style.height = `${height}px`;
   htmlVideo.style.pointerEvents = 'none';
-  htmlVideo.style.width = '1px';
-  htmlVideo.style.height = '1px';
   document.body.appendChild(htmlVideo);
 
   let videoReady = false;
@@ -195,7 +198,7 @@ export function createVideoPlayer(
     videoSource = new PIXI.VideoSource({
       resource: htmlVideo,
       autoPlay: autoplay,
-      updateFPS: 30,
+      updateFPS: 0,
     });
     videoTexture = new PIXI.Texture({ source: videoSource });
     videoSprite.texture = videoTexture;
