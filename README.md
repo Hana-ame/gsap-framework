@@ -168,6 +168,8 @@ class SubCanvas {
 - **X 关闭按钮在 `opts.keepOpen=true` 时不产生任何效果**（不是"永远关"）。PixiConfirm 的 `closeBtn.on('pointerdown')` 在 `opts.keepOpen` 时直接 `return`，既不调 onResult 也不调 onClose 也不 destroy。需要 X 永远关的 dialog 不要设 `opts.keepOpen`，改用按钮级 `keepOpen: true`。
 - **FullscreenManager singleton 竞争条件**：`singletonCollapse` 是模块级变量，被所有 ClickableImage 共享。`goFullScreen()` 先调 `singletonCollapse()` 再创建新 overlay。`collapse()` 设置 `expanded=false` 后 destroy overlay，原子操作。详见 FullscreenManager.md。
 - **`showLoading` 的 hide 必须调**：否则 `ticker` 上的 `tick` 永远跑（每帧 clear + 8×fill）。React 里用 `useEffect cleanup` + `try/finally`。
+- **`showLoading` 的 cleanup 必须幂等**：原 cleanup 没 `if (overlay.parent)` 守卫，二次调用（React strict mode / 用户双击）触发 `removeChild on non-parent` PIXI 内部 crash。**修法**：(1) `if (removed) return;` 早出；(2) `if (overlay.parent) overlay.parent.removeChild(overlay);` 守卫。
+- **PixiConfirm/PixiWindow 的 setTitle/setMessage/setImage 必须守卫 `win.destroyed`**：dialog 销毁后外部仍持有 `win` 引用（`keepOpen: true` / async await 后用户调 setMessage），访问 `titleText.text = ...` 会触发 PIXI 内部对已 destroy DisplayObject 的 `eventMode` 读写 → undefined error。**修法**：每个 setter 首行 `if (win.destroyed) return;`。
 - **Scrollable/ClickableImage 的 mask 和 hitArea 不随 resize 自动更新**：因为它们是独立的 PIXI.Container，不是 SubCanvas。resize 后要手动重建或调用 recalc()。
 
 ### 视频播放 (PixiVideoPlayer)
@@ -227,5 +229,6 @@ class SubCanvas {
 | tag | state |
 |---|---|
 | `v0.1.0-pre-restruct` | Pre-restruct archive (PIXI+HTML mix, fast-drag fix landed). |
+| `v0.2.3` | Lifecycle audit: Loading cleanup now idempotent (parent check + early return); PixiConfirm/PixiWindow setTitle/setMessage/setImage guard against `win.destroyed`; example refs (`wins`, `lastPos`, `btns`, `scrolls`) moved from `useRef` to effect-local for correctness + lint cleanliness. |
 | `v0.2.2` | PixiVideoPlayer stability: Chrome decode throttling fix (off-screen + reasonable size, `updateFPS: 0`), first-frame primer for non-autoplay, VideoSource destroy-before-DOM ordering, sprite scale from `videoWidth`, HUD in SubCanvas, fetch blob fallback. |
 | `v0.2.0` | Stability round: browser-back crash, ClickableImage destroy order, innerCleanup, Graphics lifecycle guards. |
