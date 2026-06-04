@@ -236,14 +236,17 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
   win.content = content;
 
   win.setTitle = (t: string) => {
+    if (win.destroyed) return;
     titleText.text = t;
   };
   win.setMessage = (m: string) => {
+    if (win.destroyed) return;
     messageText.text = m;
     messageText.visible = true;
     if (image) image.container.visible = false;
   };
   win.setImage = (url: string) => {
+    if (win.destroyed) return;
     if (image) {
       image.setUrl(url);
     } else {

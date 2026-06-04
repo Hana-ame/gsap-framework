@@ -108,6 +108,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   win.content = content;
 
   win.setTitle = (t: string) => {
+    if (win.destroyed) return;
     title.text = t;
   };
 

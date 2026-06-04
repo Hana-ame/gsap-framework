@@ -66,11 +66,12 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
   if (showSpinner) sc.ticker.add(tick);
 
   return () => {
+    if (removed) return;
     removed = true;
     sc.ticker.remove(tick);
-    sc.stage.removeChild(overlay);
-    sc.stage.removeChild(spinner);
-    sc.stage.removeChild(label);
+    if (overlay.parent) overlay.parent.removeChild(overlay);
+    if (spinner.parent) spinner.parent.removeChild(spinner);
+    if (label.parent) label.parent.removeChild(label);
     overlay.destroy();
     spinner.destroy();
     label.destroy();

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createScrollable, type Scrollable } from '../../components';
@@ -84,9 +84,8 @@ function fillNoScrollbar(sc: SubCanvas) {
 }
 
 export function ComponentScrollableDisplay() {
-  const scrollsRef = useRef<Scrollable[]>([]);
-
   useEffect(() => {
+    const scrolls: Scrollable[] = [];
     const stop = startPixiApp((proxy: SubCanvasProxy) => {
       const sc = proxy.createRegion({
         x: 0,
@@ -108,15 +107,15 @@ export function ComponentScrollableDisplay() {
 
       mkLabel('vertical (scrollbar: true) — 50 lines, drag or wheel', 60, 44);
       const vPanel = sc.createSubRegion({ x: 60, y: 64, width: 260, height: 300 });
-      scrollsRef.current.push(fillVertical(vPanel));
+      scrolls.push(fillVertical(vPanel));
 
       mkLabel('horizontal (scrollbar: true) — 20 cards', 360, 44);
       const hPanel = sc.createSubRegion({ x: 360, y: 64, width: 300, height: 90 });
-      scrollsRef.current.push(fillHorizontal(hPanel));
+      scrolls.push(fillHorizontal(hPanel));
 
       mkLabel('vertical (scrollbar: false) — 30 items', 60, 384);
       const nPanel = sc.createSubRegion({ x: 60, y: 404, width: 260, height: 100 });
-      scrollsRef.current.push(fillNoScrollbar(nPanel));
+      scrolls.push(fillNoScrollbar(nPanel));
 
       const api = new PIXI.Text({
         text: 'createScrollable(parent, { w, h, direction, scrollbar, accept })\nscrollTo(x,y) / scrollBy(dx,dy) / recalc()',
@@ -128,7 +127,7 @@ export function ComponentScrollableDisplay() {
       sc.stage.addChild(api);
     });
     return () => {
-      scrollsRef.current.forEach((s) => s.destroy());
+      scrolls.forEach((s) => s.destroy());
       stop();
     };
   }, []);

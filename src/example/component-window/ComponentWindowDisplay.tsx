@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow, type GameWindowOptions } from '../../components';
@@ -59,55 +59,50 @@ function addContent(win: GameWindow, hint: string) {
 interface Btns { close: PIXI.Container; open: PIXI.Container; reopen: PIXI.Container; preset: PIXI.Container; }
 
 export function ComponentWindowDisplay() {
-  const scRef = useRef<SubCanvas | null>(null);
-  const panelRef = useRef<SubCanvas | null>(null);
-  const wins = useRef<Record<WinKey, GameWindow | null>>({ A: null, B: null, C: null });
-  const lastPos = useRef<Record<WinKey, { x: number; y: number } | null>>({ A: null, B: null, C: null });
-  const btns = useRef<Record<WinKey, Btns>>({ A: null!, B: null!, C: null! });
-
-  const ref = (k: WinKey) => wins.current[k];
-
-  const doClose = (k: WinKey) => {
-    const win = ref(k);
-    if (!win) return;
-    lastPos.current[k] = { x: Math.round(win.bounds.x), y: Math.round(win.bounds.y) };
-    win.destroy();
-    wins.current[k] = null;
-    syncBtns();
-  };
-
-  const doOpen = (k: WinKey, pos?: { x: number; y: number }) => {
-    if (!scRef.current || ref(k)) return;
-    const spec = { ...WINDOW_SPECS[k], parent: scRef.current };
-    if (pos) { spec.x = pos.x; spec.y = pos.y; }
-    const win = createWindow(spec);
-    wins.current[k] = win;
-    addContent(win, HINTS[k]);
-    syncBtns();
-  };
-
-  const syncBtns = () => {
-    for (const k of KEYS) {
-      const b = btns.current[k];
-      if (!b) continue;
-      const isOpen = ref(k) != null;
-      setBtnEnabled(b.close, isOpen);
-      setBtnEnabled(b.open, !isOpen);
-      setBtnEnabled(b.reopen, !isOpen && lastPos.current[k] != null);
-      setBtnEnabled(b.preset, !isOpen);
-    }
-  };
-
   useEffect(() => {
+    let sc: SubCanvas | null = null;
+    const wins: Record<WinKey, GameWindow | null> = { A: null, B: null, C: null };
+    const lastPos: Record<WinKey, { x: number; y: number } | null> = { A: null, B: null, C: null };
+    const btns: Record<WinKey, Btns | null> = { A: null, B: null, C: null };
+
+    const syncBtns = () => {
+      for (const k of KEYS) {
+        const b = btns[k];
+        if (!b) continue;
+        const isOpen = wins[k] != null;
+        setBtnEnabled(b.close, isOpen);
+        setBtnEnabled(b.open, !isOpen);
+        setBtnEnabled(b.reopen, !isOpen && lastPos[k] != null);
+        setBtnEnabled(b.preset, !isOpen);
+      }
+    };
+
+    const doClose = (k: WinKey) => {
+      const win = wins[k];
+      if (!win) return;
+      lastPos[k] = { x: Math.round(win.bounds.x), y: Math.round(win.bounds.y) };
+      win.destroy();
+      wins[k] = null;
+      syncBtns();
+    };
+
+    const doOpen = (k: WinKey, pos?: { x: number; y: number }) => {
+      if (!sc || wins[k]) return;
+      const spec = { ...WINDOW_SPECS[k], parent: sc };
+      if (pos) { spec.x = pos.x; spec.y = pos.y; }
+      const win = createWindow(spec);
+      wins[k] = win;
+      addContent(win, HINTS[k]);
+      syncBtns();
+    };
+
     const stop = startPixiApp((proxy: SubCanvasProxy) => {
       const W = window.innerWidth;
       const H = window.innerHeight;
-      const sc = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-      scRef.current = sc;
+      sc = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
 
       const pH = 130;
       const panel = sc.createSubRegion({ x: 0, y: H - pH, width: W, height: pH });
-      panelRef.current = panel;
       const bg = new PIXI.Graphics().rect(0, 0, W, pH).fill({ color: 0x0a0a14, alpha: 0.92 });
       bg.eventMode = 'none';
       panel.stage.addChild(bg);
@@ -146,7 +141,7 @@ export function ComponentWindowDisplay() {
         open.y = rowY;
         panel.stage.addChild(open);
 
-        const reopen = makeBtn('reopen', () => doOpen(k, lastPos.current[k] ?? undefined));
+        const reopen = makeBtn('reopen', () => doOpen(k, lastPos[k] ?? undefined));
         reopen.x = col0 + (BTN_W + COL_GAP) * 2;
         reopen.y = rowY;
         panel.stage.addChild(reopen);
@@ -156,17 +151,17 @@ export function ComponentWindowDisplay() {
         preset.y = rowY;
         panel.stage.addChild(preset);
 
-        btns.current[k] = { close, open, reopen, preset };
+        btns[k] = { close, open, reopen, preset };
       });
 
       for (const k of KEYS) {
-        wins.current[k] = createWindow({ ...WINDOW_SPECS[k], parent: sc });
-        addContent(wins.current[k], HINTS[k]);
+        wins[k] = createWindow({ ...WINDOW_SPECS[k], parent: sc });
+        addContent(wins[k], HINTS[k]);
       }
       syncBtns();
     });
     return () => {
-      for (const k of KEYS) wins.current[k]?.destroy();
+      for (const k of KEYS) wins[k]?.destroy();
       stop();
     };
   }, []);
