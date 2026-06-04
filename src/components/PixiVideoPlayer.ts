@@ -394,7 +394,8 @@ export function createVideoPlayer(
       if (destroyed) return;
       destroyed = true;
 
-      // 1. 摘掉我们自己的事件监听
+      try { htmlVideo.pause(); } catch { /* ok */ }
+
       htmlVideo.removeEventListener('canplay', initVideoSource);
       htmlVideo.removeEventListener('loadedmetadata', onLoadedMeta);
       htmlVideo.removeEventListener('timeupdate', onTimeUpdate);
@@ -403,31 +404,22 @@ export function createVideoPlayer(
       htmlVideo.removeEventListener('pause', onPause);
       htmlVideo.removeEventListener('error', onVideoError);
 
-      // 2. 【关键】先销毁 VideoSource，它会在内部 removeEventListener 摘掉
-      //    PIXI 绑在 video 上的所有监听（play/pause/seeked/error 等），
-      //    并调用 pause() + src="" + load() 杀掉解码管线。
-      //    之后 video 再抛出任何事件都不会触达 PIXI 已置 null 的内部对象。
-      try { videoSource?.destroy(); } catch { /* ok */ }
+      try { videoTexture?.destroy(true); } catch { /* ok */ }
+      videoSource = null;
+      videoTexture = null;
 
-      // 3. 兜底：若 VideoSource 还没建好（坑一 canplay 未触发即被 destroy），
-      //    手动清空 src + load() 截断后台下载。否则 <video> 已离 DOM 仍在网络拉流。
       htmlVideo.removeAttribute('src');
       htmlVideo.load();
 
-      // 4. 从 DOM 中移除 video 元素，彻底阻断渲染和解码
       if (htmlVideo.parentNode) {
         htmlVideo.parentNode.removeChild(htmlVideo);
       }
 
-      // 5. 清理 blob URL
       if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
 
-      // 6. 清理 PIXI 场景（texture 此时已 safe，sprite 不再引用）
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
-
-      try { videoTexture?.destroy(true); } catch { /* ok */ }
 
       if (root.parent) root.parent.removeChild(root);
       root.destroy({ children: true });

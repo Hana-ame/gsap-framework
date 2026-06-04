@@ -71,13 +71,15 @@ htmlVideo.addEventListener('error', onVideoError)
 ### 销毁
 ```
 handle.destroy()
-  ├─ 1. removeEventListener 自家监听 (loadedmetadata/timeupdate/seeked/play/pause/error)
-  ├─ 2. videoSource?.destroy()           — PIXI 摘 video 上的 listener
-  ├─ 3. htmlVideo.parentNode.removeChild(htmlVideo)   — DOM 移除
-  ├─ 4. URL.revokeObjectURL(objectUrl)
-  ├─ 5. clearTimeout(hideTimer) + window.removeEventListener
-  ├─ 6. videoTexture?.destroy(true)
-  └─ 7. root.parent.removeChild(root) + root.destroy({ children: true })
+  ├─ htmlVideo.pause()                              — 先暂停，不再抛事件
+  ├─ removeEventListener 自家监听 (canplay/loadedmetadata/timeupdate/seeked/play/pause/error)
+  ├─ videoTexture?.destroy(true)                    — 原子销毁 texture+source
+  ├─ videoSource = null; videoTexture = null
+  ├─ htmlVideo.removeAttribute('src'); htmlVideo.load()   — 截断后台下载
+  ├─ htmlVideo.parentNode.removeChild(htmlVideo)    — DOM 移除
+  ├─ URL.revokeObjectURL(objectUrl)
+  ├─ clearTimeout(hideTimer) + window.removeEventListener (seek)
+  └─ root.parent.removeChild(root) + root.destroy({ children: true })
 ```
 
 ---
@@ -187,7 +189,7 @@ const player = createVideoPlayer(sc, {
 1. **视频元素必须挂到 DOM**：Chrome/Safari 不在 DOM 中的 video 不解帧。`document.body.appendChild(htmlVideo)` 必须调。
 2. **off-screen 元素尺寸要合理**：`width: 1px; opacity: 0` 风格的隐藏 video 会被 Chrome 降帧解码 → 画面卡。`left: -9999px` + 实际播放器尺寸是正确做法。
 3. **`updateFPS: 0` = 每 tick 同步**：固定间隔（如 30）在 60Hz 屏上会抖动，0 跟渲染同频最平滑。
-4. **destroy 顺序固定**：摘自家 listener → `videoSource.destroy()` → DOM removeChild → `URL.revokeObjectURL` → `videoTexture.destroy()` → `root.destroy()`。VideoSource.destroy 必须先于 DOM 移除，否则 PIXI 内部 listener 触达 null 对象。
+4. **destroy 顺序固定**：`pause()` → 摘自家 listener → **`videoTexture.destroy(true)`** 原子销毁（cascade 到 source）→ `removeAttribute('src') + load()` → DOM removeChild → `revokeObjectURL` → `root.destroy()`。关键：必须用 `videoTexture.destroy(true)` 在同一原子操作里销毁 source，不能先 `videoSource.destroy()` 再 `videoTexture.destroy()` —— 中间存在窗口，texture 仍引用已销毁的 source，PIXI renderer 下一帧调 `source.update()` 读 `_sourceRect.x`（destroy 时被 null 化）→ `Cannot read properties of null (reading 'x')` at `HTMLVideoElement.Ce`。
 5. **autoplay=false 需要首帧 primer**：VideoSource 纹理在 video pause 时不更新帧 → 黑屏。primer 临时 mute → play() → pause() → currentTime=0 捕获首帧。
 6. **CORS + Range 失败的 fallback**：`MEDIA_ERR_SRC_NOT_SUPPORTED` / `MEDIA_ERR_NETWORK` 时 fetch URL → blob → `URL.createObjectURL` 替换 src。这是 `PIXI.Assets.load()` 做不到的（错误粒度太粗，`MediaError.code` 不可读）。
 7. **seek 双层监听**：PIXI 命中区在时走 PIXI，跨边界（快拖）走 `window.addEventListener('pointermove')`。位置直接读 `e.clientX`（canvas `position: fixed; inset: 0`，`client == canvas-relative == PIXI coord`）。
@@ -199,3 +201,4 @@ const player = createVideoPlayer(sc, {
 13. **VIDEO SETUP 顺序**：`addEventListener('canplay')` 必须**先于** `set src / load()`（防同步 canplay 漏事件）→ 然后 `readyState` 检查在 src 之后才有意义（针对浏览器缓存命中、canplay 不会触发的极端情况）。原代码顺序写反，`readyState` 永远 0。
 14. **Fetch fallback MIME 动态继承**：原硬编码 `video/mp4` 把 WebM/MOV 也封成 mp4，Chromium 头部解析失败再抛 SRC_NOT_SUPPORTED。**修法**：`resp.headers.get('content-type') || 'video/mp4'`。
 15. **Autoplay 策略阻截的 UI 假死**：`autoplay=true` + `muted=false` 浏览器必拦截 `play()` reject；但视频没播 → `pause` 事件不触发 → UI 永远显示"正在播放"假象。**修法**：(1) UI 初始化一律 `drawPlayIcon(false); cpb.visible = true;` 强制暂停态；(2) `VideoSource.autoPlay: false`，自己控；(3) `if (autoplay) htmlVideo.play().catch(dbg)` 自己调，失败时 UI 保持暂停态等待用户点击。
+16. **destroy 中 texture/source 必须原子销毁**（critical）：原顺序 `videoSource?.destroy()` → ... → `videoTexture?.destroy(true)` 留下窗口：source 已被 PIXI 置 null（`_resourceBounds`/`_sourceRect` 等内部状态被 null 化），但 texture 仍引用它。PIXI renderer 下一帧调 `texture.source.update()`（minified 名 `Ce`）→ 读 `this._sourceRect.x` 或类似 → `TypeError: Cannot read properties of null (reading 'x') at HTMLVideoElement.Ce`。症状：导航离开播放中的视频时崩溃。**修法**：(1) 用 `videoTexture.destroy(true)` 一次性销毁 texture 和 source（PIXI v8 cascade 行为，destroy(true) 调 source.destroy()）；(2) 销毁后立即 `videoSource = null; videoTexture = null;` 阻止旧引用；(3) `destroy()` 首行 `htmlVideo.pause()` 阻止 video 继续抛事件。
