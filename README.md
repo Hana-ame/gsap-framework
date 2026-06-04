@@ -170,6 +170,18 @@ class SubCanvas {
 - **`showLoading` 的 hide 必须调**：否则 `ticker` 上的 `tick` 永远跑（每帧 clear + 8×fill）。React 里用 `useEffect cleanup` + `try/finally`。
 - **Scrollable/ClickableImage 的 mask 和 hitArea 不随 resize 自动更新**：因为它们是独立的 PIXI.Container，不是 SubCanvas。resize 后要手动重建或调用 recalc()。
 
+### 视频播放 (PixiVideoPlayer)
+- **Chrome 对极小/隐藏 video 元素降帧解码**：`width:1px; height:1px; opacity:0` 风格的 off-screen 视频，Chrome 视为"不可见"，解码 FPS 暴跌 → 画面卡顿。**修法**：off-screen 定位（`left:-9999px`）+ 合理尺寸（用播放器实际 width/height，不是 1px），Chrome 看到的是一个"真实尺寸"的元素，正常解码。**症状**：能放但是很卡，FPS 远低于视频源帧率。
+- **`updateFPS: 30` 在 60Hz 屏上引起抖动**：VideoSource 的 `updateFPS` 限定每 N 帧采一次视频帧入纹理；60Hz 屏渲染时，固定 30Hz 采样和 60Hz 渲染不同步 → 帧间隔不均匀。**修法**：`updateFPS: 0`（每 tick 检查新帧，跟渲染同频）。
+- **VideoSource 纹理在 video pause 时不更新帧**：`autoplay=false` 时纹理始终显示创建时的空帧，**黑屏直到用户按 play**。**修法**：创建 VideoSource 后短暂 play/pause/seekt0 primer：临时把 `muted` 设 true 绕过 autoplay policy，`play().then(() => { pause(); currentTime = 0; muted = 原始值 })`，捕获首帧入纹理。`destroyed` 守卫防竞态。
+- **VideoSource.destroy() 必须在 DOM removeChild 之前调用**：VideoSource 内部 `addEventListener` 绑在 video 上（`play/pause/seeked/error` 等）。`destroy()` 时内部 `removeEventListener` 摘掉，并 `pause() + src="" + load()` 杀解码管线。**顺序错了**会导致 video 抛出的 event 触达 PIXI 已 null 的内部对象。**修法**：destroy 顺序 — 摘自家监听 → `videoSource.destroy()` → DOM removeChild → `URL.revokeObjectURL` → `videoTexture.destroy()` → `root.destroy({ children: true })`。
+- **sprite.scale 必须在 `loadedmetadata` 之后设**：`canplay` 触发时 `htmlVideo.videoWidth/videoHeight` 通常已可用（`initVideoSource` 内调 `adjustSpriteScale` 加了 `vw > 0 && vh > 0` 守卫），但 `loadedmetadata` 才是 100% 可靠的时机。**修法**：双保险 — `initVideoSource` 里和 `onLoadedMeta` 里都调 `adjustSpriteScale()`。
+- **`<video>` 必须挂到 DOM**：Chrome/Safari 不在 DOM 中的 video 不解帧（"省电"行为）。**修法**：`document.body.appendChild(htmlVideo)` + off-screen 定位。详见上条 1px 尺寸陷阱。
+- **空 src 时建 VideoSource 触发 Firefox error 事件**：PixiJS 官方 `loadVideoTextures` 流程：先设 src → 等 `canplay` → 再建 VideoSource。反过来（空 src 建 VideoSource）Firefox 会触发 error 事件导致 PIXI listener 被移除。**修法**：先 addEventListener('canplay') / 检查 readyState，再 set src / load()。
+- **`MEDIA_ERR_SRC_NOT_SUPPORTED` / `MEDIA_ERR_NETWORK` → fetch blob fallback**：部分 CDN 不支持 Range/streaming 或 CORS 配置错误时，native video element 直接抛 SRC_NOT_SUPPORTED。`PIXI.Assets.load()` 错误粒度只到 `ErrorEvent`，`MediaError.code` 不可读。**修法**：手动 `<video>` + `VideoSource`（不是 Assets.load），监听 `error` 事件读 `htmlVideo.error?.code`，是 SRC_NOT_SUPPORTED / NETWORK 就 `fetch(url) → URL.createObjectURL(blob) → 替换 src → load/play`。
+- **HUD/debug 面板必须用 PIXI 而非 React DOM**：React DOM 跟 PIXI canvas 走不同的合成器层，事件路由/z-order 都不互通。在 PIXI canvas 上盖 React DOM 元素会破坏子画布 AABB 事件路由。**修法**：HUD 做成独立 SubCanvas region + Scrollable + PIXI.Text（见 `component-video-player` 例子的右上角 debug log）。
+- **`PIXI.VideoSource` v8 API**：`new PIXI.VideoSource({ resource, autoPlay, updateFPS })`，`resource` 是 `<video>` 元素（不是 URL）。Texture 单独建：`new PIXI.Texture({ source: videoSource })`。`updateFPS: 0` = 每 tick 同步（最平滑）。`videoSource.destroy()` 必须自己调，PIXI 不会 GC。
+
 ### 部署 / 缓存
 - **Cloudflare Pages 灰度 deploy**：HTML 立即更新，子 bundle（`assets/xxx-[hash].js`）还在旧 hash 状态。**症状**：页面报 `Failed to fetch dynamically imported module`。**修法**：等 1-2 分钟；不要 push 完立即 playwright 测。
 - **SW cache 撞 stale**：SW 是 `sim-v2`，network-first nav 仍然可能命中旧 cache。**修法**：`unregister` 一次 SW 再 reload。
@@ -208,6 +220,7 @@ class SubCanvas {
 ## Tags / milestones
 
 | tag | state |
-|---|---|---|
+|---|---|
 | `v0.1.0-pre-restruct` | Pre-restruct archive (PIXI+HTML mix, fast-drag fix landed). |
+| `v0.2.2` | PixiVideoPlayer stability: Chrome decode throttling fix (off-screen + reasonable size, `updateFPS: 0`), first-frame primer for non-autoplay, VideoSource destroy-before-DOM ordering, sprite scale from `videoWidth`, HUD in SubCanvas, fetch blob fallback. |
 | `v0.2.0` | Stability round: browser-back crash, ClickableImage destroy order, innerCleanup, Graphics lifecycle guards. |
