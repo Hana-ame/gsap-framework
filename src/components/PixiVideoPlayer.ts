@@ -66,7 +66,7 @@ export function createVideoPlayer(
 
   let destroyed = false;
   let objectUrl: string | null = null;
-  let paused = !autoplay;
+  let paused = true;
   let duration = 0;
   let seeking = false;
   let controlsVisible = showControlsOpt;
@@ -74,6 +74,7 @@ export function createVideoPlayer(
   let curTime = 0;
   let videoSource: PIXI.VideoSource | null = null;
   let videoTexture: PIXI.Texture | null = null;
+  let userPlayRequested = false;
 
   // ── scene graph ──
   const root = new PIXI.Container();
@@ -137,8 +138,8 @@ export function createVideoPlayer(
       playIcon.poly([CTRL_H / 2 - 3, CTRL_H / 2 - 6, CTRL_H / 2 - 3, CTRL_H / 2 + 6, CTRL_H / 2 + 6, CTRL_H / 2]).fill({ color: 0x1a1a2e });
     }
   }
-  drawPlayIcon(autoplay);
-  cpb.visible = !autoplay;
+  drawPlayIcon(false);
+  cpb.visible = true;
   ctrl.addChild(playBtn);
 
   const timeText = new PIXI.Text({ text: '--:-- / --:--', style: { fontSize: 11, fill: 0xcccccc, fontFamily: 'monospace' } });
@@ -193,22 +194,33 @@ export function createVideoPlayer(
   let videoReady = false;
 
   function initVideoSource() {
-    if (videoReady) return;
+    if (destroyed || videoReady) return;
     videoReady = true;
     videoSource = new PIXI.VideoSource({
       resource: htmlVideo,
-      autoPlay: autoplay,
+      autoPlay: false,
       updateFPS: 0,
     });
     videoTexture = new PIXI.Texture({ source: videoSource });
     videoSprite.texture = videoTexture;
     adjustSpriteScale();
 
-    if (!autoplay) {
+    if (autoplay) {
+      userPlayRequested = true;
+      htmlVideo.play().catch(() => {
+        if (destroyed) return;
+        dbg('autoplay blocked by browser policy; UI stays paused, await user click');
+      });
+    } else {
       const prevMuted = htmlVideo.muted;
       htmlVideo.muted = true;
       htmlVideo.play().then(() => {
         if (destroyed) return;
+        if (userPlayRequested) {
+          htmlVideo.muted = prevMuted;
+          dbg('prime skipped: user already playing');
+          return;
+        }
         htmlVideo.pause();
         htmlVideo.currentTime = 0;
         htmlVideo.muted = prevMuted;
@@ -221,16 +233,14 @@ export function createVideoPlayer(
     }
   }
 
-  // 已缓存时 canplay 可能不触发，检查 readyState
-  if (htmlVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-    initVideoSource();
-  } else {
-    htmlVideo.addEventListener('canplay', initVideoSource, { once: true });
-  }
-
-  // 先设 src，再 load()
+  // 顺序：先注册 canplay listener（防同步 canplay 漏） → 再 set src/load → 最后 readyState 检查
+  // readyState 检查必须放在 src 赋值之后才有意义（之前 readyState 永远 0）
+  htmlVideo.addEventListener('canplay', initVideoSource, { once: true });
   htmlVideo.src = url;
   htmlVideo.load();
+  if (htmlVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+    initVideoSource();
+  }
 
   // ── seek events ──
   function onSeekDown(e: PIXI.FederatedPointerEvent) {
@@ -264,6 +274,7 @@ export function createVideoPlayer(
 
   function doPlayAction() {
     if (htmlVideo.paused) {
+      userPlayRequested = true;
       htmlVideo.play().catch((e) => dbg(`Play rejected: ${e.message}`));
     } else {
       htmlVideo.pause();
@@ -346,8 +357,9 @@ export function createVideoPlayer(
         if (destroyed) return;
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const rawBlob = await resp.blob();
-        const mp4Blob = new Blob([rawBlob], { type: 'video/mp4' });
-        objectUrl = URL.createObjectURL(mp4Blob);
+        const contentType = resp.headers.get('content-type') || 'video/mp4';
+        const mediaBlob = new Blob([rawBlob], { type: contentType });
+        objectUrl = URL.createObjectURL(mediaBlob);
         htmlVideo.src = objectUrl;
         htmlVideo.load();
         if (autoplay) htmlVideo.play().catch(()=>{});
@@ -374,15 +386,16 @@ export function createVideoPlayer(
 
   // ── handle ──
   const handle: PixiVideoPlayerHandle = {
-    play() { if (!destroyed) htmlVideo.play().catch(()=>{}); },
+    play() { if (!destroyed) { userPlayRequested = true; htmlVideo.play().catch(()=>{}); } },
     pause() { if (!destroyed) htmlVideo.pause(); },
-    toggle() { if (!destroyed) { if (htmlVideo.paused) htmlVideo.play().catch(()=>{}); else htmlVideo.pause(); } },
+    toggle() { if (!destroyed) { if (htmlVideo.paused) { userPlayRequested = true; htmlVideo.play().catch(()=>{}); } else htmlVideo.pause(); } },
     seek(t: number) { if (!destroyed) htmlVideo.currentTime = t; },
     destroy() {
       if (destroyed) return;
       destroyed = true;
 
       // 1. 摘掉我们自己的事件监听
+      htmlVideo.removeEventListener('canplay', initVideoSource);
       htmlVideo.removeEventListener('loadedmetadata', onLoadedMeta);
       htmlVideo.removeEventListener('timeupdate', onTimeUpdate);
       htmlVideo.removeEventListener('seeked', onSeeked);
@@ -396,15 +409,20 @@ export function createVideoPlayer(
       //    之后 video 再抛出任何事件都不会触达 PIXI 已置 null 的内部对象。
       try { videoSource?.destroy(); } catch { /* ok */ }
 
-      // 3. 从 DOM 中移除 video 元素，彻底阻断渲染和解码
+      // 3. 兜底：若 VideoSource 还没建好（坑一 canplay 未触发即被 destroy），
+      //    手动清空 src + load() 截断后台下载。否则 <video> 已离 DOM 仍在网络拉流。
+      htmlVideo.removeAttribute('src');
+      htmlVideo.load();
+
+      // 4. 从 DOM 中移除 video 元素，彻底阻断渲染和解码
       if (htmlVideo.parentNode) {
         htmlVideo.parentNode.removeChild(htmlVideo);
       }
 
-      // 4. 清理 blob URL
+      // 5. 清理 blob URL
       if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
 
-      // 5. 清理 PIXI 场景（texture 此时已 safe，sprite 不再引用）
+      // 6. 清理 PIXI 场景（texture 此时已 safe，sprite 不再引用）
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
