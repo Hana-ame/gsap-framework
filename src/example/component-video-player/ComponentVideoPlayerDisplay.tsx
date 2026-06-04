@@ -153,6 +153,8 @@ export function ComponentVideoPlayerDisplay() {
     });
 
     return () => {
+      player?.destroy();
+      player = null;
       scrollableLog?.destroy();
       scrollableLog = null;
       btnRegion?.destroy();
@@ -160,7 +162,6 @@ export function ComponentVideoPlayerDisplay() {
       hudRegion?.destroy();
       hudRegion = null;
       root = null;
-      player = null;
       destroyApp();
     };
   }, []);

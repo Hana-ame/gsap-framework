@@ -296,6 +296,7 @@ export function createVideoPlayer(
   let fallbackAttempted = false;
 
   function adjustSpriteScale() {
+    if (videoSprite.destroyed) return;
     const vw = htmlVideo.videoWidth;
     const vh = htmlVideo.videoHeight;
     if (vw > 0 && vh > 0) {
@@ -305,7 +306,7 @@ export function createVideoPlayer(
   }
 
   const onLoadedMeta = () => {
-    if (destroyed) return;
+    if (destroyed || videoSprite.destroyed) return;
     duration = htmlVideo.duration || 0;
     adjustSpriteScale();
     dbg(`loadedmetadata duration=${duration}`);
@@ -313,7 +314,7 @@ export function createVideoPlayer(
   };
 
   const onTimeUpdate = () => {
-    if (destroyed) return;
+    if (destroyed || videoSprite.destroyed) return;
     curTime = htmlVideo.currentTime;
     if (!duration && htmlVideo.duration) duration = htmlVideo.duration;
     if (videoSprite.scale.x === 0) adjustSpriteScale();
@@ -323,7 +324,7 @@ export function createVideoPlayer(
   };
 
   const onSeeked = () => {
-    if (destroyed) return;
+    if (destroyed || videoSprite.destroyed) return;
     curTime = htmlVideo.currentTime;
     const pct = duration > 0 ? curTime / duration : 0;
     drawProgress(pct);
