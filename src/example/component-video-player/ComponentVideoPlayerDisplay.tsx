@@ -154,9 +154,13 @@ export function ComponentVideoPlayerDisplay() {
 
     return () => {
       scrollableLog?.destroy();
-      // destroy SubCanvases in reverse order
+      scrollableLog = null;
       btnRegion?.destroy();
+      hudRegion = null;
       hudRegion?.destroy();
+      hudRegion = null;
+      root = null;
+      player = null;
       destroyApp();
     };
   }, []);
