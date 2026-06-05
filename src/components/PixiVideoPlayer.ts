@@ -410,6 +410,7 @@ export function createVideoPlayer(
       window.removeEventListener('pointerup', onWinUp);
 
       const oldTexture = videoTexture;
+      const oldSource = videoSource;
       const oldVideo = htmlVideo;
       const oldUrl = objectUrl;
       videoSource = null;
@@ -420,11 +421,16 @@ export function createVideoPlayer(
       root.destroy({ children: true });
 
       setTimeout(() => {
-        try { oldTexture?.destroy(true); } catch { /* ok */ }
+        if (oldSource) {
+          const s = oldSource as unknown as { _videoFrameRequestCallbackHandle?: number | null };
+          if (s._videoFrameRequestCallbackHandle != null) {
+            oldVideo.cancelVideoFrameCallback(s._videoFrameRequestCallbackHandle);
+            s._videoFrameRequestCallbackHandle = null;
+          }
+        }
         if (oldVideo.parentNode) oldVideo.parentNode.removeChild(oldVideo);
-        oldVideo.removeAttribute('src');
-        oldVideo.load();
         if (oldUrl) URL.revokeObjectURL(oldUrl);
+        try { oldTexture?.destroy(false); } catch { /* ok */ }
       }, 0);
     },
     setControlsVisible(v: boolean) {
