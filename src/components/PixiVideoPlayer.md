@@ -203,3 +203,52 @@ const player = createVideoPlayer(sc, {
 15. **Autoplay 策略阻截的 UI 假死**：`autoplay=true` + `muted=false` 浏览器必拦截 `play()` reject；但视频没播 → `pause` 事件不触发 → UI 永远显示"正在播放"假象。**修法**：(1) UI 初始化一律 `drawPlayIcon(false); cpb.visible = true;` 强制暂停态；(2) `VideoSource.autoPlay: false`，自己控；(3) `if (autoplay) htmlVideo.play().catch(dbg)` 自己调，失败时 UI 保持暂停态等待用户点击。
 16. **destroy 中 texture/source 必须原子销毁**（critical）：原顺序 `videoSource?.destroy()` → ... → `videoTexture?.destroy(true)` 留下窗口：source 已被 PIXI 置 null（`_resourceBounds`/`_sourceRect` 等内部状态被 null 化），但 texture 仍引用它。PIXI renderer 下一帧调 `texture.source.update()`（minified 名 `Ce`）→ 读 `this._sourceRect.x` 或类似 → `TypeError: Cannot read properties of null (reading 'x') at HTMLVideoElement.Ce`。症状：导航离开播放中的视频时崩溃。**修法**：(1) 用 `videoTexture.destroy(true)` 一次性销毁 texture 和 source（PIXI v8 cascade 行为，destroy(true) 调 source.destroy()）；(2) 销毁后立即 `videoSource = null; videoTexture = null;` 阻止旧引用；(3) `destroy()` 首行 `htmlVideo.pause()` 阻止 video 继续抛事件。
 17. **React Strict Mode 二次挂载触发 Chromium 媒体 Cache Lock 死锁**（critical，dev 模式重复进入视频不显示）：Strict Mode 的 `Mount → Unmount → Mount` 同步序列中，cleanup 调 `player.destroy()` → 内部 `htmlVideo.removeAttribute('src') + load()`（**以及** `videoTexture.destroy(true)` cascade 到 PIXI `VideoSource.destroy()` 内部的 `source.src = "" + source.load()`）→ 同步向浏览器网络栈发 Abort 信号截断第一道媒体流。几乎同时，Mount 2 发起对**同一 URL** 的新请求。Chromium 网络缓存因上次 Abort 产生竞态闭塞，第二道请求永远 Pending，`readyState=0`，`canplay` 一辈子不触发，`initVideoSource` 不跑，`videoTexture` 没建，画面死寂。**修法**（v3，defer Abort 也不够 → 完全不 Abort）：`destroy()` 同步部分保留 pause、removeEventListener、scene graph 摘除；`setTimeout(0)` 异步部分只做三件事——手动 `cancelVideoFrameCallback` 断 rVFC 循环、`parentNode.removeChild(oldVideo)` 摘 DOM、`URL.revokeObjectURL`。texture 用 `destroy(false)` 销毁（**不** cascade → 不调 `VideoSource.destroy()` → 不发 Abort）。old htmlVideo 脱离 DOM 后被 GC，浏览器自动取消网络请求，无 Abort 信号 → 无 Cache Lock。source 变 orphan，listener 闭包随 htmlVideo 一起 GC，无泄漏。**关键**：PIXI v8 `VideoSource.destroy()` 内部 `source.src = ""; source.load()` 是 Abort 源头，**必须**用 `destroy(false)` 跳过 cascade。
+
+---
+
+## 状态图
+
+```mermaid
+stateDiagram-v2
+    [*] --> Initial: createVideoPlayer()
+    Initial --> Ready: canplay 事件 → initVideoSource()
+    Initial --> Error: error 事件 (load 阶段)
+
+    Ready --> Playing: play() 成功 / autoplay 通过
+    Ready --> Paused: play() 被拒 (autoplay 策略) / 用户点中心按钮
+    Ready --> Error: error 事件
+
+    Playing --> Paused: pause 事件 / 用户点按钮
+    Paused --> Playing: play 事件 / 用户点按钮
+
+    Playing --> Seeking: seekHit pointerdown
+    Paused --> Seeking: seekHit pointerdown
+    Seeking --> Playing: pointerup (was playing)
+    Seeking --> Paused: pointerup (was paused)
+
+    Error --> Fallback: MEDIA_ERR_SRC_NOT_SUPPORTED<br/>或 MEDIA_ERR_NETWORK
+    Fallback --> Ready: canplay on blob URL
+    Fallback --> Error: fetch() 抛错 (兜底失败)
+    Error --> [*]: onError 回调 + 红色 "Load failed" 文字
+
+    Initial --> [*]: destroy() (setTimeout 异步清理)
+    Ready --> [*]: destroy()
+    Playing --> [*]: destroy() (pause 先行)
+    Paused --> [*]: destroy()
+    Seeking --> [*]: destroy() (清 window listener)
+    Error --> [*]: destroy()
+    Fallback --> [*]: destroy() (revoke blob URL)
+```
+
+**状态变量**（闭包内 `let`）：
+- `destroyed` — 一旦 `destroy()` 调过，所有 listener/回调首行守卫返回
+- `videoReady` — `initVideoSource` 跑过标志，防 canplay 二次触发
+- `paused` — 当前播放状态，对外 `handle.paused` 只读
+- `seeking` — 用户正在拖动进度条
+- `userPlayRequested` — 用户主动播过标志，Prime 竞态守护
+
+**关键不变量**：
+- `Initial` 期间 `videoSource === null && videoTexture === null`（canplay 未到）
+- `Ready` 之后 `videoSource` 和 `videoTexture` 永不为 null（直到 destroy）
+- `destroyed === true` 之后所有 async 回调（canplay / loadedmetadata / timeupdate / seeked / play / pause / error / primer.then）首行 `if (destroyed) return`
+- `Initial` 状态下 `destroy()` 必须显式 `removeEventListener('canplay', initVideoSource)`，否则幽灵 canplay 在组件销毁后重建 VideoSource/Texture（见注意事项 #11）
