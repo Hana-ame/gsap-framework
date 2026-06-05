@@ -405,25 +405,27 @@ export function createVideoPlayer(
       htmlVideo.removeEventListener('pause', onPause);
       htmlVideo.removeEventListener('error', onVideoError);
 
-      try { videoTexture?.destroy(true); } catch { /* ok */ }
-      videoSource = null;
-      videoTexture = null;
-
-      htmlVideo.removeAttribute('src');
-      htmlVideo.load();
-
-      if (htmlVideo.parentNode) {
-        htmlVideo.parentNode.removeChild(htmlVideo);
-      }
-
-      if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
-
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
       window.removeEventListener('pointerup', onWinUp);
 
+      const oldTexture = videoTexture;
+      const oldVideo = htmlVideo;
+      const oldUrl = objectUrl;
+      videoSource = null;
+      videoTexture = null;
+      objectUrl = null;
+
       if (root.parent) root.parent.removeChild(root);
       root.destroy({ children: true });
+
+      setTimeout(() => {
+        try { oldTexture?.destroy(true); } catch { /* ok */ }
+        if (oldVideo.parentNode) oldVideo.parentNode.removeChild(oldVideo);
+        oldVideo.removeAttribute('src');
+        oldVideo.load();
+        if (oldUrl) URL.revokeObjectURL(oldUrl);
+      }, 0);
     },
     setControlsVisible(v: boolean) {
       controlsVisible = v;
