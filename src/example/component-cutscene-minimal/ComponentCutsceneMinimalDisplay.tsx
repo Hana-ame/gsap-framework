@@ -30,9 +30,9 @@ export function ComponentCutsceneMinimalDisplay() {
       player = createVideoPlayer(root, {
         url: STABLE_MP4_URL,
         x: finalX, y: vy, width: vw2, height: vh2,
-        autoplay: true,
+        autoplay: false,
         loop: true,
-        muted: true,
+        muted: false,
         showControls: true,
         onDebug: (msg) => { console.log(`[Minimal] ${msg}`); },
       });
@@ -50,5 +50,5 @@ export function ComponentCutsceneMinimalDisplay() {
 
 ComponentCutsceneMinimalDisplay.head = {
   title: 'Component: Cutscene (Minimal)',
-  description: 'Sanity test: single PIXI.App via SubCanvas + createVideoPlayer, autoplay+loop+muted. Confirms the wrapper works in Strict Mode; a raw PIXI.Texture.from(video) + app.destroy(true) version of this page is broken in Strict Mode — see PixiVideoPlayer gotcha #17.',
+  description: 'Sanity test: single PIXI.App via SubCanvas + createVideoPlayer, click-to-start with sound. Muted autoplay is the only path that bypasses browser autoplay policy without user gesture, so we use a click gesture instead.',
 };

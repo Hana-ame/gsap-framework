@@ -49,10 +49,10 @@ return cleanup → player.destroy() + destroyApp()
 
 ## 关键设计
 
-- **`muted = true`**：绕过 autoplay 策略（不接用户交互按钮）。
-- **`autoplay = true`**：进入页面立即播；`createVideoPlayer` 内部自己处理 autoplay 失败 UI 态。
+- **`muted = false` + `autoplay = false` + 点击 cpb / 控制条播放按钮**：
+  浏览器 autoplay 政策规定，要么 `muted=true`，要么必须有用户手势（user activation）。本例想要声音 → 必须有用户手势 → `autoplay: false` 等用户点击 cpb 触发 user gesture 后 play() 才会真播（带声音）。`muted: false` 让 video 元素本身有声音；`userPlayRequested` 标志在 createVideoPlayer 内部避免 primer.then 把它 pause 掉。
 - **`loop = true`**：避免视频播完后 `ended` 事件触发 `onEnded`（本例不接 `onEnded`，但循环最省事）。
-- **`showControls = true`**：让用户能 pause/seek，方便手动验证。
+- **`showControls = true`**：让 cpb 可见（中心播放按钮 + 底部控件条），用户可点击 cpb 或底部 ▶ 按钮触发 play()。cpb 的 pointerdown 本身即是 user gesture，浏览器允许 play() 带声音通过。
 
 ---
 
