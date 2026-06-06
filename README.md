@@ -192,11 +192,90 @@ class SubCanvas {
 - **React Strict Mode 二次挂载触发 Chromium 媒体 Cache Lock 死锁**（critical，dev 模式重复进入视频不显示 / 真路由切换 + 返回第二次播放黑屏）：Strict Mode `Mount → Unmount → Mount` 同步序列中（或路由切换 + 返回触发的真实二次挂载），cleanup 调 `player.destroy()` → 内部 `htmlVideo.removeAttribute('src') + load()`（**以及** `videoTexture.destroy(true)` cascade 到 PIXI `VideoSource.destroy()` 内部的 `source.src = "" + source.load()`）→ 同步向浏览器网络栈发 Abort 信号截断第一道媒体流。几乎同时 Mount 2 发起对**同一 URL** 的新请求。Chromium 网络缓存因上次 Abort 产生竞态闭塞，第二道请求永远 Pending，`readyState=0`，`canplay` 不触发，`initVideoSource` 不跑，`videoTexture` 没建，画面死寂。**修法**（v4，完全不 Abort + 全部同步）：`destroy()` 同步执行 8 步——(1) `pause()`；(2) `removeEventListener × 7`；(3) `clearTimeout(hideTimer) + removeEventListener('pointermove/up') × 2`；(4) 手动 `cancelVideoFrameCallback(oldSource._videoFrameRequestCallbackHandle)` 断 rVFC 循环（private 字段，runtime 访问 `as unknown as { _videoFrameRequestCallbackHandle?: number | null }`）；(5) `parentNode.removeChild(oldVideo)` 摘 DOM；(6) `URL.revokeObjectURL(oldUrl)`；(7) `root.parent.removeChild(root) + root.destroy({ children: true })` 摘 scene graph；(8) `oldTexture.destroy(false)`。**关键**：(a) PIXI v8 `VideoSource.destroy()` 内部 `source.src = ""; source.load()` 是 Abort 源头，**必须**用 `destroy(false)` 跳过 cascade；(b) 上述 4/5/6/7/8 步**不**触发 Abort（cancelVideoFrameCallback 是方法调用、removeChild 走 GC 路径、revokeObjectURL 只释放内存、destroy(false) 不 cascade），所以全部可以同步执行，不需要 `setTimeout(0)`；(c) 同步执行保证 cleanup 在 destroy() 返回前完成，下一次 mount 启动时旧资源已全部释放，无跨挂载竞态。old htmlVideo 脱离 DOM 后被 GC，浏览器自动取消网络请求，无 Abort 信号 → 无 Cache Lock。source 变 orphan，listener 闭包随 htmlVideo 一起 GC，无泄漏。**反面教材**：裸 `PIXI.Texture.from(video) + app.destroy(true, {texture: true})` 在 Strict Mode 下必坏——见 `src/example/component-cutscene-minimal/` 注释为什么必须用 `createVideoPlayer`。
 - **同步 `seek(0) + play()` 触发 phantom ended 事件**（critical，cutscene 黑屏直接根因）：如果视频由于之前的播放或 primer `play(); pause();` 停留在了 sticky ended 状态，同步调用 `htmlVideo.currentTime = 0; htmlVideo.play()` 会导致浏览器在异步 `seeked` 清完 ended flag 前，**基于过期的 ended 内部状态派发一个幽灵 ended 事件**。`htmlVideo.currentTime` 是同步更新没错，但底层 media engine 重置 ended 标记是异步的；`play()` 立即调度时浏览器仍认为视频 ended → 立即派发 phantom ended → 用户 `onEnded` 回调 fire → cutscene 提前进入 fading-out → 300ms 后 `backToIdle` → 画面黑。**症状**：cutscene 一开始就黑屏 / 视频播了 0.1s 立刻进 fade-out / 状态机直接跳到 `idle`。**修法**（v2，三处协同）：(1) `onEndedEvt` 内 `if (duration > 0 && htmlVideo.currentTime < duration - 0.5) { dbg('ignored phantom ended event at currentTime=...'); return; }` —— **必须**读 `htmlVideo.currentTime` 而非闭包 `curTime`，因为此时 `seeked` 事件尚未触发，`curTime` 是旧值（用户看 `player.currentTime` 仍 = duration，误以为"真播完了"）。(2) `seek(t)` 内部乐观更新 `curTime = t`，让外部 `player.currentTime` 即刻准确（用户代码可以信任 `currentTime` 做决策）。(3) 调用方在 `onEnded` 回调里可加同样的 `currentTime < duration - 0.5` 二次防御（示例见 `ComponentCutsceneDisplay.onVideoEnded`）。**阈值 `0.5` 的意义**：HTML5 视频 ended 事件触发时 `currentTime` 通常恰好 = `duration`（有 fp 误差），容差 0.5s 兼容 rounding；正常播完的 ended `currentTime === duration`，会通过阈值；phantom 事件的 `currentTime` 仍是 seek 前的旧位置（duration 或其它），会被拦截。
 - **过场动画 cutscene 模式设计模式**：`createVideoPlayer` 的 `root: PIXI.Container` 句柄 getter 让你能**直接对 player 的整个 sprite tree 做 alpha 动画**，不需要新建一个 `cutsceneLayer` 容器把 player 装进去再淡。直接用 `player.root.alpha` 做 fade-in/out 避免 z-order 脆弱性（player 自己 addChild 到 stage 时的位置 / `SubCanvas.stage.addChild` 顺序之争）。**两个 UI 隐藏选项**：`showControls: false`（底部控件条不显示）+ `hidePlayButton: true`（中心播放按钮不显示）。**关键陷阱**：即使 `cpb.visible = false`，**它的 hit-area 仍在 stage 事件层**——用户点屏幕想 skip 时，PIXI 把事件路由到 cpb 而不是上层的 skipLayer。**修法**：`createVideoPlayer` 内部对 cpb/ctrl 在 UI 隐藏时设 `eventMode = 'none'`，让事件穿透到 skipLayer 透明 hit-catcher。**16:9 fit-contain** 算法：`vw = W; vh = W*9/16; if (vh > H) { vh = H; vw = H*16/9 }` —— 视频永远完整可见，剩余区域黑底。**State machine 由 `SubCanvas.ticker` 驱动**：tickerFn 60fps 检查 `state`，按 `performance.now() - fadeStart` 算 alpha t；不要用 `setTimeout` 触发 fade（GC / 长任务会卡时间）。**完整示例**：`src/example/component-cutscene/`。**反面教材**：裸 `PIXI.Texture.from(videoElement)` + `app.destroy(true, {texture: true})` 在 Strict Mode 下会触发上面那条 Cache Lock 死锁——见 `src/example/component-cutscene-minimal/` 注释为什么必须用 `createVideoPlayer`。
-- **PIXI v8 VideoSource 默认 mipLevelCount=0 → texture 黑屏**（critical，dev 模式所有视频都是黑屏）：PIXI v8 的 `new PIXI.VideoSource({...})` 创建时 `mipLevelCount` 默认为 0（不分配 GPU storage）。renderer 每帧调 `glCopySubTextureCHROMIUM` 复制 video 帧到 texture，**目标 texture 的 level 0 storage 未定义** → 报 `GL_INVALID_OPERATION: glCopySubTextureCHROMIUM: The destination level of the destination texture must be defined` 每帧 60+ 次 → 复制静默失败 → texture 永远不被实际帧数据填充 → sprite 显示空（黑）。**症状**：`onPlay` event 正常 fire、`currentTime` 递增、`duration` 正确，但屏幕黑。**修法**：(1) `videoSource` 创建后立即 `(videoSource as unknown as { mipLevelCount?: number }).mipLevelCount = 1`（强制 level 0 分配，单 level 无 mipmaps）；(2) `videoSource.update()` 强制首帧 copy，绕开任何首 tick 竞态。两个操作都包 try/catch 防御 PIXI 未来版本可能移除 `mipLevelCount`。**根因猜想**：PIXI v8 假设 `updateFPS > 0` 时 texture 在第一次 update() 时分配 storage，但 `updateFPS: 0`（每 tick 更新）路径在某些 Chromium 版本上漏了 storage 分配。视频纹理不需要 mipmaps（视频帧本身是 full-res 的，不该 mipmap），所以 `mipLevelCount: 1` 是正确语义。
+- **PIXI v8 VideoSource 默认 mipLevelCount=0 → texture 黑屏**（**status: HYPOTHESIZED BUT FIX DID NOT WORK**）：PIXI v8 的 `new PIXI.VideoSource({...})` 创建时 `mipLevelCount` 默认为 0。renderer 每帧调 `glCopySubTextureCHROMIUM` 时报 `GL_INVALID_OPERATION: The destination level of the destination texture must be defined` 64+ 次/秒。**猜想**：mipmap storage 未分配 → copy 静默失败 → sprite 黑。**修法尝试**（commit `400924a`）：(1) `(videoSource as unknown as { mipLevelCount?: number }).mipLevelCount = 1`；(2) `videoSource.update()` 强制首帧。**结果**：GL 错误**仍出现**（用户报告 commit `d7b9cca` 部署后第一次/第二次打开仍黑屏），所以 mipmap 猜想可能是错的——根因更可能是 PIXI v8 的 WebGL/Chromium 集成层有更深的问题（如 frame extraction 没赶上 `currentTime`、或 `glCopySubTextureCHROMIUM` 本身在某些 Chromium 版本上有 bug）。**推荐方向**：(a) 试 PIXI v8.19+（如果已发布）；(b) 试 `PIXI.Texture.from(videoElement)` 工厂路径（内部可能跳过 VideoSource 的 mipmap 路径）；(c) 试 `<canvas>.transferControlToOffscreen` 跨线程渲染；(d) **实用方案**：需要 PIXI 显示视频时，**fall back 到 DOM `<video>` + `tex-image2d` 自上传帧**（`gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)` 自管理 copy，绕过 PIXI VideoSource 整条路径），或干脆**用 `VideoPlayer.tsx` DOM wrapper + 透明 canvas overlay**。详见下方「视频黑屏 — 全部尝试过的方案」一节。
 
 ### 部署 / 缓存
 - **Cloudflare Pages 灰度 deploy**：HTML 立即更新，子 bundle（`assets/xxx-[hash].js`）还在旧 hash 状态。**症状**：页面报 `Failed to fetch dynamically imported module`。**修法**：等 1-2 分钟；不要 push 完立即 playwright 测。
-- **SW cache 撞 stale**：SW 是 `sim-v2`，network-first nav 仍然可能命中旧 cache。**修法**：`unregister` 一次 SW 再 reload。
+- **SW cache 撞 stale**：SW 已 bump 到 `sim-v3`（commit `116c501`）。`networkFirst` for navigation + `cacheFirst` for assets；`skipWaiting` + `controllerchange` 强制刷新。**症状**：`index.html` 引用最新 `index-XXX.js` hash，但 SW 仍返回旧 `index-YYY.js` 资源。**修法**：硬刷新（Cmd/Ctrl+Shift+R）一次；如仍撞，DevTools → Application → Service Workers → Unregister 再 reload。
+
+## 视频黑屏 — 全部尝试过的方案（截至 `d7b9cca`，**未解决**）
+
+**状态**：minimal test（`#component-cutscene-minimal`）和完整 cutscene（`#component-cutscene`）的第一次 + 第二次打开都是黑屏。事件层全 fire（`canplay` / `onPlay` / primer 成功 / `currentTime` 递增），但屏幕上像素黑；`GL_INVALID_OPERATION: glCopySubTextureCHROMIUM` 每帧 64+ 次洪流。**PIXI v8 + Chromium 在 `Strict Mode` + dev server 环境的视频纹理整条链路上存在未知根因**，下面所有尝试都未根治。
+
+### 时间线（每个 commit 改了什么、修了什么观察、又暴露了什么）
+
+| # | Commit | 尝试 | 观察 | 结论 |
+|---|---|---|---|---|
+| 1 | `3becdd3` | `texture.destroy(true)` cascade → PIXI 内部 `source.src = "" + source.load()` | 触发 `play() rejected: AbortError`；Strict Mode 二次挂载直接死锁 | cascade 路径有毒，弃 |
+| 2 | `7e36972` | v1 推迟到 `setTimeout(0)` 试图绕过 Chromium Cache Lock | Abort 仍 fire（`setTimeout` 推迟不能阻止同步 Abort） | 推迟 ≠ 不触发 |
+| 3 | `b142144` | `texture.destroy(false)` 跳过 cascade + `setTimeout(0)` 异步清理 rVFC / DOM / URL | 第一次进入能看，但**第二次**进入仍黑屏 | destroy 路径 OK，但 strict 模式二次挂载还有别的 race |
+| 4 | `a626e47` | 把 v3 经验写进 README gotcha #17 | 文档化 | — |
+| 5 | `09fee85` | 写 cutscene state machine（idle → fading-in → playing → fading-out） | 初始就黑屏 | UI 层没问题，texture 就有问题 |
+| 6 | `e687a0c` | 用 `player.root.alpha` 直接 fade，不用单独 `cutsceneLayer` | 仍黑 | 跟 z-order 无关 |
+| 7 | `5f8f0e2` | phantom ended 防护：`onEndedEvt` 读 `htmlVideo.currentTime < duration - 0.5` 拦截幽灵 ended | 修了「cutscene 0.1s 后立刻 fade out」症状 | 不是黑屏根因，是单独的 bug |
+| 8 | `aeea8cf` | ticker 在 `onReady` async `.then` 内注册（之前在 mount 时同步检查 `root` 但 `app.init()` 是 promise） | alpha 不再 stuck 在 0 | 不是黑屏根因，是单独的 bug |
+| 9 | `d017e92` | 写 `component-cutscene-minimal`：裸 `PIXI.Texture.from(video) + app.destroy(true, {texture: true})` 还原 strict mode 死锁 | **重现 Abort 错误** | 证实 destroy cascade 是死因之一 |
+| 10 | `7c709b0` | minimal 改用 `createVideoPlayer` | 报同样的 GL 错误 | 跟 API 无关，是 PIXI/Chromium 层 |
+| 11 | `93f5328` | 声音修：minimal 用 `autoplay: false + muted: false + showControls: true` + click-to-start 模式 | 跟黑屏无关，但需要 | — |
+| 12 | `c683bba` | destroy 全同步（v4）：8 步全在 destroy() 内同步，不 setTimeout | 第一次进入 OK，**第二次**进入仍黑 | sync destroy OK，根因不在 destroy 路径 |
+| 13 | `f06ef11` | 文档化 v4 | 文档化 | — |
+| 14 | `05fff38` | 加 verbose `dbg()` 链路 + consumer `onDebug` plumb | 看清所有事件顺序：canplay → initVideoSource → onPlay → primer → onPause → GL 错误洪流 | GL 错误是**渲染时**的，不是 destroy 时的 |
+| 15 | `116c501` | SW bump `sim-v2` → `sim-v3` 修 stale bundle | 部署对齐 | — |
+| 16 | `400924a` | 修 PIXI v8 VideoSource `mipLevelCount` 默认 0 猜想：设 `mipLevelCount = 1` + `videoSource.update()` 强制首帧 | **GL 错误仍出现，黑屏仍在** | 猜想错误，根因更深 |
+| 17 | `d7b9cca` | 文档化 #19，标 "hypothesized but fix did not work" | 文档化 | — |
+
+### 当前观察（最新一次部署的 console log 特征）
+
+```
+[PixiVideoPlayer] canplay event readyState=4 networkState=2
+[PixiVideoPlayer] initVideoSource: creating VideoSource + Texture
+[PixiVideoPlayer] initVideoSource: source mipLevelCount=1
+[PixiVideoPlayer] onPlay event: readyState=4 networkState=2 currentTime=0
+[PixiVideoPlayer] primed first frame
+[PixiVideoPlayer] onPause event: currentTime=0
+[WebGL] GL_INVALID_OPERATION: glCopySubTextureCHROMIUM: The destination level of the destination texture must be defined
+[WebGL] GL_INVALID_OPERATION: glCopySubTextureCHROMIUM: The destination level of the destination texture must be defined
+... (64+ 次/秒)
+[PixiVideoPlayer] onPlay event: readyState=4 networkState=1 currentTime=0.00078
+[PixiVideoPlayer] htmlVideo play() RESOLVED
+... (画面仍黑)
+```
+
+- `mipLevelCount=1` log 确认 setter 生效（mipLevelCount 值在 source 上已是 1）
+- GL 错误文本跟 `mipLevelCount=0` 时一模一样 → 错误信息误导，根因不是 mipmap
+- 视频数据是 onPlay → primed → 网络流确认 OK（`networkState=1`）
+- 唯一未跑通的链路：`glCopySubTextureCHROMIUM` 复制到 PIXI 内部 GL texture 这一步
+
+### 剩下的可能根因方向（按概率排序）
+
+1. **PIXI v8 `TextureSystem.copyToTexture` 在 dev build + WebGL1 fallback 路径有 bug**（最高概率）：错误信息「destination level must be defined」可能是 PIXI 内部调用顺序问题（先尝试 copy 到 unallocated texture，再 lazy alloc，但 lazy alloc 路径在视频纹理下没跑）。需要看 `node_modules/pixi.js/lib/rendering/renderers/shared/texture/Texture.js` 确认。
+2. **Chromium WebGL `UNPACK_PREMULTIPLY_ALPHA_WEBGL` + 视频 alpha 通道冲突**：如果视频是带 alpha 的（`yuv420p`），可能需要 `PIXI.ALPHA_MODES.PMA` 特殊处理。
+3. **React 19 Strict Mode 二次挂载导致的 htmlVideo 内部 decoder 状态错乱**：decoder 实例被 React 强制 unmount 再 mount，但底层 decoder buffer 还在，导致 PIXI 的 `videoSource.resource` 引用的是「半死」元素。需要试 `useEffect` clean-up 时**先 destroy PIXI 再 destroy htmlVideo**，或者反过来。
+4. **PIXI v8.18.1 已知 bug**：搜 pixi.js GitHub issues 找 `glCopySubTextureCHROMIUM` 相关 PR。修复可能在 8.19+ 已发布。
+5. **OffscreenCanvas + Worker 路径**：`PIXI.Application` 默认在主线程 video element 上。如果 SubCanvas 用了 OffscreenCanvas，video → canvas 路径要重新协商。
+
+### 实用 workaround（推荐）
+
+如果产品需要**马上**让视频在 PIXI canvas 上显示，按以下优先级：
+
+1. **DOM `<video>` + 透明 canvas overlay**（最稳）：用 `VideoPlayer.tsx`（commit `2f4a21d`）做 DOM video 播放，在 PIXI canvas 上叠一个透明 `<div>` 让用户看到 DOM video。**代价**：video 不参与 PIXI scene tree，Filter/合成/事件路由都做不到。**适合 90% 场景**。
+2. **DOM `<video>` + `gl.texImage2D` 自上传帧到 PIXI Texture**（自管路径）：DOM 播放视频，每帧 `gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)` 上传到一张手动创建的 `RawTexture`，sprite 用这个 texture。**绕过 PIXI VideoSource 整条链**。**代价**：性能比 PIXI 原生差（每帧手动 copy 一次），但可控。**适合需要 Filter/合成的场景**。
+3. **等 PIXI v8.19+**（最省事但最慢）：官方可能修了。
+
+### 不推荐的尝试（已确认失败或无意义）
+
+- `mipLevelCount: 0 / 1 / 2 / 4` 任何值（commit `400924a`）
+- `updateFPS: 0 / 1 / 30 / 60`（commit 早就试过 `updateFPS: 0` 是默认）
+- `texture.destroy(true/false)` cascade vs no-cascade（`3becdd3` / `b142144` / `c683bba`）
+- `setTimeout(0)` 推迟 destroy（`7e36972` / `b142144`，v3 还有；v4 已弃）
+- 加 debug `console.log` 看事件（`05fff38`，有用但已加到极限）
+- SW bump（`116c501`，是部署问题不是根因）
+
+### 调试日志基础设施（已就位）
+
+`createVideoPlayer` 当前已 plumb `onDebug: (msg: string) => void` 到 consumer。cutscene 和 minimal test 都 `console.log` 全部 dbg 调用。如果用户想要更深的事件流（WebGL state、texture binding、renderer 内部），需要 patch PIXI v8 源码（`node_modules/pixi.js/lib/rendering/renderers/shared/texture/Texture.js` + `TextureSystem.js`）加 console.log 然后 `npm run build` 重 build bundle — 成本很高但能定位到 PIXI 内部哪一步出 bug。
+
+
 
 ### 事件架构 / 设计辩论
 - **FullscreenManager 点击穿透 → bus 守卫方案替代 `stopPropagation`**：FM 的 overlay 在 PIXI 层叠最上层（`eventMode='static'`），足以拦截 PIXI FederatedEvent 传到下方 ClickableImage。但 SubCanvas AABB 路由走独立的 `window.addEventListener` 监听同一份原生 PointerEvent，PIXI 的 `e.originalEvent?.stopPropagation()` 不可靠 — PIXI v8 部分事件路径下 `originalEvent` 可能为 null。**结论**：FM 发射 `'fullscreen:active'` / `'fullscreen:inactive'` 总线事件，ClickableImage 订阅并设置 `fullscreenActive` 标志，在 `onPress`/`onRelease` 中守卫。完全解耦 DOM 事件传播。（commit dc391c1）
@@ -227,7 +306,7 @@ class SubCanvas {
 - **Cloudflare Pages** auto on push to `sim` → `https://react.moonchan.xyz/`
 - **GitHub Actions** (`.github/workflows/`): `ci.yml` (lint + typecheck + build), `codeql.yml`, `dependency-review.yml`, `labeler.yml`, `stale.yml`
 - **Dependabot**: weekly Monday 09:00
-- **PWA**: `public/manifest.webmanifest` + `public/sw.js` (`sim-v2` — network-first nav, cache-first assets, skipWaiting + controllerchange reload)
+- **PWA**: `public/manifest.webmanifest` + `public/sw.js` (`sim-v3` — network-first nav, cache-first assets, skipWaiting + controllerchange reload)
 
 ## Tags / milestones
 
