@@ -115,6 +115,10 @@ export function ComponentCutsceneDisplay() {
 
     function onVideoEnded() {
       console.log(`[Cutscene] onVideoEnded state=${state} currentTime=${player?.currentTime} duration=${player?.duration}`);
+      if (player && player.duration > 0 && player.currentTime < player.duration - 0.5) {
+        console.log('[Cutscene] ignored phantom ended event');
+        return;
+      }
       if (state === 'fading-in' || state === 'playing') {
         state = 'fading-out';
         fadeStart = performance.now();

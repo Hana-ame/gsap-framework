@@ -355,6 +355,10 @@ export function createVideoPlayer(
 
   const onEndedEvt = () => {
     if (destroyed) return;
+    if (duration > 0 && htmlVideo.currentTime < duration - 0.5) {
+      dbg(`ignored phantom ended event at currentTime=${htmlVideo.currentTime}`);
+      return;
+    }
     onEnded?.();
   };
 
@@ -404,7 +408,11 @@ export function createVideoPlayer(
     play() { if (!destroyed) { userPlayRequested = true; htmlVideo.play().catch(()=>{}); } },
     pause() { if (!destroyed) htmlVideo.pause(); },
     toggle() { if (!destroyed) { if (htmlVideo.paused) { userPlayRequested = true; htmlVideo.play().catch(()=>{}); } else htmlVideo.pause(); } },
-    seek(t: number) { if (!destroyed) htmlVideo.currentTime = t; },
+    seek(t: number) {
+      if (destroyed) return;
+      htmlVideo.currentTime = t;
+      curTime = t;
+    },
     destroy() {
       if (destroyed) return;
       destroyed = true;
