@@ -1,4 +1,4 @@
-# ComponentCutsceneMinimalDisplay — 单 PIXI.App 视频播放 sanity 测试
+# ComponentCutsceneMinimalDisplay — createVideoPlayer sanity 测试
 
 `src/example/component-cutscene-minimal/ComponentCutsceneMinimalDisplay.tsx` 的对应文档。
 
@@ -6,9 +6,28 @@
 
 ## 职责
 
-诊断式示例：剥离 SubCanvas / `createVideoPlayer` / 状态机 / fade / skip 等所有"上层建筑"，只保留 PIXI v8 官方示例的最简模式——单 `PIXI.Application` + `<video>` + `PIXI.Texture.from(video)` + `Sprite`。目的：当 `component-cutscene` 出问题时，用本例验证 **"PIXI v8 视频播放在这个环境里是否根本可行"**。
+最小化 sanity 测试：剥离状态机、fade、skip 等所有"上层建筑"，只保留 `createVideoPlayer` 的 autoplay+loop+muted 模式——打开页面视频立即循环播放。
 
-适用：调试、回归测试、新人快速验证环境。
+目的：当你怀疑 `createVideoPlayer` 本身坏了时，用本例确认它能跑；如果你看到 `component-cutscene` 出问题但本例正常，说明问题在状态机 / ticker / fade / skip 那一层，而不是 `createVideoPlayer` 内部。
+
+---
+
+## ⚠️ 为什么不用裸 PIXI.Texture.from(video)
+
+PIXI v8 官方示例的"5 行代码"模式：
+
+```ts
+const video = document.createElement('video');
+video.src = url;
+const texture = PIXI.Texture.from(video);
+const sprite = new PIXI.Sprite(texture);
+app.stage.addChild(sprite);
+video.play();
+```
+
+**在 React Strict Mode（dev 模式）下此模式必坏**。`useEffect` 的 mount→unmount→mount 同步序列里，第一次 cleanup 调 `app.destroy(true, {texture: true})` → cascade 到 `Texture.destroy(true)` → `VideoSource.destroy()` 内部 `source.src = "" + source.load()` → **Abort** 截断首道媒体流。第二次 mount 用同一个 URL 发新请求，Chromium 网络缓存因 Abort 锁死 → `readyState=0` → `canplay` 一辈子不触发 → 画面死寂。
+
+**修法**就是 `createVideoPlayer` 内部的 v3 no-Abort cleanup（详见 `PixiVideoPlayer.md` gotcha #17）。本例用 `createVideoPlayer` 代替裸 `Texture.from` 正是因为这个原因。
 
 ---
 
@@ -16,49 +35,40 @@
 
 ```
 useEffect
-  └─ new PIXI.Application()
-     └─ .init({ width, height, webgl })
-        └─ then:
-           ├─ canvas 挂到 body
-           ├─ document.createElement('video') + 赋 src
-           ├─ PIXI.Texture.from(videoElement)
-           ├─ new PIXI.Sprite(texture) + 16:9 fit-contain
-           ├─ app.stage.addChild(sprite)
-           └─ videoElement.play()  （muted=true 必填，绕过 autoplay 策略）
+  └─ startPixiApp((proxy) => {
+       ├─ root = proxy.createRegion(...)
+       └─ createVideoPlayer(root, { autoplay:true, loop:true, muted:true })
+     })
 
-return cleanup → app.destroy(true, {children, texture})
+return cleanup → player.destroy() + destroyApp()
 ```
+
+无 ticker、无状态机、无按钮、无 fade——纯播放。
 
 ---
 
 ## 关键设计
 
-- **`muted = true`**：浏览器 autoplay 策略要求 `muted` 或 `user gesture` 二选一。本例不接 UI 按钮，最简路径是 muted 绕过。
-- **`crossOrigin = 'anonymous'`**：mdn 示例的 mp4 是 CORS-friendly；设了保险，没坏处。
-- **无 ticker、无状态机**：本例只验证"能播"，不验证"能控"。
-- **无任何 controls UI**：直接全屏 sprite。
+- **`muted = true`**：绕过 autoplay 策略（不接用户交互按钮）。
+- **`autoplay = true`**：进入页面立即播；`createVideoPlayer` 内部自己处理 autoplay 失败 UI 态。
+- **`loop = true`**：避免视频播完后 `ended` 事件触发 `onEnded`（本例不接 `onEnded`，但循环最省事）。
+- **`showControls = true`**：让用户能 pause/seek，方便手动验证。
 
 ---
 
-## 如何运行
+## 故障定位矩阵（结合 `component-cutscene`）
 
-启动后访问 `#component-cutscene-minimal`，视频应直接自动循环播放铺满屏幕（按 16:9 contain 留黑边）。Console 应输出：
-
-```
-[Minimal] loadedmetadata duration=6.166
-[Minimal] canplay
-[Minimal] play() resolved
-[Minimal] play event
-```
+| `#component-cutscene-minimal` | `#component-cutscene` | 结论 |
+|---|---|---|
+| 正常循环播放 | 正常播放+skip+fade | `createVideoPlayer` 工作正常；cutscene 出问题就是状态机/ticker/fade 层 |
+| 正常循环播放 | 黑屏 / 不响应 skip | `createVideoPlayer` 正常；问题在 cutscene 的状态机/ticker/fade 集成 |
+| 黑屏 / AbortError | 黑屏 / AbortError | 整个视频栈坏了（极少见；可能 URL 失效或 CORS） |
+| 画面但无声音 | 画面但无声音 | 浏览器 autoplay 阻截；检查 `muted` 流转 |
 
 ---
 
-## 预期结果 vs 故障定位
+## 历史
 
-| 现象 | 结论 |
-|---|---|
-| 视频正常循环播放，console 输出完整 | 环境 OK；问题在 SubCanvas 集成或 `createVideoPlayer` |
-| Console 有 `loadedmetadata` 但无 `canplay` | 网络 / MIME / CORS 问题；检查 mp4 URL 是否仍可达 |
-| Console 有 `play() rejected` | autoplay 策略相关；检查 `muted` 是否生效 |
-| 视频播了一帧后黑屏 / 卡死 | PIXI 内部 `VideoSource` rVFC 与销毁竞态；需进一步拆解 |
-| Console 完全无 video 事件 | `videoElement.src` 赋值没生效；检查 CSP / 跨域 |
+本例最初版本用了裸 `PIXI.Texture.from(video)` + `app.destroy(true)` 模式。**在 Strict Mode 下黑屏**，与 `createVideoPlayer` 早期版本的 Cache Lock bug 表现一致（`play() rejected: AbortError` + `GL_INVALID_VALUE: glCopySubTextureCHROMIUM`）。后重写为用 `createVideoPlayer` 包装，作为"v3 修法对照证明"。
+
+如果将来 PIXI 团队修了 `VideoSource.destroy()` 的 Abort 行为，本例可以拆成"裸 PIXI 版本"和"createVideoPlayer 版本"两个 example 用来对比教学。
