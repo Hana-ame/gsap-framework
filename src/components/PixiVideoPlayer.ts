@@ -70,6 +70,7 @@ export function createVideoPlayer(
   }
 
   let destroyed = false;
+  dbg(`createVideoPlayer start url=${url} autoplay=${autoplay} muted=${muted} loop=${loop}`);
   let objectUrl: string | null = null;
   let paused = true;
   let duration = 0;
@@ -204,6 +205,7 @@ export function createVideoPlayer(
   function initVideoSource() {
     if (destroyed || videoReady) return;
     videoReady = true;
+    dbg('initVideoSource: creating VideoSource + Texture');
     videoSource = new PIXI.VideoSource({
       resource: htmlVideo,
       autoPlay: false,
@@ -243,9 +245,11 @@ export function createVideoPlayer(
 
   // 顺序：先注册 canplay listener（防同步 canplay 漏） → 再 set src/load → 最后 readyState 检查
   // readyState 检查必须放在 src 赋值之后才有意义（之前 readyState 永远 0）
-  htmlVideo.addEventListener('canplay', initVideoSource, { once: true });
+  htmlVideo.addEventListener('canplay', () => { dbg(`canplay event readyState=${htmlVideo.readyState} networkState=${htmlVideo.networkState}`); initVideoSource(); }, { once: true });
+  dbg(`setting src=${url}`);
   htmlVideo.src = url;
   htmlVideo.load();
+  dbg(`after load() readyState=${htmlVideo.readyState} networkState=${htmlVideo.networkState}`);
   if (htmlVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
     initVideoSource();
   }
@@ -341,6 +345,7 @@ export function createVideoPlayer(
 
   const onPlay = () => {
     if (destroyed) return;
+    dbg(`onPlay event: readyState=${htmlVideo.readyState} networkState=${htmlVideo.networkState} currentTime=${htmlVideo.currentTime}`);
     paused = false;
     drawPlayIcon(true);
     cpb.visible = false;
@@ -348,6 +353,7 @@ export function createVideoPlayer(
 
   const onPause = () => {
     if (destroyed) return;
+    dbg(`onPause event: currentTime=${htmlVideo.currentTime}`);
     paused = true;
     drawPlayIcon(false);
     if (cpbVisibleAllowed) cpb.visible = true;
@@ -405,7 +411,7 @@ export function createVideoPlayer(
 
   // ── handle ──
   const handle: PixiVideoPlayerHandle = {
-    play() { if (!destroyed) { userPlayRequested = true; htmlVideo.play().catch(()=>{}); } },
+    play() { if (!destroyed) { dbg(`play() called by handle: readyState=${htmlVideo.readyState} currentTime=${htmlVideo.currentTime}`); userPlayRequested = true; htmlVideo.play().then(() => dbg('play() resolved'), (e) => dbg('play() rejected: ' + e.name + ' ' + e.message)); } },
     pause() { if (!destroyed) htmlVideo.pause(); },
     toggle() { if (!destroyed) { if (htmlVideo.paused) { userPlayRequested = true; htmlVideo.play().catch(()=>{}); } else htmlVideo.pause(); } },
     seek(t: number) {
@@ -416,6 +422,7 @@ export function createVideoPlayer(
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      dbg('destroy() start: paused=' + htmlVideo.paused + ' readyState=' + htmlVideo.readyState + ' networkState=' + htmlVideo.networkState + ' currentTime=' + htmlVideo.currentTime);
 
       try { htmlVideo.pause(); } catch { /* ok */ }
 
@@ -427,6 +434,7 @@ export function createVideoPlayer(
       htmlVideo.removeEventListener('pause', onPause);
       htmlVideo.removeEventListener('ended', onEndedEvt);
       htmlVideo.removeEventListener('error', onVideoError);
+      dbg('destroy(): removed 7 listeners');
 
       if (hideTimer) clearTimeout(hideTimer);
       window.removeEventListener('pointermove', onWinMove);
@@ -445,15 +453,18 @@ export function createVideoPlayer(
         if (s._videoFrameRequestCallbackHandle != null) {
           try { oldVideo.cancelVideoFrameCallback(s._videoFrameRequestCallbackHandle); } catch { /* ok */ }
           s._videoFrameRequestCallbackHandle = null;
+          dbg('destroy(): cancelled rVFC');
         }
       }
-      if (oldVideo.parentNode) oldVideo.parentNode.removeChild(oldVideo);
-      if (oldUrl) URL.revokeObjectURL(oldUrl);
+      if (oldVideo.parentNode) { oldVideo.parentNode.removeChild(oldVideo); dbg('destroy(): removed oldVideo from DOM'); }
+      if (oldUrl) { URL.revokeObjectURL(oldUrl); dbg('destroy(): revoked objectUrl'); }
 
-      if (root.parent) root.parent.removeChild(root);
+      if (root.parent) { root.parent.removeChild(root); }
       root.destroy({ children: true });
+      dbg('destroy(): scene graph destroyed');
 
-      try { oldTexture?.destroy(false); } catch { /* ok */ }
+      try { oldTexture?.destroy(false); dbg('destroy(): texture.destroy(false) ok'); } catch (e) { dbg('destroy(): texture.destroy(false) THREW ' + String(e)); }
+      dbg('destroy() done');
     },
     setControlsVisible(v: boolean) {
       controlsVisible = v;
