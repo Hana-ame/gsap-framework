@@ -34,13 +34,6 @@ export function ComponentCutsceneDisplay() {
     let fadeStart = 0;
 
     const buttonLayer = new PIXI.Container();
-    const cutsceneLayer = new PIXI.Container();
-    cutsceneLayer.visible = false;
-    cutsceneLayer.alpha = 0;
-
-    const blackBg = new PIXI.Graphics().rect(0, 0, W, H).fill({ color: 0x000000 });
-    cutsceneLayer.addChild(blackBg);
-
     const skipPrompt = new PIXI.Text({
       text: 'Click anywhere to skip',
       style: { fontSize: 13, fill: 0xaaaacc, fontFamily: 'monospace' },
@@ -49,7 +42,6 @@ export function ComponentCutsceneDisplay() {
     skipPrompt.x = W / 2;
     skipPrompt.y = H - 24;
     skipPrompt.alpha = 0;
-    cutsceneLayer.addChild(skipPrompt);
 
     const btnW = 220;
     const btnH = 64;
@@ -78,16 +70,19 @@ export function ComponentCutsceneDisplay() {
     skipLayer.eventMode = 'static';
     skipLayer.hitArea = new PIXI.Rectangle(0, 0, W, H);
     skipLayer.cursor = 'pointer';
-    cutsceneLayer.addChildAt(skipLayer, 0);
+    skipLayer.visible = false;
 
     function startCutscene() {
       state = 'fading-in';
       fadeStart = performance.now();
       buttonLayer.visible = false;
-      cutsceneLayer.visible = true;
-      cutsceneLayer.alpha = 0;
-      skipPrompt.alpha = 0;
       if (player) {
+        player.root.alpha = 0;
+        player.root.visible = true;
+        skipLayer.visible = true;
+        skipPrompt.alpha = 0;
+        root!.stage.addChild(skipPrompt);
+        root!.stage.addChild(skipLayer);
         player.seek(0);
         player.play();
       }
@@ -103,12 +98,15 @@ export function ComponentCutsceneDisplay() {
 
     function backToIdle() {
       state = 'idle';
-      cutsceneLayer.visible = false;
-      cutsceneLayer.alpha = 0;
       if (player) {
+        player.root.alpha = 1;
+        player.root.visible = false;
         player.pause();
         player.seek(0);
       }
+      skipLayer.visible = false;
+      if (skipPrompt.parent) skipPrompt.parent.removeChild(skipPrompt);
+      if (skipLayer.parent) skipLayer.parent.removeChild(skipLayer);
       buttonLayer.visible = true;
     }
 
@@ -133,10 +131,10 @@ export function ComponentCutsceneDisplay() {
         const elapsed = performance.now() - fadeStart;
         const t = Math.min(1, elapsed / FADE_DURATION);
         if (state === 'fading-in') {
-          cutsceneLayer.alpha = t;
+          if (player) player.root.alpha = t;
           if (t >= 1) state = 'playing';
         } else {
-          cutsceneLayer.alpha = 1 - t;
+          if (player) player.root.alpha = 1 - t;
           if (t >= 1) backToIdle();
         }
       }
@@ -149,19 +147,25 @@ export function ComponentCutsceneDisplay() {
 
     const destroyApp = startPixiApp((proxy) => {
       root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-      root.stage.addChild(cutsceneLayer);
       root.stage.addChild(buttonLayer);
 
-      player = createVideoPlayer(root, {
-        url: STABLE_MP4_URL,
-        x: vx, y: vy, width: vw, height: vh,
-        loop: false,
-        muted: false,
-        autoplay: false,
-        showControls: false,
-        hidePlayButton: true,
-        onEnded: onVideoEnded,
-      });
+      try {
+        player = createVideoPlayer(root, {
+          url: STABLE_MP4_URL,
+          x: vx, y: vy, width: vw, height: vh,
+          loop: false,
+          muted: false,
+          autoplay: false,
+          showControls: false,
+          hidePlayButton: true,
+          onEnded: onVideoEnded,
+          onDebug: (msg) => { console.log(`[PixiVideoPlayer] ${msg}`); },
+        });
+        player.root.alpha = 1;
+        player.root.visible = false;
+      } catch (err) {
+        console.error('[Cutscene] createVideoPlayer failed:', err);
+      }
     });
 
     if (root) {

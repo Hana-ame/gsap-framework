@@ -26,6 +26,7 @@ export interface PixiVideoPlayerHandle {
   destroy(): void;
   destroyed: boolean;
   setControlsVisible(v: boolean): void;
+  readonly root: PIXI.Container;
   readonly paused: boolean;
   readonly duration: number;
   readonly currentTime: number;
@@ -114,11 +115,13 @@ export function createVideoPlayer(
   cpb.addChild(cpbBg);
   const cpbTri = new PIXI.Graphics().poly([-10, -8, -10, 8, 8, 0]).fill({ color: 0xffffff });
   cpb.addChild(cpbTri);
+  if (hidePlayButton) cpb.eventMode = 'none';
   root.addChild(cpb);
   cpb.zIndex = 2;
 
   const ctrl = new PIXI.Container();
   ctrl.y = height - CTRL_H;
+  if (!showControlsOpt) ctrl.eventMode = 'none';
   root.addChild(ctrl);
   ctrl.zIndex = 3;
 
@@ -449,6 +452,7 @@ export function createVideoPlayer(
       controlsVisible = v;
       ctrl.visible = v;
     },
+    get root() { return root; },
     get destroyed() { return destroyed; },
     get paused() { return paused; },
     get duration() { return duration; },
