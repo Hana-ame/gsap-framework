@@ -25,6 +25,7 @@ const APPS: AppEntry[] = [
   { route: 'component-scrollable-image', label: 'Component: ScrollableImage', hint: 'scrollable gallery + fullscreen viewer', glyph: '\u29C9', accent: '#5a3a5a' },
   { route: 'component-picture-drag', label: 'Component: PictureDrag', hint: 'draggable picture + click position via bus', glyph: '\u29D6', accent: '#4a5a3a' },
   { route: 'component-video-player', label: 'Component: VideoPlayer', hint: '4K video player + controls bar + progress seek', glyph: '\u25B6', accent: '#3a4a6a' },
+  { route: 'component-video-player-dom', label: 'Component: VideoPlayer (DOM)', hint: 'native <video controls>, no PIXI, zero bugs', glyph: '\u25A0', accent: '#4a6a4a' },
 ];
 
 function accentToText(hex: string): string {
