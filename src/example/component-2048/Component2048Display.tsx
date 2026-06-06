@@ -401,13 +401,15 @@ export function Component2048Display() {
       const GAP = 10;
       const availW = W - 20;
       const availH = H - controlH - 20;
-      const dim = Math.max(rows, cols);
-      cellW = Math.floor((availW - GAP * (dim + 1)) / dim);
-      cellH = Math.floor((availH - GAP * (dim + 1)) / dim);
-      boardW = cols * cellW + (cols + 1) * GAP;
-      boardH = rows * cellH + (rows + 1) * GAP;
+      const cellWMax = (availW - GAP * (cols + 1)) / cols;
+      const cellHMax = (availH - GAP * (rows + 1)) / rows;
+      const cellSize = Math.max(20, Math.floor(Math.min(cellWMax, cellHMax)));
+      cellW = cellSize;
+      cellH = cellSize;
+      boardW = cols * cellSize + (cols + 1) * GAP;
+      boardH = rows * cellSize + (rows + 1) * GAP;
       boardOX = (W - boardW) / 2;
-      boardOY = 0;
+      boardOY = controlH + (H - controlH - boardH) / 2;
 
       const title = new PIXI.Text({
         text: '2048',
