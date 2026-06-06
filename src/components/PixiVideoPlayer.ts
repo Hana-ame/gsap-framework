@@ -11,8 +11,10 @@ export interface PixiVideoPlayerOptions {
   muted?: boolean;
   autoplay?: boolean;
   showControls?: boolean;
+  hidePlayButton?: boolean;
   onLoad?: () => void;
   onError?: (e: Error) => void;
+  onEnded?: () => void;
   onDebug?: (msg: string) => void;
 }
 
@@ -54,8 +56,10 @@ export function createVideoPlayer(
     muted = true,
     autoplay = false,
     showControls: showControlsOpt = true,
+    hidePlayButton = false,
     onLoad,
     onError,
+    onEnded,
     onDebug,
   } = opts;
 
@@ -75,6 +79,7 @@ export function createVideoPlayer(
   let videoSource: PIXI.VideoSource | null = null;
   let videoTexture: PIXI.Texture | null = null;
   let userPlayRequested = false;
+  const cpbVisibleAllowed = !hidePlayButton;
 
   // ── scene graph ──
   const root = new PIXI.Container();
@@ -139,7 +144,7 @@ export function createVideoPlayer(
     }
   }
   drawPlayIcon(false);
-  cpb.visible = true;
+  cpb.visible = cpbVisibleAllowed;
   ctrl.addChild(playBtn);
 
   const timeText = new PIXI.Text({ text: '--:-- / --:--', style: { fontSize: 11, fill: 0xcccccc, fontFamily: 'monospace' } });
@@ -342,7 +347,12 @@ export function createVideoPlayer(
     if (destroyed) return;
     paused = true;
     drawPlayIcon(false);
-    cpb.visible = true;
+    if (cpbVisibleAllowed) cpb.visible = true;
+  };
+
+  const onEndedEvt = () => {
+    if (destroyed) return;
+    onEnded?.();
   };
 
   const onVideoError = async () => {
@@ -383,6 +393,7 @@ export function createVideoPlayer(
   htmlVideo.addEventListener('seeked', onSeeked);
   htmlVideo.addEventListener('play', onPlay);
   htmlVideo.addEventListener('pause', onPause);
+  htmlVideo.addEventListener('ended', onEndedEvt);
   htmlVideo.addEventListener('error', onVideoError);
 
   // ── handle ──
@@ -403,6 +414,7 @@ export function createVideoPlayer(
       htmlVideo.removeEventListener('seeked', onSeeked);
       htmlVideo.removeEventListener('play', onPlay);
       htmlVideo.removeEventListener('pause', onPause);
+      htmlVideo.removeEventListener('ended', onEndedEvt);
       htmlVideo.removeEventListener('error', onVideoError);
 
       if (hideTimer) clearTimeout(hideTimer);
