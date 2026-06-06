@@ -4,6 +4,54 @@
 
 ---
 
+## 什么时候**不要**用这个组件
+
+**PIXI 的 `VideoSource` 本质就是 `<video>` 元素 + 一层 Texture 包装。** 浏览器已经把 `<video>` 硬件加速到极致，PIXI 每帧通过 rVFC / ticker 把帧上传到 GPU 纹理**纯亏不赚**——除非你确实需要把视频帧作为 PIXI scene graph 的一部分消费。
+
+**90% 的"我要在网页上放个能播的视频"场景都应该用 [`VideoPlayer`](./VideoPlayer.md) 而不是这个。** 那个就是 `<video controls>` 的薄包装，零 PIXI 依赖、零 bug surface、零生命周期陷阱。
+
+**这个组件存在的理由**（按强度排序）：
+
+1. **要把视频帧喂给 PIXI Filter**（BlurFilter / ColorMatrixFilter / DisplacementFilter 等后处理）
+2. **要把视频跟其他 PIXI 内容合成**（粒子、Graphics、Custom Shader 都要采样视频帧）
+3. **需要 SubCanvas 统一事件系统命中视频区域**（PIXI 内的 hover / pointerdown 路由）
+4. **要在同一棵 scene tree 里做 z-order、mask、嵌套 transform**
+
+如果以上四点你都不需要，**用 `<VideoPlayer>`**。
+
+**典型应该用 `<VideoPlayer>` 而非本组件的场景**：
+- 后台管理系统嵌入教学视频
+- 营销页 hero 区放产品演示
+- 任何"播放、暂停、seek、看完"的纯展示场景
+- 需要响应式布局、跨设备兼容、浏览器原生全屏的场合
+
+**本组件的代价**（踩过的坑，按严重度）：
+- `texture.destroy(true)` cascade 到 `VideoSource.destroy()` 内部 `source.src = ""; source.load()` Abort → Chromium 媒体 Cache Lock 死锁（注意事项 #17）
+- PIXI renderer 下一帧读已 null 化的 `_sourceRect.x` → `Cannot read properties of null`（注意事项 #16）
+- 首帧 primer 与用户主动播放的竞态需要 `userPlayRequested` 标志守护（注意事项 #12）
+- React Strict Mode 合成 cleanup 触发 Abort → 同 URL 二次挂载死锁（注意事项 #17）
+- `videoTexture` GPU 内存 + `<video>` 元素双资源生命周期管理（注意事项 #4、#11）
+- CORS / Range 失败要手写 fetch → blob URL 兜底（注意事项 #6）
+
+**对比**（同一个视频播放功能）：
+
+| 维度 | `createVideoPlayer` (本组件) | `<VideoPlayer>` (DOM) |
+|------|------------------------------|----------------------|
+| 代码量 | ~440 行 + .md | ~40 行 + .md |
+| 控件 UI | 自定义 PIXI 控件（cpb / ctrl / playBtn / seekHit） | 浏览器原生 `<video controls>` |
+| Filter / Shader 支持 | ✅ 直接套 | ❌ 不支持 |
+| 跨设备兼容 | 仅支持 PIXI 支持的平台 | 所有浏览器、所有设备 |
+| React Strict Mode | 需要特殊处理（deferred cleanup） | 不需要（浏览器自己管） |
+| 全屏 API | 要手写 | 浏览器原生 |
+| 字幕 / 章节 / 画中画 | 要手写 | 浏览器原生 |
+| 已知 critical bug 数 | 4+ | 0 |
+
+---
+
+## 调用栈
+
+---
+
 ## 调用栈
 
 ### 创建

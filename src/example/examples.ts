@@ -15,6 +15,7 @@ import { ComponentClickableImageDisplay } from './component-clickable-image/Comp
 import { ComponentScrollableImageDisplay } from './component-scrollable-image/ComponentScrollableImageDisplay';
 import { ComponentPictureDragDisplay } from './component-picture-drag/ComponentPictureDragDisplay';
 import { ComponentVideoPlayerDisplay } from './component-video-player/ComponentVideoPlayerDisplay';
+import { ComponentVideoPlayerDomDisplay } from './component-video-player-dom/ComponentVideoPlayerDomDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -33,6 +34,7 @@ export const EXAMPLES = [
   'component-scrollable-image',
   'component-picture-drag',
   'component-video-player',
+  'component-video-player-dom',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -57,4 +59,5 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-scrollable-image': ComponentScrollableImageDisplay,
   'component-picture-drag': ComponentPictureDragDisplay,
   'component-video-player': ComponentVideoPlayerDisplay,
+  'component-video-player-dom': ComponentVideoPlayerDomDisplay,
 };

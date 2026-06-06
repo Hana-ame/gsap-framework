@@ -14,3 +14,5 @@ export { createFullscreenManager } from './FullscreenManager';
 export type { FullscreenManager, FullscreenShowEvent } from './FullscreenManager';
 export { createVideoPlayer } from './PixiVideoPlayer';
 export type { PixiVideoPlayerHandle, PixiVideoPlayerOptions } from './PixiVideoPlayer';
+export { VideoPlayer } from './VideoPlayer';
+export type { VideoPlayerHandle, VideoPlayerProps } from './VideoPlayer';
