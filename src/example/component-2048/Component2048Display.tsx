@@ -41,6 +41,15 @@ function getTextColor(v: number): number {
   return TILE_SUPER_FG;
 }
 
+function fontSizeFor(value: number, cellW: number, cellH: number): number {
+  if (value === 0) return 1;
+  const base = value < 100 ? 32 : value < 1000 ? 28 : 24;
+  const digits = String(value).length;
+  const maxByHeight = Math.floor(cellH * 0.55);
+  const maxByWidth = Math.floor((cellW * 0.85) / (digits * 0.62));
+  return Math.max(8, Math.min(base, maxByHeight, maxByWidth));
+}
+
 function newBoard(rows: number, cols: number): Board {
   return Array.from({ length: rows }, () => Array(cols).fill(0));
 }
@@ -309,7 +318,7 @@ export function Component2048Display() {
       const t = new PIXI.Text({
         text: value === 0 ? '' : String(value),
         style: {
-          fontSize: value < 100 ? 32 : value < 1000 ? 28 : 24,
+          fontSize: fontSizeFor(value, cellW, cellH),
           fill: getTextColor(value),
           fontFamily: 'monospace',
           fontWeight: 'bold',
@@ -339,7 +348,7 @@ export function Component2048Display() {
           const t = new PIXI.Text({
             text: v === 0 ? '' : String(v),
             style: {
-              fontSize: v < 100 ? 32 : v < 1000 ? 28 : 24,
+              fontSize: fontSizeFor(v, cellW, cellH),
               fill: getTextColor(v),
               fontFamily: 'monospace',
               fontWeight: 'bold',
@@ -399,15 +408,14 @@ export function Component2048Display() {
       boardRegion = proxy.createRegion({ x: 0, y: controlH, width: W, height: H - controlH });
 
       const GAP = 10;
+      const MAX_BOARD_SIDE = 480;
       const availW = W - 20;
       const availH = H - controlH - 20;
-      const cellWMax = (availW - GAP * (cols + 1)) / cols;
-      const cellHMax = (availH - GAP * (rows + 1)) / rows;
-      const cellSize = Math.max(0, Math.floor(Math.min(cellWMax, cellHMax)));
-      cellW = cellSize;
-      cellH = cellSize;
-      boardW = cols * cellSize + (cols + 1) * GAP;
-      boardH = rows * cellSize + (rows + 1) * GAP;
+      const boardSide = Math.max(0, Math.min(availW, availH, MAX_BOARD_SIDE));
+      cellW = Math.max(0, Math.floor((boardSide - GAP * (cols + 1)) / cols));
+      cellH = Math.max(0, Math.floor((boardSide - GAP * (rows + 1)) / rows));
+      boardW = cols * cellW + (cols + 1) * GAP;
+      boardH = rows * cellH + (rows + 1) * GAP;
       boardOX = (W - boardW) / 2;
       boardOY = controlH + (H - controlH - boardH) / 2;
 

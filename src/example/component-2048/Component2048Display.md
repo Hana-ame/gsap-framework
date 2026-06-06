@@ -36,7 +36,7 @@ API 建立在 SubCanvas 之上：棋盘用 `SubCanvas.onPress` + `onRelease` 测
 - 默认 `4 × 4`。
 - `MIN_DIM = 3`, `MAX_DIM = 10`（仅暴露在源码常量，未做运行时检查；按钮 +/- 已 clamp）。
 - Rows 与 Cols 独立调整。改 Rows 或 Cols 会触发 React `useEffect([rows, cols])` 重跑 → 销毁当前 PIXI 应用 → 新尺寸下重建棋盘。
-- 调小时按当前最小可放区域自适应（`cellSize = floor(min((availW - GAP×(cols+1))/cols, (availH - GAP×(rows+1))/rows))`），保证 tile 始终是**正方形**且棋盘不超出可视区。
+- 调小时按当前最小可放区域自适应（`boardSide = min(availW, availH, 480)`，再以 `cellW = (boardSide - GAP×(cols+1))/cols`、`cellH = (boardSide - GAP×(rows+1))/rows` 分配），保证棋盘整体始终是**正方形**且不超出可视区，tiles 在 rows≠cols 时为长方形（不破坏外轮廓）。
 
 ---
 
@@ -120,7 +120,7 @@ boardRegion.onRelease((e) => {
 ## 已知约束
 
 - **Tiles 是 PIXI.Container 节点树，不是合并/滑动动画**：每次 move 直接 `updateTiles` 替换 Graphics+Text。如果将来要做 2048 原版那种"先滑再合并"的两阶段动画，需要把 move 拆成 `slide` + `merge` 两步并加 ticker。
-- **非正方形棋盘（rows ≠ cols）下 tile 仍为正方形**：`cellSize = min(cellWMax, cellHMax)`，因此 tile 始终是正方形；代价是非对称 board 在较长方向会有额外留白（例如 3×10 board 在垂直方向留出大块空白，水平方向刚好填满）。
+- **非正方形棋盘（rows ≠ cols）下棋盘仍是正方形，tile 是长方形**：`boardSide = min(availW, availH, MAX_BOARD_SIDE=480)` 是固定边长；`cellW` 按 cols 分配宽度，`cellH` 按 rows 分配高度，两者不等时 tile 拉伸为长方形，但外轮廓 boardW ≈ boardH ≈ boardSide 保持正方形。代价是 4 位数（1024+）的 tile 文字在窄长方形 tile 里可能换行/截断，需要配合 `Math.min(cellW, cellH)` 自适应字号（详见 `makeTileNode` 字号逻辑）。
 - **没有 Undo / 没有 Best Score 持久化**：纯本地内存状态。
 - **没接 createWindow / createConfirm**：本例专注 SubCanvas swipe + PIXI 渲染，未引入上层 `components` 包。
 
