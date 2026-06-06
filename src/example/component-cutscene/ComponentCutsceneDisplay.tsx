@@ -73,6 +73,7 @@ export function ComponentCutsceneDisplay() {
     skipLayer.visible = false;
 
     function startCutscene() {
+      console.log(`[Cutscene] startCutscene state=${state} currentTime=${player?.currentTime} duration=${player?.duration}`);
       state = 'fading-in';
       fadeStart = performance.now();
       buttonLayer.visible = false;
@@ -90,6 +91,7 @@ export function ComponentCutsceneDisplay() {
 
     function skipCutscene() {
       if (state !== 'fading-in' && state !== 'playing') return;
+      console.log(`[Cutscene] skipCutscene state=${state} currentTime=${player?.currentTime} duration=${player?.duration}`);
       state = 'fading-out';
       fadeStart = performance.now();
       if (player) player.pause();
@@ -97,6 +99,7 @@ export function ComponentCutsceneDisplay() {
     }
 
     function backToIdle() {
+      console.log(`[Cutscene] backToIdle state=${state} currentTime=${player?.currentTime} duration=${player?.duration}`);
       state = 'idle';
       if (player) {
         player.root.alpha = 1;
@@ -111,6 +114,7 @@ export function ComponentCutsceneDisplay() {
     }
 
     function onVideoEnded() {
+      console.log(`[Cutscene] onVideoEnded state=${state} currentTime=${player?.currentTime} duration=${player?.duration}`);
       if (state === 'fading-in' || state === 'playing') {
         state = 'fading-out';
         fadeStart = performance.now();
