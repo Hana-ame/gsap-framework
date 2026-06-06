@@ -403,7 +403,7 @@ export function Component2048Display() {
       const availH = H - controlH - 20;
       const cellWMax = (availW - GAP * (cols + 1)) / cols;
       const cellHMax = (availH - GAP * (rows + 1)) / rows;
-      const cellSize = Math.max(20, Math.floor(Math.min(cellWMax, cellHMax)));
+      const cellSize = Math.max(0, Math.floor(Math.min(cellWMax, cellHMax)));
       cellW = cellSize;
       cellH = cellSize;
       boardW = cols * cellSize + (cols + 1) * GAP;
