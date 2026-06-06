@@ -49,10 +49,12 @@ return cleanup → player.destroy() + destroyApp()
 
 ## 关键设计
 
-- **`muted = false` + `autoplay = false` + 点击 cpb / 控制条播放按钮**：
-  浏览器 autoplay 政策规定，要么 `muted=true`，要么必须有用户手势（user activation）。本例想要声音 → 必须有用户手势 → `autoplay: false` 等用户点击 cpb 触发 user gesture 后 play() 才会真播（带声音）。`muted: false` 让 video 元素本身有声音；`userPlayRequested` 标志在 createVideoPlayer 内部避免 primer.then 把它 pause 掉。
+- **`player.root.visible = false` 在创建后立刻设置**：**这是与 `component-cutscene` 唯一关键差异，也是为什么它能工作而之前的版本会黑屏。** PIXI v8 的 `TextureSource` 是 lazy-alloc 的——GPU texture storage 在 sprite 第一次被 renderer render 时才创建。视频 primer（canplay → initVideoSource → play/pause）是 async 的。在 primer 完成前，sprite 不能被 render，否则 renderer 会试图把 video frame `glCopySubTexture` 进一个 unallocated 的 GPU texture → `GL_INVALID_OPERATION: The destination level of the destination texture must be defined` 每帧 64+ 次 → texture 永远不被填充 → sprite 显示黑。`hide()` 让 renderer 跳过这个 sprite → primer 完成后用户点击再 `visible = true` → 第一次 render 时干净地 alloc + copy。详见 README gotcha #20。
+- **外部 start button 而不是 cpb**：本例的 cpb 是 `player.root` 的子节点，hide `root` 必然同时 hide cpb。所以 click-to-start 的 UI 必须在 player 外部——`startContainer` 加到 `root.stage` 上，player 单独 hide。
+- **`muted = false` + `autoplay = false` + 点击 start button**：
+  浏览器 autoplay 政策规定，要么 `muted=true`，要么必须有用户手势（user activation）。本例想要声音 → 必须有用户手势 → `autoplay: false` 等用户点击 start button 触发 user gesture 后 play() 才会真播（带声音）。`muted: false` 让 video 元素本身有声音；`userPlayRequested` 标志在 createVideoPlayer 内部避免 primer.then 把它 pause 掉。
 - **`loop = true`**：避免视频播完后 `ended` 事件触发 `onEnded`（本例不接 `onEnded`，但循环最省事）。
-- **`showControls = true`**：让 cpb 可见（中心播放按钮 + 底部控件条），用户可点击 cpb 或底部 ▶ 按钮触发 play()。cpb 的 pointerdown 本身即是 user gesture，浏览器允许 play() 带声音通过。
+- **`showControls = true`**：视频显示后底部控件条可暂停/拖动。
 
 ---
 

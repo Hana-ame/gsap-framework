@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../framework/PixiApp';
 import { createVideoPlayer } from '../../components';
 import type { PixiVideoPlayerHandle } from '../../components';
@@ -24,8 +25,31 @@ export function ComponentCutsceneMinimalDisplay() {
     let root: SubCanvas | null = null;
     let player: PixiVideoPlayerHandle | null = null;
 
+    const btnW = 200;
+    const btnH = 56;
+    const startBtn = new PIXI.Graphics()
+      .roundRect(-btnW / 2, -btnH / 2, btnW, btnH, 8)
+      .fill({ color: 0x1a1a2e, alpha: 0.92 });
+    startBtn.stroke({ width: 2, color: 0x446 });
+    startBtn.eventMode = 'static';
+    startBtn.cursor = 'pointer';
+    startBtn.hitArea = new PIXI.Rectangle(-btnW / 2, -btnH / 2, btnW, btnH);
+    const startText = new PIXI.Text({
+      text: '\u25B6  Start Video',
+      style: { fontSize: 16, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
+    });
+    startText.anchor.set(0.5);
+    const startContainer = new PIXI.Container();
+    startContainer.x = W / 2;
+    startContainer.y = H / 2;
+    startContainer.addChild(startBtn);
+    startContainer.addChild(startText);
+    startBtn.on('pointerover', () => { startBtn.tint = 0xaabbff; });
+    startBtn.on('pointerout', () => { startBtn.tint = 0xffffff; });
+
     const destroyApp = startPixiApp((proxy) => {
       root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      root.stage.addChild(startContainer);
 
       player = createVideoPlayer(root, {
         url: STABLE_MP4_URL,
@@ -35,6 +59,14 @@ export function ComponentCutsceneMinimalDisplay() {
         muted: false,
         showControls: true,
         onDebug: (msg) => { console.log(`[Minimal] ${msg}`); },
+      });
+      player.root.visible = false;
+
+      startBtn.on('pointerdown', () => {
+        if (!player) return;
+        startContainer.visible = false;
+        player.root.visible = true;
+        player.play();
       });
     });
 
@@ -50,5 +82,5 @@ export function ComponentCutsceneMinimalDisplay() {
 
 ComponentCutsceneMinimalDisplay.head = {
   title: 'Component: Cutscene (Minimal)',
-  description: 'Sanity test: single PIXI.App via SubCanvas + createVideoPlayer, click-to-start with sound. Muted autoplay is the only path that bypasses browser autoplay policy without user gesture, so we use a click gesture instead.',
+  description: 'Sanity test: single PIXI.App via SubCanvas + createVideoPlayer, click-to-start with sound. Hidden until click to avoid first-render race with video primer (see README gotcha #20).',
 };
