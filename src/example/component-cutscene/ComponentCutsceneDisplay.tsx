@@ -157,6 +157,9 @@ export function ComponentCutsceneDisplay() {
       root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
       root.stage.addChild(buttonLayer);
 
+      tickerObj = root.ticker;
+      tickerObj.add(tickerFn);
+
       try {
         player = createVideoPlayer(root, {
           url: STABLE_MP4_URL,
@@ -175,11 +178,6 @@ export function ComponentCutsceneDisplay() {
         console.error('[Cutscene] createVideoPlayer failed:', err);
       }
     });
-
-    if (root) {
-      tickerObj = root.ticker;
-      tickerObj.add(tickerFn);
-    }
 
     return () => {
       if (tickerObj && tickerFn) tickerObj.remove(tickerFn);
