@@ -211,8 +211,11 @@ export function createVideoPlayer(
       autoPlay: false,
       updateFPS: 0,
     });
+    try { (videoSource as unknown as { mipLevelCount?: number }).mipLevelCount = 1; } catch { /* ok */ }
+    dbg(`initVideoSource: source mipLevelCount=${(videoSource as unknown as { mipLevelCount?: number }).mipLevelCount}`);
     videoTexture = new PIXI.Texture({ source: videoSource });
     videoSprite.texture = videoTexture;
+    try { videoSource.update(); } catch (e) { dbg('initVideoSource: source.update() THREW ' + String(e)); }
     adjustSpriteScale();
 
     if (autoplay) {
