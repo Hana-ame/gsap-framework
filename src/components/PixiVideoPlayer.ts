@@ -440,21 +440,20 @@ export function createVideoPlayer(
       videoTexture = null;
       objectUrl = null;
 
+      if (oldSource) {
+        const s = oldSource as unknown as { _videoFrameRequestCallbackHandle?: number | null };
+        if (s._videoFrameRequestCallbackHandle != null) {
+          try { oldVideo.cancelVideoFrameCallback(s._videoFrameRequestCallbackHandle); } catch { /* ok */ }
+          s._videoFrameRequestCallbackHandle = null;
+        }
+      }
+      if (oldVideo.parentNode) oldVideo.parentNode.removeChild(oldVideo);
+      if (oldUrl) URL.revokeObjectURL(oldUrl);
+
       if (root.parent) root.parent.removeChild(root);
       root.destroy({ children: true });
 
-      setTimeout(() => {
-        if (oldSource) {
-          const s = oldSource as unknown as { _videoFrameRequestCallbackHandle?: number | null };
-          if (s._videoFrameRequestCallbackHandle != null) {
-            oldVideo.cancelVideoFrameCallback(s._videoFrameRequestCallbackHandle);
-            s._videoFrameRequestCallbackHandle = null;
-          }
-        }
-        if (oldVideo.parentNode) oldVideo.parentNode.removeChild(oldVideo);
-        if (oldUrl) URL.revokeObjectURL(oldUrl);
-        try { oldTexture?.destroy(false); } catch { /* ok */ }
-      }, 0);
+      try { oldTexture?.destroy(false); } catch { /* ok */ }
     },
     setControlsVisible(v: boolean) {
       controlsVisible = v;
