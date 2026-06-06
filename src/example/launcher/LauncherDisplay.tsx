@@ -27,6 +27,7 @@ const APPS: AppEntry[] = [
   { route: 'component-video-player', label: 'Component: VideoPlayer', hint: '4K video player + controls bar + progress seek', glyph: '\u25B6', accent: '#3a4a6a' },
   { route: 'component-video-player-dom', label: 'Component: VideoPlayer (DOM)', hint: 'native <video controls>, no PIXI, zero bugs', glyph: '\u25A0', accent: '#4a6a4a' },
   { route: 'component-cutscene', label: 'Component: Cutscene', hint: 'click-to-play full-screen video + fade in/out + skip', glyph: '\u29D6', accent: '#6a4a3a' },
+  { route: 'component-cutscene-minimal', label: 'Component: Cutscene (Minimal)', hint: 'sanity test: single raw PIXI.App + <video> + Sprite, no SubCanvas', glyph: '\u25CF', accent: '#7a5a4a' },
 ];
 
 function accentToText(hex: string): string {

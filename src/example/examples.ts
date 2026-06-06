@@ -17,6 +17,7 @@ import { ComponentPictureDragDisplay } from './component-picture-drag/ComponentP
 import { ComponentVideoPlayerDisplay } from './component-video-player/ComponentVideoPlayerDisplay';
 import { ComponentVideoPlayerDomDisplay } from './component-video-player-dom/ComponentVideoPlayerDomDisplay';
 import { ComponentCutsceneDisplay } from './component-cutscene/ComponentCutsceneDisplay';
+import { ComponentCutsceneMinimalDisplay } from './component-cutscene-minimal/ComponentCutsceneMinimalDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -37,6 +38,7 @@ export const EXAMPLES = [
   'component-video-player',
   'component-video-player-dom',
   'component-cutscene',
+  'component-cutscene-minimal',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -63,4 +65,5 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-video-player': ComponentVideoPlayerDisplay,
   'component-video-player-dom': ComponentVideoPlayerDomDisplay,
   'component-cutscene': ComponentCutsceneDisplay,
+  'component-cutscene-minimal': ComponentCutsceneMinimalDisplay,
 };
