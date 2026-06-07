@@ -16,3 +16,5 @@ export { createVideoPlayer } from './PixiVideoPlayer';
 export type { PixiVideoPlayerHandle, PixiVideoPlayerOptions } from './PixiVideoPlayer';
 export { VideoPlayer } from './VideoPlayer';
 export type { VideoPlayerHandle, VideoPlayerProps } from './VideoPlayer';
+export { Avd } from './Avd';
+export type { AvdLine, AvdOptions, AvdState, AvdText, AvdTextSegment, AvdPortraitPos } from './Avd';
