@@ -485,29 +485,7 @@ function buildViewport(refs: LifeMapRefs): void {
   region.stage.addChild(worldContainer);
   refs.worldContainer = worldContainer;
 
-  refs.tileCols = Math.ceil(refs.viewportW / refs.worldW) + 1;
-  refs.tileRows = Math.ceil(refs.viewportH / refs.worldH) + 1;
-  refs.tiles = [];
-  for (let i = 0; i < refs.tileCols * refs.tileRows; i++) {
-    const tileContainer = new PIXI.Container();
-    tileContainer.eventMode = 'none';
-    worldContainer.addChild(tileContainer);
-    const bg = new PIXI.Graphics();
-    bg.eventMode = 'none';
-    tileContainer.addChild(bg);
-    const cells = new PIXI.Graphics();
-    cells.eventMode = 'none';
-    tileContainer.addChild(cells);
-    const gridLines = new PIXI.Graphics();
-    gridLines.eventMode = 'none';
-    tileContainer.addChild(gridLines);
-    refs.tiles.push({ container: tileContainer, bg, cells, gridLines });
-  }
-
-  updateTilePositions(refs);
-  drawBg(refs);
-  drawGridLines(refs);
-  drawCells(refs);
+  rebuildTileGrid(refs);
 
   let dragStartClientX = 0;
   let dragStartClientY = 0;
@@ -579,9 +557,7 @@ function setRows(n: number): void {
   state.playing = false;
   state.lastStepTime = 0;
   setWorldPos(state, 0, 0);
-  drawBg(state);
-  drawGridLines(state);
-  drawCells(state);
+  rebuildTileGrid(state);
   updateStats(state);
   updatePlayPauseLabel(state);
   state.steppers.rows?.refresh();
@@ -598,12 +574,38 @@ function setCols(n: number): void {
   state.playing = false;
   state.lastStepTime = 0;
   setWorldPos(state, 0, 0);
-  drawBg(state);
-  drawGridLines(state);
-  drawCells(state);
+  rebuildTileGrid(state);
   updateStats(state);
   updatePlayPauseLabel(state);
   state.steppers.cols?.refresh();
+}
+
+function rebuildTileGrid(refs: LifeMapRefs): void {
+  for (const tile of refs.tiles) tile.container.destroy({ children: true });
+  refs.tiles = [];
+  refs.tileCols = Math.ceil(refs.viewportW / refs.worldW) + 1;
+  refs.tileRows = Math.ceil(refs.viewportH / refs.worldH) + 1;
+  const wc = refs.worldContainer;
+  if (!wc) return;
+  for (let i = 0; i < refs.tileCols * refs.tileRows; i++) {
+    const tileContainer = new PIXI.Container();
+    tileContainer.eventMode = 'none';
+    wc.addChild(tileContainer);
+    const bg = new PIXI.Graphics();
+    bg.eventMode = 'none';
+    tileContainer.addChild(bg);
+    const cells = new PIXI.Graphics();
+    cells.eventMode = 'none';
+    tileContainer.addChild(cells);
+    const gridLines = new PIXI.Graphics();
+    gridLines.eventMode = 'none';
+    tileContainer.addChild(gridLines);
+    refs.tiles.push({ container: tileContainer, bg, cells, gridLines });
+  }
+  updateTilePositions(refs);
+  drawBg(refs);
+  drawGridLines(refs);
+  drawCells(refs);
 }
 
 function setCellSize(n: number): void {
@@ -614,9 +616,7 @@ function setCellSize(n: number): void {
   state.worldW = state.worldCols * n;
   state.worldH = state.worldRows * n;
   setWorldPos(state, 0, 0);
-  drawBg(state);
-  drawGridLines(state);
-  drawCells(state);
+  rebuildTileGrid(state);
   state.steppers.zoom?.refresh();
 }
 
