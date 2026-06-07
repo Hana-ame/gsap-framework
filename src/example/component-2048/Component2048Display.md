@@ -76,6 +76,7 @@ cleanup → keyCleanups.forEach(remove) + destroyApp()
 - **PIXI 控件捕获 React setter**：Rows/Cols stepper 的 +/- 按钮在 `useEffect` 内创建时闭包捕获 `setRows` / `setCols`。点击调 setter → React 排队 re-render → useEffect cleanup + 重跑 → 旧 PIXI 应用销毁 → 新应用就位。
 - **Reset 与 Rows/Cols 共享一个 useEffect 路径**：Reset 只清 board/score/gameOver，不改 rows/cols，不触发 effect 重跑，所以走的是 `updateTiles` + 清除 `gameOverOverlay`，比改尺寸便宜。
 - **PIXI app 只创建一次，rows/cols 变化时原位重建 board**：单 useEffect `[]` 创建 `SubCanvasProxy`、注册 swipe/keyboard、首次 `buildBoard`；第二个 useEffect `[rows, cols]` 只调 `buildBoard` 重画控制面板 + 棋盘背景 + tiles，**canvas 保持存活**。这是为了避免点击 Rows/Cols +/- 时销毁整个 PIXI app 导致的黑屏闪烁。
+- **整个游戏状态在模块级 `let state` 里，没有任何 React state / ref**：rows/cols 不在 React state，setRows/setCols 是 module-level 函数，直接 mutate `state` + 调 `buildBoard`。React 根本不 re-render。组件函数体只有 `useEffect` 挂载/卸载 PIXI app + `return <></>`。**约束来源**：本项目原则 "整块屏幕只允许 canvas 出现" + "基于 SubCanvas 显示组件" + "不要用 useEffect 做游戏逻辑"（规则见 README 踩过的坑 "React useEffect 销毁 PIXI app 黑屏"）。
 - **不暴露 4 行/列/8 行/列的预置按钮**：用户明确要求"自定义长宽"，所以走 +/- stepper 而非 preset。如果将来要加 preset，逻辑是 `setRows(n); setCols(m);` 同时改两 state。
 - **tile 颜色按 2048 原版 (Gabriele Cirulli)**：空 `cdc1b4`，2/4 浅米色，8/16/32/64 橙红系，128+ 金色系，>2048 黑底白字（`TILE_SUPER_BG / TILE_SUPER_FG`）。
 - **scoreText 直接 `text` 属性赋值**：不重建 PIXI.Text，零分配。

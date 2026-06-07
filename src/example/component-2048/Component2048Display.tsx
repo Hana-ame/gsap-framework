@@ -272,28 +272,6 @@ interface GameRefs {
   keyCleanups: Array<() => void>;
 }
 
-function makeInitialRefs(rows: number, cols: number): GameRefs {
-  return {
-    region: null,
-    W: 0,
-    H: 0,
-    rows,
-    cols,
-    board: spawnTile(spawnTile(newBoard(rows, cols))),
-    score: 0,
-    gameOver: false,
-    tileNodes: [],
-    scoreText: null,
-    gameOverOverlay: null,
-    cellW: 0,
-    cellH: 0,
-    boardOX: 0,
-    boardOY: 0,
-    pressStart: null,
-    keyCleanups: [],
-  };
-}
-
 function clearRegion(region: SubCanvas): void {
   while (region.stage.children.length > 0) {
     const child = region.stage.children[0];
