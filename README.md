@@ -159,6 +159,20 @@ class SubCanvas {
 - **Graphics destroy 后 immediate recreate 在同一 callstack 报 `_callContextMethod → clear` null**：PIXI v8 的 render batch 在帧末 flush；若 `destroy()` 释放了 GraphicsContext，然后同一事件处理中 `new Graphics()` 再 `.fill()`，renderer flush 旧 frame 时尝试访问已 null 的 context，报 `TypeError: Cannot read properties of null (reading 'clear')`。**修法**：复用 object 用 `.clear().rect().fill()` 而不是 destroy+new。FullscreenManager `show()` 已踩过。
 - **父级 SubCanvas destroy → 子 Graphics context null → tick/event handler 仍调用 `.clear()` 报相同 null 错**：`sc.destroy()` 通过 `stage.destroy()` 连带销毁所有 Graphics 子对象（context=null）。但 `Ticker` 上的 tick 函数或 PIXI event handler 若未及时移除，后续帧仍尝试 `.clear()` → crash。**修法**：(1) destroy 前 `off()` 所有 listener；(2) public 方法（如 `scrollTo` / `recalc`）加 `if (destroyed) return` 守卫；(3) tick 内 `try { graphics.clear() } catch { /* 已销毁，停止 tick */ }`。Scrollable/Loading/Displays 已统一修。
 - **Graphics mask 不 `.fill()` 则全隐藏**：PIXI v8 要求 `new Graphics().rect(...).fill({ color: 0xffffff })` — 空 path 的 Graphics 作为 mask 会 **隐藏所有内容**。这个 bug 在 Scrollable 和 PixiImage 的 mask 上都出现过。
+- **Graphics `fill()` / `stroke()` 是路径提交，不是设色**（critical，**v8 行为变更**，conway 第一版踩坑 → 黑屏/活格不可见）：在 v7，Graphics 是"立即模式"——`beginFill(0xff0000); drawRect(...)` 立即着色。**v8 改成"路径构建"模式**——`fill()` / `stroke()` 是**对当前已定义路径生效**的操作。**fill-first 死路**：
+  ```ts
+  graphics.clear();
+  graphics.fill({ color: 0xff0000 });  // ❌ no-op: path 为空，fill 状态设上但未生效
+  for (...) graphics.rect(x, y, w, h);  // 加 path 到 build
+  // 提交时 path 里有 rect 但 fill 状态未生效 → 全部不可见
+  ```
+  **batch commit 模式**（修复）：先把所有 shape 加到 path，**最后**调一次 `fill()` 提交整条：
+  ```ts
+  graphics.clear();
+  for (...) graphics.rect(x, y, w, h);
+  graphics.fill({ color: 0xff0000 });  // ✅ 一次性提交整条 path
+  ```
+  **链式 vs 累积**：2048 工作版的 `new Graphics().roundRect(...).fill(...)` 链式天然规避——`roundRect` 在 `fill` 前已加 path。conway 想性能优化（单 Graphics + 2400 rects）就踩了 fill-first 死路。**stroke 同理**：`moveTo/lineTo` 之前调 `stroke({...})` 也是 no-op。**Debug tip**：(1) console.log `drawCells` 里 `drawn` 计数，`drawn > 0` 但屏幕黑 = fill 没生效；(2) 临时 `g.tint = 0xff0000` 整片染色，染色后能看到轮廓但无 fill = 确认是 fill-first；(3) 临时 `g.alpha = 0.5`，能透到后景 = graphics 在 stage 上、位置正确。**已踩坑**：`ComponentConwayDisplay.drawCells()` + `drawGridBg()`（commit `dfa32a2` 修复）。
 - **`eventMode='passive'` 是 v8 默认值**（不同于 v7 的 `'auto'`）。不设 `'static'` 的 Container 不响应 PIXI FederatedEvent，也不转发给子级。
 - **`Container` 没有 `setPointerCapture/releasePointerCapture`**：那是 DOM Element 方法。PIXI 需要 window 级 listener 替代。
 - **`PIXI.Assets.load` 的 texture 可能 width/height=0**：即使 `.then` 进了，也可能拿到空纹理。PixiImage 加 `texture.width === 0 || texture.height === 0` 检测 → 进 `buildError('empty texture')`。
@@ -323,6 +337,7 @@ export function Component() {
 - **`startPixiApp` 忽略 `onReady` 返回值**：route 组件在 `onReady` 里返回的清理函数（删除 window 监听器、destroy imgs/fm 等）从未被调用。后退时 `proxy.destroyAll()` 先销毁所有 Graphics → 残留的 `window 'pointermove'` 监听器触发 → 在已销毁 Graphics 上调 `.clear()` → `_callContextMethod` crash。**修法**：`startPixiApp` 捕获 `onReady` 返回值并存在 `innerCleanup` 闭包里，`stop()` 时 `innerCleanup?.(); proxy?.destroyAll();` 顺序执行。PixiApp.ts line 266。
 - **canvas 双重 DOM removeChild**：`stop()` 手工 `c.parentNode.removeChild(c)` + `app.destroy(true, ...)` 再次移除同一 canvas → `NotFoundError: Failed to execute 'removeChild' on 'Node'`。**修法**：移除手工删除，全部交给 `app.destroy(true, ...)` 统一处理。
 - **route 内部清理函数不执行 = window 监听器泄漏**：`onWindowDown/onWindowMove/onWindowUp` 挂在 `window.addEventListener` 上，受作用域闭包保护，永远不会 GC。后退重进同一 route 时重复注册，前一实例的 listener 在旧 scope 上永久残留。**根因**同上（`startPixiApp` 忽略返回值）。
+- **配置变更（`useEffect([...])`）destroyApp + startPixiApp = 闪烁 1-2 帧**（critical，conway / 2048 都踩过）：如果把游戏配置（rows / cols / size / etc.）放在 React state，stepper +/- 触发 `setState` → React 重跑 useEffect → cleanup 调 `destroyApp()`（销毁 canvas + ticker + 全 stage children）→ 同步再 `startPixiApp()` 创建新 canvas + 新 ticker → 1-2 帧空窗 → 用户看到**闪烁黑屏**。**修法**（两段 useEffect 模式，2048 `aedba2d` + conway 闪烁修复）：(1) **第一段 `useEffect([])`**：创建 PIXI app、注册 handlers、初始化游戏 ref、设置 ticker。**只跑一次**（mount），**只 cleanup 一次**（unmount）。(2) **第二段 `useEffect([rows, cols])`**：只**重建内容**（board / tiles / cells）— 清空 region.stage 重建 children、保持 canvas / ticker / handlers 活着。(3) 所有 mutable state（grid / score / gameOver / cellSize / 当前 ticker callback / refs to PIXI objects）搬到 `useRef<GameRefs>` 容器，**必须**能被两段 effect 访问 + 在事件 handler / ticker 中更新。**关键**：(a) 状态容器 `useRef` 不能用 `useState`——state 变化触发 effect 重跑；ref 变化不触发。(b) `useEffect([...])` 的 cleanup **不调** `destroyApp()`，只清 region 内容（`clearRegion(stage)` 之类）。(c) 第一段 effect 创建的 ticker callback 引用必须存在 ref 里，第二段 effect 才能在重建时正确移除/替换。**反面教材**：`useEffect([rows, cols]) { ... const destroyApp = startPixiApp(...); return () => destroyApp(); }` 单段模式 — 任何配置变化都 destroy+recreate。
 - **ClickableImage placeholder destroy 后仍在 stage.children 中**：`Assets.load()` 的 `.then` 里调 `placeholder.destroy()` 但未先 `removeFromParent()`。PIXI 下帧渲染遍历 children 时访问 null GraphicsContext → crash（`_callContextMethod: clear` on null）。**修法**：`placeholder.removeFromParent(); placeholder.destroy();`（placeholderText 同理）。
 - **`SubCanvas.removeChildren()` 泄漏 `_mask` 和 `_bg`**：原实现 `return this.stage.removeChildren()` 把框架内部的 mask Graphics 和 drag 背景 container 也返回给外部。外部代码调 `.destroy()` 会永久删除内部遮罩和拖拽背景。**修法**：过滤 `${this._mask}` 和 `${this._bg}`，只返回业务子对象。
 - **`Loading.ts` catch 后 ticker 泄漏**：`spinner.clear()` 在 `try` 中，catch 设 `removed=true` 但没 `sc.ticker.remove(tick)` → tick 函数驻留在 ticker 上每帧跑还占内存。**修法**：catch 块加 `sc.ticker.remove(tick)`。
