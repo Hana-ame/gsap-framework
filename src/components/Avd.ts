@@ -115,24 +115,33 @@ export class Avd {
     this.W = screenW;
     this.H = screenH;
     this.ticker = ticker;
+    const narrow = screenW < 720;
+    const dBoxW = narrow ? screenW - 24 : 920;
+    const dBoxH = narrow ? Math.min(180, Math.floor(screenH * 0.26)) : 200;
+    const dBoxX = narrow ? 12 : Math.floor((screenW - 920) / 2);
+    const dBoxY = narrow ? screenH - dBoxH - 16 : screenH - 200 - 40;
+    const dPortMaxH = narrow
+      ? Math.min(380, Math.floor(screenH * 0.5))
+      : Math.min(560, Math.floor(screenH * 0.7));
+    const dPortY = narrow ? screenH - dPortMaxH - 8 : screenH - dPortMaxH - 20;
     this.opts = {
-      boxWidth: 920,
-      boxHeight: 200,
-      boxX: Math.floor((screenW - 920) / 2),
-      boxY: screenH - 200 - 40,
+      boxWidth: dBoxW,
+      boxHeight: dBoxH,
+      boxX: dBoxX,
+      boxY: dBoxY,
       boxBg: 0x0a0a1e,
       boxBgAlpha: 0.92,
-      boxRadius: 12,
-      boxPadding: 24,
+      boxRadius: narrow ? 10 : 12,
+      boxPadding: narrow ? 14 : 24,
       textColor: 0xffffff,
-      textSize: 24,
+      textSize: narrow ? Math.max(15, Math.min(20, Math.floor((screenW - 48) / 26))) : 24,
       fontFamily: 'sans-serif',
       typewriterSpeed: 30,
       textFadeMs: 200,
       nameColor: 0x88ccff,
-      nameSize: 22,
-      portraitMaxH: Math.min(560, Math.floor(screenH * 0.7)),
-      portraitY: screenH - Math.min(560, Math.floor(screenH * 0.7)) - 20,
+      nameSize: narrow ? Math.max(14, Math.min(18, Math.floor((screenW - 48) / 30))) : 22,
+      portraitMaxH: dPortMaxH,
+      portraitY: dPortY,
       portraitFadeMs: 300,
       arrowColor: 0x88ccff,
       boxEnterMs: 400,

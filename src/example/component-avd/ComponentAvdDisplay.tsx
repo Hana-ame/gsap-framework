@@ -151,9 +151,9 @@ function makeStepper(
   lbl.y = 2;
   wrap.addChild(lbl);
 
-  const btnW = 20;
-  const btnH = 20;
-  const valW = 30;
+  const btnW = 32;
+  const btnH = 28;
+  const valW = 36;
 
   const minus = makeButton('-', btnW, btnH, () => {
     if (value > min) onChange(value - 1);
