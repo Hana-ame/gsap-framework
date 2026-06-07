@@ -19,7 +19,6 @@ const DEFAULT_FPS = 10;
 const MIN_FPS = 1;
 const MAX_FPS = 30;
 const DEFAULT_DENSITY = 0.12;
-const DRAG_THRESHOLD = 4;
 
 const CELL_COLOR = 0x88aaff;
 const DEAD_BG_COLOR = 0x0a0a14;
@@ -103,13 +102,18 @@ function makeButton(
   return btn;
 }
 
+interface Stepper {
+  container: PIXI.Container;
+  refresh: () => void;
+}
+
 function makeStepper(
   label: string,
-  value: number,
+  getValue: () => number,
   onChange: (v: number) => void,
   min: number,
   max: number,
-): PIXI.Container {
+): Stepper {
   const wrap = new PIXI.Container();
   const lbl = new PIXI.Text({
     text: label,
@@ -125,14 +129,15 @@ function makeStepper(
   const rowY = 20;
 
   const minus = makeButton('-', btnW, btnH, () => {
-    if (value > min) onChange(value - 1);
+    const cur = getValue();
+    if (cur > min) onChange(cur - 1);
   });
   minus.x = lbl.width + 6;
   minus.y = rowY;
   wrap.addChild(minus);
 
   const valText = new PIXI.Text({
-    text: String(value),
+    text: String(getValue()),
     style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
   });
   valText.anchor.set(0.5, 0);
@@ -141,7 +146,8 @@ function makeStepper(
   wrap.addChild(valText);
 
   const plus = makeButton('+', btnW, btnH, () => {
-    if (value < max) onChange(value + 1);
+    const cur = getValue();
+    if (cur < max) onChange(cur + 1);
   });
   plus.x = lbl.width + 6 + btnW + valW;
   plus.y = rowY;
@@ -149,7 +155,10 @@ function makeStepper(
 
   wrap.width = lbl.width + 6 + btnW + valW + btnW;
   wrap.height = 48;
-  return wrap;
+  const refresh = () => {
+    valText.text = String(getValue());
+  };
+  return { container: wrap, refresh };
 }
 
 interface TileRefs {
@@ -180,23 +189,18 @@ interface LifeMapRefs {
   viewportRegion: SubCanvas | null;
   worldContainer: PIXI.Container | null;
   tiles: TileRefs[];
-  dragOverlay: PIXI.Container | null;
   genText: PIXI.Text | null;
   popText: PIXI.Text | null;
   coordsText: PIXI.Text | null;
   playPauseText: PIXI.Text | null;
   ticker: PIXI.Ticker | null;
   tickFn: (() => void) | null;
-  drag: {
-    active: boolean;
-    startClientX: number;
-    startClientY: number;
-    startWorldX: number;
-    startWorldY: number;
-    startRegionX: number;
-    startRegionY: number;
-    moved: boolean;
-  } | null;
+  steppers: {
+    speed: Stepper | null;
+    zoom: Stepper | null;
+    rows: Stepper | null;
+    cols: Stepper | null;
+  };
   setRows: (n: number) => void;
   setCols: (n: number) => void;
   setCellSize: (n: number) => void;
@@ -362,7 +366,6 @@ function buildControlPanel(refs: LifeMapRefs): void {
   const region = refs.controlRegion;
   if (!region) return;
   const W = refs.W;
-  const { worldRows, worldCols, cellSize, speed } = refs;
 
   const title = new PIXI.Text({
     text: "Life Map \u00B7 toroidal wrap",
@@ -420,25 +423,29 @@ function buildControlPanel(refs: LifeMapRefs): void {
   randomBtn.y = 60;
   region.stage.addChild(randomBtn);
 
-  const speedStepper = makeStepper('Speed', speed, refs.setSpeed, MIN_FPS, MAX_FPS);
-  speedStepper.x = 360;
-  speedStepper.y = 46;
-  region.stage.addChild(speedStepper);
+  const speedStepper = makeStepper('Speed', () => state!.speed, refs.setSpeed, MIN_FPS, MAX_FPS);
+  speedStepper.container.x = 360;
+  speedStepper.container.y = 46;
+  region.stage.addChild(speedStepper.container);
+  refs.steppers.speed = speedStepper;
 
-  const cellSizeStepper = makeStepper('Zoom', cellSize, refs.setCellSize, MIN_CELL_SIZE, MAX_CELL_SIZE);
-  cellSizeStepper.x = 360 + speedStepper.width + 12;
-  cellSizeStepper.y = 46;
-  region.stage.addChild(cellSizeStepper);
+  const cellSizeStepper = makeStepper('Zoom', () => state!.cellSize, refs.setCellSize, MIN_CELL_SIZE, MAX_CELL_SIZE);
+  cellSizeStepper.container.x = 360 + speedStepper.container.width + 12;
+  cellSizeStepper.container.y = 46;
+  region.stage.addChild(cellSizeStepper.container);
+  refs.steppers.zoom = cellSizeStepper;
 
-  const rowsStepper = makeStepper('Rows', worldRows, refs.setRows, MIN_WORLD_ROWS, MAX_WORLD_ROWS);
-  rowsStepper.x = 360 + speedStepper.width + 12 + cellSizeStepper.width + 12;
-  rowsStepper.y = 46;
-  region.stage.addChild(rowsStepper);
+  const rowsStepper = makeStepper('Rows', () => state!.worldRows, refs.setRows, MIN_WORLD_ROWS, MAX_WORLD_ROWS);
+  rowsStepper.container.x = 360 + speedStepper.container.width + 12 + cellSizeStepper.container.width + 12;
+  rowsStepper.container.y = 46;
+  region.stage.addChild(rowsStepper.container);
+  refs.steppers.rows = rowsStepper;
 
-  const colsStepper = makeStepper('Cols', worldCols, refs.setCols, MIN_WORLD_COLS, MAX_WORLD_COLS);
-  colsStepper.x = rowsStepper.x + rowsStepper.width + 12;
-  colsStepper.y = 46;
-  region.stage.addChild(colsStepper);
+  const colsStepper = makeStepper('Cols', () => state!.worldCols, refs.setCols, MIN_WORLD_COLS, MAX_WORLD_COLS);
+  colsStepper.container.x = rowsStepper.container.x + rowsStepper.container.width + 12;
+  colsStepper.container.y = 46;
+  region.stage.addChild(colsStepper.container);
+  refs.steppers.cols = colsStepper;
 
   const centerBtn = makeButton('Center', 80, 30, () => doRecenter(refs), BTN_CENTER_BG);
   centerBtn.x = W - 184;
@@ -488,57 +495,28 @@ function buildViewport(refs: LifeMapRefs): void {
   drawGridLines(refs);
   drawCells(refs);
 
-  const dragOverlay = new PIXI.Container();
-  dragOverlay.eventMode = 'static';
-  dragOverlay.hitArea = new PIXI.Rectangle(0, 0, refs.viewportW, refs.viewportH);
-  dragOverlay.cursor = 'grab';
-  region.stage.addChild(dragOverlay);
-  refs.dragOverlay = dragOverlay;
+  let dragStartClientX = 0;
+  let dragStartClientY = 0;
+  let dragStartWorldX = 0;
+  let dragStartWorldY = 0;
 
-  setupDrag(refs, dragOverlay);
-}
+  region.onPress((e) => {
+    dragStartClientX = e.globalX;
+    dragStartClientY = e.globalY;
+    dragStartWorldX = refs.worldX;
+    dragStartWorldY = refs.worldY;
+  });
 
-function setupDrag(refs: LifeMapRefs, overlay: PIXI.Container): void {
-  overlay.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-    const startRegionX = e.x;
-    const startRegionY = e.y;
-    const startClientX = e.clientX;
-    const startClientY = e.clientY;
-    refs.drag = {
-      active: true,
-      startClientX,
-      startClientY,
-      startWorldX: refs.worldX,
-      startWorldY: refs.worldY,
-      startRegionX,
-      startRegionY,
-      moved: false,
-    };
+  region.onMove((e) => {
+    const dx = e.globalX - dragStartClientX;
+    const dy = e.globalY - dragStartClientY;
+    setWorldPos(refs, dragStartWorldX + dx, dragStartWorldY + dy);
+  });
 
-    const onMove = (ev: PointerEvent) => {
-      if (!refs.drag || !refs.drag.active) return;
-      const dx = ev.clientX - refs.drag.startClientX;
-      const dy = ev.clientY - refs.drag.startClientY;
-      if (!refs.drag.moved && Math.sqrt(dx * dx + dy * dy) < DRAG_THRESHOLD) return;
-      refs.drag.moved = true;
-      setWorldPos(refs, refs.drag.startWorldX + dx, refs.drag.startWorldY + dy);
-    };
-
-    const onUp = () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onUp);
-      if (refs.drag && !refs.drag.moved) {
-        toggleCellAt(refs, refs.drag.startRegionX, refs.drag.startRegionY);
-        drawCells(refs);
-        updateStats(refs);
-      }
-      refs.drag = null;
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onUp);
+  region.onTap((e) => {
+    toggleCellAt(refs, e.x, e.y);
+    drawCells(refs);
+    updateStats(refs);
   });
 }
 
@@ -568,9 +546,12 @@ function setRows(n: number): void {
   state.playing = false;
   state.lastStepTime = 0;
   setWorldPos(state, 0, 0);
+  drawBg(state);
   drawGridLines(state);
+  drawCells(state);
   updateStats(state);
   updatePlayPauseLabel(state);
+  state.steppers.rows?.refresh();
 }
 
 function setCols(n: number): void {
@@ -584,9 +565,12 @@ function setCols(n: number): void {
   state.playing = false;
   state.lastStepTime = 0;
   setWorldPos(state, 0, 0);
+  drawBg(state);
   drawGridLines(state);
+  drawCells(state);
   updateStats(state);
   updatePlayPauseLabel(state);
+  state.steppers.cols?.refresh();
 }
 
 function setCellSize(n: number): void {
@@ -597,13 +581,19 @@ function setCellSize(n: number): void {
   state.worldW = state.worldCols * n;
   state.worldH = state.worldRows * n;
   setWorldPos(state, 0, 0);
+  drawBg(state);
   drawGridLines(state);
+  drawCells(state);
+  state.steppers.zoom?.refresh();
 }
 
 function setSpeed(n: number): void {
   if (!state) return;
   if (n < MIN_FPS || n > MAX_FPS) return;
+  if (state.speed === n) return;
   state.speed = n;
+  state.lastStepTime = performance.now();
+  state.steppers.speed?.refresh();
 }
 
 function clearRegion(stage: PIXI.Container): void {
@@ -622,11 +612,11 @@ function rebuild(refs: LifeMapRefs): void {
   }
   refs.worldContainer = null;
   refs.tiles = [];
-  refs.dragOverlay = null;
   refs.genText = null;
   refs.popText = null;
   refs.coordsText = null;
   refs.playPauseText = null;
+  refs.steppers = { speed: null, zoom: null, rows: null, cols: null };
   unregisterTicker(refs);
   buildControlPanel(refs);
   buildViewport(refs);
@@ -664,14 +654,13 @@ export function ComponentLifeMapDisplay() {
       viewportRegion: null,
       worldContainer: null,
       tiles: [],
-      dragOverlay: null,
       genText: null,
       popText: null,
       coordsText: null,
       playPauseText: null,
       ticker: null,
       tickFn: null,
-      drag: null,
+      steppers: { speed: null, zoom: null, rows: null, cols: null },
       setRows,
       setCols,
       setCellSize,

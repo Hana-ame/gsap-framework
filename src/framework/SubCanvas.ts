@@ -7,7 +7,7 @@ export interface Rect {
   height: number;
 }
 
-export type SubPointerType = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerleave';
+export type SubPointerType = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerleave' | 'tap';
 
 export interface SubPointerEvent {
   type: SubPointerType;
@@ -30,6 +30,7 @@ export interface SubCanvasOptions {
   dragMode?: SubDragMode;
   dragBounds?: () => Rect | null;
   dragBringToFront?: boolean;
+  tapThreshold?: number;
   onDragStart?: (e: { x: number; y: number }) => void;
   onDrag?: (e: { x: number; y: number }) => void;
   onDragEnd?: (e: { x: number; y: number }) => void;
@@ -61,6 +62,9 @@ export class SubCanvas {
   private _dragHandles: WeakSet<PIXI.Container> = new WeakSet();
   private _dragHandlers: DragHandlers | null = null;
   private _perHandleCleanups: Map<PIXI.Container, () => void> = new Map();
+  private _tapThreshold: number;
+  private _pressStart: { x: number; y: number; clientX: number; clientY: number } | null = null;
+  private _pressMoved = false;
   private onDestroy: () => void;
 
   constructor(opts: SubCanvasOptions) {
@@ -68,6 +72,7 @@ export class SubCanvas {
     this._bounds = opts.bounds;
     this.parent = opts.parent ?? null;
     this.onDestroy = opts.onDestroy ?? (() => {});
+    this._tapThreshold = opts.tapThreshold ?? 4;
 
     this.stage = new PIXI.Container();
     this.stage.position.set(opts.bounds.x, opts.bounds.y);
@@ -158,6 +163,10 @@ export class SubCanvas {
 
   onLeave(fn: Listener): this {
     return this.addListener('pointerleave', fn);
+  }
+
+  onTap(fn: Listener): this {
+    return this.addListener('tap', fn);
   }
 
   offPointer(type: SubPointerType, fn: Listener): this {
@@ -531,11 +540,44 @@ export class SubCanvas {
       if (this._subRegions[i].handlePointer(type, e)) return true;
     }
 
+    const localX = gx - gb.x;
+    const localY = gy - gb.y;
+
+    if (type === 'pointerdown') {
+      this._pressStart = { x: localX, y: localY, clientX: gx, clientY: gy };
+      this._pressMoved = false;
+    } else if (type === 'pointermove' && this._pressStart) {
+      const dx = gx - this._pressStart.clientX;
+      const dy = gy - this._pressStart.clientY;
+      if (dx * dx + dy * dy >= this._tapThreshold * this._tapThreshold) {
+        this._pressMoved = true;
+      }
+    } else if (type === 'pointerup' && this._pressStart) {
+      const start = this._pressStart;
+      this._pressStart = null;
+      if (!this._pressMoved) {
+        const dx = gx - start.clientX;
+        const dy = gy - start.clientY;
+        if (dx * dx + dy * dy < this._tapThreshold * this._tapThreshold) {
+          const tapEvent: SubPointerEvent = {
+            type: 'tap',
+            x: localX,
+            y: localY,
+            globalX: gx,
+            globalY: gy,
+            originalEvent: e,
+          };
+          this.listeners.get('tap')?.forEach((fn) => fn(tapEvent));
+        }
+      }
+    } else if (type === 'pointerleave') {
+      this._pressStart = null;
+      this._pressMoved = false;
+    }
+
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
     if (!hasListeners) return false;
 
-    const localX = gx - gb.x;
-    const localY = gy - gb.y;
     const sub: SubPointerEvent = {
       type,
       x: localX,

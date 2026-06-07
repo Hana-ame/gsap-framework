@@ -113,15 +113,18 @@ getChildren(): SubCanvas[]                         // 同 subRegions，返回浅
 
 ### 事件
 ```ts
-onPress(fn)   / onMove(fn)   / onRelease(fn)   / onLeave(fn)   // 链式，返回 this
-offPointer(type, fn)                                            // 移除单个监听器
+onPress(fn)   / onMove(fn)   / onRelease(fn)   / onLeave(fn)   / onTap(fn)   // 链式，返回 this
+offPointer(type, fn)                                                       // 移除单个监听器
 ```
 回调签名：
 ```ts
 (e: SubPointerEvent) => void
 // SubPointerEvent = { type, x, y, globalX, globalY, originalEvent }
+// type ∈ 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerleave' | 'tap'
 ```
 `x/y` 是 **本地坐标**（相对此 SubCanvas 的 stage）；`globalX/globalY` 是 viewport 坐标（同 `e.clientX/Y`）。
+
+**`onTap` vs `onRelease`**：`onTap` 只在 `pointerdown` 到 `pointerup` 之间位移 < `tapThreshold`（默认 4px）时触发。`onRelease` 每次 pointerup 都触发。点击/拖动分流场景用 `onPress` + `onMove` 处理拖动，用 `onTap` 处理点击（避免自己写阈值判断）。`tapThreshold` 可在构造选项中改。
 
 **注意**：这些事件通过 SubCanvas `handlePointer` AABB 路由分发，不是 PIXI FederatedEvent。点击按钮等 PIXI 子对象不会触发 SubCanvas 的 `onPress`（它们走 PIXI 事件系统）。只有 `eventMode='static'` + `hitArea` 明确设置的 PIXI children 需要自己挂 `pointerdown`。
 
@@ -155,6 +158,7 @@ createSubRegion(bounds, {
   dragMode?: SubDragMode;                // 'none' = 不可拖动（默认不传 = 不可拖动）
   dragBounds?: () => Rect | null;        // 拖动约束范围（默认 parent.bounds）
   dragBringToFront?: boolean;            // 拖动时是否置顶，默认 true
+  tapThreshold?: number;                 // onTap 的位移阈值（px），默认 4
   onDragStart?: (p: { x, y }) => void;
   onDrag?: (p: { x, y }) => void;
   onDragEnd?: (p: { x, y }) => void;
