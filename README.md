@@ -202,6 +202,64 @@ class SubCanvas {
 - **`useEffect([state])` 销毁/重建 PIXI app = 黑屏闪一下**（critical，**只允许 1 个 useEffect**）：本项目原则：example/component 文件里**只能有 1 个 useEffect**（用来挂载/卸载 PIXI app），**禁止**用第二个 `useEffect([rows, cols])` 之类响应游戏状态变化。**原因**：(1) 任何 `useEffect` 的 dep 数组里放状态变量 → 该变量变化时 React 先跑旧 effect cleanup（`destroyApp()` 销毁整个 canvas）→ 再跑新 effect body（`startPixiApp()` 重建 canvas）。两步之间 canvas 是空的，body 背景穿透 → **黑屏闪一下**。肉眼可见、对体验破坏大。(2) 状态变化应该走 PIXI 内部，React 只管 mount/unmount 一次。**修法**：(a) 游戏状态（rows/cols/score/board/tileNodes 等）放**模块级 `let state`** 或 `useRef`，**绝不放** `useState`。(b) 状态变更函数（setRows / setCols / tryMove / reset）也是**模块级函数**，直接 mutate state + 调 `buildBoard` 原地重画 PIXI scene，**完全绕过 React re-render**。(c) React 组件体只剩 `useEffect(() => { startPixiApp(...); return destroyApp; }, [])` + `return <></>`。**反面教材**（已废弃）：第一版用 `useState` + 两个 useEffect 调试一晚上还以为是布局公式问题；撤 useState 改 useRef 单 useEffect 还是没消掉黑屏；最后才意识到是 useEffect 重跑本身销毁了 canvas。**正确实现**：`src/example/component-2048/`。
 - **整块屏幕只允许 canvas 出现**（critical UI 原则）：example/component 的 React 组件体 `return <></>` 即可，**不要**返回任何 React DOM 元素（div / button / input 等）。所有 UI（按钮、文本、滑块、菜单、对话框、debug log）必须在 PIXI canvas 里用 `PIXI.Text` / `PIXI.Graphics` / `PIXI.Container` 实现。**原因**：(1) React DOM 跟 PIXI canvas 走不同的合成器层，z-order / 事件路由 / hit-test 都不互通；(2) DOM 元素在 canvas 上会破坏 SubCanvas AABB 事件路由（canvas pointer 事件先过 SubCanvas AABB，再过 PIXI hit-test，DOM 元素在中间会拦截）；(3) PI canvas 是 `position: fixed; inset: 0` 全屏盖住，DOM 元素如果没 z-index 会被盖。**例外**：video 元素（必须有 DOM `<video>` tag 才能解帧）+ launcher home（路由入口，不是 example）。所有 example/component 文件遵循此原则。HUD/debug 面板也用 PIXI 区域（见 `component-video-player` 右上角）。
 
+## 2048 黑屏 / 闪屏 — 全部尝试过的方案（**已解决**）
+
+**状态**：✅ **截至 `94b1f03`，2048 不再闪**。**根因**：单个 useEffect dep 数组里放 `rows`/`cols` → 状态变化时 React 跑旧 cleanup（`destroyApp()` 销毁整个 PIXI canvas）→ 跑新 body（`startPixiApp()` 重建 canvas）→ 中间空档 canvas 消失，body 黑背景穿透 → **闪一下**。**修法**：把 rows/cols/board/score 等所有游戏状态搬到**模块级 `let state`**，setRows/setCols 是**模块级函数**直接 mutate state + 调 `buildBoard` 原地重画 PIXI scene，**完全绕过 React re-render**。整个文件只剩 1 个 `useEffect`（挂载/卸载 PIXI app），`return <></>`。详见上方 gotcha "React 桥接 PIXI"。
+
+### 时间线（每次提交改了什么、修了什么观察、又暴露了什么）
+
+| # | Commit | 尝试 | 观察 | 结论 |
+|---|--------|------|------|------|
+| 1 | `d32ea4c` | 第一版：useState + 单 useEffect `[rows, cols]`，`cellSize = floor((availW/H - GAP×(dim+1)) / dim)` 其中 `dim = max(rows, cols)` | 用户说 "请做成正方形，显示太难看了" + "不能超过高度不能超过宽度" + "操你妈的没改" | 我以为视觉丑是公式问题（默认 4×4 应该是正方形才对），没意识到用户看到的是 rows≠cols 时 board 变矩形 |
+| 2 | `5fcc232` | 改公式：`cellSize = min(cellWMax, cellHMax)`，cells 永远正方形 | 4×4 没变（之前就是正方形）；3×6 现在 cell 是 121×88（不是正方形）—— **cells 仍然不是正方形** | 我以为用户要 cells 正方形。但其实 board 在 rows≠cols 时仍是矩形（这是必然） |
+| 3 | `d904e78` | 改 `Math.max(20, ...)` → `Math.max(0, ...)`，说 "min 公式已经保证 fit，去掉 guard 不会 overflow" | 用户说 "操你妈的没改" | 我没真改任何视觉上的东西，只动了边界守卫，常规视口下完全没变化 |
+| 4 | `42093cf` | 改公式：board 永远正方形，cells 在 rows≠cols 时是长方形（`boardSide = min(availW, availH, 480)`，cellW/cellH 独立算） | 用户说 "你加完还是要求是正方形啊" | 我搞反了 —— 用户要的是 **cells 永远正方形**，不是 board 永远正方形。"请做成正方形" 说的是 cells |
+| 5 | `aedba2d` | 拆 useEffect：第一个 `[]` 创建 PIXI app，第二个 `[rows, cols]` 只 rebuild board（不放 useState 改 useRef，board 内容原地重建而非销毁 canvas） | 用户说 "为什么点一下还会黑屏闪一下的" | 拆 useEffect 没用 —— 第二个 useEffect 仍会重跑，仍会 destroy 整个 canvas（因为 `startPixiApp` 不允许两个 canvas 存在），仍是黑屏。我以为"原地重建 board"就够了 |
+| 6 | `94b1f03` | 全部撤掉 React state：rows/cols/board/score 放**模块级 `let state`**，setRows/setCols 是**模块级函数**直接 mutate + 调 `buildBoard`。**整个文件只剩 1 个 useEffect**（挂载/卸载）。`return <></>` | 不闪了 | **真正的根因**：`useEffect` dep 数组里有 `rows`/`cols` → 任何状态变化都会触发 canvas 销毁/重建。绕 useState 没用，绕 useRef 也没用，**根本不能有第二个 useEffect**。游戏状态变更必须完全在 PIXI 内部，React 只管 mount/unmount |
+
+### 关键洞察（之前盲点）
+
+1. **`useEffect` dep 是"canvas 销毁触发器"**：`useEffect([rows, cols])` 不只是"rows 变化时跑回调"，而是"rows 变化时**先 destroy 整个 PIXI app 再跑回调**"。我把 useEffect 想得太温柔了。
+2. **拆 useEffect 不能解决问题**：第一个 useEffect 挂 app，第二个 useEffect rebuild board，看起来是"分层"，但第二个 useEffect 跑时第一个 useEffect 的 cleanup 也跑（因为 effect 链是同步 cleanup+rebuild）。除非第二个 useEffect **不依赖** 任何会变的 React state。
+3. **`useRef` 救不了 useEffect**：把 `rows` 从 useState 改 useRef 后，rows 还是通过 `useEffect([rows, cols])` 读 deps，React 不知道 ref 值变了不会重跑 —— 看起来"ref 不触发 re-run"是好事，但实际上**根本原因是 useEffect 不应该用 `rows` 做 dep**。这跟 ref vs state 没关系。
+4. **整块屏幕只允许 canvas 出现**：example/component 的 React 组件 `return <></>`，所有 UI 在 PIXI 里。这条原则跟"不用 useState"是配套的 —— 一旦 UI 状态在 React，状态变化就会触发 React re-render，进而触发 useEffect cleanup，canvas 黑屏。
+
+### 实用工作模式（**example/component 必须遵循**）
+
+```ts
+// 模块级游戏状态（无 React）
+let state: GameState | null = null;
+
+function setRows(n: number) {
+  if (!state) return;
+  state.rows = n;
+  state.board = spawnTile(spawnTile(newBoard(n, state.cols)));
+  buildBoard(state);  // 原地重画 PIXI scene
+}
+
+export function Component() {
+  useEffect(() => {  // 整个文件唯一 useEffect
+    const destroy = startPixiApp((proxy) => {
+      const region = proxy.createRegion({...});
+      state = { region, rows: 4, cols: 4, board: ..., ... };
+      region.onPress(...);  // 事件直接调 setRows / tryMove / ...
+      buildBoard(state);
+    });
+    return () => {
+      state?.keyCleanups.forEach((fn) => fn());
+      destroy();
+      state = null;
+    };
+  }, []);
+
+  return <></>;
+}
+```
+
+**反面教材**（已废弃 3 版）：`useState` + `useEffect([rows, cols])` 调试 3 个 commit、绕 `useRef` 调试 1 个 commit 才意识到根因是 useEffect 重跑本身。**正确实现**：`src/example/component-2048/Component2048Display.tsx`。
+
+---
+
 ## 视频黑屏 — 全部尝试过的方案（**已解决**）
 
 **状态**：✅ **截至 `d505cc3`，minimal test 和 cutscene 都工作**。**根因**：视频在 primer 完成前被 render → lazy GPU texture alloc 竞态。**修法**：`createVideoPlayer` 之后立刻 `player.root.visible = false` → primer 在 hide 期间跑完 → 用户 click 时设 `visible = true` → 第一次 render 时干净 alloc + copy。详见上方 gotcha #20。`mipLevelCount = 1`（commit `400924a`）保留作为防御层。
