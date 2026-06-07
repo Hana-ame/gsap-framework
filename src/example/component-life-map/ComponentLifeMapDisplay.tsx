@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../framework/PixiApp';
-import type { SubCanvas, SubPointerEvent } from '../../framework/SubCanvas';
+import type { SubCanvas } from '../../framework/SubCanvas';
 
 type Grid = Uint8Array;
 
@@ -30,6 +30,7 @@ const BTN_STEP_BG = 0x2a3a4a;
 const BTN_CLEAR_BG = 0x4a3a2e;
 const BTN_RANDOM_BG = 0x3a4a6a;
 const BTN_RESET_BG = 0x6a3a3a;
+const BTN_CENTER_BG = 0x4a5a6a;
 
 function idx(r: number, c: number, cols: number): number {
   return r * cols + c;
@@ -67,6 +68,10 @@ function countLive(grid: Grid): number {
   let n = 0;
   for (let i = 0; i < grid.length; i++) n += grid[i];
   return n;
+}
+
+function mod(n: number, m: number): number {
+  return ((n % m) + m) % m;
 }
 
 function makeButton(
@@ -147,11 +152,11 @@ function makeStepper(
   return wrap;
 }
 
-interface WorldBounds {
-  minX: number;
-  maxX: number;
-  minY: number;
-  maxY: number;
+interface TileRefs {
+  container: PIXI.Container;
+  bg: PIXI.Graphics;
+  cells: PIXI.Graphics;
+  gridLines: PIXI.Graphics;
 }
 
 interface LifeMapRefs {
@@ -161,6 +166,8 @@ interface LifeMapRefs {
   viewportH: number;
   worldRows: number;
   worldCols: number;
+  worldW: number;
+  worldH: number;
   cellSize: number;
   grid: Grid;
   generation: number;
@@ -172,22 +179,22 @@ interface LifeMapRefs {
   controlRegion: SubCanvas | null;
   viewportRegion: SubCanvas | null;
   worldContainer: PIXI.Container | null;
-  worldBg: PIXI.Graphics | null;
-  cellsGraphics: PIXI.Graphics | null;
-  gridLineGraphics: PIXI.Graphics | null;
+  tiles: TileRefs[];
+  dragOverlay: PIXI.Container | null;
   genText: PIXI.Text | null;
   popText: PIXI.Text | null;
   coordsText: PIXI.Text | null;
   playPauseText: PIXI.Text | null;
   ticker: PIXI.Ticker | null;
   tickFn: (() => void) | null;
-  pointerCleanups: Array<() => void>;
   drag: {
     active: boolean;
     startClientX: number;
     startClientY: number;
     startWorldX: number;
     startWorldY: number;
+    startRegionX: number;
+    startRegionY: number;
     moved: boolean;
   } | null;
   setRows: (n: number) => void;
@@ -198,107 +205,93 @@ interface LifeMapRefs {
 
 let state: LifeMapRefs | null = null;
 
-function clampPan(value: number, min: number, max: number): number {
-  if (min > max) return (min + max) / 2;
-  return Math.max(min, Math.min(max, value));
+function centerOfView(refs: LifeMapRefs): { c: number; r: number } {
+  const cRaw = Math.floor((-refs.worldX + refs.viewportW / 2) / refs.cellSize);
+  const rRaw = Math.floor((-refs.worldY + refs.viewportH / 2) / refs.cellSize);
+  return { c: mod(cRaw, refs.worldCols), r: mod(rRaw, refs.worldRows) };
 }
 
-function getBounds(refs: LifeMapRefs): WorldBounds {
-  const worldW = refs.worldCols * refs.cellSize;
-  const worldH = refs.worldRows * refs.cellSize;
-  let minX: number;
-  let maxX: number;
-  if (worldW <= refs.viewportW) {
-    const c = Math.floor((refs.viewportW - worldW) / 2);
-    minX = c;
-    maxX = c;
-  } else {
-    minX = -(worldW - refs.viewportW);
-    maxX = 0;
-  }
-  let minY: number;
-  let maxY: number;
-  if (worldH <= refs.viewportH) {
-    const c = Math.floor((refs.viewportH - worldH) / 2);
-    minY = c;
-    maxY = c;
-  } else {
-    minY = -(worldH - refs.viewportH);
-    maxY = 0;
-  }
-  return { minX, maxX, minY, maxY };
+function tileBase(refs: LifeMapRefs): { cdx: number; cdy: number } {
+  return {
+    cdx: Math.floor(-refs.worldX / refs.worldW),
+    cdy: Math.floor(-refs.worldY / refs.worldH),
+  };
 }
 
-function initialWorldPos(refs: LifeMapRefs): { x: number; y: number } {
-  const b = getBounds(refs);
-  return { x: b.minX, y: b.minY };
+function updateTilePositions(refs: LifeMapRefs): void {
+  const { cdx, cdy } = tileBase(refs);
+  for (let i = 0; i < 4; i++) {
+    const tileCx = i % 2;
+    const tileCy = Math.floor(i / 2);
+    const tile = refs.tiles[i];
+    if (!tile) continue;
+    tile.container.x = (cdx + tileCx) * refs.worldW;
+    tile.container.y = (cdy + tileCy) * refs.worldH;
+  }
 }
 
 function drawBg(refs: LifeMapRefs): void {
-  if (!refs.worldBg) return;
-  refs.worldBg.clear();
-  const worldW = refs.worldCols * refs.cellSize;
-  const worldH = refs.worldRows * refs.cellSize;
-  refs.worldBg.rect(0, 0, worldW, worldH).fill({ color: DEAD_BG_COLOR });
+  for (const tile of refs.tiles) {
+    tile.bg.clear().rect(0, 0, refs.worldW, refs.worldH).fill({ color: DEAD_BG_COLOR });
+  }
 }
 
 function drawGridLines(refs: LifeMapRefs): void {
-  if (!refs.gridLineGraphics) return;
-  refs.gridLineGraphics.clear();
-  if (refs.cellSize < 6) return;
-  refs.gridLineGraphics.stroke({ width: 0.5, color: GRID_LINE_COLOR, alpha: 0.5 });
-  for (let r = 0; r <= refs.worldRows; r++) {
-    refs.gridLineGraphics.moveTo(0, r * refs.cellSize);
-    refs.gridLineGraphics.lineTo(refs.worldCols * refs.cellSize, r * refs.cellSize);
+  for (const tile of refs.tiles) {
+    tile.gridLines.clear();
   }
-  for (let c = 0; c <= refs.worldCols; c++) {
-    refs.gridLineGraphics.moveTo(c * refs.cellSize, 0);
-    refs.gridLineGraphics.lineTo(c * refs.cellSize, refs.worldRows * refs.cellSize);
+  if (refs.cellSize < 6) return;
+  const cs = refs.cellSize;
+  for (const tile of refs.tiles) {
+    tile.gridLines.stroke({ width: 0.5, color: GRID_LINE_COLOR, alpha: 0.5 });
+    for (let r = 0; r <= refs.worldRows; r++) {
+      tile.gridLines.moveTo(0, r * cs);
+      tile.gridLines.lineTo(refs.worldW, r * cs);
+    }
+    for (let c = 0; c <= refs.worldCols; c++) {
+      tile.gridLines.moveTo(c * cs, 0);
+      tile.gridLines.lineTo(c * cs, refs.worldH);
+    }
   }
 }
 
 function drawCells(refs: LifeMapRefs): void {
-  if (!refs.cellsGraphics) return;
-  refs.cellsGraphics.clear();
   const cs = refs.cellSize;
-  const b = getBounds(refs);
-  const leftPx = -b.minX;
-  const topPx = -b.minY;
-  const rightPx = leftPx + refs.viewportW;
-  const bottomPx = topPx + refs.viewportH;
-  const firstCol = Math.max(0, Math.floor(leftPx / cs) - 1);
-  const lastCol = Math.min(refs.worldCols, Math.ceil(rightPx / cs) + 1);
-  const firstRow = Math.max(0, Math.floor(topPx / cs) - 1);
-  const lastRow = Math.min(refs.worldRows, Math.ceil(bottomPx / cs) + 1);
-  for (let r = firstRow; r < lastRow; r++) {
-    for (let c = firstCol; c < lastCol; c++) {
-      if (refs.grid[idx(r, c, refs.worldCols)]) {
-        refs.cellsGraphics.rect(c * cs, r * cs, cs, cs);
+  for (const tile of refs.tiles) {
+    tile.cells.clear();
+    for (let r = 0; r < refs.worldRows; r++) {
+      for (let c = 0; c < refs.worldCols; c++) {
+        if (refs.grid[idx(r, c, refs.worldCols)]) {
+          tile.cells.rect(c * cs, r * cs, cs, cs);
+        }
       }
     }
+    tile.cells.fill({ color: CELL_COLOR });
   }
-  refs.cellsGraphics.fill({ color: CELL_COLOR });
 }
 
-function applyPan(refs: LifeMapRefs, dx: number, dy: number): void {
-  const b = getBounds(refs);
-  refs.worldX = clampPan(refs.drag!.startWorldX + dx, b.minX, b.maxX);
-  refs.worldY = clampPan(refs.drag!.startWorldY + dy, b.minY, b.maxY);
+function setWorldPos(refs: LifeMapRefs, x: number, y: number): void {
+  const cdxOld = Math.floor(-refs.worldX / refs.worldW);
+  const cdyOld = Math.floor(-refs.worldY / refs.worldH);
+  refs.worldX = x;
+  refs.worldY = y;
   if (refs.worldContainer) {
-    refs.worldContainer.x = refs.worldX;
-    refs.worldContainer.y = refs.worldY;
+    refs.worldContainer.x = x;
+    refs.worldContainer.y = y;
   }
+  const cdxNew = Math.floor(-x / refs.worldW);
+  const cdyNew = Math.floor(-y / refs.worldH);
+  if (cdxNew !== cdxOld || cdyNew !== cdyOld) {
+    updateTilePositions(refs);
+  }
+  updateCoords(refs);
 }
 
 function toggleCellAt(refs: LifeMapRefs, regionX: number, regionY: number): void {
-  if (!refs.worldContainer) return;
-  const worldLocalX = regionX - refs.worldX;
-  const worldLocalY = regionY - refs.worldY;
-  if (worldLocalX < 0 || worldLocalY < 0) return;
-  if (worldLocalX >= refs.worldCols * refs.cellSize || worldLocalY >= refs.worldRows * refs.cellSize) return;
-  const c = Math.floor(worldLocalX / refs.cellSize);
-  const r = Math.floor(worldLocalY / refs.cellSize);
-  if (r < 0 || r >= refs.worldRows || c < 0 || c >= refs.worldCols) return;
+  const cRaw = Math.floor((regionX - refs.worldX) / refs.cellSize);
+  const rRaw = Math.floor((regionY - refs.worldY) / refs.cellSize);
+  const c = mod(cRaw, refs.worldCols);
+  const r = mod(rRaw, refs.worldRows);
   const i = idx(r, c, refs.worldCols);
   refs.grid[i] = refs.grid[i] ? 0 : 1;
 }
@@ -310,9 +303,8 @@ function updateStats(refs: LifeMapRefs): void {
 
 function updateCoords(refs: LifeMapRefs): void {
   if (!refs.coordsText) return;
-  const cx = Math.floor((-refs.worldX + refs.viewportW / 2) / refs.cellSize);
-  const cy = Math.floor((-refs.worldY + refs.viewportH / 2) / refs.cellSize);
-  refs.coordsText.text = `view: ${cx},${cy}  \u00B7  world: ${refs.worldCols}\u00D7${refs.worldRows}  \u00B7  cell: ${refs.cellSize}px`;
+  const center = centerOfView(refs);
+  refs.coordsText.text = `view: ${center.c},${center.r}  \u00B7  world: ${refs.worldCols}\u00D7${refs.worldRows}  \u00B7  wrap: ON`;
 }
 
 function updatePlayPauseLabel(refs: LifeMapRefs): void {
@@ -355,6 +347,10 @@ function doReset(refs: LifeMapRefs): void {
   updatePlayPauseLabel(refs);
 }
 
+function doRecenter(refs: LifeMapRefs): void {
+  setWorldPos(refs, 0, 0);
+}
+
 function unregisterTicker(refs: LifeMapRefs): void {
   if (refs.ticker && refs.tickFn) {
     refs.ticker.remove(refs.tickFn);
@@ -369,7 +365,7 @@ function buildControlPanel(refs: LifeMapRefs): void {
   const { worldRows, worldCols, cellSize, speed } = refs;
 
   const title = new PIXI.Text({
-    text: "Life Map \u00B7 toroidal world",
+    text: "Life Map \u00B7 toroidal wrap",
     style: { fontSize: 18, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
   });
   title.x = 16;
@@ -401,25 +397,8 @@ function buildControlPanel(refs: LifeMapRefs): void {
   refs.coordsText.y = 10;
   region.stage.addChild(refs.coordsText);
 
-  const playPauseBtn = new PIXI.Container();
-  const ppBg = new PIXI.Graphics().roundRect(0, 0, 80, 30, 6).fill({ color: BTN_PLAY_BG, alpha: 0.92 });
-  ppBg.stroke({ width: 1.5, color: 0x446 });
-  playPauseBtn.addChild(ppBg);
-  refs.playPauseText = new PIXI.Text({
-    text: '\u25B6  Play',
-    style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
-  });
-  refs.playPauseText.anchor.set(0.5);
-  refs.playPauseText.x = 40;
-  refs.playPauseText.y = 15;
-  playPauseBtn.addChild(refs.playPauseText);
-  playPauseBtn.eventMode = 'static';
-  playPauseBtn.cursor = 'pointer';
-  playPauseBtn.hitArea = new PIXI.Rectangle(0, 0, 80, 30);
-  playPauseBtn.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-    e.stopPropagation();
-    doPlayPause(refs);
-  });
+  const playPauseBtn = makeButton('\u25B6  Play', 80, 30, () => doPlayPause(refs), BTN_PLAY_BG);
+  refs.playPauseText = (playPauseBtn.children[1] as PIXI.Text);
   playPauseBtn.x = 16;
   playPauseBtn.y = 60;
   region.stage.addChild(playPauseBtn);
@@ -461,6 +440,11 @@ function buildControlPanel(refs: LifeMapRefs): void {
   colsStepper.y = 46;
   region.stage.addChild(colsStepper);
 
+  const centerBtn = makeButton('Center', 80, 30, () => doRecenter(refs), BTN_CENTER_BG);
+  centerBtn.x = W - 184;
+  centerBtn.y = 60;
+  region.stage.addChild(centerBtn);
+
   const resetBtn = makeButton('Reset', 80, 30, () => doReset(refs), BTN_RESET_BG);
   resetBtn.x = W - 96;
   resetBtn.y = 60;
@@ -471,6 +455,10 @@ function buildViewport(refs: LifeMapRefs): void {
   const region = refs.viewportRegion;
   if (!region) return;
 
+  const mask = new PIXI.Graphics().rect(0, 0, refs.viewportW, refs.viewportH).fill({ color: 0xffffff });
+  region.stage.addChild(mask);
+  region.stage.mask = mask;
+
   const worldContainer = new PIXI.Container();
   worldContainer.eventMode = 'none';
   worldContainer.x = refs.worldX;
@@ -478,37 +466,52 @@ function buildViewport(refs: LifeMapRefs): void {
   region.stage.addChild(worldContainer);
   refs.worldContainer = worldContainer;
 
-  refs.worldBg = new PIXI.Graphics();
-  refs.worldBg.eventMode = 'none';
-  worldContainer.addChild(refs.worldBg);
+  refs.tiles = [];
+  for (let i = 0; i < 4; i++) {
+    const tileContainer = new PIXI.Container();
+    tileContainer.eventMode = 'none';
+    worldContainer.addChild(tileContainer);
+    const bg = new PIXI.Graphics();
+    bg.eventMode = 'none';
+    tileContainer.addChild(bg);
+    const cells = new PIXI.Graphics();
+    cells.eventMode = 'none';
+    tileContainer.addChild(cells);
+    const gridLines = new PIXI.Graphics();
+    gridLines.eventMode = 'none';
+    tileContainer.addChild(gridLines);
+    refs.tiles.push({ container: tileContainer, bg, cells, gridLines });
+  }
+
+  updateTilePositions(refs);
   drawBg(refs);
-
-  refs.gridLineGraphics = new PIXI.Graphics();
-  refs.gridLineGraphics.eventMode = 'none';
-  worldContainer.addChild(refs.gridLineGraphics);
   drawGridLines(refs);
-
-  refs.cellsGraphics = new PIXI.Graphics();
-  refs.cellsGraphics.eventMode = 'none';
-  worldContainer.addChild(refs.cellsGraphics);
   drawCells(refs);
 
-  setupDrag(refs);
+  const dragOverlay = new PIXI.Container();
+  dragOverlay.eventMode = 'static';
+  dragOverlay.hitArea = new PIXI.Rectangle(0, 0, refs.viewportW, refs.viewportH);
+  dragOverlay.cursor = 'grab';
+  region.stage.addChild(dragOverlay);
+  refs.dragOverlay = dragOverlay;
+
+  setupDrag(refs, dragOverlay);
 }
 
-function setupDrag(refs: LifeMapRefs): void {
-  const region = refs.viewportRegion;
-  if (!region) return;
-
-  const onPress = (e: SubPointerEvent) => {
-    const startX = e.originalEvent.clientX;
-    const startY = e.originalEvent.clientY;
+function setupDrag(refs: LifeMapRefs, overlay: PIXI.Container): void {
+  overlay.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+    const startRegionX = e.x;
+    const startRegionY = e.y;
+    const startClientX = e.clientX;
+    const startClientY = e.clientY;
     refs.drag = {
       active: true,
-      startClientX: startX,
-      startClientY: startY,
+      startClientX,
+      startClientY,
       startWorldX: refs.worldX,
       startWorldY: refs.worldY,
+      startRegionX,
+      startRegionY,
       moved: false,
     };
 
@@ -518,9 +521,7 @@ function setupDrag(refs: LifeMapRefs): void {
       const dy = ev.clientY - refs.drag.startClientY;
       if (!refs.drag.moved && Math.sqrt(dx * dx + dy * dy) < DRAG_THRESHOLD) return;
       refs.drag.moved = true;
-      applyPan(refs, dx, dy);
-      drawCells(refs);
-      updateCoords(refs);
+      setWorldPos(refs, refs.drag.startWorldX + dx, refs.drag.startWorldY + dy);
     };
 
     const onUp = () => {
@@ -528,7 +529,7 @@ function setupDrag(refs: LifeMapRefs): void {
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
       if (refs.drag && !refs.drag.moved) {
-        toggleCellAt(refs, e.x, e.y);
+        toggleCellAt(refs, refs.drag.startRegionX, refs.drag.startRegionY);
         drawCells(refs);
         updateStats(refs);
       }
@@ -538,10 +539,7 @@ function setupDrag(refs: LifeMapRefs): void {
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
-  };
-
-  region.onPress(onPress);
-  refs.pointerCleanups.push(() => region.offPointer('pointerdown', onPress));
+  });
 }
 
 function registerTicker(refs: LifeMapRefs): void {
@@ -564,14 +562,15 @@ function setRows(n: number): void {
   if (n < MIN_WORLD_ROWS || n > MAX_WORLD_ROWS) return;
   if (state.worldRows === n) return;
   state.worldRows = n;
+  state.worldH = n * state.cellSize;
   state.grid = newGrid(n, state.worldCols, 'empty');
   state.generation = 0;
   state.playing = false;
   state.lastStepTime = 0;
-  const init = initialWorldPos(state);
-  state.worldX = init.x;
-  state.worldY = init.y;
-  rebuild(state);
+  setWorldPos(state, 0, 0);
+  drawGridLines(state);
+  updateStats(state);
+  updatePlayPauseLabel(state);
 }
 
 function setCols(n: number): void {
@@ -579,14 +578,15 @@ function setCols(n: number): void {
   if (n < MIN_WORLD_COLS || n > MAX_WORLD_COLS) return;
   if (state.worldCols === n) return;
   state.worldCols = n;
+  state.worldW = n * state.cellSize;
   state.grid = newGrid(state.worldRows, n, 'empty');
   state.generation = 0;
   state.playing = false;
   state.lastStepTime = 0;
-  const init = initialWorldPos(state);
-  state.worldX = init.x;
-  state.worldY = init.y;
-  rebuild(state);
+  setWorldPos(state, 0, 0);
+  drawGridLines(state);
+  updateStats(state);
+  updatePlayPauseLabel(state);
 }
 
 function setCellSize(n: number): void {
@@ -594,10 +594,10 @@ function setCellSize(n: number): void {
   if (n < MIN_CELL_SIZE || n > MAX_CELL_SIZE) return;
   if (state.cellSize === n) return;
   state.cellSize = n;
-  const init = initialWorldPos(state);
-  state.worldX = init.x;
-  state.worldY = init.y;
-  rebuild(state);
+  state.worldW = state.worldCols * n;
+  state.worldH = state.worldRows * n;
+  setWorldPos(state, 0, 0);
+  drawGridLines(state);
 }
 
 function setSpeed(n: number): void {
@@ -615,14 +615,14 @@ function clearRegion(stage: PIXI.Container): void {
 }
 
 function rebuild(refs: LifeMapRefs): void {
-  refs.pointerCleanups.forEach((fn) => fn());
-  refs.pointerCleanups = [];
   if (refs.controlRegion) clearRegion(refs.controlRegion.stage);
-  if (refs.viewportRegion) clearRegion(refs.viewportRegion.stage);
+  if (refs.viewportRegion) {
+    clearRegion(refs.viewportRegion.stage);
+    refs.viewportRegion.stage.mask = null;
+  }
   refs.worldContainer = null;
-  refs.worldBg = null;
-  refs.cellsGraphics = null;
-  refs.gridLineGraphics = null;
+  refs.tiles = [];
+  refs.dragOverlay = null;
   refs.genText = null;
   refs.popText = null;
   refs.coordsText = null;
@@ -641,6 +641,7 @@ export function ComponentLifeMapDisplay() {
     const W = window.innerWidth;
     const H = window.innerHeight;
     const viewportH = H - CONTROL_H;
+    const cs = DEFAULT_CELL_SIZE;
 
     state = {
       W,
@@ -649,7 +650,9 @@ export function ComponentLifeMapDisplay() {
       viewportH,
       worldRows: DEFAULT_WORLD_ROWS,
       worldCols: DEFAULT_WORLD_COLS,
-      cellSize: DEFAULT_CELL_SIZE,
+      worldW: DEFAULT_WORLD_COLS * cs,
+      worldH: DEFAULT_WORLD_ROWS * cs,
+      cellSize: cs,
       grid: newGrid(DEFAULT_WORLD_ROWS, DEFAULT_WORLD_COLS, 'random'),
       generation: 0,
       playing: false,
@@ -660,26 +663,20 @@ export function ComponentLifeMapDisplay() {
       controlRegion: null,
       viewportRegion: null,
       worldContainer: null,
-      worldBg: null,
-      cellsGraphics: null,
-      gridLineGraphics: null,
+      tiles: [],
+      dragOverlay: null,
       genText: null,
       popText: null,
       coordsText: null,
       playPauseText: null,
       ticker: null,
       tickFn: null,
-      pointerCleanups: [],
       drag: null,
       setRows,
       setCols,
       setCellSize,
       setSpeed,
     };
-
-    const init = initialWorldPos(state);
-    state.worldX = init.x;
-    state.worldY = init.y;
 
     const destroyApp = startPixiApp((proxy) => {
       if (!state) return;
@@ -691,8 +688,9 @@ export function ComponentLifeMapDisplay() {
     return () => {
       if (state) {
         unregisterTicker(state);
-        state.pointerCleanups.forEach((fn) => fn());
-        state.pointerCleanups = [];
+        if (state.viewportRegion) {
+          state.viewportRegion.stage.mask = null;
+        }
       }
       destroyApp();
       state = null;
@@ -705,5 +703,5 @@ export function ComponentLifeMapDisplay() {
 ComponentLifeMapDisplay.head = {
   title: 'Component: Life Map',
   description:
-    "Conway's Game of Life on a large toroidal world with Google-Maps-style mouse-drag panning. Click cells to toggle, drag to pan around the world. Always wrapped (toroidal grid), viewport drag is clamped but you can always pan back.",
+    "Conway's Game of Life on a large toroidal world with Google-Maps-style mouse-drag panning. Click cells to toggle, drag to pan around the world. Always wrapped (toroidal grid + visual tiling via 4 dynamic tiles), viewport drag is unbounded — pan as far as you want and the world tiles seamlessly.",
 };
