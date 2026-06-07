@@ -198,6 +198,8 @@ interface LifeMapRefs {
   viewportRegion: SubCanvas | null;
   worldContainer: PIXI.Container | null;
   tiles: TileRefs[];
+  tileCols: number;
+  tileRows: number;
   genText: PIXI.Text | null;
   popText: PIXI.Text | null;
   coordsText: PIXI.Text | null;
@@ -234,9 +236,9 @@ function tileBase(refs: LifeMapRefs): { cdx: number; cdy: number } {
 
 function updateTilePositions(refs: LifeMapRefs): void {
   const { cdx, cdy } = tileBase(refs);
-  for (let i = 0; i < 4; i++) {
-    const tileCx = i % 2;
-    const tileCy = Math.floor(i / 2);
+  for (let i = 0; i < refs.tiles.length; i++) {
+    const tileCx = i % refs.tileCols;
+    const tileCy = Math.floor(i / refs.tileCols);
     const tile = refs.tiles[i];
     if (!tile) continue;
     tile.container.x = (cdx + tileCx) * refs.worldW;
@@ -483,8 +485,10 @@ function buildViewport(refs: LifeMapRefs): void {
   region.stage.addChild(worldContainer);
   refs.worldContainer = worldContainer;
 
+  refs.tileCols = Math.ceil(refs.viewportW / refs.worldW) + 1;
+  refs.tileRows = Math.ceil(refs.viewportH / refs.worldH) + 1;
   refs.tiles = [];
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < refs.tileCols * refs.tileRows; i++) {
     const tileContainer = new PIXI.Container();
     tileContainer.eventMode = 'none';
     worldContainer.addChild(tileContainer);
@@ -643,6 +647,8 @@ function rebuild(refs: LifeMapRefs): void {
   refs.viewportCleanups = [];
   refs.worldContainer = null;
   refs.tiles = [];
+  refs.tileCols = 0;
+  refs.tileRows = 0;
   refs.genText = null;
   refs.popText = null;
   refs.coordsText = null;
@@ -685,6 +691,8 @@ export function ComponentLifeMapDisplay() {
       viewportRegion: null,
       worldContainer: null,
       tiles: [],
+      tileCols: 0,
+      tileRows: 0,
       genText: null,
       popText: null,
       coordsText: null,

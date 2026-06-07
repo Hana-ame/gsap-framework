@@ -178,6 +178,16 @@ class SubCanvas {
 - **`PIXI.Assets.load` 的 texture 可能 width/height=0**：即使 `.then` 进了，也可能拿到空纹理。PixiImage 加 `texture.width === 0 || texture.height === 0` 检测 → 进 `buildError('empty texture')`。
 - **动态 import renderer 可能 hash 不匹配**：Vite build 后 `WebGLRenderer-[hash].js` 可能跟 HTML 引用的 hash 不同。Cloudflare 灰度 deploy + SW cache 导致不同步。
 
+### SubCanvas 事件路由（makeStepper / rebuild 常见坑）
+
+- **Stepper 数字不更新（closure 捕获初始值）**：`makeStepper` 的 `onClick` 闭包里用了函数参数 `value`（初始值），点击 +/- 正确调了 `onChange()` 但 `valText` 创建时 `String(initialValue)` 之后再也没改过 → 数字永远停在初始值。**踩了两次**：(1) Avd demo 的 Speed stepper（commit `7f7347f` 修）；(2) Life Map 的 Zoom / Rows / Cols / Speed 四个 stepper（commit `143a58b` 修）。**修法**：hoist value 到 `let current = getValue()` 可变局部变量，click handler 内 `current += 1; valText.text = String(current); onChange(current)` 三步一起走。**刷新**：外部状态变时（如 restart）`refresh()` 同步 `current = getValue(); valText.text = String(current)`。
+
+- **rebuild 时 SubCanvas onPress/onMove/onTap 重复注册 → 事件双击**：React Strict Mode `Mount → Unmount → Mount`，rebuild 在 remount 时再调 `region.onPress(fn)`。但旧的 `fn`（同名 inlined 函数）仍在 SubCanvas 的 listeners 里。新 listener 加上旧 listener **并列存在**，一次 tap 触发两个 handler → `toggleCellAt` 两次 → cell 先 toggle 又 toggle 回原值 → 视觉上"点不动"。**修法**：(1) handler 用 named function（`const onTap = (e) => {...}`）而不是 inline closure，这样 `offPointer` 能通过引用匹配到同一个函数；(2) `refs` 里加 `viewportCleanups: (() => void)[]` 数组，每次 buildViewport 注册完 push 对应的 `() => region.offPointer(type, fn)`；(3) rebuild 开头先 `for (const fn of refs.viewportCleanups) fn()` 清掉旧 listener 再 `refs.viewportCleanups = []` 重置。**踩了一次**：Life Map 的 tap 在 Strict Mode 下点不动（commit `143a58b` 加了 cleanups 但首次挂载时 cleanups 为空所以 mount 正常；remount 后再 rebuild 才暴露重复注册）。
+
+- **onMove 无 dragging guard → 鼠标悬停地图就跟着晃**：`buildViewport` 里 `onMove` 没有 `if (dragging) return` 守卫。`dragStartClientX/Y` 初始值 = 0，每次 `pointermove` 走 `dx = e.globalX - 0` / `dy = e.globalY - 0` → viewport 被拉到一个远离世界坐标的位置 → 地图"自己飘"。**修法**：加 `let dragging = false` flag：(1) `onPress` 里 `dragging = true`；(2) `onMove` 首行 `if (!dragging) return`；(3) `onRelease`（`region.onRelease(onRelease)` + `region.offPointer('pointerup', onRelease)`）里 `dragging = false`。**踩了一次**：Life Map 的 drag 在光标悬停时自己飞（commit `7dde35d` 修）。**注意**：这个方法名是 `onRelease` 不是 `onUp`。
+
+- **硬编码 4 tiles（2×2）→ zoom 小时 viewport 覆盖不全**：原 `buildViewport` 永远创建 4 个 tile，每个 tile 覆盖 `worldW × worldH`。默认 cellSize=8 → worldW=1600。但 zoom 到 cellSize=4 时 worldW=800，viewportW 可能 1920。2×2 tiles = 1600 宽，viewport 1920 宽 → 右边 320px 空白。**修法**：dynamic tile grid —— `tileCols = ceil(viewportW / worldW) + 1; tileRows = ceil(viewportH / worldH) + 1`，总共 `tileCols × tileRows` 个 tile。`updateTilePositions` 用 `tileCols` 做 wrap 而不是硬编码 `% 2`。+1 是为了 panning 时有 buffer tile（拖到边上不会看到黑边）。**踩了一次**：Life Map zoom=4 时右边缘空白（commit `TODO` 修）。
+
 ### 组件交互
 - **X 关闭按钮在 `opts.keepOpen=true` 时不产生任何效果**（不是"永远关"）。PixiConfirm 的 `closeBtn.on('pointerdown')` 在 `opts.keepOpen` 时直接 `return`，既不调 onResult 也不调 onClose 也不 destroy。需要 X 永远关的 dialog 不要设 `opts.keepOpen`，改用按钮级 `keepOpen: true`。
 - **FullscreenManager singleton 竞争条件**：`singletonCollapse` 是模块级变量，被所有 ClickableImage 共享。`goFullScreen()` 先调 `singletonCollapse()` 再创建新 overlay。`collapse()` 设置 `expanded=false` 后 destroy overlay，原子操作。详见 FullscreenManager.md。
