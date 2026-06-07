@@ -509,8 +509,10 @@ function buildViewport(refs: LifeMapRefs): void {
   let dragStartClientY = 0;
   let dragStartWorldX = 0;
   let dragStartWorldY = 0;
+  let dragging = false;
 
   const onPress = (e: SubPointerEvent) => {
+    dragging = true;
     dragStartClientX = e.globalX;
     dragStartClientY = e.globalY;
     dragStartWorldX = refs.worldX;
@@ -518,9 +520,14 @@ function buildViewport(refs: LifeMapRefs): void {
   };
 
   const onMove = (e: SubPointerEvent) => {
+    if (!dragging) return;
     const dx = e.globalX - dragStartClientX;
     const dy = e.globalY - dragStartClientY;
     setWorldPos(refs, dragStartWorldX + dx, dragStartWorldY + dy);
+  };
+
+  const onRelease = () => {
+    dragging = false;
   };
 
   const onTap = (e: SubPointerEvent) => {
@@ -531,11 +538,13 @@ function buildViewport(refs: LifeMapRefs): void {
 
   region.onPress(onPress);
   region.onMove(onMove);
+  region.onRelease(onRelease);
   region.onTap(onTap);
 
   refs.viewportCleanups.push(
     () => region.offPointer('pointerdown', onPress),
     () => region.offPointer('pointermove', onMove),
+    () => region.offPointer('pointerup', onRelease),
     () => region.offPointer('tap', onTap),
   );
 }
