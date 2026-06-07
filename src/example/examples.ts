@@ -20,6 +20,7 @@ import { ComponentCutsceneDisplay } from './component-cutscene/ComponentCutscene
 import { ComponentCutsceneMinimalDisplay } from './component-cutscene-minimal/ComponentCutsceneMinimalDisplay';
 import { Component2048Display } from './component-2048/Component2048Display';
 import { ComponentConwayDisplay } from './component-conway/ComponentConwayDisplay';
+import { ComponentLifeMapDisplay } from './component-life-map/ComponentLifeMapDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -43,6 +44,7 @@ export const EXAMPLES = [
   'component-cutscene-minimal',
   'component-2048',
   'component-conway',
+  'component-life-map',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -72,4 +74,5 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-cutscene-minimal': ComponentCutsceneMinimalDisplay,
   'component-2048': Component2048Display,
   'component-conway': ComponentConwayDisplay,
+  'component-life-map': ComponentLifeMapDisplay,
 };
