@@ -1,6 +1,6 @@
-const CACHE = 'sim-v3';
+const CACHE = 'sim-v4';
 const PRECACHE = ['/', '/favicon.ico', '/manifest.webmanifest', '/index.html'];
-const ASSET_CACHE = 'sim-v3-assets';
+const ASSET_CACHE = 'sim-v4-assets';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(

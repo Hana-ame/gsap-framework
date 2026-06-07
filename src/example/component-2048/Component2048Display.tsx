@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '../../framework/PixiApp';
 import type { SubCanvas } from '../../framework/SubCanvas';
@@ -302,7 +302,7 @@ function clearRegion(region: SubCanvas): void {
   }
 }
 
-function buildBoard(refs: GameRefs, setRows: (n: number) => void, setCols: (n: number) => void): void {
+function buildBoard(refs: GameRefs): void {
   const region = refs.region;
   if (!region) return;
   clearRegion(region);
@@ -310,7 +310,6 @@ function buildBoard(refs: GameRefs, setRows: (n: number) => void, setCols: (n: n
   refs.gameOverOverlay = null;
 
   const GAP = 10;
-  const MAX_BOARD_SIDE = 480;
   const controlH = 110;
   const W = refs.W;
   const H = refs.H;
@@ -318,9 +317,11 @@ function buildBoard(refs: GameRefs, setRows: (n: number) => void, setCols: (n: n
   const cols = refs.cols;
   const availW = W - 20;
   const availH = H - controlH - 20;
-  const boardSide = Math.max(0, Math.min(availW, availH, MAX_BOARD_SIDE));
-  refs.cellW = Math.max(0, Math.floor((boardSide - GAP * (cols + 1)) / cols));
-  refs.cellH = Math.max(0, Math.floor((boardSide - GAP * (rows + 1)) / rows));
+  const cellWMax = (availW - GAP * (cols + 1)) / cols;
+  const cellHMax = (availH - GAP * (rows + 1)) / rows;
+  const cellSize = Math.max(0, Math.floor(Math.min(cellWMax, cellHMax)));
+  refs.cellW = cellSize;
+  refs.cellH = cellSize;
   const boardW = cols * refs.cellW + (cols + 1) * GAP;
   const boardH = rows * refs.cellH + (rows + 1) * GAP;
   refs.boardOX = (W - boardW) / 2;
@@ -497,73 +498,100 @@ function showGameOver(refs: GameRefs): void {
   region.stage.addChild(overlay);
 }
 
-export function Component2048Display() {
-  const [rows, setRows] = useState(4);
-  const [cols, setCols] = useState(4);
-  const refs = useRef<GameRefs>(makeInitialRefs(rows, cols));
+function setRows(n: number): void {
+  if (!state) return;
+  if (n < MIN_DIM || n > MAX_DIM) return;
+  if (state.rows === n) return;
+  state.rows = n;
+  state.board = spawnTile(spawnTile(newBoard(n, state.cols)));
+  state.score = 0;
+  state.gameOver = false;
+  buildBoard(state);
+}
 
+function setCols(n: number): void {
+  if (!state) return;
+  if (n < MIN_DIM || n > MAX_DIM) return;
+  if (state.cols === n) return;
+  state.cols = n;
+  state.board = spawnTile(spawnTile(newBoard(state.rows, n)));
+  state.score = 0;
+  state.gameOver = false;
+  buildBoard(state);
+}
+
+let state: GameRefs | null = null;
+
+export function Component2048Display() {
   useEffect(() => {
     const W = window.innerWidth;
     const H = window.innerHeight;
-    refs.current.W = W;
-    refs.current.H = H;
 
     const destroyApp = startPixiApp((proxy) => {
-      const r = refs.current;
       const region = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-      r.region = region;
+      const refs: GameRefs = {
+        region,
+        W,
+        H,
+        rows: 4,
+        cols: 4,
+        board: spawnTile(spawnTile(newBoard(4, 4))),
+        score: 0,
+        gameOver: false,
+        tileNodes: [],
+        scoreText: null,
+        gameOverOverlay: null,
+        cellW: 0,
+        cellH: 0,
+        boardOX: 0,
+        boardOY: 0,
+        pressStart: null,
+        keyCleanups: [],
+      };
+      state = refs;
 
       region.onPress((e) => {
         if (e.y < 110) return;
-        refs.current.pressStart = { x: e.x, y: e.y };
+        if (state) state.pressStart = { x: e.x, y: e.y };
       });
       region.onRelease((e) => {
-        const ps = refs.current.pressStart;
-        refs.current.pressStart = null;
+        if (!state) return;
+        const ps = state.pressStart;
+        state.pressStart = null;
         if (!ps) return;
         if (ps.y < 110) return;
         const dx = e.x - ps.x;
         const dy = e.y - ps.y;
         if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) return;
         if (Math.abs(dx) > Math.abs(dy)) {
-          tryMove(refs.current, dx > 0 ? 'right' : 'left');
+          tryMove(state, dx > 0 ? 'right' : 'left');
         } else {
-          tryMove(refs.current, dy > 0 ? 'down' : 'up');
+          tryMove(state, dy > 0 ? 'down' : 'up');
         }
       });
 
       const onKey = (ke: KeyboardEvent) => {
-        if (ke.key === 'ArrowLeft' || ke.key === 'a') tryMove(refs.current, 'left');
-        else if (ke.key === 'ArrowRight' || ke.key === 'd') tryMove(refs.current, 'right');
-        else if (ke.key === 'ArrowUp' || ke.key === 'w') tryMove(refs.current, 'up');
-        else if (ke.key === 'ArrowDown' || ke.key === 's') tryMove(refs.current, 'down');
+        if (!state) return;
+        if (ke.key === 'ArrowLeft' || ke.key === 'a') tryMove(state, 'left');
+        else if (ke.key === 'ArrowRight' || ke.key === 'd') tryMove(state, 'right');
+        else if (ke.key === 'ArrowUp' || ke.key === 'w') tryMove(state, 'up');
+        else if (ke.key === 'ArrowDown' || ke.key === 's') tryMove(state, 'down');
       };
       window.addEventListener('keydown', onKey);
-      refs.current.keyCleanups.push(() => window.removeEventListener('keydown', onKey));
+      refs.keyCleanups.push(() => window.removeEventListener('keydown', onKey));
 
-      buildBoard(refs.current, setRows, setCols);
+      buildBoard(refs);
     });
 
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      const r = refs.current;
-      r.keyCleanups.forEach((fn) => fn());
-      r.keyCleanups = [];
+      if (state) {
+        state.keyCleanups.forEach((fn) => fn());
+        state.keyCleanups = [];
+      }
       destroyApp();
-      r.region = null;
+      state = null;
     };
   }, []);
-
-  useEffect(() => {
-    const r = refs.current;
-    if (!r.region) return;
-    r.rows = rows;
-    r.cols = cols;
-    r.board = spawnTile(spawnTile(newBoard(rows, cols)));
-    r.score = 0;
-    r.gameOver = false;
-    buildBoard(r, setRows, setCols);
-  }, [rows, cols]);
 
   return <></>;
 }
