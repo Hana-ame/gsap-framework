@@ -184,14 +184,17 @@ export function ComponentConwayDisplay() {
     function drawCells() {
       if (!cellsGraphics) return;
       cellsGraphics.clear();
-      cellsGraphics.fill({ color: CELL_COLOR });
+      let drawn = 0;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           if (grid[idx(r, c, cols)]) {
             cellsGraphics.rect(c * cellSize, r * cellSize, cellSize, cellSize);
+            drawn++;
           }
         }
       }
+      cellsGraphics.fill({ color: CELL_COLOR });
+      console.log(`[Conway] drawCells: rows=${rows} cols=${cols} cellSize=${cellSize} gridOX=${gridOX} gridOY=${gridOY} live=${countLive(grid)} drawn=${drawn}`);
     }
 
     function drawGridBg() {
