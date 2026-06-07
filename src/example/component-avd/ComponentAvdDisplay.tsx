@@ -155,15 +155,9 @@ function makeStepper(
   const btnH = 28;
   const valW = 36;
 
-  const minus = makeButton('-', btnW, btnH, () => {
-    if (value > min) onChange(value - 1);
-  }, btnBg);
-  minus.x = 0;
-  minus.y = 18;
-  wrap.addChild(minus);
-
+  let current = value;
   const valText = new PIXI.Text({
-    text: String(value),
+    text: String(current),
     style: { fontSize: 12, fill: 0xffffff, fontFamily: 'monospace' },
   });
   valText.anchor.set(0.5);
@@ -171,8 +165,23 @@ function makeStepper(
   valText.y = 18 + btnH / 2;
   wrap.addChild(valText);
 
+  const minus = makeButton('-', btnW, btnH, () => {
+    if (current > min) {
+      current -= 1;
+      valText.text = String(current);
+      onChange(current);
+    }
+  }, btnBg);
+  minus.x = 0;
+  minus.y = 18;
+  wrap.addChild(minus);
+
   const plus = makeButton('+', btnW, btnH, () => {
-    if (value < max) onChange(value + 1);
+    if (current < max) {
+      current += 1;
+      valText.text = String(current);
+      onChange(current);
+    }
   }, btnBg);
   plus.x = btnW + valW;
   plus.y = 18;
