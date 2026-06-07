@@ -17,4 +17,6 @@ export type { PixiVideoPlayerHandle, PixiVideoPlayerOptions } from './PixiVideoP
 export { VideoPlayer } from './VideoPlayer';
 export type { VideoPlayerHandle, VideoPlayerProps } from './VideoPlayer';
 export { Avd } from './Avd';
-export type { AvdLine, AvdOptions, AvdState, AvdText, AvdTextSegment, AvdPortraitPos } from './Avd';
+export type { AvdLine, AvdOptions, AvdState, AvdText, AvdTextSegment, AvdPortraitPos, AvdRoster, AvdRosterEntry, AvdRosterMode } from './Avd';
+export { parseAvdScriptJSON } from './AvdScript';
+export type { AvdScriptJSON, AvdMetaJSON, AvdRosterEntryJSON, AvdLineJSON, AvdTextSegmentJSON, AvdAssetResolver, AvdParsedScript } from './AvdScript';

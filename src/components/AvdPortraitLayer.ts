@@ -42,6 +42,26 @@ export class PortraitLayer {
     }
   }
 
+  setSlotAlpha(pos: AvdPortraitPos, alpha: number, animate: boolean = true): void {
+    const slot = this.slots.get(pos);
+    if (!slot) return;
+    if (alpha >= 0.999) slot.sprite.visible = true;
+    if (animate) {
+      slot.fading = true;
+      slot.fadeStart = performance.now();
+      slot.fadeFrom = slot.alpha;
+      slot.fadeTo = alpha;
+    } else {
+      slot.fading = false;
+      slot.alpha = alpha;
+      slot.sprite.alpha = alpha;
+    }
+  }
+
+  getSlotTexture(pos: AvdPortraitPos): PIXI.Texture | null {
+    return this.slots.get(pos)?.current ?? null;
+  }
+
   private _showSlot(pos: AvdPortraitPos, slot: PortraitSlot | undefined, texture: PIXI.Texture | null): void {
     if (!slot) {
       const sprite = new PIXI.Sprite(texture ?? PIXI.Texture.EMPTY);

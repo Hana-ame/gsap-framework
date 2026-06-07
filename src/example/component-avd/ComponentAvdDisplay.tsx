@@ -51,6 +51,7 @@ interface DemoRefs {
   avdRegion: SubCanvas | null;
   statusText: PIXI.Text | null;
   themeButtons: Map<Theme, PIXI.Container>;
+  rosterModeButton: PIXI.Container | null;
   lineCount: number;
 }
 
@@ -195,6 +196,7 @@ const AVATAR_SIZE = 280;
 interface BuiltAssets {
   alicePortrait: PIXI.Texture;
   bobPortrait: PIXI.Texture;
+  carolPortrait: PIXI.Texture;
   moonIcon: PIXI.Texture;
   script: AvdLine[];
 }
@@ -202,10 +204,13 @@ interface BuiltAssets {
 function buildAssets(renderer: PIXI.Renderer): BuiltAssets {
   const aliceAvatar = makeAvatar('Alice', 0xf4c89a, 0x4a2a1a, 0x5a8acc, AVATAR_SIZE);
   const bobAvatar = makeAvatar('Bob', 0xe8b888, 0x1a1a1a, 0x6a5a3a, AVATAR_SIZE);
+  const carolAvatar = makeAvatar('Carol', 0xd8a888, 0x8a4a2a, 0x4a8a5a, AVATAR_SIZE);
   const aliceTex = avatarToTexture(renderer, aliceAvatar);
   const bobTex = avatarToTexture(renderer, bobAvatar);
+  const carolTex = avatarToTexture(renderer, carolAvatar);
   aliceAvatar.destroy();
   bobAvatar.destroy();
+  carolAvatar.destroy();
 
   const moon = makeMoonIcon(64);
   const moonTex = makeIconTexture(renderer, moon);
@@ -224,15 +229,18 @@ function buildAssets(renderer: PIXI.Renderer): BuiltAssets {
 
   const script: AvdLine[] = [
     { speaker: 'Narrator', text: '深夜的实验室里，只有服务器的嗡嗡声。' },
-    { speaker: 'Alice', text: '终于编译通过了！', portrait: aliceTex, portraitPos: 'left' },
-    { speaker: 'Alice', text: inlineWithMoon, portrait: aliceTex, portraitPos: 'left' },
-    { speaker: 'Bob', text: '不对，那是平面几何。这里是相对论。', portrait: bobTex, portraitPos: 'right' },
-    { speaker: 'Bob', text: longText, portrait: bobTex, portraitPos: 'right' },
-    { speaker: 'Alice', text: '啊，对。我搞混了。', portrait: aliceTex, portraitPos: 'left' },
+    { speaker: 'Alice', text: '终于编译通过了！' },
+    { speaker: 'Alice', text: inlineWithMoon },
+    { speaker: 'Bob', text: '不对，那是平面几何。这里是相对论。' },
+    { speaker: 'Bob', text: longText },
+    { speaker: 'Alice', text: '啊，对。我搞混了。' },
+    { speaker: 'Carol', text: '我能加入吗？' },
+    { speaker: 'Bob', text: '当然。' },
+    { speaker: 'Alice', text: 'Carol！你也来了。' },
     { speaker: 'Narrator', text: '对话结束。点 Restart 重新开始。' },
   ];
 
-  return { alicePortrait: aliceTex, bobPortrait: bobTex, moonIcon: moonTex, script };
+  return { alicePortrait: aliceTex, bobPortrait: bobTex, carolPortrait: carolTex, moonIcon: moonTex, script };
 }
 
 function buildControlPanel(
@@ -240,6 +248,7 @@ function buildControlPanel(
   setTheme: (t: Theme) => void,
   setSpeed: (n: number) => void,
   setRestartKey: Dispatch<SetStateAction<number>>,
+  setRosterMode: (m: 'speaker-only' | 'persistent') => void,
 ): void {
   if (!refs.controlRegion) return;
   const stage = refs.controlRegion.stage;
@@ -265,6 +274,18 @@ function buildControlPanel(
   speedStepper.y = y0;
   stage.addChild(speedStepper);
   x += 80;
+
+  const rosterModeBtn = makeButton('Mode: solo', 86, 26, () => {
+    if (refs.avd) {
+      const next = refs.avd.getRosterMode() === 'speaker-only' ? 'persistent' : 'speaker-only';
+      setRosterMode(next);
+    }
+  }, 0x4a3a6a);
+  rosterModeBtn.x = x;
+  rosterModeBtn.y = y0;
+  stage.addChild(rosterModeBtn);
+  refs.rosterModeButton = rosterModeBtn;
+  x += 94;
 
   const restartBtn = makeButton('Restart', 64, 26, () => setRestartKey((k) => k + 1), 0x6a3a3a);
   restartBtn.x = x;
@@ -328,6 +349,7 @@ export function ComponentAvdDisplay() {
   const [theme, setTheme] = useState<Theme>('dark');
   const [speed, setSpeed] = useState(30);
   const [restartKey, setRestartKey] = useState(0);
+  const [rosterMode, setRosterModeState] = useState<'speaker-only' | 'persistent'>('speaker-only');
   const [lineIndex, setLineIndex] = useState(0);
   const [avdState, setAvdState] = useState<AvdState>('typing');
 
@@ -335,6 +357,7 @@ export function ComponentAvdDisplay() {
   const avdRef = useRef<Avd | null>(null);
   const themeRef = useRef(theme);
   const speedRef = useRef(speed);
+  const rosterModeRef = useRef(rosterMode);
 
   useEffect(() => {
     themeRef.current = theme;
@@ -342,6 +365,20 @@ export function ComponentAvdDisplay() {
   useEffect(() => {
     speedRef.current = speed;
   }, [speed]);
+  useEffect(() => {
+    rosterModeRef.current = rosterMode;
+    avdRef.current?.setRosterMode(rosterMode);
+    if (refsRef.current?.rosterModeButton) {
+      const g = refsRef.current.rosterModeButton.children[0] as PIXI.Graphics;
+      const t = refsRef.current.rosterModeButton.children[1] as PIXI.Text;
+      if (g) {
+        g.clear();
+        g.roundRect(0, 0, 86, 26, 6).fill({ color: rosterMode === 'persistent' ? BTN_ACTIVE_BG : 0x4a3a6a, alpha: 0.92 });
+        g.stroke({ width: 1.5, color: rosterMode === 'persistent' ? 0x88ccff : 0x446 });
+      }
+      if (t) t.text = `Mode: ${rosterMode === 'persistent' ? 'group' : 'solo'}`;
+    }
+  }, [rosterMode]);
 
   useEffect(() => {
     const W = window.innerWidth;
@@ -355,6 +392,7 @@ export function ComponentAvdDisplay() {
       avdRegion: null,
       statusText: null,
       themeButtons: new Map(),
+      rosterModeButton: null,
       lineCount: 0,
     };
     refsRef.current = refs;
@@ -368,7 +406,7 @@ export function ComponentAvdDisplay() {
       const assets = buildAssets(renderer);
       refs.lineCount = assets.script.length;
 
-      if (refs.controlRegion) buildControlPanel(refs, setTheme, setSpeed, setRestartKey);
+      if (refs.controlRegion) buildControlPanel(refs, setTheme, setSpeed, setRestartKey, (m) => setRosterModeState(m));
       if (refs.statusRegion) buildStatusBar(refs);
       updateStatusText(refs, 'typing', 0);
       updateThemeButtonVisuals(refs, themeRef.current);
@@ -382,6 +420,12 @@ export function ComponentAvdDisplay() {
           onStateChange: (s) => setAvdState(s),
           onLineEnter: (_line, idx) => setLineIndex(idx),
         });
+        refs.avd.setRoster({
+          Alice: { pos: 'left', texture: assets.alicePortrait },
+          Bob: { pos: 'right', texture: assets.bobPortrait },
+          Carol: { pos: 'center', texture: assets.carolPortrait },
+        });
+        refs.avd.setRosterMode(rosterModeRef.current);
         refs.avd.setScript(assets.script);
         avdRef.current = refs.avd;
       }

@@ -21,6 +21,15 @@ export interface AvdLine {
 
 export type AvdState = 'typing' | 'between' | 'done';
 
+export interface AvdRosterEntry {
+  pos: AvdPortraitPos;
+  texture: PIXI.Texture | null;
+}
+
+export type AvdRoster = Record<string, AvdRosterEntry>;
+
+export type AvdRosterMode = 'speaker-only' | 'persistent';
+
 export interface AvdOptions {
   boxWidth?: number;
   boxHeight?: number;
@@ -95,6 +104,10 @@ export class Avd {
   private lines: AvdLine[] = [];
   private lineIndex: number = 0;
   private state: AvdState = 'typing';
+
+  private roster: AvdRoster = {};
+  private rosterMode: AvdRosterMode = 'speaker-only';
+  private currentSpeaker: string | null = null;
 
   private fullText: string = '';
   private totalUnits: number = 0;
@@ -238,6 +251,7 @@ export class Avd {
   setScript(lines: AvdLine[]): void {
     this.lines = lines;
     this.lineIndex = 0;
+    this.currentSpeaker = null;
     this.portraitLayer.setPortrait(null, null);
     this._enterLine(0);
   }
@@ -254,6 +268,24 @@ export class Avd {
     if (index < 0 || index >= this.lines.length) return;
     this.lineIndex = index;
     this._enterLine(index);
+  }
+
+  setRoster(roster: AvdRoster): void {
+    this.roster = { ...roster };
+    this._applyRosterHighlight(this.currentSpeaker);
+  }
+
+  setRosterMode(mode: AvdRosterMode): void {
+    this.rosterMode = mode;
+    this._applyRosterHighlight(this.currentSpeaker);
+  }
+
+  getRoster(): AvdRoster {
+    return { ...this.roster };
+  }
+
+  getRosterMode(): AvdRosterMode {
+    return this.rosterMode;
   }
 
   getState(): AvdState {
@@ -326,7 +358,9 @@ export class Avd {
       this.totalUnits = this.inlineLayout.totalUnits;
     }
 
-    this.portraitLayer.setPortrait(line.portraitPos ?? null, line.portrait ?? null);
+    this.currentSpeaker = line.speaker ?? null;
+    const resolved = this._resolvePortrait(line);
+    this._applyPortrait(resolved.pos, resolved.texture);
 
     this.textFadeStart = performance.now();
     this.textFadeFrom = 0;
@@ -356,6 +390,49 @@ export class Avd {
     }
     this._setState('between');
     this.arrowPhase = 0;
+  }
+
+  private _resolvePortrait(line: AvdLine): { pos: AvdPortraitPos | null; texture: PIXI.Texture | null } {
+    if (line.portrait && line.portraitPos) {
+      return { pos: line.portraitPos, texture: line.portrait };
+    }
+    if (line.speaker && this.roster[line.speaker]) {
+      return { pos: this.roster[line.speaker].pos, texture: this.roster[line.speaker].texture };
+    }
+    if (line.portrait) {
+      return { pos: line.portraitPos ?? null, texture: line.portrait };
+    }
+    return { pos: null, texture: null };
+  }
+
+  private _applyPortrait(pos: AvdPortraitPos | null, texture: PIXI.Texture | null): void {
+    if (this.rosterMode === 'persistent' && this.currentSpeaker && this.roster[this.currentSpeaker]) {
+      this._applyRosterHighlight(this.currentSpeaker);
+      return;
+    }
+    this.portraitLayer.setPortrait(pos, texture);
+  }
+
+  private _applyRosterHighlight(speaker: string | null): void {
+    if (this.rosterMode !== 'persistent') {
+      if (speaker && this.roster[speaker]) {
+        const entry = this.roster[speaker];
+        this.portraitLayer.setPortrait(entry.pos, entry.texture);
+      } else {
+        this.portraitLayer.setPortrait(null, null);
+      }
+      return;
+    }
+    for (const [name, entry] of Object.entries(this.roster)) {
+      this.portraitLayer.setPortrait(entry.pos, entry.texture);
+      const target = name === speaker ? 1.0 : 0.4;
+      this.portraitLayer.setSlotAlpha(entry.pos, target, true);
+    }
+    if (!speaker) {
+      for (const entry of Object.values(this.roster)) {
+        this.portraitLayer.setSlotAlpha(entry.pos, 0.4, true);
+      }
+    }
   }
 
   private _redrawClickOverlay(): void {
