@@ -19,6 +19,7 @@ import { ComponentVideoPlayerDomDisplay } from './component-video-player-dom/Com
 import { ComponentCutsceneDisplay } from './component-cutscene/ComponentCutsceneDisplay';
 import { ComponentCutsceneMinimalDisplay } from './component-cutscene-minimal/ComponentCutsceneMinimalDisplay';
 import { Component2048Display } from './component-2048/Component2048Display';
+import { ComponentConwayDisplay } from './component-conway/ComponentConwayDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -41,6 +42,7 @@ export const EXAMPLES = [
   'component-cutscene',
   'component-cutscene-minimal',
   'component-2048',
+  'component-conway',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -69,4 +71,5 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-cutscene': ComponentCutsceneDisplay,
   'component-cutscene-minimal': ComponentCutsceneMinimalDisplay,
   'component-2048': Component2048Display,
+  'component-conway': ComponentConwayDisplay,
 };

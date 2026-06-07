@@ -29,6 +29,7 @@ const APPS: AppEntry[] = [
   { route: 'component-cutscene', label: 'Component: Cutscene', hint: 'click-to-play full-screen video + fade in/out + skip', glyph: '\u29D6', accent: '#6a4a3a' },
   { route: 'component-cutscene-minimal', label: 'Component: Cutscene (Minimal)', hint: 'sanity test: single raw PIXI.App + <video> + Sprite, no SubCanvas', glyph: '\u25CF', accent: '#7a5a4a' },
   { route: 'component-2048', label: 'Component: 2048', hint: 'swipe-to-merge tile game, customizable 3-10 rows/cols', glyph: '2', accent: '#3a5a4a' },
+  { route: 'component-conway', label: "Component: Conway's", hint: 'Game of Life: pure PIXI UI, random/clear/step/play, customizable grid + speed', glyph: '\u2756', accent: '#4a3a6a' },
 ];
 
 function accentToText(hex: string): string {
