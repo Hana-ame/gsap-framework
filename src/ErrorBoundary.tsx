@@ -65,7 +65,15 @@ export class ErrorBoundary extends Component<Props, State> {
           Tap the message to copy · tap outside to retry
         </p>
         <pre
+          role="button"
+          tabIndex={0}
           onClick={() => navigator.clipboard?.writeText(body).catch(() => {})}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              navigator.clipboard?.writeText(body).catch(() => {});
+            }
+          }}
           style={{
             fontSize: '0.8rem',
             maxWidth: '90vw',

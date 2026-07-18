@@ -83,7 +83,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     .fill({ color: 0x222a3a, alpha: 1 });
   bar.eventMode = 'static';
   bar.label = DRAG_HANDLE_LABEL;
-  bar.cursor = 'move';
+  bar.cursor = dragMode === 'none' ? 'default' : 'move';
   win.addChild(bar);
 
   const titleText = new PIXI.Text({

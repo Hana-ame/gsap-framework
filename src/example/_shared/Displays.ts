@@ -62,11 +62,15 @@ export function mountDisplays(sc: SubCanvas): () => void {
 
     let t = 0;
     let ringRemoved = false;
-    const tick = (ticker: PIXI.Ticker) => {
+    const tick = () => {
       if (ringRemoved) return;
-      t += ticker.deltaMS / 700;
+      t += 1000 / 60 / 700;
       if (t >= 1) {
         sc.ticker.remove(tick);
+        ring.removeFromParent();
+        ring.destroy();
+        label.removeFromParent();
+        label.destroy();
         return;
       }
       const r = 6 + t * 26;
@@ -76,10 +80,13 @@ export function mountDisplays(sc: SubCanvas): () => void {
       } catch {
         ringRemoved = true;
         sc.ticker.remove(tick);
+        ring.removeFromParent();
+        ring.destroy();
+        label.removeFromParent();
+        label.destroy();
         return;
       }
-      ring.setStrokeStyle({ width: 2, color: 0xff00ff, alpha: a });
-      ring.circle(x, y, r).stroke();
+      ring.circle(x, y, r).stroke({ width: 2, color: 0xff00ff, alpha: a });
     };
     sc.ticker.add(tick);
 

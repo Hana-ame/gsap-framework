@@ -2,20 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [sim]
+    branches: [sim, main]
   pull_request:
-    branches: [sim]
-
-permissions:
-  contents: read
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [sim, main]
 
 jobs:
-  lint:
-    name: Lint
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,59 +21,8 @@ jobs:
 
       - run: npm run lint
 
-  typecheck:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - run: npx tsc --noEmit -p tsconfig.app.json
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - run: npx tsc -b --noEmit
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: [lint, typecheck]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
+      - run: npm test
 
       - run: npm run build
-
-      - name: Upload dist
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ github.sha }}
-          path: dist
-          retention-days: 7
-
-  ci-success:
-    name: CI Status
-    if: always()
-    needs: [lint, typecheck, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: All checks passed
-        if: needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.build.result == 'success'
-        run: echo "CI green for ${{ github.sha }}"
-      - name: CI failed
-        if: needs.lint.result != 'success' || needs.typecheck.result != 'success' || needs.build.result != 'success'
-        run: |
-          echo "## CI Failure" >> $GITHUB_STEP_SUMMARY
-          echo "- lint: ${{ needs.lint.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- typecheck: ${{ needs.typecheck.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
-          exit 1

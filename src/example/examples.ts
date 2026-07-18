@@ -22,6 +22,7 @@ import { Component2048Display } from './component-2048/Component2048Display';
 import { ComponentConwayDisplay } from './component-conway/ComponentConwayDisplay';
 import { ComponentAvdDisplay } from './component-avd/ComponentAvdDisplay';
 import { ComponentLifeMapDisplay } from './component-life-map/ComponentLifeMapDisplay';
+import { ComponentColonyDisplay } from './component-colony/ComponentColonyDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -47,6 +48,7 @@ export const EXAMPLES = [
   'component-conway',
   'component-life-map',
   'component-avd',
+  'component-colony',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -78,4 +80,5 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-conway': ComponentConwayDisplay,
   'component-life-map': ComponentLifeMapDisplay,
   'component-avd': ComponentAvdDisplay,
+  'component-colony': ComponentColonyDisplay,
 };

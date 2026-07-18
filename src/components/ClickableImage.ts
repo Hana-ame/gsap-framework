@@ -133,7 +133,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
       sprite.y = (thumbH - sprite.height) / 2;
       stage.addChild(sprite);
       stage.hitArea = new PIXI.Rectangle(0, 0, thumbW, thumbH);
-    }).catch(() => {});
+    }).catch((err) => { console.warn('[ClickableImage] load failed:', url, err); });
   };
 
   load(opts.url);
