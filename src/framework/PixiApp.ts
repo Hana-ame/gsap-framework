@@ -120,9 +120,18 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
   let proxy: SubCanvasProxy | null = null;
   let innerCleanup: (() => void) | undefined;
 
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
   const onResize = () => {
     if (!mounted) return;
-    app.renderer.resize(window.innerWidth, window.innerHeight);
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      resizeTimer = null;
+      if (!mounted) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      app.renderer.resize(w, h, dpr);
+    }, 80);
   };
 
   const makePointerHandler = (type: SubPointerType) => (e: PointerEvent) => {
