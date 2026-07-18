@@ -23,6 +23,9 @@ import { ComponentConwayDisplay } from './component-conway/ComponentConwayDispla
 import { ComponentAvdDisplay } from './component-avd/ComponentAvdDisplay';
 import { ComponentLifeMapDisplay } from './component-life-map/ComponentLifeMapDisplay';
 import { ComponentColonyDisplay } from './component-colony/ComponentColonyDisplay';
+import { ComponentGsapDisplay } from './component-gsap/ComponentGsapDisplay';
+import { ComponentInfiniteDisplay } from './component-infinite/ComponentInfiniteDisplay';
+import { ComponentRegistryDisplay } from './component-registry/ComponentRegistryDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -49,6 +52,9 @@ export const EXAMPLES = [
   'component-life-map',
   'component-avd',
   'component-colony',
+  'component-gsap',
+  'component-infinite',
+  'component-registry',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -81,4 +87,7 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-life-map': ComponentLifeMapDisplay,
   'component-avd': ComponentAvdDisplay,
   'component-colony': ComponentColonyDisplay,
+  'component-gsap': ComponentGsapDisplay,
+  'component-infinite': ComponentInfiniteDisplay,
+  'component-registry': ComponentRegistryDisplay,
 };

@@ -32,6 +32,9 @@ const APPS: AppEntry[] = [
   { route: 'component-conway', label: "Component: Conway's", hint: 'Game of Life: pure PIXI UI, random/clear/step/play, customizable grid + speed', glyph: '\u2756', accent: '#4a3a6a' },
   { route: 'component-avd', label: 'Component: AVD', hint: 'Visual Novel dialogue: textbox + portraits + typewriter + fade in/out + speed + CJK/English + inline images, auto-wrap', glyph: '\u2756', accent: '#3a6a4a' },
   { route: 'component-life-map', label: 'Component: Life Map', hint: 'Conway on big toroidal world, Google-Maps-style mouse-drag panning, click to toggle cell', glyph: '\u29C9', accent: '#3a4a6a' },
+  { route: 'component-gsap', label: 'Component: GSAP', hint: 'GSAP animation showcase — box position/scale/rotation/alpha/timeline', glyph: '\u25C7', accent: '#4a6a8a' },
+  { route: 'component-infinite', label: 'Component: InfiniteCanvas', hint: 'InfiniteCanvas — chunked grid, drag pan, zoom in/out, decelerate', glyph: '\u2316', accent: '#6a4a6a' },
+  { route: 'component-registry', label: 'Component: Registry', hint: 'createComponent("window"|"confirm"|"scrollable") — unified factory API', glyph: '\u229E', accent: '#4a6a5a' },
 ];
 
 function accentToText(hex: string): string {
@@ -221,6 +224,7 @@ const launcherCss = `
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   transition: transform 80ms ease, box-shadow 120ms ease;
+  overflow: hidden;
 }
 .launcher-tile:active {
   transform: scale(0.97);
@@ -238,11 +242,22 @@ const launcherCss = `
 .launcher-label {
   font-size: 0.95rem;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .launcher-hint {
   font-size: 0.75rem;
   opacity: 0.75;
   line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  max-width: 100%;
 }
 .launcher-route {
   position: absolute;

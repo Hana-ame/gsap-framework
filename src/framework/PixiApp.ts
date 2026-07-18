@@ -205,7 +205,9 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
 
         if (import.meta.env.DEV) {
           setTimeout(() => {
-            const c = app.canvas as HTMLCanvasElement;
+            if (destroyed) return;
+            let c: HTMLCanvasElement | null;
+            try { c = app.canvas as HTMLCanvasElement; } catch { return; }
             if (!c) return;
             try {
               const tmp = document.createElement('canvas');
@@ -225,10 +227,11 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
                 stageChildren: app.stage.children.length,
               });
               if (nonBlack === 0 && app.stage.children.length > 0) {
-                showFatalOverlay(
-                  'PIXI canvas is blank',
-                  `Stage has ${app.stage.children.length} children but rendered canvas is all-black at sample point. Renderer may have failed silently.`,
-                );
+                console.warn('[PixiApp] canvas may be blank', {
+                  stageChildren: app.stage.children.length,
+                  nonBlackPixels: 0,
+                  sample: '32x32 top-left — may be false positive for dark/small content',
+                });
               }
             } catch (e) {
               console.warn('[PixiApp] health check failed', e);

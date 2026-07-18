@@ -52,7 +52,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
   const x = opts.x ?? 60;
   const y = opts.y ?? 60;
   const draggable = opts.draggable !== false;
-  const dragMode = draggable ? (opts.dragMode ?? 'title') : 'none';
+  const dragMode = draggable ? (opts.dragMode ?? 'anywhere') : 'none';
   const closable = opts.closable !== false;
   const okText = opts.okText ?? 'OK';
   const cancelText = opts.cancelText ?? 'Cancel';

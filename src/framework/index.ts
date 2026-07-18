@@ -8,6 +8,7 @@ export { InfiniteCanvas } from './InfiniteCanvas';
 export type { InfiniteCanvasOptions, Chunk, InfiniteCanvasPlugin } from './InfiniteCanvas';
 export { makeButton, makeStepper } from './ui-helpers';
 export type { Stepper } from './ui-helpers';
+export { gsap } from './gsap-pixi';
 export {
   registerComponent,
   registeredTypes,

@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    allowedHosts: ['wsl-5173.moonchan.xyz', '.moonchan.xyz'],
+  },
   build: {
     sourcemap: true,
   },

@@ -18,6 +18,7 @@ export interface Scrollable {
   recalc(): void;
   destroy(): void;
   readonly destroyed: boolean;
+  sync(): void;
 }
 
 const SCROLLBAR_SIZE = 6;
@@ -39,7 +40,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
   stage.addChild(mask);
 
   const content = new PIXI.Container();
-  content.eventMode = 'none';
+  content.eventMode = 'passive';
   content.mask = mask;
   stage.addChild(content);
 
@@ -68,6 +69,20 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     }
   }
 
+  const calcBounds = () => {
+    let maxW = 0;
+    let maxH = 0;
+    for (const child of content.children) {
+      const b = child.getBounds().rectangle;
+      const right = child.x + b.width;
+      const bottom = child.y + b.height;
+      if (right > maxW) maxW = right;
+      if (bottom > maxH) maxH = bottom;
+    }
+    contentW = maxW;
+    contentH = maxH;
+  };
+
   const clamp = () => {
     const maxW = Math.max(0, contentW - w);
     const maxH = Math.max(0, contentH - h);
@@ -95,8 +110,10 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     }
   };
 
-  const apply = () => {
+  const sync = () => {
     if (destroyed) return;
+    calcBounds();
+    clamp();
     content.x = -scrollX;
     content.y = -scrollY;
     if (scrollbarV) scrollbarV.visible = dir === 'vertical' && contentH > h;
@@ -104,22 +121,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     updateScrollbar();
   };
 
-  const recalc = () => {
-    if (destroyed) return;
-    let maxW = 0;
-    let maxH = 0;
-    for (const child of content.children) {
-      const b = child.getBounds().rectangle;
-      const right = child.x + b.width;
-      const bottom = child.y + b.height;
-      if (right > maxW) maxW = right;
-      if (bottom > maxH) maxH = bottom;
-    }
-    contentW = maxW;
-    contentH = maxH;
-    clamp();
-    apply();
-  };
+  const recalc = sync;
 
   const onWheel = (e: PIXI.FederatedWheelEvent) => {
     e.stopPropagation();
@@ -129,7 +131,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
       scrollX += e.deltaY;
     }
     clamp();
-    apply();
+    sync();
   };
   stage.on('wheel', onWheel);
 
@@ -161,7 +163,7 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
       scrollX = dragStartScrollX - dx;
     }
     clamp();
-    apply();
+    sync();
   };
 
   const onUp = () => {
@@ -184,16 +186,17 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
       scrollX = x;
       scrollY = y;
       clamp();
-      apply();
+      sync();
     },
     scrollBy(dx: number, dy: number) {
       if (destroyed) return;
       scrollX += dx;
       scrollY += dy;
       clamp();
-      apply();
+      sync();
     },
     recalc,
+    sync,
     destroy() {
       if (destroyed) return;
       destroyed = true;

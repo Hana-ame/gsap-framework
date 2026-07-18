@@ -29,7 +29,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   const x = opts.x ?? 60;
   const y = opts.y ?? 60;
   const draggable = opts.draggable !== false;
-  const dragMode: PixiDragMode = draggable ? (opts.dragMode ?? 'title') : 'none';
+  const dragMode: PixiDragMode = draggable ? (opts.dragMode ?? 'anywhere') : 'none';
   const closable = opts.closable !== false;
 
   const win = opts.parent.createSubRegion(
@@ -71,12 +71,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     closeBtn.y = cy;
     closeBtn.eventMode = 'static';
     closeBtn.cursor = 'pointer';
-    closeBtn.hitArea = new PIXI.Rectangle(
-      -CLOSE_BTN_R - 2,
-      -CLOSE_BTN_R - 2,
-      (CLOSE_BTN_R + 2) * 2,
-      (CLOSE_BTN_R + 2) * 2,
-    );
+    closeBtn.hitArea = new PIXI.Rectangle(-14, -14, 28, 28);
     const circle = new PIXI.Graphics().circle(0, 0, CLOSE_BTN_R).fill({ color: 0xff5577 });
     circle.eventMode = 'none';
     closeBtn.addChild(circle);

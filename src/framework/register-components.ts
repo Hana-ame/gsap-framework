@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js';
 import { registerComponent, type Component, type ComponentOptions } from './component';
 import { createWindow } from '../components/PixiWindow';
 import { createConfirm } from '../components/PixiConfirm';
@@ -93,9 +94,15 @@ registerComponent<ScrollableComponentOptions>('scrollable', (opts) => {
     scrollbar: opts.scrollbar,
     accept: opts.accept,
   });
+  const origAddChild = sc.content.addChild.bind(sc.content);
+  sc.content.addChild = ((...children: PIXI.Container[]) => {
+    const r = origAddChild(...children);
+    sc.recalc();
+    return r;
+  }) as typeof sc.content.addChild;
   return {
     type: 'scrollable',
-    stage: sc.stage,
+    stage: sc.content,
     destroy: () => sc.destroy(),
     get destroyed() { return sc.destroyed; },
   };

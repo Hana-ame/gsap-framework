@@ -22,7 +22,7 @@ export interface InfiniteCanvasPlugin {
 }
 
 const FRICTION = 0.95;
-const MIN_SPEED = 0.5;
+const MIN_SPEED = 0.1;
 
 class DeceleratePlugin implements InfiniteCanvasPlugin {
   readonly name = 'decelerate';
@@ -48,18 +48,12 @@ class DeceleratePlugin implements InfiniteCanvasPlugin {
 
   onUp(): void {
     if (this._saved.length < 2) return;
-    const now = performance.now();
-    const cutoff = now - 100;
-    let recent: { x: number; y: number; time: number } | null = null;
-    for (let i = this._saved.length - 1; i >= 0; i--) {
-      if (this._saved[i].time < cutoff) break;
-      recent = this._saved[i];
-    }
-    if (!recent) return;
-    const dt = (now - recent.time) / 1000;
+    const last = this._saved[this._saved.length - 1];
+    const prev = this._saved[this._saved.length - 2];
+    const dt = last.time - prev.time;
     if (dt <= 0) return;
-    this._vx = (this.parent.worldX - (this.parent.worldX + (recent.x - this._saved[0].x))) / dt;
-    this._vy = (this.parent.worldY - (this.parent.worldY + (recent.y - this._saved[0].y))) / dt;
+    this._vx = (last.x - prev.x) / dt;
+    this._vy = (last.y - prev.y) / dt;
     if (Math.abs(this._vx) < MIN_SPEED && Math.abs(this._vy) < MIN_SPEED) return;
     this._active = true;
   }
@@ -75,7 +69,7 @@ class DeceleratePlugin implements InfiniteCanvasPlugin {
       this._active = false;
       return;
     }
-    this.parent.panBy(this._vx * (elapsed / 16), this._vy * (elapsed / 16));
+    this.parent.panBy(this._vx * elapsed, this._vy * elapsed);
   }
 
   onDestroy(): void {
