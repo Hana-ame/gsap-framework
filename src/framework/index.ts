@@ -5,7 +5,7 @@ export type { SubCanvasProxyOptions } from './SubCanvasProxy';
 export { EventBus } from './EventBus';
 export { startPixiApp, debugBodyCanvases } from './PixiApp';
 export { InfiniteCanvas } from './InfiniteCanvas';
-export type { InfiniteCanvasOptions, Chunk } from './InfiniteCanvas';
+export type { InfiniteCanvasOptions, Chunk, InfiniteCanvasPlugin } from './InfiniteCanvas';
 export { makeButton, makeStepper } from './ui-helpers';
 export type { Stepper } from './ui-helpers';
 export {
@@ -16,3 +16,5 @@ export {
   createComponentFromMap,
 } from './component';
 export type { ComponentOptions, Component, ComponentFactory } from './component';
+
+import './register-components';

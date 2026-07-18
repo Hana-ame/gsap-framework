@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '../framework/SubCanvas';
+import { gsap } from '../framework/gsap-pixi';
 
 export interface LoadingOptions {
   text?: string;
@@ -43,32 +44,31 @@ export function showLoading(sc: SubCanvas, opts: LoadingOptions | string = {}): 
   label.eventMode = 'none';
   sc.stage.addChild(label);
 
-  let t = 0;
+  const phase = { t: 0 };
   let removed = false;
-  const tick = (ticker: PIXI.Ticker) => {
-    if (removed) return;
-    t += ticker.deltaMS / 1000;
-    try {
-      spinner.clear();
-    } catch {
-      // spinner was destroyed by parent SubCanvas — stop ticking
-      removed = true;
-      sc.ticker.remove(tick);
-      return;
-    }
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2 - t * 2;
-      const x = Math.cos(a) * 14;
-      const y = Math.sin(a) * 14;
-      spinner.circle(x, y, 3).fill({ color: spinnerColor, alpha: (i + 1) / 8 });
-    }
-  };
-  if (showSpinner) sc.ticker.add(tick);
+  if (showSpinner) {
+    gsap.to(phase, {
+      t: Math.PI * 2,
+      duration: 1,
+      repeat: -1,
+      ease: 'none',
+      onUpdate: () => {
+        if (removed) return;
+        try { spinner.clear(); } catch { return; }
+        for (let i = 0; i < 8; i++) {
+          const a = (i / 8) * Math.PI * 2 - phase.t * 2;
+          const x = Math.cos(a) * 14;
+          const y = Math.sin(a) * 14;
+          spinner.circle(x, y, 3).fill({ color: spinnerColor, alpha: (i + 1) / 8 });
+        }
+      },
+    });
+  }
 
   return () => {
     if (removed) return;
     removed = true;
-    sc.ticker.remove(tick);
+    gsap.killTweensOf(phase);
     if (overlay.parent) overlay.parent.removeChild(overlay);
     if (spinner.parent) spinner.parent.removeChild(spinner);
     if (label.parent) label.parent.removeChild(label);

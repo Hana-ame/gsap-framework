@@ -102,6 +102,9 @@ export interface InfiniteCanvasOptions {
   onDrag?: (x: number, y: number) => void;
   onTap?: (worldX: number, worldY: number) => void;
   decelerate?: boolean;
+  zoom?: number;
+  minZoom?: number;
+  maxZoom?: number;
 }
 
 export class InfiniteCanvas {
@@ -112,6 +115,9 @@ export class InfiniteCanvas {
   private _viewport: Rect;
   private _worldX = 0;
   private _worldY = 0;
+  private _zoom: number;
+  private _minZoom: number;
+  private _maxZoom: number;
   private _chunks = new Map<string, Chunk>();
   private _chunkCreate: (chunk: Chunk) => void;
   private _chunkDestroy: (chunk: Chunk) => void;
@@ -133,9 +139,13 @@ export class InfiniteCanvas {
     this._chunkDestroy = opts.chunkDestroy;
     this._onDrag = opts.onDrag ?? null;
     this._onTap = opts.onTap ?? null;
+    this._zoom = opts.zoom ?? 1;
+    this._minZoom = opts.minZoom ?? 0.1;
+    this._maxZoom = opts.maxZoom ?? 10;
 
     this.worldContainer = new PIXI.Container();
     this.worldContainer.eventMode = 'none';
+    this.worldContainer.scale.set(this._zoom);
     this.parent.stage.addChild(this.worldContainer);
 
     this._decelerate = new DeceleratePlugin();
@@ -164,8 +174,23 @@ export class InfiniteCanvas {
 
   get worldX(): number { return this._worldX; }
   get worldY(): number { return this._worldY; }
+  get zoom(): number { return this._zoom; }
 
   get viewport(): Readonly<Rect> { return this._viewport; }
+
+  setZoom(zoom: number, cx?: number, cy?: number): void {
+    const centerX = cx ?? this._viewport.width / 2;
+    const centerY = cy ?? this._viewport.height / 2;
+    const world = this.screenToWorld(centerX, centerY);
+    this._zoom = Math.max(this._minZoom, Math.min(this._maxZoom, zoom));
+    this.worldContainer.scale.set(this._zoom);
+    this._worldX = centerX - world.x * this._zoom;
+    this._worldY = centerY - world.y * this._zoom;
+    this.worldContainer.x = this._worldX;
+    this.worldContainer.y = this._worldY;
+    this._syncChunks();
+    for (const p of this._plugins) p.onResize?.();
+  }
 
   setViewport(rect: Rect): void {
     this._viewport = rect;
@@ -174,8 +199,8 @@ export class InfiniteCanvas {
   }
 
   panBy(dx: number, dy: number): void {
-    this._worldX += dx;
-    this._worldY += dy;
+    this._worldX += dx / this._zoom;
+    this._worldY += dy / this._zoom;
     this.worldContainer.x = this._worldX;
     this.worldContainer.y = this._worldY;
     this._syncChunks();
@@ -195,20 +220,20 @@ export class InfiniteCanvas {
   centerOn(worldCX: number, worldCY: number): void {
     const vw = this._viewport.width / 2;
     const vh = this._viewport.height / 2;
-    this.panTo(vw - worldCX, vh - worldCY);
+    this.panTo(vw - worldCX * this._zoom, vh - worldCY * this._zoom);
   }
 
   screenToWorld(screenX: number, screenY: number): { x: number; y: number } {
     return {
-      x: screenX - this._worldX,
-      y: screenY - this._worldY,
+      x: (screenX - this._worldX) / this._zoom,
+      y: (screenY - this._worldY) / this._zoom,
     };
   }
 
   worldToScreen(worldX: number, worldY: number): { x: number; y: number } {
     return {
-      x: worldX + this._worldX,
-      y: worldY + this._worldY,
+      x: worldX * this._zoom + this._worldX,
+      y: worldY * this._zoom + this._worldY,
     };
   }
 
@@ -277,8 +302,8 @@ export class InfiniteCanvas {
       if (!dragging) return;
       const dx = e.globalX - startClientX;
       const dy = e.globalY - startClientY;
-      this._worldX = startWorldX + dx;
-      this._worldY = startWorldY + dy;
+      this._worldX = startWorldX + dx / this._zoom;
+      this._worldY = startWorldY + dy / this._zoom;
       this.worldContainer.x = this._worldX;
       this.worldContainer.y = this._worldY;
       this._syncChunks();
@@ -320,10 +345,15 @@ export class InfiniteCanvas {
     const margin = this._preloadMargin;
     const cs = this.chunkSize;
 
-    const minCx = Math.floor(-this._worldX / cs) - margin;
-    const maxCx = Math.ceil((-this._worldX + this._viewport.width) / cs) + margin;
-    const minCy = Math.floor(-this._worldY / cs) - margin;
-    const maxCy = Math.ceil((-this._worldY + this._viewport.height) / cs) + margin;
+    const z = this._zoom;
+    const worldLeft = -this._worldX / z;
+    const worldTop = -this._worldY / z;
+    const worldRight = worldLeft + this._viewport.width / z;
+    const worldBottom = worldTop + this._viewport.height / z;
+    const minCx = Math.floor(worldLeft / cs) - margin;
+    const maxCx = Math.ceil(worldRight / cs) + margin;
+    const minCy = Math.floor(worldTop / cs) - margin;
+    const maxCy = Math.ceil(worldBottom / cs) + margin;
 
     const needed = new Set<string>();
     for (let cx = minCx; cx <= maxCx; cx++) {

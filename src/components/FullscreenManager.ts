@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import type { SubCanvasProxy } from '../framework/SubCanvasProxy';
+import { gsap } from '../framework/gsap-pixi';
 
 export interface FullscreenShowEvent {
   texture: PIXI.Texture;
@@ -18,10 +19,7 @@ export interface FullscreenManager {
   destroy(): void;
 }
 
-const LERP = 0.15;
-const SNAP = 0.5;
 const DRAG_THRESHOLD = 4;
-// Swipe-to-close: if not zoomed and drag-distance exceeds this, close.
 const CLOSE_DRAG_THRESHOLD = 80;
 
 export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManager {
@@ -42,12 +40,30 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   let thumbW = 0;
   let thumbH = 0;
 
-  // Animation targets
-  let targetX = 0;
-  let targetY = 0;
-  let targetScale = 1;
-  let animating = false;
-  let onAnimDone: (() => void) | null = null;
+  // GSAP animation
+  let currentTween: gsap.core.Tween | null = null;
+  let hiding = false;
+
+  const killTween = () => {
+    if (currentTween) {
+      currentTween.kill();
+      currentTween = null;
+    }
+  };
+
+  const animateTo = (x: number, y: number, scale: number, onComplete?: () => void) => {
+    killTween();
+    if (!sprite) return;
+    currentTween = gsap.to(sprite, {
+      pixi: { x, y, scale },
+      duration: 0.3,
+      ease: 'power2.out',
+      onComplete: () => {
+        currentTween = null;
+        onComplete?.();
+      },
+    });
+  };
 
   // Zoom & drag
   let zoomed = false;
@@ -58,45 +74,9 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   let dragStartGlobalY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
-  // Double-tap detection — timestamp of last pointerdown; 0 means reset.
   let lastTapMs = 0;
-  // Set on double-tap to prevent the immediately following pointerup from closing.
   let suppressClose = false;
   const DBL_TAP_MS = 300;
-
-  const snap = (v: number, t: number) => Math.abs(v - t) < SNAP;
-
-  const tick = (ticker?: PIXI.Ticker) => {
-    if (!sprite || destroyed) return;
-    const dt = ticker?.deltaTime ?? 1;
-    const f = Math.min(LERP * dt, 1);
-    sprite.x += (targetX - sprite.x) * f;
-    sprite.y += (targetY - sprite.y) * f;
-    const cs = sprite.scale.x;
-    sprite.scale.set(cs + (targetScale - cs) * f);
-    if (
-      snap(sprite.x, targetX) && snap(sprite.y, targetY) &&
-      snap(sprite.scale.x, targetScale)
-    ) {
-      sprite.x = targetX;
-      sprite.y = targetY;
-      sprite.scale.set(targetScale);
-      proxy.ticker.remove(tick);
-      animating = false;
-      if (onAnimDone) {
-        const cb = onAnimDone;
-        onAnimDone = null;
-        cb();
-      }
-    }
-  };
-
-  const startAnim = () => {
-    if (!animating) {
-      animating = true;
-      proxy.ticker.add(tick);
-    }
-  };
 
   const clampDim = (v: number, imgDim: number, viewDim: number): number => {
     if (imgDim <= viewDim) return viewDim / 2;
@@ -123,16 +103,14 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
   const hide = () => {
     if (!active || destroyed) return;
-    if (animating) {
-      proxy.ticker.remove(tick);
-      animating = false;
-      onAnimDone = null;
-    }
+    killTween();
+    hiding = true;
     zoomed = false;
-    targetX = thumbGlobalX + thumbW / 2;
-    targetY = thumbGlobalY + thumbH / 2;
-    targetScale = Math.min(thumbW / texW, thumbH / texH, 1);
-    onAnimDone = () => {
+    const tx = thumbGlobalX + thumbW / 2;
+    const ty = thumbGlobalY + thumbH / 2;
+    const ts = Math.min(thumbW / texW, thumbH / texH, 1);
+    animateTo(tx, ty, ts, () => {
+      hiding = false;
       active = false;
       container.eventMode = 'none';
       container.visible = false;
@@ -140,39 +118,33 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       if (sprite) { container.removeChild(sprite); sprite.destroy(); sprite = null; }
       proxy.bus.emit('fullscreen:hide');
       proxy.bus.emit('fullscreen:inactive');
-    };
-    startAnim();
+    });
   };
 
   const toggleZoom = (gx: number, gy: number) => {
     if (!sprite) return;
+    killTween();
     const pw = window.innerWidth;
     const ph = window.innerHeight;
     if (zoomed) {
       zoomed = false;
-      targetX = pw / 2;
-      targetY = ph / 2;
-      targetScale = fitScale;
-      startAnim();
+      animateTo(pw / 2, ph / 2, fitScale);
     } else {
       zoomed = true;
       const zf = zoomFactor;
       const newScale = fitScale * zf;
-      targetX = pw / 2 + (gx - pw / 2) * (1 - zf);
-      targetY = ph / 2 + (gy - ph / 2) * (1 - zf);
-      targetScale = newScale;
+      const tx = pw / 2 + (gx - pw / 2) * (1 - zf);
+      const ty = ph / 2 + (gy - ph / 2) * (1 - zf);
+      sprite.x = tx;
+      sprite.y = ty;
+      sprite.scale.set(newScale);
       clampSprite();
-      startAnim();
     }
   };
 
   const show = (ev: FullscreenShowEvent) => {
     if (destroyed) return;
-    if (animating) {
-      proxy.ticker.remove(tick);
-      animating = false;
-      onAnimDone = null;
-    }
+    killTween();
     zoomed = false;
     isDragging = false;
     lastTapMs = 0;
@@ -191,8 +163,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     fitScale = Math.min(pw / texW, ph / texH, 1);
     const thumbScale = Math.min(thumbW / texW, thumbH / texH, 1);
 
-    // Reuse overlay — clear+redraw instead of destroy+recreate to avoid
-    // PIXI GraphicsContext null reference in the render batch.
     const ovColor = ev.overlayColor ?? 0x000000;
     const ovAlpha = ev.overlayAlpha ?? 0.6;
     if (overlay) {
@@ -204,7 +174,6 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
       container.addChild(overlay);
     }
 
-    // Reuse sprite — swap texture instead of destroy+recreate.
     if (sprite) {
       sprite.texture = ev.texture;
       sprite.anchor.set(0.5);
@@ -225,10 +194,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     container.hitArea = new PIXI.Rectangle(0, 0, pw, ph);
     container.cursor = 'pointer';
 
-    targetX = pw / 2;
-    targetY = ph / 2;
-    targetScale = fitScale;
-    startAnim();
+    animateTo(pw / 2, ph / 2, fitScale);
   };
 
   // --- interaction ---
@@ -256,25 +222,19 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
 
     // Rule 2 & 3: sprite click.
     // If a closing animation is still running, ignore sprite clicks.
-    if (onAnimDone) return;
+    if (hiding) return;
 
     const now = performance.now();
     if (lastTapMs > 0 && now - lastTapMs < DBL_TAP_MS) {
-      // Rule 3: second tap in quick succession → toggle zoom.
-      lastTapMs = 0; // prevent triple-tap re-detection
+      lastTapMs = 0;
       suppressClose = true;
-      if (animating) {
-        proxy.ticker.remove(tick);
-        animating = false;
-        onAnimDone = null;
-      }
+      killTween();
       toggleZoom(e.globalX, e.globalY);
       return;
     }
     lastTapMs = now;
     suppressClose = false;
 
-    // Track for potential drag (only meaningful when zoomed).
     dragStartGlobalX = e.globalX;
     dragStartGlobalY = e.globalY;
     dragOriginX = sprite.x;
@@ -291,23 +251,16 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     if (!isDragging) {
       if (distSq > DRAG_THRESHOLD * DRAG_THRESHOLD) {
         isDragging = true;
-        if (animating) {
-          proxy.ticker.remove(tick);
-          animating = false;
-        }
+        killTween();
       } else {
         return;
       }
     }
     if (zoomed) {
-      // Rule: pan when zoomed.
       sprite.x = dragOriginX + dx;
       sprite.y = dragOriginY + dy;
-      targetX = sprite.x;
-      targetY = sprite.y;
       clampSprite();
     } else {
-      // Rule 4: swipe-to-close when not zoomed.
       sprite.x = dragOriginX + dx;
       sprite.y = dragOriginY + dy;
       if (distSq > CLOSE_DRAG_THRESHOLD * CLOSE_DRAG_THRESHOLD) {
@@ -320,20 +273,17 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   container.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
     e.originalEvent?.stopPropagation();
-    if (!pointerDownOnSprite) return; // rule 1 handled on pointerdown
+    if (!pointerDownOnSprite) return;
     if (isDragging) {
       isDragging = false;
       if (!zoomed) {
-        // Swipe under close threshold — bounce back to center.
-        targetX = window.innerWidth / 2;
-        targetY = window.innerHeight / 2;
-        targetScale = fitScale;
-        startAnim();
+        const pw = window.innerWidth;
+        const ph = window.innerHeight;
+        animateTo(pw / 2, ph / 2, fitScale);
       }
       return;
     }
     if (suppressClose) { suppressClose = false; return; }
-    // Rule 2: single click on sprite → nothing.
   });
   container.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
     if (!active || !sprite) return;
@@ -348,7 +298,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      if (animating) proxy.ticker.remove(tick);
+      killTween();
       unsubShow();
       container.off('globalpointermove');
       container.off('pointerdown');

@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '../../framework/SubCanvas';
+import { gsap } from '../../framework/gsap-pixi';
 
 export function mountDisplays(sc: SubCanvas): () => void {
   const crosshair = new PIXI.Graphics();
@@ -60,35 +61,24 @@ export function mountDisplays(sc: SubCanvas): () => void {
     label.y = y - 6;
     clickLayer.addChild(label);
 
-    let t = 0;
-    let ringRemoved = false;
-    const tick = () => {
-      if (ringRemoved) return;
-      t += 1000 / 60 / 700;
-      if (t >= 1) {
-        sc.ticker.remove(tick);
+    const ripple = { t: 0 };
+    gsap.to(ripple, {
+      t: 1,
+      duration: 0.7,
+      ease: 'none',
+      onUpdate: () => {
+        const r = 6 + ripple.t * 26;
+        const a = 1 - ripple.t;
+        try { ring.clear(); } catch { return; }
+        ring.circle(x, y, r).stroke({ width: 2, color: 0xff00ff, alpha: a });
+      },
+      onComplete: () => {
         ring.removeFromParent();
         ring.destroy();
         label.removeFromParent();
         label.destroy();
-        return;
-      }
-      const r = 6 + t * 26;
-      const a = 1 - t;
-      try {
-        ring.clear();
-      } catch {
-        ringRemoved = true;
-        sc.ticker.remove(tick);
-        ring.removeFromParent();
-        ring.destroy();
-        label.removeFromParent();
-        label.destroy();
-        return;
-      }
-      ring.circle(x, y, r).stroke({ width: 2, color: 0xff00ff, alpha: a });
-    };
-    sc.ticker.add(tick);
+      },
+    });
 
     clickCountText.text = `clicks: ${clickCount}`;
   });

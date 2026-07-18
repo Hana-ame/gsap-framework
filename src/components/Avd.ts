@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { gsap } from '../framework/gsap-pixi';
 import { DialogueBox, type DialogueBoxOptions } from './AvdDialogueBox';
 import { PortraitLayer, type AvdPortraitPos } from './AvdPortraitLayer';
 import {
@@ -114,14 +115,6 @@ export class Avd {
   private revealedChars: number = 0;
   private typewriterSpeed: number;
 
-  private textFadeStart: number = 0;
-  private textFadeFrom: number = 1;
-  private textFadeTo: number = 1;
-  private textFading: boolean = false;
-
-  private boxEnterStart: number = 0;
-  private boxEnterActive: boolean = false;
-
   private arrowPhase: number = 0;
 
   constructor(parent: PIXI.Container, screenW: number, screenH: number, ticker: PIXI.Ticker, options: AvdOptions = {}) {
@@ -217,6 +210,7 @@ export class Avd {
 
   destroy(): void {
     this.ticker.remove(this._tick, this);
+    gsap.killTweensOf(this.dialogueBox.container);
     this.container.destroy({ children: true });
   }
 
@@ -362,19 +356,23 @@ export class Avd {
     const resolved = this._resolvePortrait(line);
     this._applyPortrait(resolved.pos, resolved.texture);
 
-    this.textFadeStart = performance.now();
-    this.textFadeFrom = 0;
-    this.textFadeTo = 1;
-    this.textFading = true;
     this.dialogueBox.setAlpha(0);
+    gsap.killTweensOf(this.dialogueBox.container);
+    gsap.to(this.dialogueBox.container, {
+      alpha: 1,
+      duration: this.opts.textFadeMs / 1000,
+      ease: 'power2.out',
+    });
 
     if (index === 0) {
       this.dialogueBox.setBoxOffsetY(this.opts.boxEnterOffsetY);
-      this.boxEnterStart = performance.now();
-      this.boxEnterActive = true;
+      gsap.to(this.dialogueBox.container, {
+        y: 0,
+        duration: this.opts.boxEnterMs / 1000,
+        ease: 'power3.out',
+      });
     } else {
       this.dialogueBox.setBoxOffsetY(0);
-      this.boxEnterActive = false;
     }
 
     this._setState('typing');
@@ -447,24 +445,6 @@ export class Avd {
 
   private _tick(ticker: PIXI.Ticker): void {
     const dt = ticker.deltaMS;
-    const now = performance.now();
-
-    if (this.boxEnterActive) {
-      const t = Math.min(1, (now - this.boxEnterStart) / this.opts.boxEnterMs);
-      const eased = 1 - Math.pow(1 - t, 3);
-      this.dialogueBox.setBoxOffsetY(this.opts.boxEnterOffsetY * (1 - eased));
-      if (t >= 1) {
-        this.dialogueBox.setBoxOffsetY(0);
-        this.boxEnterActive = false;
-      }
-    }
-
-    if (this.textFading) {
-      const t = Math.min(1, (now - this.textFadeStart) / this.opts.textFadeMs);
-      const a = this.textFadeFrom + (this.textFadeTo - this.textFadeFrom) * t;
-      this.dialogueBox.setAlpha(a);
-      if (t >= 1) this.textFading = false;
-    }
 
     if (this.state === 'typing' && this.revealedChars < this.totalUnits) {
       this.revealedChars = Math.min(
@@ -488,7 +468,6 @@ export class Avd {
       this.dialogueBox.redrawArrow(this.state, this.arrowPhase);
     }
 
-    this.portraitLayer.update(now);
     this._redrawClickOverlay();
   }
 }
