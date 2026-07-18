@@ -19,7 +19,6 @@ export interface InfiniteCanvasOptions {
   onDrag?: (x: number, y: number) => void;
   onTap?: (worldX: number, worldY: number) => void;
   inertia?: boolean;
-  inertiaFriction?: number;
 }
 
 export class InfiniteCanvas {
@@ -37,7 +36,6 @@ export class InfiniteCanvas {
   private _onTap: ((worldX: number, worldY: number) => void) | null;
   private _preloadMargin: number;
   private _inertia: boolean;
-  private _inertiaFriction: number;
   private _velX = 0;
   private _velY = 0;
   private _inertiaTween: gsap.core.Tween | null = null;
@@ -54,7 +52,6 @@ export class InfiniteCanvas {
     this._onDrag = opts.onDrag ?? null;
     this._onTap = opts.onTap ?? null;
     this._inertia = opts.inertia ?? true;
-    this._inertiaFriction = opts.inertiaFriction ?? 0.92;
 
     this.worldContainer = new PIXI.Container();
     this.worldContainer.eventMode = 'none';
@@ -77,8 +74,6 @@ export class InfiniteCanvas {
   panTo(x: number, y: number, animate = false): void {
     if (animate) {
       this._inertiaTween?.kill();
-      const startX = this._worldX;
-      const startY = this._worldY;
       this._inertiaTween = gsap.to(this, {
         duration: 0.3,
         _worldX: x,
@@ -212,11 +207,6 @@ export class InfiniteCanvas {
     const vx = this._velX;
     const vy = this._velY;
     if (Math.abs(vx) < 0.5 && Math.abs(vy) < 0.5) return;
-
-    let t = 0;
-    let velX = vx;
-    let velY = vy;
-    const friction = this._inertiaFriction;
 
     this._inertiaTween = gsap.to(this, {
       duration: 0.8,
