@@ -593,11 +593,93 @@ destroy chain:
 
 ### 坐标系统
 
+#### SubCanvas 定位模型
+
+SubCanvas **不依赖 PIXI transform** 做定位。位置通过 `_bounds` 字段 + `setPosition()` 管理：
+
 ```
-clientX/Y  ← window 事件坐标
-    ↓ SubCanvas.clientToLocal(clientX, clientY)
-localX/Y   ← 相对于 SubCanvas.stage 左上角
+setPosition(x, y):
+  _bounds.x = x
+  _bounds.y = y
+  stage.x = x      ← PIXI stage 只是渲染结果的反映，不是位置源头
+  stage.y = y
 ```
+
+所有定位决策都读 `_bounds`，不读 `stage.x/y`。
+
+#### globalBounds
+
+`globalBounds` 是 SubCanvas 在 viewport 中的绝对位置（即 client 坐标空间）：
+
+```
+get globalBounds():
+  x = _bounds.x, y = _bounds.y
+  p = parent
+  while p:
+    x += p._bounds.x        ← 递归求和所有父级的偏移
+    y += p._bounds.y
+    p = p.parent
+  return { x, y, width, height }
+```
+
+#### Event hit-test
+
+事件路由用 `clientX/Y` 与 `globalBounds` 做 AABB 检测：
+
+```
+handlePointer(type, e):
+  gx = e.clientX, gy = e.clientY
+  if gx < gb.x || gx > gb.x + gb.width: return false   ← 不在区域内
+  if gy < gb.y || gy > gb.y + gb.height: return false
+  ...
+```
+
+命中后构建 `SubPointerEvent`：
+
+```
+SubPointerEvent:
+  x: gx - gb.x         ← 相对此 SubCanvas 的局部坐标
+  y: gy - gb.y
+  globalX: gx          ← 始终是 clientX/Y（与父级位置无关）
+  globalY: gy
+```
+
+**所有层级的 `globalX/Y` 都是 `clientX/Y`**，不随父级偏移改变。这保证了拖拽计算（如 InfiniteCanvas）在不同嵌套深度下的一致。
+
+#### InfiniteCanvas 拖拽与 zoom
+
+InfiniteCanvas 的 `_worldX/_worldY` 是 `worldContainer` 在父 SubCanvas stage 空间的偏移量（像素单位，不是世界坐标）。
+
+拖拽时鼠标在 screen 空间移动 `dx`，保持世界点跟手的条件是：
+
+```
+startClientX + dx = _worldX_new + worldPoint * zoom
+worldPoint = (startClientX - _worldX_old) / zoom
+→ _worldX_new = _worldX_old + dx     ← zoom 完全抵消
+```
+
+同理 `panBy` 也直接用 screen delta：
+
+```
+panBy(dx, dy):
+  _worldX += dx       ← 不是 dx / zoom
+  _worldY += dy
+```
+
+`setZoom` 不受影响，因为它是绝对值计算（zoom-to-pointer 公式）：
+
+```
+setZoom(newZoom, cx, cy):
+  world = screenToWorld(cx, cy)     ← 缩放前世界点
+  _zoom = newZoom
+  _worldX = cx - world.x * _zoom   ← 调整偏移使世界点保持在(cx,cy)下
+```
+
+#### 风险边界
+
+**不要**对 SubCanvas 的 `stage` 做 PIXI transform（`scale` / `rotation` / `pivot`）。`globalBounds` 不感知 PIXI transform，事件坐标会偏。所有定位走 `_bounds`/`setPosition`。
+
+如果需要视觉效果上的缩放/旋转（如过渡动画），在 `stage` 里包一层子 Container 操作，不要动 `stage` 本身。
 
 ### 事件路由
 
