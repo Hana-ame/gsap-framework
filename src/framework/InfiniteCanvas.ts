@@ -209,8 +209,8 @@ export class InfiniteCanvas {
   }
 
   panBy(dx: number, dy: number): void {
-    this._worldX += dx / this._zoom;
-    this._worldY += dy / this._zoom;
+    this._worldX += dx;
+    this._worldY += dy;
     this.worldContainer.x = this._worldX;
     this.worldContainer.y = this._worldY;
     this._syncChunks();
@@ -317,8 +317,8 @@ export class InfiniteCanvas {
       if (!dragging) return;
       const dx = e.globalX - startClientX;
       const dy = e.globalY - startClientY;
-      this._worldX = startWorldX + dx / this._zoom;
-      this._worldY = startWorldY + dy / this._zoom;
+      this._worldX = startWorldX + dx;
+      this._worldY = startWorldY + dy;
       this.worldContainer.x = this._worldX;
       this.worldContainer.y = this._worldY;
       this._syncChunks();
