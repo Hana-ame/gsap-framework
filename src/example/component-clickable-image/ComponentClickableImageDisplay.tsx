@@ -57,7 +57,7 @@ export function ComponentClickableImageDisplay() {
         label.eventMode = 'none';
         sc.stage.addChild(label);
 
-        const panel = sc.createSubRegion({ x, y, width: THUMB, height: THUMB });
+        const panel = sc.createRegion({ x, y, width: THUMB, height: THUMB });
         const ci = createClickableImage(panel, proxy.bus, {
           url: img.url,
           x: 0,

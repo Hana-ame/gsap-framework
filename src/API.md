@@ -85,7 +85,7 @@ class SubCanvas {
   sendToBack(): void
 
   // sub-regions
-  createSubRegion(bounds: Rect, opts?: SubRegionOpts): SubCanvas
+  createRegion(bounds: Rect, opts?: SubRegionOpts): SubCanvas
   getChildren(): SubCanvas[]
 
   // event listeners (AABB routing)

@@ -184,7 +184,7 @@ const quadrants = root.divide({ direction: 'horizontal', ratios: [0.3, 0.7] })
 
 不适合：
 - **悬浮 / 拖动 / z-order**（4 个 quadrant 固定位置固定大小）
-- **重叠 quadrant**（grid 不支持；用 `createSubRegion` 手动指定）
+- **重叠 quadrant**（grid 不支持；用 `createRegion` 手动指定）
 - **非整除网格**（grid 强行均分；用 `divide`）
 - **响应式断点**（"宽屏 4 列，窄屏 2 列"）— 当前的 layout 函数是均分；要做断点就在 layout 里 `if (W > 1000) cols = 4; else cols = 2;` 重新调用 `quadrants.forEach((q, i) => { ... })` 算 setBounds 参数
 

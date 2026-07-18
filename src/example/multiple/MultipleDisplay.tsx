@@ -16,7 +16,7 @@ export function MultipleDisplay() {
       const rows = 2;
 
       const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-      const quadrants = Array.from({ length: rows * cols }, () => root.createSubRegion({ x: 0, y: 0, width: 1, height: 1 }));
+      const quadrants = Array.from({ length: rows * cols }, () => root.createRegion({ x: 0, y: 0, width: 1, height: 1 }));
 
       quadrants.forEach((q, i) => {
         const color = colors[i];

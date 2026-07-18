@@ -38,7 +38,7 @@ export function ComponentScrollableImageDisplay() {
       const panelY = 60;
 
       // panel with clip mask — content doesn't spill outside
-      const panel = root.createSubRegion(
+      const panel = root.createRegion(
         { x: panelX, y: panelY, width: PANEL_W, height: PANEL_H },
         { clipToBounds: true },
       );
@@ -76,7 +76,7 @@ export function ComponentScrollableImageDisplay() {
       const fm = createFullscreenManager(proxy);
 
       // tall content SubCanvas — holds all thumbnails
-      const content = panel.createSubRegion({
+      const content = panel.createRegion({
         x: 0,
         y: 0,
         width: PANEL_W,
@@ -91,7 +91,7 @@ export function ComponentScrollableImageDisplay() {
         const x = GAP + col * (THUMB_W + GAP);
         const y = GAP + row * (THUMB_H + GAP + 24);
 
-        const tp = content.createSubRegion({
+        const tp = content.createRegion({
           x,
           y,
           width: THUMB_W,

@@ -113,7 +113,7 @@ interface ClickableImage {
 const sc = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
 const fm = createFullscreenManager(proxy);
 
-const panel = sc.createSubRegion({ x: 40, y: 60, width: 180, height: 180 });
+const panel = sc.createRegion({ x: 40, y: 60, width: 180, height: 180 });
 const thumb = createClickableImage(panel, proxy.bus, {
   url: 'https://example.com/image.jpg',
   x: 0, y: 0,

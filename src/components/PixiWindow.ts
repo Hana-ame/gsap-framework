@@ -32,7 +32,7 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   const dragMode: PixiDragMode = draggable ? (opts.dragMode ?? 'anywhere') : 'none';
   const closable = opts.closable !== false;
 
-  const win = opts.parent.createSubRegion(
+  const win = opts.parent.createRegion(
     { x, y, width: opts.width, height: opts.height },
     {
       dragMode,
@@ -85,13 +85,13 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     closeBtn.addChild(xMark);
     closeBtn.on('pointerdown', (e) => {
       e.stopPropagation();
-      if (opts.onClose) opts.onClose();
-      else win.destroy();
+      opts.onClose?.();
+      win.destroy();
     });
     win.stage.addChild(closeBtn);
   }
 
-  const content = win.createSubRegion(
+  const content = win.createRegion(
     {
       x: 0,
       y: TITLE_BAR_H,

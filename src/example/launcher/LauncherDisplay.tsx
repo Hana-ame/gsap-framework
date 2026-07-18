@@ -35,6 +35,8 @@ const APPS: AppEntry[] = [
   { route: 'component-gsap', label: 'Component: GSAP', hint: 'GSAP animation showcase — box position/scale/rotation/alpha/timeline', glyph: '\u25C7', accent: '#4a6a8a' },
   { route: 'component-infinite', label: 'Component: InfiniteCanvas', hint: 'InfiniteCanvas — chunked grid, drag pan, zoom in/out, decelerate', glyph: '\u2316', accent: '#6a4a6a' },
   { route: 'component-registry', label: 'Component: Registry', hint: 'createComponent("window"|"confirm"|"scrollable") — unified factory API', glyph: '\u229E', accent: '#4a6a5a' },
+  { route: 'component-multi-window', label: 'Stress: MultiWindow', hint: '12+ draggable windows — test drag + z-order', glyph: '\u25A6', accent: '#6a4a3a' },
+  { route: 'component-window-canvas', label: 'Window + InfiniteCanvas', hint: 'InfiniteCanvas inside a draggable window — SubCanvas nests anything', glyph: '\u25A8', accent: '#3a5a6a' },
 ];
 
 function accentToText(hex: string): string {

@@ -61,7 +61,7 @@ export function ComponentImageDisplay() {
       SOURCES.forEach((_, i) => {
         const col = i % 2;
         const row = Math.floor(i / 2);
-        const slot = sc.createSubRegion({
+        const slot = sc.createRegion({
           x: baseX + col * (SLOT_W + gap),
           y: baseY + row * (SLOT_H + 60),
           width: SLOT_W,

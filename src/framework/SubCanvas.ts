@@ -215,6 +215,8 @@ export class SubCanvas {
       if (child === this.stage) continue;
       if (child.zIndex > max) max = child.zIndex;
     }
+    // zIndex 只增不减。超过 2^25（3355 万）时 IEEE 754 ULP ≥ 4，+1 因舍入到偶数规则永不生效，bringToFront 卡死。
+    // 防止方案：当 max > 10000 时归一化所有兄弟 zIndex 为 0,1,2,...（目前无需处理）
     this.stage.zIndex = max + 1;
     if (this.parent) {
       const idx = this.parent._subRegions.indexOf(this);
@@ -496,7 +498,23 @@ export class SubCanvas {
     }
   }
 
+  /** @deprecated Use `createRegion` instead */
   createSubRegion(
+    bounds: Rect,
+    opts?: {
+      clipToBounds?: boolean;
+      dragMode?: SubDragMode;
+      dragBounds?: () => Rect | null;
+      dragBringToFront?: boolean;
+      onDragStart?: (e: { x: number; y: number }) => void;
+      onDrag?: (e: { x: number; y: number }) => void;
+      onDragEnd?: (e: { x: number; y: number }) => void;
+    },
+  ): SubCanvas {
+    return this.createRegion(bounds, opts);
+  }
+
+  createRegion(
     bounds: Rect,
     opts?: {
       clipToBounds?: boolean;

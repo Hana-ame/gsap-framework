@@ -114,8 +114,8 @@ const destroy = startPixiApp((proxy) => {
 ```ts
 const destroy = startPixiApp((proxy) => {
   const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-  // root 是顶层；root.createSubRegion 出来的全是 root 的 children
-  const children = [0,1,2,3].map(i => root.createSubRegion({ x: col*i, y: row*i, width: W/2, height: H/2 }));
+  // root 是顶层；root.createRegion 出来的全是 root 的 children
+  const children = [0,1,2,3].map(i => root.createRegion({ x: col*i, y: row*i, width: W/2, height: H/2 }));
   // children 不出现在 topCanvases 里 — 只 root 在
   // 销毁时 root.destroy() 会级联销毁 children
 });
@@ -141,7 +141,7 @@ const destroy = startPixiApp((proxy) => {
 
 1. **proxy 由 `startPixiApp` 拥有**：不要自己 `new SubCanvasProxy`。
 2. **onReady 是异步回调**：`app.init()` 之后才触发。如果在 unmount 之后才 onReady，外部 `displayCleanups` 数组的清理会漏，**事件路由也就漏清理**（race condition）。生产代码里要么 `useRef` 标记 `mounted` 守住 onReady 后的副作用，要么用 `AbortController`。
-3. **`createRegion` 只能造顶层**：嵌套子级用 `SubCanvas.createSubRegion / divide / grid`。
+3. **`createRegion` 只能造顶层**：嵌套子级用 `SubCanvas.createRegion / divide / grid`。
 4. **`routePointer` 是内部 API**：PixiApp 已经统一监听 `window` 上的 pointer 事件，**不要自己再 addEventListener**，否则事件会被处理两次。
 5. **`onWindowResize` 的 cleanup 一定要调**：否则路由切换时旧的 listener 永远活着，每次 resize 都会执行旧的 `layout`（闭包持有的旧 root 已经 destroy 也不致命，但浪费）。
 6. **`getTopCanvases()` 返回浅拷贝**：遍历中增删安全。

@@ -14,7 +14,7 @@ SubCanvasProxy.createRegion(bounds)
        ├─ stage.position.set(bounds.x, bounds.y)
        └─ rootApp.stage.addChild(stage)            // 顶层 canvas 挂到主 stage
 
-root.createSubRegion(bounds)
+root.createRegion(bounds)
   └─ new SubCanvas({ rootApp, bounds, parent: this, onDestroy })
        ├─ new PIXI.Container()
        ├─ stage.position.set(bounds.x, bounds.y)
@@ -67,7 +67,7 @@ new SubCanvas({
   onDestroy?: () => void,
 })
 ```
-不要直接 `new SubCanvas` — 必须通过 `SubCanvasProxy.createRegion` 或 `SubCanvas.createSubRegion` 创建。
+不要直接 `new SubCanvas` — 必须通过 `SubCanvasProxy.createRegion` 或 `SubCanvas.createRegion` 创建。
 
 ### 只读属性
 | 属性 | 类型 | 说明 |
@@ -106,7 +106,7 @@ new SubCanvas({
 
 ### 子区域管理
 ```ts
-createSubRegion(bounds: Rect, opts?): SubCanvas    // 直接创建子区域（opts 见下方）
+createRegion(bounds: Rect, opts?): SubCanvas    // 直接创建子区域（opts 见下方）
 subRegions: readonly SubCanvas[]                   // 子区域只读数组
 getChildren(): SubCanvas[]                         // 同 subRegions，返回浅拷贝
 ```
@@ -144,17 +144,17 @@ setSize(width: number, height: number): void      // 只改大小，触发 onRes
 bringToFront(): void                              // 移到 parent.stage.children 末尾（最上层）
 sendToBack(): void                                // 移到 0 位（最下层）
 ```
-**渲染顺序 = 命中顺序**：后画的在上层 + 后被命中。`createSubRegion` 的顺序就是 z-order；想换序调 `bringToFront`/`sendToBack`。
+**渲染顺序 = 命中顺序**：后画的在上层 + 后被命中。`createRegion` 的顺序就是 z-order；想换序调 `bringToFront`/`sendToBack`。
 
 实现：使用 `parent.sortableChildren = true` + sibling zIndex 扫描。同时同步更新 `parent._subRegions` 数组（事件路由的 truth source），保证子区域数组顺序 = 渲染顺序。
 
 ### 拖动（构造选项）
-拖动通过 `createSubRegion` 的 `opts` 传入：
+拖动通过 `createRegion` 的 `opts` 传入：
 
 ```ts
 type SubDragMode = 'title' | 'anywhere' | 'none';
 
-createSubRegion(bounds, {
+createRegion(bounds, {
   dragMode?: SubDragMode;                // 'none' = 不可拖动（默认不传 = 不可拖动）
   dragBounds?: () => Rect | null;        // 拖动约束范围（默认 parent.bounds）
   dragBringToFront?: boolean;            // 拖动时是否置顶，默认 true
@@ -197,7 +197,7 @@ sc.onPress((e) => console.log('clicked at', e.x, e.y));
 const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
 const cells = [0, 1, 2, 3].map((i) => {
   const col = i % 2, row = Math.floor(i / 2);
-  return root.createSubRegion({
+  return root.createRegion({
     x: col * (W / 2) + 2, y: row * (H / 2) + 2,
     width: W / 2 - 4, height: H / 2 - 4,
   });
@@ -213,7 +213,7 @@ cells.forEach((cell, i) => {
 const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
 const cells = [0, 1, 2, 3].map((i) => {
   const col = i % 2, row = Math.floor(i / 2);
-  return root.createSubRegion({
+  return root.createRegion({
     x: col * (W / 2), y: row * (H / 2),
     width: W / 2, height: H / 2,
   });

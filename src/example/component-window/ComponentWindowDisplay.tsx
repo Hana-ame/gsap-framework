@@ -102,7 +102,7 @@ export function ComponentWindowDisplay() {
       sc = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
 
       const pH = 130;
-      const panel = sc.createSubRegion({ x: 0, y: H - pH, width: W, height: pH });
+      const panel = sc.createRegion({ x: 0, y: H - pH, width: W, height: pH });
       const bg = new PIXI.Graphics().rect(0, 0, W, pH).fill({ color: 0x0a0a14, alpha: 0.92 });
       bg.eventMode = 'none';
       panel.stage.addChild(bg);

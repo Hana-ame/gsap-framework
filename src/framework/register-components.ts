@@ -87,7 +87,8 @@ interface ScrollableComponentOptions extends ComponentOptions {
 }
 
 registerComponent<ScrollableComponentOptions>('scrollable', (opts) => {
-  const sc = createScrollable(opts.parent, {
+  const sc = createScrollable({
+    parent: opts.parent,
     width: opts.width,
     height: opts.height,
     direction: opts.direction,

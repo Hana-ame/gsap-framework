@@ -123,6 +123,7 @@ export class InfiniteCanvas {
   private _dragHandlers: (() => void)[] = [];
   private _destroyed = false;
   private _tickFn: (() => void) | null = null;
+  private _eventShield: PIXI.Container | null = null;
 
   constructor(opts: InfiniteCanvasOptions) {
     this.parent = opts.parent;
@@ -141,6 +142,18 @@ export class InfiniteCanvas {
     this.worldContainer.eventMode = 'none';
     this.worldContainer.scale.set(this._zoom);
     this.parent.stage.addChild(this.worldContainer);
+
+    // PIXI 事件护盾：阻止 PIXI pointerdown 冒泡到父 SubCanvas 的 drag handle
+    // InfiniteCanvas 用 SubCanvas proxy 事件处理拖拽，不需要 PIXI 事件路径。
+    // 不加这个护盾时，父子 SubCanvas 的 PIXI drag handle（如 window 的 anywhere drag）
+    // 会和 InfiniteCanvas 的 proxy 拖拽同时触发，导致 window 和 canvas 一起动。
+    const shield = new PIXI.Container();
+    shield.eventMode = 'static';
+    shield.hitArea = new PIXI.Rectangle(0, 0, this._viewport.width, this._viewport.height);
+    shield.on('pointerdown', (e: PIXI.FederatedPointerEvent) => e.stopPropagation());
+    shield.zIndex = -999;
+    this.parent.stage.addChild(shield);
+    this._eventShield = shield;
 
     this._decelerate = new DeceleratePlugin();
     if (opts.decelerate !== false) {
@@ -188,6 +201,9 @@ export class InfiniteCanvas {
 
   setViewport(rect: Rect): void {
     this._viewport = rect;
+    if (this._eventShield) {
+      this._eventShield.hitArea = new PIXI.Rectangle(0, 0, rect.width, rect.height);
+    }
     this._syncChunks();
     for (const p of this._plugins) p.onResize?.();
   }
@@ -252,6 +268,11 @@ export class InfiniteCanvas {
     this._dragHandlers = [];
     for (const chunk of this._chunks.values()) this._chunkDestroy(chunk);
     this._chunks.clear();
+    if (this._eventShield) {
+      if (this._eventShield.parent) this._eventShield.parent.removeChild(this._eventShield);
+      this._eventShield.destroy();
+      this._eventShield = null;
+    }
     if (this.worldContainer.parent) {
       this.worldContainer.parent.removeChild(this.worldContainer);
     }

@@ -102,7 +102,8 @@ export function ComponentVideoPlayerDisplay() {
       const scW = HUD_W - 12;
       const scH = HUD_H - scY - 6;
 
-      scrollableLog = createScrollable(hudRegion, {
+      scrollableLog = createScrollable({
+        parent: hudRegion,
         width: scW,
         height: scH,
         direction: 'vertical',

@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import type { SubCanvas } from '../framework/SubCanvas';
 
 export interface ScrollableOptions {
+  parent: SubCanvas;
   width: number;
   height: number;
   direction?: 'vertical' | 'horizontal';
@@ -25,7 +26,8 @@ const SCROLLBAR_SIZE = 6;
 const SCROLLBAR_PAD = 2;
 const DRAG_THRESHOLD = 2;
 
-export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Scrollable {
+export function createScrollable(opts: ScrollableOptions): Scrollable {
+  const parent = opts.parent;
   const w = opts.width;
   const h = opts.height;
   const dir = opts.direction ?? 'vertical';
@@ -112,8 +114,6 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
 
   const sync = () => {
     if (destroyed) return;
-    calcBounds();
-    clamp();
     content.x = -scrollX;
     content.y = -scrollY;
     if (scrollbarV) scrollbarV.visible = dir === 'vertical' && contentH > h;
@@ -121,7 +121,12 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     updateScrollbar();
   };
 
-  const recalc = sync;
+  const recalc = () => {
+    if (destroyed) return;
+    calcBounds();
+    clamp();
+    sync();
+  };
 
   const onWheel = (e: PIXI.FederatedWheelEvent) => {
     e.stopPropagation();
@@ -142,19 +147,10 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
   let dragStartScrollY = 0;
   let moved = false;
 
-  stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-    dragging = true;
-    moved = false;
-    dragStartX = e.globalX;
-    dragStartY = e.globalY;
-    dragStartScrollX = scrollX;
-    dragStartScrollY = scrollY;
-  });
-
-  const onMove = (e: PIXI.FederatedPointerEvent) => {
+  const applyDrag = (cx: number, cy: number) => {
     if (!dragging) return;
-    const dx = e.globalX - dragStartX;
-    const dy = e.globalY - dragStartY;
+    const dx = cx - dragStartX;
+    const dy = cy - dragStartY;
     if (!moved && Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
     moved = true;
     if (dir === 'vertical') {
@@ -166,14 +162,36 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     sync();
   };
 
-  const onUp = () => {
+  stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+    if (dragging) return;
+    dragging = true;
+    moved = false;
+    dragStartX = e.globalX;
+    dragStartY = e.globalY;
+    dragStartScrollX = scrollX;
+    dragStartScrollY = scrollY;
+    window.addEventListener('pointermove', onWindowMove);
+    window.addEventListener('pointerup', onWindowUp);
+    window.addEventListener('pointercancel', onWindowUp);
+  });
+
+  const onPxiMove = (e: PIXI.FederatedPointerEvent) => applyDrag(e.globalX, e.globalY);
+  const onWindowMove = (e: PointerEvent) => applyDrag(e.clientX, e.clientY);
+
+  const onPxiUp = () => endDrag();
+  const onWindowUp = () => endDrag();
+  const endDrag = () => {
+    if (!dragging) return;
     dragging = false;
+    window.removeEventListener('pointermove', onWindowMove);
+    window.removeEventListener('pointerup', onWindowUp);
+    window.removeEventListener('pointercancel', onWindowUp);
   };
 
-  stage.on('pointermove', onMove);
-  stage.on('pointerup', onUp);
-  stage.on('pointerupoutside', onUp);
-  stage.on('pointercancel', onUp);
+  stage.on('pointermove', onPxiMove);
+  stage.on('pointerup', onPxiUp);
+  stage.on('pointerupoutside', onPxiUp);
+  stage.on('pointercancel', onPxiUp);
 
   return {
     stage,
@@ -200,11 +218,13 @@ export function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Sc
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      endDrag();
       stage.off('wheel', onWheel);
-      stage.off('pointermove', onMove);
-      stage.off('pointerup', onUp);
-      stage.off('pointerupoutside', onUp);
-      stage.off('pointercancel', onUp);
+      stage.off('pointerdown');
+      stage.off('pointermove', onPxiMove);
+      stage.off('pointerup', onPxiUp);
+      stage.off('pointerupoutside', onPxiUp);
+      stage.off('pointercancel', onPxiUp);
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },

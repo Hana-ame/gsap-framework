@@ -4,7 +4,8 @@ import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framewo
 import { createScrollable, type Scrollable } from '../../components';
 
 function fillVertical(sc: SubCanvas) {
-  const scroll = createScrollable(sc, {
+  const scroll = createScrollable({
+    parent: sc,
     width: 260,
     height: 300,
     direction: 'vertical',
@@ -34,7 +35,8 @@ function fillVertical(sc: SubCanvas) {
 }
 
 function fillHorizontal(sc: SubCanvas) {
-  const scroll = createScrollable(sc, {
+  const scroll = createScrollable({
+    parent: sc,
     width: 300,
     height: 90,
     direction: 'horizontal',
@@ -63,7 +65,8 @@ function fillHorizontal(sc: SubCanvas) {
 }
 
 function fillNoScrollbar(sc: SubCanvas) {
-  const scroll = createScrollable(sc, {
+  const scroll = createScrollable({
+    parent: sc,
     width: 260,
     height: 100,
     direction: 'vertical',
@@ -106,15 +109,15 @@ export function ComponentScrollableDisplay() {
       };
 
       mkLabel('vertical (scrollbar: true) — 50 lines, drag or wheel', 60, 44);
-      const vPanel = sc.createSubRegion({ x: 60, y: 64, width: 260, height: 300 });
+      const vPanel = sc.createRegion({ x: 60, y: 64, width: 260, height: 300 });
       scrolls.push(fillVertical(vPanel));
 
       mkLabel('horizontal (scrollbar: true) — 20 cards', 360, 44);
-      const hPanel = sc.createSubRegion({ x: 360, y: 64, width: 300, height: 90 });
+      const hPanel = sc.createRegion({ x: 360, y: 64, width: 300, height: 90 });
       scrolls.push(fillHorizontal(hPanel));
 
       mkLabel('vertical (scrollbar: false) — 30 items', 60, 384);
-      const nPanel = sc.createSubRegion({ x: 60, y: 404, width: 260, height: 100 });
+      const nPanel = sc.createRegion({ x: 60, y: 404, width: 260, height: 100 });
       scrolls.push(fillNoScrollbar(nPanel));
 
       const api = new PIXI.Text({

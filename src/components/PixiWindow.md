@@ -10,7 +10,7 @@
 ```
 createWindow({ parent, title, width, height, x?, y?, draggable?, closable?, onClose? })
   ├─ 解析 dragMode: draggable? → (dragMode ?? 'title') : 'none'
-  ├─ parent.createSubRegion({ x, y, width, height },
+  ├─ parent.createRegion({ x, y, width, height },
   │     { dragMode, dragBounds })       // 窗口本体，拖动由 SubCanvas 接管
   ├─ bg (背景 Graphics)        win.stage.addChildAt(0)
   ├─ bar (标题栏 Graphics)     win.addChild(bar)    // → SubCanvas.addChild 自动安装 drag handle
@@ -18,7 +18,7 @@ createWindow({ parent, title, width, height, x?, y?, draggable?, closable?, onCl
   │    bar.cursor = dragMode === 'none' ? 'default' : 'move'
   ├─ title (标题 Text)        win.stage.addChild(titleText)
   ├─ closeBtn (Container)     win.stage.addChild(closeBtn)   // PIXI pointerdown + stopPropagation
-  └─ content = win.createSubRegion({ y: TITLE_BAR_H, ... },
+  └─ content = win.createRegion({ y: TITLE_BAR_H, ... },
        { clipToBounds: true })          // 内容区，带裁切
 ```
 

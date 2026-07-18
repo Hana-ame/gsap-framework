@@ -22,7 +22,7 @@ PixiApp → SubCanvasProxy → SubCanvas
 | 文件 | 作用 | 被依赖方 |
 |---|---|---|
 | `SubCanvas.ts` | **核心**。AABB 容器，bounds、event routing、tag-based drag、z-order、clipToBounds。 | `Displays`, `PixiApp`, `SubCanvasProxy`, `Loading`, `PixiWindow`, `PixiConfirm`, `PixiImage` (7 处) |
-| `SubCanvasProxy.ts` | 顶层 proxy。`createRegion` / `createSubRegion` / `routePointer` / `destroyAll`。 | `PixiApp` |
+| `SubCanvasProxy.ts` | 顶层 proxy。`createRegion` / `createRegion` / `routePointer` / `destroyAll`。 | `PixiApp` |
 | `EventBus.ts` | 类型化 pub-sub，跨 SubCanvas + 后台。 | `SubCanvasProxy` |
 | `PixiApp.ts` | `startPixiApp(onReady?)`：全屏 PIXI.Application + 4 个 window pointer 监听 + 自动 `app.stage.eventMode='static'`。 | 所有 example |
 | `index.ts` | 公开 re-export（**只 import 这个，不要 deep import**） | consumers |

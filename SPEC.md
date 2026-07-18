@@ -42,14 +42,12 @@ PIXI v8 游戏 UI 框架。组件可拖动，支持无限画布。
 
 ### 分层原则
 
-| 层 | 职责 | 是否依赖 PIXI | 是否依赖 GSAP |
-|----|------|--------------|--------------|
-| Framework | 画布管理、事件路由、坐标系统、无限画布、组件注册表 | ✅ | ✅ (gsap-pixi.ts) |
-| Components | 具体 UI 组件（窗口、弹窗、滚动、图片、AVD） | ✅ | ❌（闭包工厂，纯 PIXI） |
-| Animated Zones | FullscreenManager、Loading、AvdPortraitLayer、Displays | ✅ | ✅ (GSAP tween 替换了手写 ticker) |
-| Examples | 示例页面、启动器 | ✅ | 部分 |
+| 层 | 职责 | 依赖 PIXI | 依赖 GSAP |
+|----|------|-----------|----------|
+| Framework | 画布管理、事件路由、坐标系统、无限画布、组件注册表 | ✅ | ✅ (`gsap-pixi.ts`) |
+| Components | 窗口、弹窗、滚动、图片、AVD 等 UI 组件 | ✅ | 部分组件 |
 
-**重要**：Components 层（`PixiWindow`、`PixiConfirm`、`Scrollable`）是 PIXI 架构下的闭包工厂，不依赖 GSAP。GSAP 只在 Framework 层的 `gsap-pixi.ts` 注册 PixiPlugin，供有动画需求的组件使用。
+**重要**：所有组件都在 `src/components/` 下。其中有动画需求的（FullscreenManager、Loading、AvdPortraitLayer、Displays）额外引入了 GSAP，用 `gsap.to/timeline` 替换了早期的手写 `lerp + rAF` ticker。纯布局/交互组件（PixiWindow、PixiConfirm、Scrollable）不依赖 GSAP。
 
 ### 数据流
 
@@ -71,7 +69,7 @@ Pointer Event (DOM) → PixiApp.routePointer
 ```
 原始工厂（不同签名）：
   createWindow({ parent, title, width, height, ... }) → GameWindow (SubCanvas)
-  createScrollable(parent, { width, height, ... }) → Scrollable { stage, content }
+  createScrollable({ parent, width, height, ... }) → Scrollable { stage, content }
   createConfirm({ parent, title, message, ... }) → PixiConfirm (SubCanvas)
 
 适配器（统一为 Component<T>）：
@@ -95,6 +93,169 @@ Component 接口只有一个 `stage: PIXI.Container`，对于需要暴露 `conte
 
 ---
 
+## 二次开发指南
+
+以下内容面向 **在本框架之上开发新组件和扩展** 的开发者。如果你是框架内部维护者，也请参考 `LEARNINGS.md` 了解历史决策和踩坑记录。
+
+### 一、组件开发契约
+
+每个组件的返回结构必须满足以下接口：
+
+```ts
+interface Component {
+  stage: Container;    // PIXI 场景节点，将被 addChild 到父容器
+  destroy: () => void; // 清理所有资源（PIXI 对象、GSAP tween、事件监听）
+  destroyed: boolean;  // 是否已销毁（异步回调中作为 guard 检查）
+}
+```
+
+组件参数的首个参数统一为 `parent: SubCanvas`，父容器负责提供坐标空间。
+
+```ts
+// 模板
+export interface MyWidgetOptions {
+  parent: SubCanvas;
+  width: number;
+  height: number;
+}
+
+export function createMyWidget(opts: MyWidgetOptions) {
+  const stage = new Container();
+  const destroy = () => {
+    gsap.killTweensOf(stage);   // 清理 GSAP
+    stage.destroy({ children: true });
+  };
+  const destroyed = false;       // destroy() 时改为 true
+  return { stage, destroy, get destroyed() { return ... } };
+}
+```
+
+### 二、组件放置位置
+
+```
+src/components/          ← 你的组件放这里
+  MyWidget.ts            ← 一个文件一个组件
+  index.ts               ← 重新导出所有公共组件
+```
+
+`src/components/index.ts` 是组件层的唯一入口。外部只允许 `import { createMyWidget } from '../components'`。
+
+### 三、注册到统一工厂（可选）
+
+如果希望组件也能通过 `createComponent('my-widget', opts)` 创建，在 `src/framework/register-components.ts` 中添加适配器：
+
+```ts
+import { createMyWidget } from '../components/MyWidget';
+
+registerComponent<MyWidgetOptions>('my-widget', (opts) => {
+  const widget = createMyWidget(opts);
+  return {
+    type: 'my-widget',
+    stage: widget.stage,
+    destroy: widget.destroy,
+    get destroyed() { return widget.destroyed; },
+  };
+});
+```
+
+这样消费者可以用统一 API：
+
+```ts
+const w = createComponent('my-widget', { parent: root, width: 100, height: 50 });
+w.destroy();
+```
+
+### 四、GSAP 使用规范
+
+| 场景 | 做法 |
+|------|------|
+| 一次性动画（淡入、滑动、缩放） | `gsap.to(obj, { pixi: { x, y, alpha }, duration })` |
+| 循环动画（spinner、呼吸光） | `gsap.to(obj, { repeat: -1, ease: 'none' })` |
+| 连续动画链 | `gsap.timeline().to(...).to(...)` |
+| Graphics 重绘 | `gsap.to({ t: 0 }, { t: 1, onUpdate: redraw })` |
+| 延迟执行 | `gsap.delayedCall(1, fn)` |
+
+**不要在组件内部新增手写 rAF/PIXI.Ticker**。框架统一用 GSAP。例外：物理模拟（惯性、弹性）保留 Ticker。
+
+`pixi: { rotation }` 单位是 **度**（不是弧度）。如需弧度，直接用 `gsap.to(obj, { rotation: Math.PI * 2 })` 绕开 PixiPlugin。
+
+### 五、拖拽实现规范
+
+如果组件需要拖拽，不要自己写 pointer 事件。已有的拖拽方案：
+
+1. **SubCanvas dragMode** — 轻量区域拖拽，提供 `'none'` / `'title'` / `'anywhere'` 三种模式
+2. **InfiniteCanvas** — 无限画布自带平移拖拽
+
+如果以上不满足需求，需要自行实现拖拽时，**必须**使用 window-level pointer 兜底：
+
+```ts
+// ✅ 正确模式
+stage.on('pointerdown', (e) => {
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+});
+// 纯 PIXI stage.on('pointermove') 在快速拖动时会丢事件
+```
+
+### 六、性能守则
+
+1. **bounds 计算与视图同步分离** — 参考 `Scrollable.ts` 的 `recalc()` vs `sync()` 模式。前者 O(n)，只在增删子节点时调用；后者 O(1)，每帧频繁调用。
+2. **destroy guard** — 所有异步回调（GSAP onComplete、setTimeout、fetch.then）第一行检查 `if (destroyed) return`，防止组件已销毁后操作 PIXI 对象。
+3. **GSAP tween 清理** — 组件 destroy 时调用 `gsap.killTweensOf(obj)`，防止 gsap 持有已销毁对象的引用。
+
+### 七、EventBus 使用约定
+
+- 事件名统一为 `namespace:action` 格式（如 `fullscreen:show`、`item:select`）
+- 组件销毁时调用 `bus.off(event, handler)` 或利用 `on()` 返回的 unsubscribe 函数
+- EventBus 适合**跨组件通信**。父子组件通信直接用函数调用更简单
+
+### 八、InfiniteCanvas 插件开发
+
+```ts
+import type { InfiniteCanvasPlugin } from '../framework';
+
+function createGridPlugin(): InfiniteCanvasPlugin {
+  return {
+    name: 'grid',         // 唯一标识
+    priority: 10,         // 执行顺序（升序）
+    parent: null!,        // 由 addPlugin 时赋值
+    onTap(worldX, worldY) { /* 点击 */ },
+    onUpdate(elapsed)     { /* 每帧 */ },
+    onDestroy()           { /* 清理 */ },
+  };
+}
+
+ic.addPlugin(createGridPlugin());
+ic.removePlugin('grid');
+```
+
+内置插件：DeceleratePlugin（priority=50）。
+
+### 九、import 规则
+
+```
+外部代码
+  → 只允许 import { ... } from '../framework' 和 '../components'
+  → 禁止 import { SubCanvas } from '../framework/SubCanvas'
+```
+
+TypeScript paths 别名（`@framework/*`、`@components/*`）已配置在 `tsconfig.json`，但 **构建时不保证生效**（取决于 bundler）。生产代码用相对路径。
+
+### 十、测试
+
+```sh
+npm run test          # vitest 运行
+npm run test:watch    # watch 模式
+npm run typecheck     # tsc --noEmit
+npm run lint          # eslint
+```
+
+测试放在 `src/` 下对应目录（如 `src/framework/EventBus.test.ts`）。纯函数优先测试，PIXI 相关组件用 registry smoke test 验证（参考 `src/framework/register-components.test.ts`）。
+
+CI pipeline 在 `.github/workflows/ci.yml`：lint → tsc → test → build。
+
+---
+
 ## 快速开始
 
 ```ts
@@ -113,7 +274,7 @@ const stop = startPixiApp((proxy) => {
   const root = proxy.createRoot();
 
   // 创建子区域
-  const panel = root.createSubRegion(
+  const panel = root.createRegion(
     { x: 10, y: 10, width: 200, height: 300 },
     { dragMode: 'title' }, // 可拖动
   );
@@ -167,19 +328,14 @@ interface SubCanvas {
   readonly bounds: Rect;
 
   // 子区域
-  createSubRegion(bounds: Rect, opts?: SubCanvasOptions): SubCanvas;
+  createRegion(bounds: Rect, opts?: SubCanvasOptions): SubCanvas;
 
   // 事件
   onPress(handler): void;
   onMove(handler): void;
   onRelease(handler): void;
   onTap(handler): void;
-  onDrag(handler): void;
   offPointer(type, handler): void;
-
-  // 坐标系
-  clientToLocal(clientX, clientY): { x, y };
-  localToClient(localX, localY): { x, y };
 
   // 生命周期
   destroy(): void;
@@ -190,25 +346,13 @@ interface SubCanvas {
 #### 拖动模式
 
 ```ts
-createSubRegion(bounds, {
+createRegion(bounds, {
   dragMode: 'none' | 'title' | 'anywhere',
   // 'title' — 只在点击 label='subcanvas-drag-handle' 的子节点时拖动
   // 'anywhere' — 点击任意位置拖动
   dragBounds: () => Rect, // 限制拖动范围
   clipToBounds: boolean,  // 遮罩裁剪
 });
-```
-
-#### Tile 模式（游戏地图）
-
-通过 `SubCanvas.tile()` 开启 toroidal wrap（环形世界，适合 Life Map / 模拟游戏）：
-
-```ts
-interface SubCanvas {
-  tile(opts: TileOptions): TileController;
-  // 只需两层：active.fill(R, G, B, A) 直接写像素
-  // 滚动时自动偏移 UV，无需重建 tile
-}
 ```
 
 ### InfiniteCanvas
@@ -382,7 +526,7 @@ unsub(); // 取消订阅
 |------|------|--------|
 | `createWindow(opts)` | 窗口（标题栏+关闭按钮+内容区） | 支持 |
 | `createConfirm(opts)` | 模态弹窗（标题+消息+按钮组+图片） | 支持 |
-| `createScrollable(parent, opts)` | 滚动容器（垂直/水平+滚动条） | 否 |
+| `createScrollable({ parent, ... })` | 滚动容器（垂直/水平+滚动条） | 否 |
 | `createLoadingImage(parent, opts)` | 图片加载器（loading→显示/错误回退） | 否 |
 | `createClickableImage(parent, bus, opts)` | 可点击图片（点击→fullscreen） | 否 |
 | `createVideoPlayer(parent, opts)` | PIXI 视频播放器 | 否 |
@@ -437,7 +581,7 @@ Proxy.createRoot()
       ├── bounds: 相对于父级的矩形
       └── event routing via SubCanvasProxy
 
-SubCanvas.createSubRegion()
+SubCanvas.createRegion()
   └── new SubCanvas(子 container, 子 bounds)
       ├── dragHandler（基于 dragMode）
       └── mask（如果 clipToBounds）
@@ -472,13 +616,47 @@ window.addEventListener('pointerdown', handler)
 ### 拖动机制
 
 ```
-createSubRegion(bounds, { dragMode, dragBounds })
+createRegion(bounds, { dragMode, dragBounds })
   └── press: 记录 startPos
       ├── dragMode === 'title': 检查 e.target.label === 'subcanvas-drag-handle'
       └── dragMode === 'anywhere': 始终允许
   └── move: 计算 delta，更新 stage.position，clamp 到 dragBounds
   └── release: 结束拖动
 ```
+
+#### 保证拖拽流畅：window-level pointer 兜底
+
+纯 PIXI `stage.on('pointermove', ...)` 在快速拖动时会丢事件，导致"不跟手"。必须同时在 `pointerdown` 时注册 `window.addEventListener('pointermove', handler)` 做兜底，DOM 事件永远不丢。
+
+```ts
+// 反例：只靠 PIXI 事件（Scrollable 修之前）
+stage.on('pointerdown', () => { dragging = true; });
+stage.on('pointermove', onMove);  // 快拖丢事件 → 卡
+
+// 正例：PIXI + window 双路（Scrollable 修之后）
+stage.on('pointerdown', () => {
+  dragging = true;
+  window.addEventListener('pointermove', onWindowMove);
+  window.addEventListener('pointerup', onWindowUp);
+});
+const onPxiMove = (e) => applyDrag(e.globalX, e.globalY);
+const onWindowMove = (e) => applyDrag(e.clientX, e.clientY);
+```
+
+`SubCanvas._installDragOnHandle` 和 `Scrollable` 都使用此模式。
+
+### 性能：bounds 计算 vs 视图同步分离
+
+滚动容器或频繁更新位置的组件，必须把 **bounds 重算** 和 **视图同步** 拆成两个函数：
+
+| 路径 | 频率 | 开销 | 调用时机 |
+|------|------|------|---------|
+| `recalc()` | 低 | O(n) 遍历子节点 + getBounds | 子节点增删、尺寸变化 |
+| `sync()` | 高 | O(1) 只改 x/y + 滚动条 | 每帧滚轮、拖拽 |
+
+反例（修之前的 Scrollable）：`sync()` 里每次调用 `calcBounds()`，滚轮每 tick 都 O(n) → 卡顿。
+
+正例（修之后）：`addChild` 代理自动调 `recalc()`，滚轮/拖拽只调 `sync()`。所有需要频繁更新位置的组件都应遵循这个模式。
 
 ### InfiniteCanvas 插件循环
 
@@ -524,7 +702,7 @@ setZoom(newZoom, cx, cy):
 ```
 原始工厂（不同签名）：
   createWindow(opts) → GameWindow
-  createScrollable(parent, opts) → Scrollable
+  createScrollable(opts) → Scrollable (with parent in opts)
 
 适配器（统一为 Component<T>）：
   registerComponent('window', (opts) => {

@@ -26,6 +26,9 @@ import { ComponentColonyDisplay } from './component-colony/ComponentColonyDispla
 import { ComponentGsapDisplay } from './component-gsap/ComponentGsapDisplay';
 import { ComponentInfiniteDisplay } from './component-infinite/ComponentInfiniteDisplay';
 import { ComponentRegistryDisplay } from './component-registry/ComponentRegistryDisplay';
+import { MultiWindowDisplay } from './component-multi-window/MultiWindowDisplay';
+import { WindowCanvasDisplay } from './component-window-canvas/WindowCanvasDisplay';
+import { ComponentTutorialDisplay } from './component-tutorial/ComponentTutorialDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -55,6 +58,9 @@ export const EXAMPLES = [
   'component-gsap',
   'component-infinite',
   'component-registry',
+  'component-multi-window',
+  'component-window-canvas',
+  'component-tutorial',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -90,4 +96,7 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-gsap': ComponentGsapDisplay,
   'component-infinite': ComponentInfiniteDisplay,
   'component-registry': ComponentRegistryDisplay,
+  'component-multi-window': MultiWindowDisplay,
+  'component-window-canvas': WindowCanvasDisplay,
+  'component-tutorial': ComponentTutorialDisplay,
 };

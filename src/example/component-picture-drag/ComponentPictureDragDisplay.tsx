@@ -34,7 +34,7 @@ export function ComponentPictureDragDisplay() {
       // draggable SubCanvas with a picture
       const PIC_W = 400;
       const PIC_H = 300;
-      const pic = root.createSubRegion(
+      const pic = root.createRegion(
         { x: (W - PIC_W) / 2, y: (H - PIC_H) / 2, width: PIC_W, height: PIC_H },
         { dragMode: 'anywhere', dragBringToFront: true },
       );

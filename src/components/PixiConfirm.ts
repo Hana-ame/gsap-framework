@@ -64,7 +64,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
       { label: okText, primary: true },
     ];
 
-  const win = opts.parent.createSubRegion(
+  const win = opts.parent.createRegion(
     { x, y, width: opts.width, height: opts.height },
     {
       dragMode,
@@ -124,8 +124,8 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
       e.stopPropagation();
       if (opts.keepOpen) return;
       opts.onResult?.('cancel', win);
-      if (opts.onClose) opts.onClose();
-      else win.destroy();
+      opts.onClose?.();
+      win.destroy();
     });
     win.stage.addChild(closeBtn);
   }
@@ -227,7 +227,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     win.stage.addChild(btnContainer);
   }
 
-  const content = win.createSubRegion({
+  const content = win.createRegion({
     x: 0,
     y: TITLE_BAR_H,
     width: opts.width,

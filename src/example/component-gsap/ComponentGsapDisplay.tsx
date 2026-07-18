@@ -14,12 +14,12 @@ export function ComponentGsapDisplay() {
         height: window.innerHeight,
       });
 
-      const panel = root.createSubRegion(
+      const panel = root.createRegion(
         { x: 12, y: 12, width: 190, height: window.innerHeight - 24 },
         { dragMode: 'none' },
       );
 
-      const canvas = root.createSubRegion(
+      const canvas = root.createRegion(
         { x: 210, y: 12, width: window.innerWidth - 222, height: window.innerHeight - 24 },
         { dragMode: 'none' },
       );
