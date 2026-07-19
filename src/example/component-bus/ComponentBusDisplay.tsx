@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, EventBus, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, EventBus, TXT, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow } from '../../components';
 
 type BusPayload = { from: string; text: string; n: number };
@@ -25,6 +25,7 @@ export function ComponentBusDisplay() {
         height: window.innerHeight,
       });
       scRef.current = sc;
+      makeInfoPanel(sc, { title: '事件总线', lines: ['目的：演示 EventBus 发布-订阅模式，带发送和接收窗口。', '操作：在发送窗口输入消息并点击发送。观察接收窗口。', '预期：接收窗口显示消息。多个订阅者均收到同一事件。取消订阅后停止接收。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
       busRef.current = proxy.bus;
 
       const drawLog = (parent: SubCanvas, lines: string[]) => {

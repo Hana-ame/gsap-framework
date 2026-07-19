@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework/PixiApp';
+import { startPixiApp, makeInfoPanel } from '../../framework';
 import { mountDisplays } from '../_shared/Displays';
 
 export function MultipleDisplay() {
@@ -16,6 +16,7 @@ export function MultipleDisplay() {
       const rows = 2;
 
       const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      makeInfoPanel(root, { title: '多画布', lines: ['用途：2×2 四象限网格——每个象限为独立的 SubCanvas，指针事件独立路由。', '测试方法：在不同象限间移动鼠标，点击每个象限。', '预期：十字线和点击波纹按象限隔离，事件仅触发在指针所在象限。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
       const quadrants = Array.from({ length: rows * cols }, () => root.createRegion({ x: 0, y: 0, width: 1, height: 1 }));
 
       quadrants.forEach((q, i) => {

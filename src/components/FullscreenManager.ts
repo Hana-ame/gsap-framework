@@ -245,7 +245,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   });
 
   container.on('globalpointermove', (e: PIXI.FederatedPointerEvent) => {
-    if (!active || !sprite) return;
+    if (!active || !sprite || hiding) return;
     if (!(e.buttons & 1)) { isDragging = false; return; }
     const dx = e.globalX - dragStartGlobalX;
     const dy = e.globalY - dragStartGlobalY;

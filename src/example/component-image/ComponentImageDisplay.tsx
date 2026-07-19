@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createLoadingImage, type PixiImageHandle } from '../../components';
 
 interface Slot {
@@ -54,6 +54,8 @@ export function ComponentImageDisplay() {
         height: window.innerHeight,
       });
       scRef.current = sc;
+
+      makeInfoPanel(sc, { title: '图片加载器', lines: ['目的：演示 createLoadingImage() 不同来源：代理、直链上传和错误情况。', '操作：观察 4 个图片槽位。使用右侧面板重新加载或清空每个槽位。切换错误提示。', '预期：槽位 A-C 加载图片。槽位 D 显示错误占位。重新加载重新获取。清空移除图片。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const baseX = 60;
       const baseY = 110;

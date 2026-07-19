@@ -202,4 +202,63 @@ describe('WindowManager', () => {
       backend.send('focus-window', { id: 'nonexistent' });
     }).not.toThrow();
   });
+
+  it('close-window on non-existent does not throw', () => {
+    wm = new WindowManager(backend, parent);
+    expect(() => backend.send('close-window', { id: 'nonexistent' })).not.toThrow();
+  });
+
+  it('move-window calls setPosition', () => {
+    wm = new WindowManager(backend, parent);
+    backend.send('open-window', {
+      id: 'w1', title: 'Test', x: 0, y: 0, width: 200, height: 200,
+    });
+    const win = wm.getWindow('w1')!;
+    backend.send('move-window', { id: 'w1', x: 150, y: 250 });
+    expect(win.setPosition).toHaveBeenCalledWith(150, 250);
+  });
+
+  it('resize-window calls setSize', () => {
+    wm = new WindowManager(backend, parent);
+    backend.send('open-window', {
+      id: 'w1', title: 'Test', x: 0, y: 0, width: 200, height: 200,
+    });
+    const win = wm.getWindow('w1')!;
+    backend.send('resize-window', { id: 'w1', width: 400, height: 300 });
+    expect(win.setSize).toHaveBeenCalledWith(400, 300);
+  });
+
+  it('set-title calls setTitle', () => {
+    wm = new WindowManager(backend, parent);
+    backend.send('open-window', {
+      id: 'w1', title: 'Test', x: 0, y: 0, width: 200, height: 200,
+    });
+    const win = wm.getWindow('w1')!;
+    backend.send('set-title', { id: 'w1', title: 'Updated' });
+    expect(win.setTitle).toHaveBeenCalledWith('Updated');
+  });
+
+  it('move/resize/set-title on non-existent does not throw', () => {
+    wm = new WindowManager(backend, parent);
+    expect(() => {
+      backend.send('move-window', { id: 'noop', x: 0, y: 0 });
+      backend.send('resize-window', { id: 'noop', width: 100, height: 100 });
+      backend.send('set-title', { id: 'noop', title: 'x' });
+    }).not.toThrow();
+  });
+
+  it('clear-content on non-existent does not throw', () => {
+    wm = new WindowManager(backend, parent);
+    expect(() => backend.send('clear-content', { windowId: 'noop' })).not.toThrow();
+  });
+
+  it('set-content without open window does not throw', () => {
+    wm = new WindowManager(backend, parent);
+    expect(() => backend.send('set-content', { windowId: 'noop', type: 'text' })).not.toThrow();
+  });
+
+  it('getWindow on non-existent returns undefined', () => {
+    wm = new WindowManager(backend, parent);
+    expect(wm.getWindow('noop')).toBeUndefined();
+  });
 });

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, TXT, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createScrollable, type Scrollable } from '../../components';
 
 function fillVertical(sc: SubCanvas) {
@@ -96,6 +96,8 @@ export function ComponentScrollableDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+
+      makeInfoPanel(sc, { title: '可滚动容器', lines: ['用途：演示 createScrollable() 的垂直、水平及无滚动条变体。', '测试方法：使用鼠标滚轮或拖拽滚动每个面板。', '预期：垂直面板可上下滚动。水平面板可左右滚动。无滚动条面板功能相同但无可见滚动条。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const mkLabel = (text: string, x: number, y: number) => {
         const t = new PIXI.Text({

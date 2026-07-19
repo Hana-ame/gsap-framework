@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, TXT, type SubCanvas, type SubCanvasProxy, type Component } from '../../framework';
+import { startPixiApp, createComponent, makeButton, makeInfoPanel, TXT, type SubCanvas, type SubCanvasProxy, type Component } from '../../framework';
 
 const COLORS = [
   0x4488ff, 0xff4488, 0x44ff88, 0xff8844, 0x8844ff,
@@ -17,6 +17,16 @@ export function MultiWindowDisplay() {
         x: 0, y: 0,
         width: window.innerWidth,
         height: window.innerHeight,
+      });
+
+      makeInfoPanel(root, {
+        title: '多窗口压力测试',
+        lines: [
+          '用途：12+ 可拖拽窗口压力测试，验证拖拽性能和层级顺序。',
+          '测试方法：拖拽窗口，点击不同窗口置顶，关闭部分窗口。',
+          '预期效果：所有窗口流畅渲染和拖拽，点击置顶，关闭不影响其他窗口。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       const hint = new PIXI.Text({

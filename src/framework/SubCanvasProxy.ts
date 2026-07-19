@@ -1,18 +1,27 @@
 import * as PIXI from 'pixi.js';
 import { Rect, SubCanvas, SubPointerType } from './SubCanvas';
 import { EventBus } from './EventBus';
+import { PerfDisplay } from './perf';
 
 export interface SubCanvasProxyOptions {
   app: PIXI.Application;
+  perfDisplay?: PerfDisplay;
 }
 
 export class SubCanvasProxy {
   private app: PIXI.Application;
   private topCanvases: SubCanvas[] = [];
   private _bus = new EventBus();
+  private _perfDisplay: PerfDisplay | null;
 
   constructor(opts: SubCanvasProxyOptions) {
     this.app = opts.app;
+    this._perfDisplay = opts.perfDisplay ?? null;
+  }
+
+  showPerfMeasure(show: boolean): void {
+    if (show) this._perfDisplay?.enable();
+    else this._perfDisplay?.disable();
   }
 
   get bus(): EventBus {

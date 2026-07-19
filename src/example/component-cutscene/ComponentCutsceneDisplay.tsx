@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
 import { createVideoPlayer } from '../../components';
 import type { PixiVideoPlayerHandle } from '../../components';
 
@@ -154,6 +154,7 @@ export function ComponentCutsceneDisplay() {
 
     const destroyApp = startPixiApp((proxy) => {
       root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      makeInfoPanel(root, { title: '过场动画播放器', lines: ['目的：全屏视频过场动画，带淡入淡出和跳过按钮。', '操作：点击播放。观看视频。点击跳过跳至结尾。', '预期：视频全屏播放带淡入淡出过渡。跳过按钮提前结束过场动画。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
       root.stage.addChild(buttonLayer);
 
       tickerObj = root.ticker;

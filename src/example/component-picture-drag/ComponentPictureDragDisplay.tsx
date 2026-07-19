@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const IMG_URL = 'https://proxy.moonchan.xyz/mw2000/007Y7SRMly1idrdc5nzp2j310o1m2agv.jpg?proxy_host=wx4.sinaimg.cn&proxy_referer=https%3A%2F%2Fweibo.com%2F';
 
@@ -10,6 +10,16 @@ export function ComponentPictureDragDisplay() {
       const W = window.innerWidth;
       const H = window.innerHeight;
       const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+
+      makeInfoPanel(root, {
+        title: '图片拖拽',
+        lines: [
+          '用途：在 SubCanvas 内实现边界受限的图片拖拽。',
+          '测试方法：拖拽图片移动，观察是否不超过父容器边界。',
+          '预期效果：图片跟随光标拖拽，无法拖出父区域范围。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
+      });
 
       // instruction
       const hint = new PIXI.Text({

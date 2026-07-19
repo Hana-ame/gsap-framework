@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, gsap, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 export function ComponentFiltersDisplay() {
   useEffect(() => {
@@ -10,6 +10,7 @@ export function ComponentFiltersDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: 'PIXI 滤镜', lines: ['目的：展示 PIXI 内置滤镜 — 模糊、色彩矩阵、噪点、位移。', '操作：点击按钮为图像应用不同滤镜。', '预期：每个滤镜改变视觉效果。多个滤镜可叠加。滤镜可以移除。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const panel = root.createRegion(
         { x: 12, y: 12, width: 160, height: window.innerHeight - 24 },
@@ -91,34 +92,43 @@ export function ComponentFiltersDisplay() {
         status.text = `filter: ${filter ? filter.constructor.name.replace('Filter', '').toLowerCase() : 'none'}`;
       }
 
-      panel.stage.addChild(makeButton('none', 140, 28, () => setFilter(null), 0x1a1a2e));
-      panel.stage.addChild(makeButton('blur', 140, 28, () => setFilter(blurFilter), 0x2a3a4a));
-      panel.stage.addChild(makeButton('noise', 140, 28, () => setFilter(noiseFilter), 0x3a4a3a));
-      panel.stage.addChild(makeButton('grayscale', 140, 28, () => {
+      let btnY = 12;
+      const addBtn = (label: string, color: number, onClick: () => void) => {
+        const btn = makeButton(label, 140, 28, onClick, color);
+        btn.x = 10;
+        btn.y = btnY;
+        panel.stage.addChild(btn);
+        btnY += 34;
+      };
+
+      addBtn('none', 0x1a1a2e, () => setFilter(null));
+      addBtn('blur', 0x2a3a4a, () => setFilter(blurFilter));
+      addBtn('noise', 0x3a4a3a, () => setFilter(noiseFilter));
+      addBtn('grayscale', 0x4a4a4a, () => {
         colorMatrix.reset();
         colorMatrix.grayscale(0.3, false);
         setFilter(colorMatrix);
-      }, 0x4a4a4a));
-      panel.stage.addChild(makeButton('sepia', 140, 28, () => {
+      });
+      addBtn('sepia', 0x5a4a3a, () => {
         colorMatrix.reset();
         colorMatrix.sepia(false);
         setFilter(colorMatrix);
-      }, 0x5a4a3a));
-      panel.stage.addChild(makeButton('invert', 140, 28, () => {
+      });
+      addBtn('invert', 0x3a3a5a, () => {
         colorMatrix.reset();
         colorMatrix.negative(false);
         setFilter(colorMatrix);
-      }, 0x3a3a5a));
-      panel.stage.addChild(makeButton('hue+', 140, 28, () => {
+      });
+      addBtn('hue+', 0x4a3a5a, () => {
         colorMatrix.reset();
         colorMatrix.hue(90, false);
         setFilter(colorMatrix);
-      }, 0x4a3a5a));
-      panel.stage.addChild(makeButton('saturate', 140, 28, () => {
+      });
+      addBtn('saturate', 0x3a5a3a, () => {
         colorMatrix.reset();
         colorMatrix.saturate(2, false);
         setFilter(colorMatrix);
-      }, 0x3a5a3a));
+      });
 
       return () => {
         gsap.killTweensOf(shapes.children);

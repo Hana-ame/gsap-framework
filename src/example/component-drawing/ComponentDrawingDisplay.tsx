@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const COLORS = [0xffffff, 0xff4488, 0x4488ff, 0x44ff88, 0xffaa44, 0xff44ff, 0x44ffff];
 const BRUSH_SIZES = [2, 4, 8, 16];
@@ -12,6 +12,11 @@ export function ComponentDrawingDisplay() {
         x: 0, y: 0,
         width: window.innerWidth,
         height: window.innerHeight,
+      });
+      makeInfoPanel(root, {
+        title: '画板',
+        lines: ['用途：自由绘制画板，支持颜色和笔刷大小控制。', '测试方法：点击拖拽绘制，使用控件切换颜色和笔刷大小。', '预期效果：线条流畅跟随光标，颜色和大小即时生效，清除按钮擦除全部。'],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       const toolPanel = root.createRegion(
@@ -41,61 +46,77 @@ export function ComponentDrawingDisplay() {
 
       let y = 4;
 
+      function renderTools() {
+        const toRemove = toolPanel.stage.children.filter((c) => c.label === 'tool-btn');
+        for (const c of toRemove) { toolPanel.stage.removeChild(c); c.destroy({ children: true }); }
+
+        let cy = 24;
+        for (let i = 0; i < COLORS.length; i++) {
+          const c = COLORS[i];
+          const col = i % 4;
+          const row = Math.floor(i / 4);
+          const btn = new PIXI.Container();
+          btn.label = 'tool-btn';
+          if (brushColor === c) {
+            const frame = new PIXI.Graphics()
+              .roundRect(-2, -2, 44, 32, 8)
+              .fill({ color: 0xffffff, alpha: 0.25 });
+            btn.addChild(frame);
+          }
+          const g = new PIXI.Graphics()
+            .roundRect(0, 0, 40, 28, 6)
+            .fill({ color: c, alpha: 0.92 });
+          g.stroke({ width: 1, color: 0x446 });
+          btn.addChild(g);
+          btn.eventMode = 'static';
+          btn.cursor = 'pointer';
+          btn.hitArea = new PIXI.Rectangle(0, 0, 40, 28);
+          btn.on('pointerdown', () => { brushColor = c; renderTools(); });
+          btn.x = 10 + col * 46;
+          btn.y = cy + row * 38;
+          toolPanel.stage.addChild(btn);
+        }
+        cy += Math.ceil(COLORS.length / 4) * 38 + 18;
+        for (const s of BRUSH_SIZES) {
+          const btn = new PIXI.Container();
+          btn.label = 'tool-btn';
+          const g = new PIXI.Graphics()
+            .roundRect(0, 0, 40, 28, 6)
+            .fill({ color: brushSize === s ? 0x2a2a4a : 0x1a1a2e, alpha: 0.92 });
+          g.stroke({ width: 2, color: brushSize === s ? 0xffffff : 0x446 });
+          btn.addChild(g);
+          const dot = new PIXI.Graphics()
+            .circle(20, 14, s / 2)
+            .fill({ color: 0xaaaacc });
+          btn.addChild(dot);
+          btn.eventMode = 'static';
+          btn.cursor = 'pointer';
+          btn.hitArea = new PIXI.Rectangle(0, 0, 40, 28);
+          btn.on('pointerdown', () => { brushSize = s; renderTools(); });
+          btn.x = 10 + (BRUSH_SIZES.indexOf(s) % 4) * 46;
+          btn.y = cy;
+          toolPanel.stage.addChild(btn);
+        }
+        return cy + 38;
+      }
+
       const colorTitle = new PIXI.Text({
         text: 'colors',
         style: { fontSize: 11, fill: 0x666888, fontFamily: 'monospace' },
       });
       colorTitle.x = 10;
-      colorTitle.y = y;
+      colorTitle.y = 4;
       toolPanel.stage.addChild(colorTitle);
-      y += 20;
-
-      for (const c of COLORS) {
-        const btn = new PIXI.Container();
-        const g = new PIXI.Graphics()
-          .roundRect(0, 0, 40, 28, 6)
-          .fill({ color: c, alpha: 0.92 });
-        g.stroke({ width: 1.5, color: brushColor === c ? 0xffffff : 0x446 });
-        btn.addChild(g);
-        btn.eventMode = 'static';
-        btn.cursor = 'pointer';
-        btn.hitArea = new PIXI.Rectangle(0, 0, 40, 28);
-        btn.on('pointerdown', () => { brushColor = c; });
-        btn.x = 10 + (COLORS.indexOf(c) % 4) * 46;
-        btn.y = y;
-        toolPanel.stage.addChild(btn);
-      }
-      y += 38;
 
       const sizeTitle = new PIXI.Text({
         text: 'brush size',
         style: { fontSize: 11, fill: 0x666888, fontFamily: 'monospace' },
       });
       sizeTitle.x = 10;
-      sizeTitle.y = y;
+      sizeTitle.y = 104;
       toolPanel.stage.addChild(sizeTitle);
-      y += 20;
 
-      for (const s of BRUSH_SIZES) {
-        const btn = new PIXI.Container();
-        const g = new PIXI.Graphics()
-          .roundRect(0, 0, 40, 28, 6)
-          .fill({ color: 0x1a1a2e, alpha: 0.92 });
-        g.stroke({ width: 1.5, color: brushSize === s ? 0xffffff : 0x446 });
-        btn.addChild(g);
-        const dot = new PIXI.Graphics()
-          .circle(20, 14, s / 2)
-          .fill({ color: 0xaaaacc });
-        btn.addChild(dot);
-        btn.eventMode = 'static';
-        btn.cursor = 'pointer';
-        btn.hitArea = new PIXI.Rectangle(0, 0, 40, 28);
-        btn.on('pointerdown', () => { brushSize = s; });
-        btn.x = 10 + (BRUSH_SIZES.indexOf(s) % 4) * 46;
-        btn.y = y;
-        toolPanel.stage.addChild(btn);
-      }
-      y += 38;
+      y = renderTools();
 
       const clearBtn = makeButton('clear all', 180, 30, () => {
         for (const s of strokes) {

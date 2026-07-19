@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { SubCanvasProxy } from './SubCanvasProxy';
 import { SubPointerType } from './SubCanvas';
+import { PerfDisplay } from './perf';
 
 const POINTER_TYPES: SubPointerType[] = [
   'pointerdown',
@@ -175,6 +176,8 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
 
       app.stage.eventMode = 'static';
 
+      _rootPerfDisplay = new PerfDisplay(app.ticker, () => app.stage);
+
       assertSingleBodyCanvas(canvas);
       bodyCanvases.add(canvas);
       document.body.appendChild(canvas);
@@ -187,7 +190,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
       }
 
       try {
-        proxy = new SubCanvasProxy({ app });
+        proxy = new SubCanvasProxy({ app, perfDisplay: _rootPerfDisplay });
         const returned = onReady?.(proxy);
         if (typeof returned === 'function') innerCleanup = returned;
         if (typeof app.ticker.maxFPS === 'number' && app.ticker.maxFPS > 0) {
@@ -277,6 +280,8 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
     innerCleanup?.();
     proxy?.destroyAll();
     proxy = null;
+    _rootPerfDisplay?.destroy();
+    _rootPerfDisplay = null;
     // Let app.destroy handle canvas removal (removeView=true) to avoid
     // NotFoundError from double-removal.
     if (mounted) {
@@ -288,6 +293,12 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
       // already destroyed
     }
   };
+}
+
+let _rootPerfDisplay: PerfDisplay | null = null;
+
+export function getRootPerfDisplay(): PerfDisplay | null {
+  return _rootPerfDisplay;
 }
 
 export function debugBodyCanvases(): HTMLCanvasElement[] {

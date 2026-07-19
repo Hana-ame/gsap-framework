@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, gsap, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const DEMO_TEXTS = [
   'The quick brown fox jumps over the lazy dog.',
@@ -23,6 +23,7 @@ export function ComponentTypingEffectDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '打字效果', lines: ['目的：打字机文字动画 — 字符逐个出现。', '操作：点击在不同文本样本上触发打字效果。', '预期：文字逐字出现带光标闪烁。速度和样式可调节。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const panel = root.createRegion(
         { x: 12, y: 12, width: 160, height: window.innerHeight - 24 },

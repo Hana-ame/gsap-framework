@@ -34,13 +34,13 @@ const stop = startPixiApp((proxy) => {
 
 | | |
 |---|---|
-| **SubCanvas** | Region-based canvas subdivision, recursive event routing, drag (`title` / `anywhere` / `none`) |
+| **LayerManager** | Named z-ordered layers (`add`, `get`, `remove`, `bringToFront`, `sendToBack`, show/hide, alpha) — zero-overhead abstraction over PIXI.Container + zIndex |
 | **InfiniteCanvas** | Plugin-based infinite pan/zoom canvas with chunked lazy loading, deceleration, zoom-to-pointer. `worldX/worldY` returns viewport-center world coordinates (stable during zoom). |
 | **Component Registry** | `registerComponent` / `createComponent` — unified factory API for all UI components |
 | **GSAP Integration** | `gsap-pixi.ts` — PixiPlugin pre-registered with PIXI, ready for `gsap.to(obj, { pixi: { ... } })` |
 | **TXT style constants** | Centralized `TXT.btn`, `TXT.label`, `TXT.dim`, `TXT.coord`, `TXT.heading` — one place to change global font/color |
 | **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |
-| **Components** | Window / Confirm / Scrollable / Image / ClickableImage / FullscreenManager / AVD (visual novel engine) |
+| **Components** | Window / Confirm / Scrollable / Image / ClickableImage / FullscreenManager / TextInput / VideoPlayer / AVD (visual novel engine) |
 | **Backend Control** | `MockBackend` + `WindowManager` + `ContentChannel` — backend-driven UI via command protocol, WS-ready |
 | **Performance** | Bounds calc vs view sync separation, window-level pointer events for smooth drag, 80ms debounced resize |
 
@@ -48,10 +48,10 @@ const stop = startPixiApp((proxy) => {
 
 ```
 src/
-  framework/    PIXI core + GSAP + EventBus + Component Registry + InfiniteCanvas
+  framework/    PIXI core + GSAP + EventBus + Component Registry + InfiniteCanvas + LayerManager
   components/   Window, Confirm, Scrollable, Image, FullscreenManager, AVD, etc.
   backend/      MockBackend + WindowManager + ContentChannel (backend-driven UI control)
-  example/      32+ routes demonstrating everything
+  example/      47+ routes demonstrating everything
 ```
 
 ## Secondary Development Guide
@@ -195,6 +195,136 @@ In production, replace `MockBackend` with a WebSocket connection. The command pr
 | **EventBus** | Loose coupling, cross-component, multi-window |
 | **Direct calls** | Tight coupling, parent-child within one component |
 | **GSAP timeline** | Animation sequencing between related elements |
+
+### TextInput — Overlay input field
+
+Renders an HTML `<input>` element over the canvas, positioned to match the PIXI scene coordinates. Supports text, password, placeholder, maxLength, onChange, onSubmit.
+
+```ts
+import { createTextInput } from '../components';
+
+const input = createTextInput(parent.stage, {
+  x: 40, y: 100,
+  width: 300, height: 34,
+  placeholder: 'type something…',
+  password: false,
+  maxLength: 20,
+  onChange: (v) => console.log(v),
+  onSubmit: (v) => console.log('submitted:', v),
+});
+
+input.focus();
+input.blur();
+input.getValue();   // string
+input.setValue('hi');
+input.setEnabled(false);
+input.destroy();
+```
+
+**How it works**: A transparent DOM overlay (`pointer-events: auto`, `opacity: 0`) is always positioned over the PIXI container via `requestAnimationFrame` + `getBounds()`. Clicking the overlay or the PIXI container focuses the input. On focus, GSAP fades the overlay in and positions the native `<input>` for actual typing. On blur, the overlay fades out but remains clickable — the PIXI `pointerdown` handler serves as backup for environments where SubCanvas routing bypasses PIXI events.
+
+**PIXI container requirements**: `eventMode = 'static'` + `hitArea` + `cursor = 'text'` must be set for PIXI events to work (PixiJS v8 defaults to `'passive'`).
+
+### FullscreenManager — Image viewer overlay
+
+Full-viewport image viewer launched via EventBus `'fullscreen:show'` event. Supports click-to-open, double-click zoom, drag-to-pan (when zoomed), drag-down-to-close.
+
+```ts
+import { createFullscreenManager, createClickableImage } from '../components';
+
+const fm = createFullscreenManager(proxy);
+
+createClickableImage(panel, proxy.bus, {
+  url: 'image.jpg',
+  x: 0, y: 0,
+  width: 180, height: 180,
+  overlayColor: 0x000000,
+  overlayAlpha: 0.6,
+  zoomFactor: 2,
+});
+```
+
+### PerfDisplay — On-screen performance HUD
+
+Code-controlled FPS/frametime/object count overlay, created automatically by `startPixiApp` and exposed on the proxy:
+
+```ts
+import { startPixiApp } from '../framework';
+
+const stop = startPixiApp((proxy) => {
+  // Show performance HUD
+  proxy.showPerfMeasure(true);
+
+  // ... build your scene
+
+  // Hide it later
+  proxy.showPerfMeasure(false);
+});
+```
+
+Displays:
+- **FPS** — 60-frame rolling average
+- **Frame time** — ms per frame
+- **Object count** — recursive scene graph traversal
+- **Resolution** — canvas logical size
+
+Default position is top-left `(10, 10)` with monospace green text. Disabled by default; call `proxy.showPerfMeasure(true)` to enable.
+
+Standalone usage outside `startPixiApp`:
+
+```ts
+import { PerfDisplay } from '../framework';
+
+const perf = new PerfDisplay(app.ticker, () => app.stage, {
+  x: 10, y: 10,
+  fontSize: 11,
+  color: 0x88ff88,
+});
+perf.enable();
+```
+
+### LayerManager — Named z-ordered layers
+
+Zero-overhead abstraction over `PIXI.Container` + `zIndex`. No extra draw calls, no hidden traversal.
+
+```ts
+import { LayerManager } from '../framework';
+
+const layers = new LayerManager(stage);
+stage.sortableChildren = true;  // LayerManager requires this
+
+const bg     = layers.add('bg',      0);    // name + zIndex
+const game   = layers.add('game',   10);
+const ui     = layers.add('ui',    100);
+const overlay= layers.add('overlay',200);
+
+// Use like any Container
+bg.addChild(sprite);
+ui.addChild(button);
+
+// Visibility
+ui.hide();
+ui.show();
+
+// Alpha
+overlay.setAlpha(0.5);
+
+// Reorder
+layers.bringToFront('ui');
+layers.sendToBack('bg');
+
+// Query
+const layer = layers.get('ui');
+layer?.addChild(element);
+layers.has('bg');       // true
+layers.names();         // ['bg', 'game', 'ui', 'overlay']
+
+// Remove
+layers.remove('overlay');
+
+// Destroy all
+layers.destroy();
+```
 
 ## 经验教训与收获
 

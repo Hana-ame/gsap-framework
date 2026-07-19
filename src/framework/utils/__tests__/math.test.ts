@@ -11,6 +11,7 @@ import {
   normalizeAngle,
   snapToGrid,
   randomInt,
+  randomFloat,
 } from '../math';
 
 describe('clamp', () => {
@@ -128,5 +129,28 @@ describe('randomInt', () => {
   });
   it('handles single value range', () => {
     expect(randomInt(5, 5)).toBe(5);
+  });
+});
+
+describe('randomFloat', () => {
+  it('returns values within range', () => {
+    for (let i = 0; i < 100; i++) {
+      const v = randomFloat(1.5, 3.5);
+      expect(v).toBeGreaterThanOrEqual(1.5);
+      expect(v).toBeLessThanOrEqual(3.5);
+    }
+  });
+  it('returns a float (not integer)', () => {
+    const vals = Array.from({ length: 50 }, () => randomFloat(0, 1));
+    const hasFractional = vals.some(v => v !== Math.floor(v) && v !== Math.ceil(v));
+    expect(hasFractional).toBe(true);
+  });
+  it('handles min equal to max', () => {
+    expect(randomFloat(5, 5)).toBe(5);
+  });
+  it('handles negative ranges', () => {
+    const v = randomFloat(-10, -5);
+    expect(v).toBeGreaterThanOrEqual(-10);
+    expect(v).toBeLessThanOrEqual(-5);
   });
 });

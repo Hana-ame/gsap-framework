@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow, type GameWindowOptions } from '../../components';
 
 type WinKey = 'A' | 'B' | 'C';
@@ -100,6 +100,8 @@ export function ComponentWindowDisplay() {
       const W = window.innerWidth;
       const H = window.innerHeight;
       sc = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+
+      makeInfoPanel(sc, { title: '窗口组件', lines: ['用途：演示 createWindow() 的三种拖拽模式：标题栏拖拽、任意位置拖拽、固定模式', '测试方法：使用底部面板按钮对每个窗口执行关闭/打开/恢复/预设操作，尝试拖拽各窗口', '预期效果：窗口A仅能通过标题栏拖拽，窗口B可在任意位置拖拽，窗口C不可拖拽。关闭后恢复可还原上次位置'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const pH = 130;
       const panel = sc.createRegion({ x: 0, y: H - pH, width: W, height: pH });

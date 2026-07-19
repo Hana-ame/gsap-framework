@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 import { createClickableImage, createFullscreenManager } from '../../components';
 
 const IMAGES = [
@@ -33,6 +33,16 @@ export function ComponentScrollableImageDisplay() {
       const W = window.innerWidth;
       const H = window.innerHeight;
       const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+
+      makeInfoPanel(root, {
+        title: '可滚动图片画廊',
+        lines: [
+          '用途：可滚动图片画廊，支持全屏查看。',
+          '测试方法：纵向滚动浏览图片，点击图片进入全屏。',
+          '预期效果：图片以网格形式加载，点击打开全屏查看，滚动流畅。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
+      });
 
       const panelX = 20;
       const panelY = 60;

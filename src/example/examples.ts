@@ -43,6 +43,10 @@ import { ComponentBreakoutDisplay } from './component-breakout/ComponentBreakout
 import { ComponentTypingEffectDisplay } from './component-typing-effect/ComponentTypingEffectDisplay';
 import { ComponentTetrisDisplay } from './component-tetris/ComponentTetrisDisplay';
 import { ComponentWavesDisplay } from './component-waves/ComponentWavesDisplay';
+import { ComponentFullscreenDisplay } from './component-fullscreen/ComponentFullscreenDisplay';
+import { ComponentUiHelpersDisplay } from './component-ui-helpers/ComponentUiHelpersDisplay';
+import { ComponentTextInputDisplay } from './component-text-input/ComponentTextInputDisplay';
+import { ComponentLayersDisplay } from './component-layers/ComponentLayersDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -89,6 +93,10 @@ export const EXAMPLES = [
   'component-tetris',
   'component-typing-effect',
   'component-backend-controlled',
+  'component-fullscreen',
+  'component-ui-helpers',
+  'component-text-input',
+  'component-layers',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -141,4 +149,8 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-tetris': ComponentTetrisDisplay,
   'component-typing-effect': ComponentTypingEffectDisplay,
   'component-backend-controlled': BackendControlledDisplay,
+  'component-fullscreen': ComponentFullscreenDisplay,
+  'component-ui-helpers': ComponentUiHelpersDisplay,
+  'component-text-input': ComponentTextInputDisplay,
+  'component-layers': ComponentLayersDisplay,
 };

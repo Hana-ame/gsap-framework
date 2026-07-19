@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, TXT, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createClickableImage, createFullscreenManager, type ClickableImage } from '../../components';
 
 const IMAGES = [
@@ -27,6 +27,8 @@ export function ComponentClickableImageDisplay() {
         height: window.innerHeight,
       });
       scRef.current = sc;
+
+      makeInfoPanel(sc, { title: '可点击图片', lines: ['用途：演示 createClickableImage() 点击后通过 FullscreenManager 打开全屏视图', '测试方法：点击缩略图→全屏叠加层；双击缩放；缩放时拖拽；向下滑动或点击叠加层关闭', '预期效果：点击缩略图打开全屏查看器，双击切换缩放，缩放时可拖拽平移，向下滑动关闭'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const header = new PIXI.Text({
         text: 'ClickableImage — click: expand to full viewport · click again: return to thumb',

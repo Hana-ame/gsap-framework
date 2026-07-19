@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
 import { Avd, type AvdLine, type AvdState, type AvdOptions, type AvdTextSegment } from '../../components';
 
 const CONTROL_H = 80;
@@ -397,6 +397,17 @@ export function ComponentAvdDisplay() {
     refsRef.current = refs;
 
     const destroyApp = startPixiApp((proxy) => {
+      const root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      makeInfoPanel(root, {
+        title: 'AVD 视觉小说',
+        lines: [
+          '用途：视觉小说对话系统，支持打字机效果、角色头像和内联图片。',
+          '测试方法：点击推进对话，使用控件调整速度、跳转至指定行。',
+          '预期效果：文字逐字打出，头像淡入淡出，推进触达下一行，内联图片正确显示。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
+      });
+
       refs.controlRegion = proxy.createRegion({ x: 0, y: 0, width: W, height: CONTROL_H });
       refs.statusRegion = proxy.createRegion({ x: 0, y: CONTROL_H, width: W, height: STATUS_H });
       refs.avdRegion = proxy.createRegion({ x: 0, y: CONTROL_H + STATUS_H, width: W, height: avdH });

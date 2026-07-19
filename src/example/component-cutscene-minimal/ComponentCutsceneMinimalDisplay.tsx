@@ -4,6 +4,7 @@ import { startPixiApp } from '../../framework/PixiApp';
 import { createVideoPlayer } from '../../components';
 import type { PixiVideoPlayerHandle } from '../../components';
 import type { SubCanvas } from '../../framework/SubCanvas';
+import { makeInfoPanel } from '../../framework';
 
 const STABLE_MP4_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4';
 
@@ -49,6 +50,7 @@ export function ComponentCutsceneMinimalDisplay() {
 
     const destroyApp = startPixiApp((proxy) => {
       root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      makeInfoPanel(root, { title: '过场动画（基础版）', lines: ['用途：基础过场动画测试——原生 PIXI.App + <video> + 精灵，不使用 SubCanvas', '测试方法：点击开始播放', '预期效果：视频直接在画布上渲染，无需 SubCanvas 抽象层'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
       root.stage.addChild(startContainer);
 
       player = createVideoPlayer(root, {

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, gsap, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const STAR_LAYERS = 4;
 const STARS_PER_LAYER = 80;
@@ -13,6 +13,7 @@ export function ComponentStarfieldDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '星空', lines: ['用途：3D星空模拟——星星向观察者飞来', '测试方法：观察星空，调整星星数量和速度', '预期效果：星星从中心向观察者飞来，产生视差效果，密度和速度可调'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const W = window.innerWidth;
       const H = window.innerHeight;

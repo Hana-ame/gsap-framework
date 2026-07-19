@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const CELL = 24;
 const GRID_W = 25;
@@ -25,6 +25,7 @@ export function ComponentSnakeDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '贪吃蛇', lines: ['目的：经典贪吃蛇游戏 — 吃食物变长。', '操作：方向键或滑动控制方向。吃掉红色食物方块。', '预期：蛇持续移动。吃到食物增加长度和分数。撞墙或自身游戏结束。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const W = window.innerWidth;
       const H = window.innerHeight;
@@ -195,7 +196,10 @@ export function ComponentSnakeDisplay() {
       }
 
       function onKey(e: KeyboardEvent) {
-        if (!alive) return;
+        if (!alive) {
+          reset();
+          return;
+        }
         const nd: Record<string, Dir> = {
           ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
           w: 'up', s: 'down', a: 'left', d: 'right',

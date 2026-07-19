@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, InfiniteCanvas, makeButton, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, InfiniteCanvas, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import type { Chunk } from '../../framework';
 
 const COLORS = [0x1a2a3a, 0x2a1a3a, 0x1a3a2a, 0x3a2a1a, 0x3a1a2a, 0x2a3a1a];
@@ -12,6 +12,16 @@ export function ComponentInfiniteDisplay() {
         x: 0, y: 0,
         width: window.innerWidth,
         height: window.innerHeight,
+      });
+
+      makeInfoPanel(root, {
+        title: '无限画布',
+        lines: [
+          '用途：无限拖拽平移缩放画布，支持分块延迟加载和惯性减速。',
+          '测试方法：拖拽平移，使用按钮缩放，观察分块加载计数。',
+          '预期效果：网格分块按需加载，平移带惯性平滑，缩放以视口为中心，未使用的分块自动卸载。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       const CHUNK = 300;

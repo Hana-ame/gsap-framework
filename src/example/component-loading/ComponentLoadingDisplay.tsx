@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { showLoading } from '../../components';
 
 export function ComponentLoadingDisplay() {
@@ -17,6 +17,7 @@ export function ComponentLoadingDisplay() {
         height: window.innerHeight,
       });
       scRef.current = sc;
+      makeInfoPanel(sc, { title: '加载覆盖层', lines: ['用途：演示 showLoading() 和 createLoading() 的加载动画、自定义文本和覆盖层颜色。', '测试方法：点击按钮以不同选项显示加载覆盖层，数秒后自动消失。', '预期：加载覆盖层显示旋转动画和文本，超时后自动消失，自定义颜色和文本正常生效。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
       readyRef.current = true;
     });
     return () => {

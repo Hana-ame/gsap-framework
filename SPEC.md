@@ -318,6 +318,36 @@ function startPixiApp(onReady: (proxy: SubCanvasProxy) => void): () => void
 - `app.renderer.resize(w, h, dpr)` 传入当前 `devicePixelRatio`
 - 防抖避免连续缩放时的 framebuffer 重建风暴
 
+#### PerfDisplay — 性能 HUD
+
+默认不显示。`proxy.showPerfMeasure(true)` 打开左上角性能面板，显示 FPS、帧耗时、场景对象数、分辨率：
+
+```ts
+proxy.showPerfMeasure(true);   // 显示
+proxy.showPerfMeasure(false);  // 隐藏
+```
+
+每次 `startPixiApp` 会自动创建一个绑定了 `app.ticker` + `app.stage` 的 `PerfDisplay` 实例，通过 `SubCanvasProxy.showPerfMeasure()` 控制。
+
+独立使用：
+
+```ts
+import { PerfDisplay } from '../framework';
+const perf = new PerfDisplay(ticker, () => stage, { x: 10, y: 10 });
+perf.enable();
+```
+
+显示内容：
+
+| 行 | 说明 |
+|----|------|
+| `xx.x FPS` | 60 帧滚动平均 |
+| `xx.x ms` | 平均帧耗时 |
+| `objects: N` | 场景树递归统计 |
+| `resolution: W×H` | canvas 逻辑尺寸 |
+
+RenderGroup 等内部节点会计入对象数（它们是 `PIXI.Container` 的子类）。
+
 ### SubCanvas
 
 轻量 PIXI 容器包装，提供坐标转换和子区域管理。
@@ -501,6 +531,38 @@ bus.listenerCount('evt');  // 查询
 - `FullscreenManager` ↔ `ClickableImage`：`fullscreen:show` / `fullscreen:hide` / `fullscreen:active` / `fullscreen:inactive`
 - 自定义组件间通信
 
+### LayerManager
+
+```ts
+import { LayerManager, type Layer } from '../framework';
+
+const layers = new LayerManager(parentContainer);
+parentContainer.sortableChildren = true;
+
+// Add layers (name + zIndex)
+const bg   = layers.add('bg',   0);
+const game = layers.add('game', 10);
+const ui   = layers.add('ui',  100);
+
+// Layer API
+bg.addChild(sprite);
+bg.hide();
+bg.show();
+bg.setAlpha(0.5);
+bg.alpha;  // getter
+
+// LayerManager API
+layers.get('game');            // Layer | undefined
+layers.has('ui');              // boolean
+layers.names();                // string[]
+layers.remove('bg');           // boolean
+layers.bringToFront('ui');
+layers.sendToBack('game');
+layers.destroy();
+```
+
+**设计原则**：纯语法糖，零额外开销。每个 Layer 只是一个带 label 的 `PIXI.Container`，z-order 通过原生 `zIndex` + `sortableChildren` 实现。不引入额外 draw call 或遍历。
+
 ### 工具函数
 
 ```ts
@@ -534,7 +596,8 @@ unsub(); // 取消订阅
 | `showLoading(sc, opts)` | 加载遮罩（显示 spinner） | 否 |
 | `makeButton(label, w, h, onClick, bg?)` | 按钮 | 否 |
 | `mountDisplays(sc)` | 示例工具：十字准星+点击波纹+计数器（挂载到任意 SubCanvas） | 否 |
-| `makeStepper(label, getValue, onChange, min, max)` | 步进器 | 否 |
+| `makeStepper(label, getValue, onChange, min, max, step?)` | 步进器（step 支持 +10 快速调节） | 否 |
+| `LayerManager(stage)` | 命名层系统（z-order、show/hide、alpha、bringToFront） | 否 |
 
 ### AVD（视觉小说引擎）
 

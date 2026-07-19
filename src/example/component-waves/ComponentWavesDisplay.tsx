@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, makeStepper, type SubCanvasProxy } from '../../framework';
 
 const ROWS = 12;
 const COLS = 20;
-const SPEED = 2;
-const AMPLITUDE = 30;
 
 const PALETTE_TOP = [0x4488ff, 0x44aaff, 0x44ccff, 0x44ddff];
 const PALETTE_BOTTOM = [0x004488, 0x0066aa, 0x0088cc, 0x00aadd];
@@ -18,6 +16,7 @@ export function ComponentWavesDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '波浪', lines: ['目的：可调节参数的正弦波动画。', '操作：观察波浪动画。调节振幅、频率、速度。', '预期：平滑的波浪动画。改变参数实时更新波形。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const W = window.innerWidth;
       const H = window.innerHeight;
@@ -55,6 +54,14 @@ export function ComponentWavesDisplay() {
       title.y = 12;
       root.stage.addChild(title);
 
+      const desc = new PIXI.Text({
+        text: 'grid: 所有格子画在同一个 Graphics 上 · dots: 每格独立 Graphics · both: 叠两层',
+        style: { fontSize: 10, fill: 0x445566, fontFamily: 'monospace' },
+      });
+      desc.x = 12;
+      desc.y = 30;
+      root.stage.addChild(desc);
+
       let mouseX = W / 2;
       let mouseY = H / 2;
       const ripples: { x: number; y: number; t: number }[] = [];
@@ -91,7 +98,7 @@ export function ComponentWavesDisplay() {
 
             const phase = phases[i];
             const speed = speeds[i];
-            const wave = Math.sin(c * 0.4 + r * 0.3 + t * speed + phase) * AMPLITUDE;
+            const wave = Math.sin(c * 0.4 * freqMul + r * 0.3 * freqMul + t * speed * speedMul + phase) * amplitude;
             const totalWave = wave + mouseWave + rippleWave;
 
             const xOff = totalWave * 0.3;
@@ -121,7 +128,7 @@ export function ComponentWavesDisplay() {
 
             const phase = phases[i];
             const speed = speeds[i];
-            const wave = Math.sin(c * 0.4 + r * 0.3 + t * speed + phase) * AMPLITUDE;
+            const wave = Math.sin(c * 0.4 * freqMul + r * 0.3 * freqMul + t * speed * speedMul + phase) * amplitude;
             const totalWave = wave + mouseWave + rippleWave;
 
             const xOff = totalWave * 0.3;
@@ -135,8 +142,31 @@ export function ComponentWavesDisplay() {
         }
       }
 
+      let amplitude = 30;
+      let speedMul = 1;
+      let freqMul = 1;
       let mode: 'grid' | 'dots' | 'both' = 'both';
+
       let y = 4;
+
+      const ampStepper = makeStepper('amplitude', () => amplitude, (v) => { amplitude = v; }, 5, 80);
+      ampStepper.container.x = 10;
+      ampStepper.container.y = y;
+      root.stage.addChild(ampStepper.container);
+      y += 54;
+
+      const speedStepper = makeStepper('speed', () => speedMul, (v) => { speedMul = v; }, 0, 5);
+      speedStepper.container.x = 10;
+      speedStepper.container.y = y;
+      root.stage.addChild(speedStepper.container);
+      y += 54;
+
+      const freqStepper = makeStepper('frequency', () => freqMul, (v) => { freqMul = v; }, 1, 20);
+      freqStepper.container.x = 10;
+      freqStepper.container.y = y;
+      root.stage.addChild(freqStepper.container);
+      y += 54;
+
       const modes = ['grid', 'dots', 'both'];
       for (const m of modes) {
         const btn = makeButton(m, 140, 28, () => { mode = m as typeof mode; }, 0x1a1a2e);

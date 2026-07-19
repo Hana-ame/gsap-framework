@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
 import { createVideoPlayer, createScrollable } from '../../components';
 import type { PixiVideoPlayerHandle, Scrollable } from '../../components';
 
@@ -23,6 +23,16 @@ export function ComponentVideoPlayerDisplay() {
       // full-screen region for everything
       root = proxy.createRegion({
         x: 0, y: 0, width: window.innerWidth, height: window.innerHeight,
+      });
+
+      makeInfoPanel(root, {
+        title: '视频播放器（PIXI）',
+        lines: [
+          '用途：基于 PIXI 的视频播放器，包含自定义控制栏、进度拖拽和播放/暂停。',
+          '测试方法：点击播放，拖拽进度条跳转，悬停显示控制栏，点击中央播放按钮。',
+          '预期效果：视频播放与进度条同步，跳转功能正常，控制栏 2.5 秒后自动隐藏。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       // video player dimensions

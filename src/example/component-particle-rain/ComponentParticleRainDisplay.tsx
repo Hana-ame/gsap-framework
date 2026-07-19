@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, gsap, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 type Mode = 'rain' | 'snow' | 'fireflies' | 'confetti';
 
@@ -23,6 +23,7 @@ export function ComponentParticleRainDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '粒子雨', lines: ['用途：可调节密度和速度的粒子下落特效', '测试方法：观察粒子雨，调整粒子数量和下落速度', '预期效果：粒子持续从顶部下落，密度和速度控制实时生效'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const panel = root.createRegion(
         { x: 12, y: 12, width: 160, height: window.innerHeight - 24 },

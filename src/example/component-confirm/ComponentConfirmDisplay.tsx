@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createConfirm, type PixiConfirm, type PixiConfirmOptions } from '../../components';
 
 export function ComponentConfirmDisplay() {
@@ -15,6 +15,7 @@ export function ComponentConfirmDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(scRef.current, { title: 'Confirm Component', lines: ['PURPOSE: Demo createConfirm() with multiple button configurations, image display, and custom styling.', 'HOW TO TEST: Click buttons to spawn different confirm dialogs. Try the OK/Cancel buttons.', 'EXPECTED: Confirm dialogs appear with correct buttons. Click a button → dialog closes → onResult fires with the button label.'] });
     });
     return () => {
       confirmRef.current?.destroy();

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const ROWS = 12;
 const COLS = 12;
@@ -24,6 +24,7 @@ export function ComponentMinesweeperDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '扫雷', lines: ['用途：经典扫雷——在不踩雷的前提下揭开所有单元格', '测试方法：左键揭开，右键标记旗帜，数字显示相邻地雷数量', '预期效果：踩雷则游戏结束，数字正确指示相邻地雷数，标记可防止误揭'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const W = window.innerWidth;
       const H = window.innerHeight;
@@ -92,6 +93,25 @@ export function ComponentMinesweeperDisplay() {
         return revealCount >= ROWS * COLS - MINES;
       }
 
+      function revealAllMines() {
+        for (let r = 0; r < ROWS; r++)
+          for (let c = 0; c < COLS; c++)
+            if (board[r][c] === -1) revealed[r][c] = true;
+      }
+
+      function restart() {
+        firstClick = true;
+        if (overlay) { root.stage.removeChild(overlay); overlay.destroy({ children: true }); overlay = null; }
+        board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        revealed = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+        flagged = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+        gameOver = false;
+        flagCount = 0;
+        revealCount = 0;
+        flagText.text = 'flags: 0';
+        renderBoard();
+      }
+
       let overlay: PIXI.Container | null = null;
 
       function showOverlay(text: string, color: number) {
@@ -156,7 +176,17 @@ export function ComponentMinesweeperDisplay() {
 
             cell.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
               e.stopPropagation();
-              if (gameOver) return;
+              if (gameOver) {
+                if (overlay) { root.stage.removeChild(overlay); overlay.destroy({ children: true }); overlay = null; }
+                flagCount = 0;
+                revealCount = 0;
+                flagText.text = 'flags: 0';
+                initBoard(r, c);
+                if (board[r][c] === 0) floodReveal(r, c);
+                else reveal(r, c);
+                renderBoard();
+                return;
+              }
               if (e.button === 2) {
                 if (revealed[r][c]) return;
                 flagged[r][c] = !flagged[r][c];
@@ -172,8 +202,7 @@ export function ComponentMinesweeperDisplay() {
               }
               if (board[r][c] === -1) {
                 gameOver = true;
-                board[r][c] = -1;
-                revealed[r][c] = true;
+                revealAllMines();
                 renderBoard();
                 showOverlay('Game Over', 0xff4455);
                 return;
@@ -193,8 +222,9 @@ export function ComponentMinesweeperDisplay() {
         }
       }
 
-      initBoard(Math.floor(ROWS / 2), Math.floor(COLS / 2));
-      firstClick = true;
+      board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+      revealed = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+      flagged = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
 
       const flagText = new PIXI.Text({
         text: 'flags: 0',
@@ -204,13 +234,7 @@ export function ComponentMinesweeperDisplay() {
       flagText.y = 12;
       root.stage.addChild(flagText);
 
-      const resetBtn = makeButton('Reset', 80, 28, () => {
-        firstClick = true;
-        if (overlay) { root.stage.removeChild(overlay); overlay.destroy({ children: true }); overlay = null; }
-        initBoard(Math.floor(ROWS / 2), Math.floor(COLS / 2));
-        renderBoard();
-        flagText.text = 'flags: 0';
-      }, 0x4a3a2e);
+      const resetBtn = makeButton('Reset', 80, 28, restart, 0x4a3a2e);
       resetBtn.x = W - 100;
       resetBtn.y = 12;
       root.stage.addChild(resetBtn);

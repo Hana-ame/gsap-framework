@@ -20,3 +20,5 @@ export { Avd } from './Avd';
 export type { AvdLine, AvdOptions, AvdState, AvdText, AvdTextSegment, AvdPortraitPos, AvdRoster, AvdRosterEntry, AvdRosterMode } from './Avd';
 export { parseAvdScriptJSON } from './AvdScript';
 export type { AvdScriptJSON, AvdMetaJSON, AvdRosterEntryJSON, AvdLineJSON, AvdTextSegmentJSON, AvdAssetResolver, AvdParsedScript } from './AvdScript';
+export { createTextInput } from './TextInput';
+export type { TextInputHandle, TextInputOptions } from './TextInput';

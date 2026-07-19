@@ -70,7 +70,7 @@ vi.mock('../SubCanvasProxy', () => {
   return { SubCanvasProxy: MockProxy };
 });
 
-import { startPixiApp, debugBodyCanvases } from '../PixiApp';
+import { startPixiApp, getRootPerfDisplay, debugBodyCanvases } from '../PixiApp';
 
 describe('PixiApp', () => {
   afterAll(() => {
@@ -101,5 +101,15 @@ describe('PixiApp', () => {
   it('debugBodyCanvases returns array', () => {
     const result = debugBodyCanvases();
     expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('getRootPerfDisplay returns null before start', () => {
+    expect(getRootPerfDisplay()).toBeNull();
+  });
+
+  it('calling destroy twice does not throw', () => {
+    const destroy = startPixiApp();
+    destroy();
+    expect(() => destroy()).not.toThrow();
   });
 });

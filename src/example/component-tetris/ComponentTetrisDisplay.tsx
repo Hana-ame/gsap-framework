@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const COLS = 10;
 const ROWS = 20;
@@ -29,6 +29,7 @@ export function ComponentTetrisDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '俄罗斯方块', lines: ['目的：经典俄罗斯方块堆叠游戏。', '操作：方向键移动/旋转。向下加速。消除行得分。', '预期：方块下落并堆叠。完整行消除。游戏随时间加速。方块堆到顶部时游戏结束。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const W = window.innerWidth;
       const H = window.innerHeight;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
 
 type Grid = Uint8Array;
 
@@ -508,6 +508,7 @@ export function ComponentConwayDisplay() {
       if (!refs || !refsRef.current) return;
       refs.controlRegion = proxy.createRegion({ x: 0, y: 0, width: W, height: CONTROL_H });
       refs.gridRegion = proxy.createRegion({ x: 0, y: CONTROL_H, width: W, height: H - CONTROL_H });
+      makeInfoPanel(refs.controlRegion, { title: '康威生命游戏', lines: ['用途：细胞自动机——每个细胞根据邻居数量存活或死亡', '测试方法：点击细胞切换状态，按下播放模拟，调整速度和网格大小', '预期效果：细胞遵循康威规则：3个邻居→诞生，2-3个→存活，否则→死亡。模式持续演化'], x: (refs.controlRegion.bounds?.width ?? window.innerWidth) - 400, y: (refs.controlRegion.bounds?.height ?? window.innerHeight) - 150 });
       rebuildBoard(refs);
     });
 

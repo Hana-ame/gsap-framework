@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, createComponent, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 
 const css = `
 .cr-hint {
@@ -25,6 +25,16 @@ export function ComponentRegistryDisplay() {
         x: 0, y: 0,
         width: window.innerWidth,
         height: window.innerHeight,
+      });
+
+      makeInfoPanel(root, {
+        title: '组件注册中心',
+        lines: [
+          '用途：演示 createComponent() 统一工厂方法，创建窗口、确认框和滚动面板。',
+          '测试方法：点击按钮通过注册中心创建组件，与直接调用创建函数对比。',
+          '预期效果：createComponent(\'window\') 与 createWindow() 结果一致，所有注册类型均可使用。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       const hint = new PIXI.Text({

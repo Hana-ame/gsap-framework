@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
 
 type Board = number[][];
 type Direction = 'up' | 'down' | 'left' | 'right';
@@ -506,6 +506,7 @@ export function Component2048Display() {
 
     const destroyApp = startPixiApp((proxy) => {
       const region = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+      makeInfoPanel(region, { title: '2048 游戏', lines: ['2048 滑动拼图——滑动以合并方块。', '使用方向键或滑动操作。用步进器调整棋盘大小。', '方块滑动并合并相同数字。每次移动生成新方块。分数增加。棋盘满了则游戏结束。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
       const refs: GameRefs = {
         region,
         W,

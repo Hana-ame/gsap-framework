@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 export function ComponentClockDisplay() {
   useEffect(() => {
@@ -10,6 +10,7 @@ export function ComponentClockDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '模拟时钟', lines: ['用途：带平滑秒针的实时模拟时钟', '测试方法：观察时钟，显示当前时间', '预期效果：时、分、秒针正确转动，实时更新'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;

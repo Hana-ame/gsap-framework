@@ -10,6 +10,8 @@ vi.mock('../../framework/gsap-pixi', () => ({
   PixiPlugin: { registerPIXI: vi.fn() },
 }));
 
+const mockAssetsLoad = vi.hoisted(() => vi.fn().mockResolvedValue(null));
+
 type MockContainer = {
   children: unknown[];
   addChild: ReturnType<typeof vi.fn>;
@@ -20,7 +22,7 @@ type MockContainer = {
   y: number;
   width: number;
   height: number;
-  scale: { x: number; y: number };
+  scale: { x: number; y: number; set: ReturnType<typeof vi.fn> };
   anchor: { set: ReturnType<typeof vi.fn>; x: number; y: number };
   mask: unknown;
   clear: ReturnType<typeof vi.fn>;
@@ -35,56 +37,55 @@ type MockContainer = {
   set: ReturnType<typeof vi.fn>;
 };
 
-vi.mock('pixi.js', async () => {
-  const actual = await vi.importActual('pixi.js');
-  function makeMockContainer(extra: Record<string, unknown> = {}): MockContainer {
-    return {
-      children: [],
-      addChild: vi.fn(function (this: MockContainer, child: unknown) {
-        (this.children as unknown[]).push(child);
-        return child;
-      }),
-      removeChild: vi.fn(function (this: MockContainer, child: unknown) {
-        this.children = (this.children as unknown[]).filter((x) => x !== child);
-        return child;
-      }),
-      destroy: vi.fn(function (this: MockContainer, _opts?: unknown) {
-        this.children = [];
-      }),
-      eventMode: null,
-      x: 0, y: 0, width: 0, height: 0,
-      scale: { x: 1, y: 1 },
+function makeMockContainer(extra: Record<string, unknown> = {}): MockContainer {
+  return {
+    children: [],
+    addChild: vi.fn(function (this: MockContainer, child: unknown) {
+      (this.children as unknown[]).push(child);
+      return child;
+    }),
+    removeChild: vi.fn(function (this: MockContainer, child: unknown) {
+      this.children = (this.children as unknown[]).filter((x) => x !== child);
+      return child;
+    }),
+    destroy: vi.fn(function (this: MockContainer, _opts?: unknown) {
+      this.children = [];
+    }),
+    eventMode: null,
+    x: 0, y: 0, width: 0, height: 0,
+      scale: { x: 1, y: 1, set: vi.fn() },
       anchor: { set: vi.fn(), x: 0.5, y: 0.5 },
-      mask: null,
-      clear: vi.fn(function (this: MockContainer) { return this; }),
-      circle: vi.fn(function (this: MockContainer) { return this; }),
-      fill: vi.fn(function (this: MockContainer) { return this; }),
-      stroke: vi.fn(function (this: MockContainer) { return this; }),
-      rect: vi.fn(function (this: MockContainer) { return this; }),
-      label: '',
-      parent: null as MockContainer | null,
-      texture: null,
-      removeFromParent: vi.fn(),
-      set: vi.fn(function (this: MockContainer, _x: number, _y: number) {}),
-      ...extra,
-    };
-  }
+    mask: null,
+    clear: vi.fn(function (this: MockContainer) { return this; }),
+    circle: vi.fn(function (this: MockContainer) { return this; }),
+    fill: vi.fn(function (this: MockContainer) { return this; }),
+    stroke: vi.fn(function (this: MockContainer) { return this; }),
+    rect: vi.fn(function (this: MockContainer) { return this; }),
+    label: '',
+    parent: null as MockContainer | null,
+    texture: null,
+    removeFromParent: vi.fn(),
+    set: vi.fn(function (this: MockContainer, _x: number, _y: number) {}),
+    ...extra,
+  };
+}
 
+vi.mock('pixi.js', () => {
   const Graphics = vi.fn(function () { return makeMockContainer(); } as unknown as new () => MockContainer);
   const Text = vi.fn(function () { return makeMockContainer(); } as unknown as new () => MockContainer);
   const Container = vi.fn(function () { return makeMockContainer(); } as unknown as new () => MockContainer);
   const Sprite = vi.fn(function () { return makeMockContainer({ texture: null }); } as unknown as new () => MockContainer);
 
   return {
-    ...actual as object,
     Graphics, Text, Container, Sprite,
     Assets: {
-      load: vi.fn().mockResolvedValue(null),
+      load: mockAssetsLoad,
     },
     Texture: { from: vi.fn() },
   };
 });
 
+import * as PIXI from 'pixi.js';
 import { createLoadingImage } from '../PixiImage';
 
 describe('createLoadingImage', () => {
@@ -106,7 +107,7 @@ describe('createLoadingImage', () => {
       fill: vi.fn(),
       stroke: vi.fn(),
       rect: vi.fn(),
-      scale: { x: 1, y: 1 },
+      scale: { x: 1, y: 1, set: vi.fn() },
       anchor: { set: vi.fn(), x: 0.5, y: 0.5 },
       mask: null,
       label: '',
@@ -182,5 +183,116 @@ describe('createLoadingImage', () => {
     });
     img.destroy();
     expect(() => img.destroy()).not.toThrow();
+  });
+
+  it('success path invokes onLoad callback', async () => {
+    const texture = { width: 100, height: 80 };
+    mockAssetsLoad.mockResolvedValue(texture);
+
+    const onLoad = vi.fn();
+    createLoadingImage(mockParent as never, {
+      url: 'ok.png', x: 0, y: 0, width: 200, height: 150,
+      onLoad,
+    });
+
+    expect(mockAssetsLoad).toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(onLoad).toHaveBeenCalledOnce();
+    });
+    expect(onLoad).toHaveBeenCalledWith(texture);
+  });
+
+  it('error path invokes onError callback', async () => {
+    mockAssetsLoad.mockRejectedValue(new Error('network error'));
+
+    const onError = vi.fn();
+    createLoadingImage(mockParent as never, {
+      url: 'bad.png', x: 0, y: 0, width: 200, height: 150,
+      onError,
+    });
+
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledWith(expect.any(Error));
+      expect((onError.mock.calls[0][0] as Error).message).toBe('network error');
+    });
+  });
+
+  it('empty texture triggers onError with empty texture message', async () => {
+    mockAssetsLoad.mockResolvedValue({ width: 0, height: 80 } as never);
+
+    const onError = vi.fn();
+    createLoadingImage(mockParent as never, {
+      url: 'empty.png', x: 0, y: 0, width: 200, height: 150,
+      onError,
+    });
+
+    await vi.waitFor(() => {
+      expect(onError).toHaveBeenCalledWith(expect.any(Error));
+      expect((onError.mock.calls[0][0] as Error).message).toBe('empty texture');
+    });
+  });
+
+  it('error without explicit onError does not throw', async () => {
+    mockAssetsLoad.mockRejectedValue(new Error('fail'));
+
+    const img = createLoadingImage(mockParent as never, {
+      url: 'bad.png', x: 0, y: 0, width: 200, height: 150,
+    });
+
+    await vi.waitFor(() => {
+      expect(img.destroyed).toBe(false);
+    });
+    img.destroy();
+  });
+
+  it('setUrl on destroyed instance does nothing', () => {
+    const img = createLoadingImage(mockParent as never, {
+      url: 'test.png', x: 0, y: 0, width: 200, height: 150,
+    });
+    img.destroy();
+    expect(() => img.setUrl('new.png')).not.toThrow();
+  });
+
+  it('setErrorHintVisible on destroyed instance does nothing', () => {
+    const img = createLoadingImage(mockParent as never, {
+      url: 'test.png', x: 0, y: 0, width: 200, height: 150,
+    });
+    img.destroy();
+    expect(() => img.setErrorHintVisible(false)).not.toThrow();
+  });
+
+  it('setErrorHintVisible toggles after error', async () => {
+    mockAssetsLoad.mockRejectedValue(new Error('fail'));
+
+    const img = createLoadingImage(mockParent as never, {
+      url: 'bad.png', x: 0, y: 0, width: 200, height: 150,
+    });
+
+    await vi.waitFor(() => {
+      expect(() => img.setErrorHintVisible(false)).not.toThrow();
+      expect(() => img.setErrorHintVisible(true)).not.toThrow();
+    });
+    img.destroy();
+  });
+
+  it('setUrl re-triggers load', async () => {
+    const texture = { width: 50, height: 50 };
+    mockAssetsLoad.mockResolvedValue(texture);
+
+    const onLoad = vi.fn();
+    const img = createLoadingImage(mockParent as never, {
+      url: 'first.png', x: 0, y: 0, width: 200, height: 150,
+      onLoad,
+    });
+
+    await vi.waitFor(() => {
+      expect(onLoad).toHaveBeenCalledTimes(1);
+    });
+
+    img.setUrl('second.png');
+    await vi.waitFor(() => {
+      expect(onLoad).toHaveBeenCalledTimes(2);
+    });
+    img.destroy();
   });
 });

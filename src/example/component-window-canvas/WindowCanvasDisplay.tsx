@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, InfiniteCanvas, makeButton, TXT, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, InfiniteCanvas, makeButton, makeInfoPanel, TXT, type SubCanvasProxy } from '../../framework';
 import { createWindow } from '../../components';
 
 const COLORS = [0x1a2a3a, 0x2a1a3a, 0x1a3a2a, 0x3a2a1a, 0x3a1a2a, 0x2a3a1a];
@@ -12,6 +12,16 @@ export function WindowCanvasDisplay() {
         x: 0, y: 0,
         width: window.innerWidth,
         height: window.innerHeight,
+      });
+
+      makeInfoPanel(root, {
+        title: '窗口 + 无限画布',
+        lines: [
+          '用途：在可拖拽窗口中嵌套无限画布，展示 SubCanvas 层级结构。',
+          '测试方法：拖拽窗口，在窗口内平移和缩放画布。',
+          '预期效果：窗口可正常拖拽，内部无限画布可独立平移缩放。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       const hint = new PIXI.Text({

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 
 const PADDLE_W = 100;
 const PADDLE_H = 14;
@@ -22,13 +22,15 @@ export function ComponentBreakoutDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      makeInfoPanel(root, { title: '打砖块', lines: ['用途：经典打砖块——弹球击碎所有砖块', '测试方法：用鼠标或方向键移动挡板，不要让球掉落', '预期效果：球在挡板和墙壁之间反弹，接触砖块即击碎，丢球减少生命值，清空所有砖块获胜'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const W = window.innerWidth;
       const H = window.innerHeight;
       const ox = (W - COLS * (BRICK_W + BRICK_GAP)) / 2;
 
       let paddleX = (W - PADDLE_W) / 2;
-      let ball = { x: W / 2, y: H - 60, dx: 3, dy: -3 };
+      let lastPaddleDx = 0;
+      let ball = { x: W / 2, y: H - 60, dx: 3, dy: -3, spin: 0, rotation: 0 };
       let score = 0;
       let lives = 3;
       let running = false;
@@ -101,7 +103,11 @@ export function ComponentBreakoutDisplay() {
 
       function draw() {
         paddleG.clear().roundRect(paddleX, H - PADDLE_H - 10, PADDLE_W, PADDLE_H, 6).fill({ color: 0x88aaff });
-        ballG.clear().circle(ball.x, ball.y, BALL_R).fill({ color: 0xffffff });
+        ballG.clear();
+        ballG.circle(ball.x, ball.y, BALL_R).fill({ color: 0xffffff });
+        ballG.moveTo(ball.x, ball.y);
+        ballG.lineTo(ball.x + Math.cos(ball.rotation) * BALL_R, ball.y + Math.sin(ball.rotation) * BALL_R);
+        ballG.stroke({ width: 2, color: 0xffaa44 });
         brickG.clear();
         for (let r = 0; r < ROWS; r++) {
           for (let c = 0; c < COLS; c++) {
@@ -116,7 +122,7 @@ export function ComponentBreakoutDisplay() {
       }
 
       function resetBall() {
-        ball = { x: W / 2, y: H - 60, dx: (Math.random() > 0.5 ? 3 : -3), dy: -3 };
+        ball = { x: W / 2, y: H - 60, dx: (Math.random() > 0.5 ? 3 : -3), dy: -3, spin: 0, rotation: 0 };
         running = false;
         showMessage('Get Ready!', 0x88aaff);
       }
@@ -131,7 +137,9 @@ export function ComponentBreakoutDisplay() {
       }
 
       root.onMove((e) => {
-        paddleX = Math.max(0, Math.min(W - PADDLE_W, e.x - PADDLE_W / 2));
+        const nx = Math.max(0, Math.min(W - PADDLE_W, e.x - PADDLE_W / 2));
+        lastPaddleDx = nx - paddleX;
+        paddleX = nx;
         draw();
       });
 
@@ -149,9 +157,12 @@ export function ComponentBreakoutDisplay() {
 
         ball.x += ball.dx;
         ball.y += ball.dy;
+        ball.rotation += ball.spin;
+        ball.dx += ball.spin * 0.015;
+        ball.spin *= 0.99;
 
-        if (ball.x < BALL_R) { ball.x = BALL_R; ball.dx = -ball.dx; }
-        if (ball.x > W - BALL_R) { ball.x = W - BALL_R; ball.dx = -ball.dx; }
+        if (ball.x < BALL_R) { ball.x = BALL_R; ball.dx = -ball.dx; ball.spin *= 0.5; }
+        if (ball.x > W - BALL_R) { ball.x = W - BALL_R; ball.dx = -ball.dx; ball.spin *= 0.5; }
         if (ball.y < BALL_R) { ball.y = BALL_R; ball.dy = -ball.dy; }
 
         if (ball.y + BALL_R > H - PADDLE_H - 10 && ball.dy > 0 &&
@@ -159,6 +170,7 @@ export function ComponentBreakoutDisplay() {
           ball.dy = -ball.dy;
           const hit = (ball.x - paddleX) / PADDLE_W - 0.5;
           ball.dx += hit * 1.5;
+          ball.spin += lastPaddleDx * 0.08 + hit * 0.5;
           const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
           const maxSpeed = 7;
           if (speed > maxSpeed) { ball.dx = (ball.dx / speed) * maxSpeed; ball.dy = (ball.dy / speed) * maxSpeed; }

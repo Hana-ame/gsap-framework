@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, gsap, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 
 export function ComponentGsapDisplay() {
   useEffect(() => {
@@ -13,6 +13,8 @@ export function ComponentGsapDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
+
+      makeInfoPanel(root, { title: 'GSAP 动画', lines: ['GSAP 动画演示——位置、缩放、旋转、透明度、时间线、缓动效果。', '点击左侧面板的按钮触发蓝色方块的不同动画。', '方块根据按钮描述平滑动画。时间线演示串联多个动画。终止全部停止所有动画。重置恢复初始状态。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const panel = root.createRegion(
         { x: 12, y: 12, width: 190, height: window.innerHeight - 24 },

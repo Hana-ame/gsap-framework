@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow } from '../../components';
 import { mountDisplays } from '../_shared/Displays';
 
@@ -14,6 +14,16 @@ export function ComponentSingleWindowDisplay() {
       const W = window.innerWidth;
       const H = window.innerHeight;
       root = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+
+      makeInfoPanel(root, {
+        title: '单窗口应用',
+        lines: [
+          '用途：极简单窗口应用布局展示。',
+          '测试方法：观察带内容区域的窗口。',
+          '预期效果：单窗口占据屏幕大部分区域，包含标题栏和内容区。',
+        ],
+        x: window.innerWidth - 400, y: window.innerHeight - 150,
+      });
 
       const title = new PIXI.Text({
         text: 'single window — draggable',
