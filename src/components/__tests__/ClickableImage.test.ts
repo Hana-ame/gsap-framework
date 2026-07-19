@@ -65,8 +65,8 @@ vi.mock('pixi.js', async () => {
   };
 });
 
-import { type SubCanvas } from '../../framework/SubCanvas';
-import { EventBus } from '../../framework/EventBus';
+import { type SubCanvas } from '@framework/SubCanvas';
+import { EventBus } from '@framework/EventBus';
 
 function mockSubCanvas(): SubCanvas {
   return {

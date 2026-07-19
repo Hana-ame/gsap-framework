@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '@framework';
 
 const COLORS = [0xffffff, 0xff4488, 0x4488ff, 0x44ff88, 0xffaa44, 0xff44ff, 0x44ffff];
 const BRUSH_SIZES = [2, 4, 8, 16];

@@ -1035,6 +1035,72 @@ window 'resize' event
 
 ---
 
+## Text Effects — `text()` 一行动效
+
+`text()` 是 `runTextEffect` 的便捷封装，一行创建文字动效。
+
+```ts
+import { text } from '../../framework';
+
+text(canvas.stage, 'Hello World');                    // typewriter 默认
+text(canvas.stage, 'Fade in', 'fadeInChars');         // 逐字淡入
+text(stage, 'Big red', 'scaleBounce', {                // 弹性缩放
+  fontSize: 32, fill: 0xff4444, x: 100, y: 200,
+});
+```
+
+**参数：**
+
+| 参数 | 类型 | 默认 | 说明 |
+|------|------|------|------|
+| `parent` | `PIXI.Container` | — | 父容器 |
+| `text` | `string` | — | 显示文字 |
+| `type` | `TextEffectType` | `'typewriter'` | 动效类型 |
+| `opts.x` | `number` | `0` | X 偏移 |
+| `opts.y` | `number` | `0` | Y 偏移 |
+| `opts.maxWidth` | `number` | `Infinity` | 最大宽度（自动换行） |
+| `opts.speed` | `number` | `30` | 打字速度（字符/秒） |
+| `opts.duration` | `number` | `1` | 动画时长（秒） |
+| `opts.fontSize` | `number` | `18` | 字号 |
+| `opts.fill` | `number` | `0xffffff` | 文字颜色 |
+| `opts.fontFamily` | `string` | `'monospace'` | 字体 |
+
+**7 种动效：**
+
+| 类型 | 效果 |
+|------|------|
+| `typewriter` | 逐字显示（打字机） |
+| `fadeInChars` | 逐字淡入 |
+| `fadeIn` | 整体淡入 |
+| `slideIn` | 从左滑入 |
+| `scaleBounce` | 弹性缩放 |
+| `charRain` | 字符雨落下 |
+| `scramble` | 随机打乱 → 正确文字 |
+
+**返回 `TextEffectHandle`：**
+
+- `.container` — PIXI 容器（可手动 reposition）
+- `.completed` — boolean getter
+- `.skip()` — 立即完成动画
+- `.destroy()` — 销毁
+
+底层 `runTextEffect(opts)` 接受完整选项：支持 `TextSegment[]` 图文混排。
+
+---
+
+## 已知问题
+
+### 层违规
+
+| 问题 | 详情 |
+|------|------|
+| `framework/register-components.ts` 导入 `components/` | `index.ts` 通过 `import './register-components'` 副作用导入。任何人 `import { x } from '@framework'` 都会**透传加载** `PixiWindow/PixiConfirm/Scrollable`。哪天某个 component 改用 `@framework` barrel 就会形成运行时循环依赖。 |
+| `backend/WindowManager.ts` 导入 `components/` 和 `example/` | backend 层依赖 `createWindow`（components）和 `mountDisplays`（example）。生产代码不应依赖 demo 代码。 |
+
+### 遗留导入路径（能跑，但指向旧来源）
+
+拆分后部分文件仍从 `SubCanvas.ts` 导入原属于 `SubCanvasTypes.ts` 的类型。2026-07 已清理了 `SubCanvasProxy.ts`、`InfiniteCanvasTypes.ts`、`utils/rect.ts` 和 `index.ts` 的 barrel，但如果新文件也这样写需要注意。
+
 ## 部署
 
 - push to `sim` → Cloudflare Pages 自动部署 → `https://react.moonchan.xyz/`

@@ -56,8 +56,11 @@ const APPS: AppEntry[] = [
   { route: 'component-tutorial', label: 'Component: Tutorial', hint: 'heavily-commented walkthrough: SubCanvas, GSAP, InfiniteCanvas, EventBus, Registry', glyph: '\u2753', accent: '#4a6a6a' },
   { route: 'component-tutorial-ic-br', label: 'Component: Tutorial IC BR', hint: 'tutorial copy with InfiniteCanvas at bottom-right', glyph: '\u2198', accent: '#4a6a6a' },
   { route: 'component-tutorial-gsap-ic', label: 'Component: Tutorial GSAP+IC', hint: 'tutorial variant: full-demo IC, GSAP buttons animate pan/zoom', glyph: '\u25C7', accent: '#4a6a8a' },
+  { route: 'component-ic-chunks', label: 'Component: IC Chunks', hint: 'InfiniteCanvas — define per-chunk content (colors/shapes/labels)', glyph: '\u25F0', accent: '#3a6a5a' },
   { route: 'component-typing-effect', label: 'Component: Typing Effect', hint: 'typewriter text animation', glyph: '\u270D', accent: '#4a6a4a' },
   { route: 'component-waves', label: 'Component: Waves', hint: 'interactive waveform visualization', glyph: '\u2248', accent: '#3a6a8a' },
+  { route: 'component-demo', label: 'Component: Demo', hint: 'draggable SubCanvas + colored blocks + text + click tint', glyph: '\u25A3', accent: '#4a3a8a' },
+  { route: 'component-demo-anywhere', label: 'Component: Demo Anywhere', hint: 'same but dragMode=anywhere — click colored blocks to also drag', glyph: '\u25A3', accent: '#3a6a8a' },
 ];
 
 function accentToText(hex: string): string {

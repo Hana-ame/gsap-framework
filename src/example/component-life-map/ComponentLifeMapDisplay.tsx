@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeStepper, type SubCanvas, type SubPointerEvent, type Stepper } from '../../framework';
+import { startPixiApp, makeButton, makeStepper, type SubCanvas, type SubPointerEvent, type Stepper } from '@framework';
 
 type Grid = Uint8Array;
 

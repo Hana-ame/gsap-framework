@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework/PixiApp';
-import type { SubCanvas, SubPointerEvent } from '../../framework/SubCanvas';
+import { startPixiApp } from '@framework/PixiApp';
+import type { SubCanvas, SubPointerEvent } from '@framework/SubCanvas';
 
 const TILE_SIZE = 256;
 const CELLS_PER_TILE = 16;

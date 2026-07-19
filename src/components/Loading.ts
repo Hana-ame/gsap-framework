@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas } from '../framework/SubCanvas';
+import { SubCanvas } from '@framework/SubCanvas';
 import { gsap } from 'gsap';
-import type { ComponentHandle } from '../framework/component';
+import type { ComponentHandle } from '@framework/component';
 
 export interface LoadingOptions {
   text?: string;

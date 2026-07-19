@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment } from '@framework';
 import { gsap } from 'gsap';
 
 const DEMO_TEXTS = [

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { showLoading } from '../../components';
 
 export function ComponentLoadingDisplay() {

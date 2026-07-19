@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas } from '../../framework/SubCanvas';
+import { SubCanvas } from '@framework/SubCanvas';
 import { gsap } from 'gsap';
 
 export function mountDisplays(sc: SubCanvas): () => void {

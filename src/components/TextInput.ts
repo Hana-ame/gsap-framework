@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { gsap } from 'gsap';
-import { textPresets } from '../framework';
+import { textPresets } from '@framework';
 
 export interface TextInputOptions {
   x: number;

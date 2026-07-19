@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel, type SubCanvasProxy } from '@framework';
 import { createTextInput, type TextInputHandle } from '../../components/TextInput';
 
 export function ComponentTextInputDisplay() {

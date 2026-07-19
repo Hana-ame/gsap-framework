@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeStepper, makeInfoPanel, textPresets, type SubCanvasProxy, type Stepper } from '../../framework';
+import { startPixiApp, makeButton, makeStepper, makeInfoPanel, textPresets, type SubCanvasProxy, type Stepper } from '@framework';
 
 export function ComponentUiHelpersDisplay() {
   const steppersRef = useRef<Stepper[]>([]);
@@ -129,7 +129,7 @@ export function ComponentUiHelpersDisplay() {
 
       const code = new PIXI.Text({
         text: [
-          'import { makeButton, makeStepper, textPresets } from \'../../framework\';',
+          "import { makeButton, makeStepper } from '@framework';",
           '',
           'const btn = makeButton(label, w, h, onClick, bgColor?);',
           'const stepper = makeStepper({ label, getValue, onChange, min, max });',

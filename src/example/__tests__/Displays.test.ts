@@ -67,7 +67,7 @@ vi.mock('pixi.js', async () => {
 });
 
 import { mountDisplays } from '../_shared/Displays';
-import type { SubCanvas } from '../../framework/SubCanvas';
+import type { SubCanvas } from '@framework/SubCanvas';
 
 function mockSubCanvas(): SubCanvas {
   return {

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createScrollable, type Scrollable } from '../../components';
 
 function fillVertical(sc: SubCanvas) {

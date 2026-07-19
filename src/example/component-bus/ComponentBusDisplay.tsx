@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, EventBus, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, EventBus, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createWindow, type GameWindow } from '../../components';
 
 type BusPayload = { from: string; text: string; n: number };

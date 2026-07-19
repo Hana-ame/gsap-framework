@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '@framework';
 
 export function ComponentClockDisplay() {
   useEffect(() => {

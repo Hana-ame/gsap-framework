@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as PIXI from 'pixi.js';
-import { InfiniteCanvas, type InfiniteCanvasPlugin } from '../InfiniteCanvas';
+import { InfiniteCanvas } from '../InfiniteCanvas';
+import type { InfiniteCanvasPlugin } from '../InfiniteCanvasTypes';
 
 function makeMockParent() {
   const stage = new PIXI.Container();

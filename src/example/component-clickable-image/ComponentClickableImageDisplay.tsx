@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createClickableImage, createFullscreenManager, type ClickableImage } from '../../components';
 
 const IMAGES = [

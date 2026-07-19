@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework';
+import { startPixiApp } from '@framework';
 import { createConfirm, showLoading } from '../../components';
 import type { PixiConfirm } from '../../components';
 

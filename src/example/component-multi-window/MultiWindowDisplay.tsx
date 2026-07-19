@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy, type Component } from '../../framework';
+import { startPixiApp, createComponent, makeButton, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy, type Component } from '@framework';
 
 const COLORS = [
   0x4488ff, 0xff4488, 0x44ff88, 0xff8844, 0x8844ff,

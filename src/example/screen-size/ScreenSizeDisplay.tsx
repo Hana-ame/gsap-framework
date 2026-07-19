@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework';
+import { startPixiApp } from '@framework';
 
 interface Snapshot {
   innerW: number;

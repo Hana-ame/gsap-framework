@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas, type SubDragMode } from '../framework/SubCanvas';
+import { SubCanvas, type SubDragMode } from '@framework/SubCanvas';
 
 const TITLE_BAR_H = 22;
 const CLOSE_BTN_R = 5;

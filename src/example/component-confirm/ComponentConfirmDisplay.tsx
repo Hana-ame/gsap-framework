@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createConfirm, type PixiConfirm, type PixiConfirmOptions } from '../../components';
 
 export function ComponentConfirmDisplay() {

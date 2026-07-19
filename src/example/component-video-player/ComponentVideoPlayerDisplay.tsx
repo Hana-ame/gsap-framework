@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
 import { createVideoPlayer, createScrollable } from '../../components';
 import type { PixiVideoPlayerHandle, Scrollable } from '../../components';
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
 import { Avd, type AvdLine, type AvdState, type AvdOptions, type AvdTextSegment } from '../../components';
 
 const CONTROL_H = 80;

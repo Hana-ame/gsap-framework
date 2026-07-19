@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createWindow, type GameWindow } from '../../components';
 import { mountDisplays } from '../_shared/Displays';
 

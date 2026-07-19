@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { Rect, SubCanvas, SubPointerType } from './SubCanvas';
+import type { Rect, SubPointerType } from './SubCanvasTypes';
+import { SubCanvas } from './SubCanvas';
 import { EventBus } from './EventBus';
 import { enablePerfMeasure, disablePerfMeasure } from './perf';
 

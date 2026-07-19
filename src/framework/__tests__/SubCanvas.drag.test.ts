@@ -8,16 +8,16 @@ function mockApp(stage?: PIXI.Container) {
 
 describe('SubCanvas drag behavior', () => {
   describe('dragMode anywhere', () => {
-    it('creates drag background container on construction', () => {
+    it('does not create _bg (drag handled via handlePointer instead)', () => {
       const app = mockApp();
       const parent = new SubCanvas({ rootApp: app, bounds: { x: 0, y: 0, width: 800, height: 600 } });
-      vi.spyOn(parent.stage, 'addChild');
       const child = parent.createRegion(
         { x: 100, y: 100, width: 300, height: 200 },
         { dragMode: 'anywhere' },
       );
       const bg = child.stage.children.find((c) => (c as PIXI.Container).label === 'subcanvas-drag-handle');
-      expect(bg).toBeDefined();
+      expect(bg).toBeUndefined();
+      expect((child as any)._dragMode).toBe('anywhere');
     });
   });
 

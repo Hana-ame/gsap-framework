@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { SubCanvas } from '../framework/SubCanvas';
+import { SubCanvas } from '@framework/SubCanvas';
 import { createLoadingImage, type PixiImageHandle } from './PixiImage';
 
 const TITLE_BAR_H = 22;

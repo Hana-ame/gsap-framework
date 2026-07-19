@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { textPresets } from '../framework';
+import { textPresets } from '@framework';
 import { MockBackend } from './MockBackend';
 import {
   type BackendCommand,
@@ -7,7 +7,7 @@ import {
   type WindowSpec,
 } from './types';
 import { createWindow, type GameWindow } from '../components';
-import type { SubCanvas } from '../framework/SubCanvas';
+import type { SubCanvas } from '@framework/SubCanvas';
 import { mountDisplays } from '../example/_shared/Displays';
 
 interface ManagedWindow {

@@ -1,79 +1,15 @@
 import * as PIXI from 'pixi.js';
+import type { Rect, SubPointerType, SubPointerEvent, SubCanvasOptions, SubDragMode, DragHandlers } from './SubCanvasTypes';
+import { installDragOnHandle } from './SubCanvasDrag';
 
-/* ===================================================
- * SubCanvas －画布分区系统
- *
- * 每个 SubCanvas 对应一块矩形区域，有独立的：
- *   - PIXI.Container（stage）— 内容挂载点
- *   - 事件路由（pointerdown/move/up/tap）
- *   - 拖拽行为（标题栏 / 任意位置 / 禁用）
- *   - 生命周期（创建 / resize / destroy）
- *
- * 类比 DOM 的 <div>，但在 Canvas 上实现。
- * 支持递归嵌套，事件自动路由到正确的 region 内，
- * 坐标已转换成 region-local，不需手算 getLocalPosition。
- * =================================================== */
-
-/* ---- 基础类型定义 ---- */
-
-/** 矩形区域 */
-export interface Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-/** 框架内统一的 pointer 事件类型（5 种） */
-export type SubPointerType = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerleave' | 'tap';
-
-/**
- * 框架内统一的 pointer 事件对象。
- * `x/y` 是 region-local 坐标，`globalX/globalY` 是 client 坐标。
- */
-export interface SubPointerEvent {
-  type: SubPointerType;
-  x: number;
-  y: number;
-  globalX: number;
-  globalY: number;
-  originalEvent: PointerEvent;
-}
+export type { Rect, SubPointerType, SubPointerEvent, SubCanvasOptions, SubDragMode } from './SubCanvasTypes';
 
 type Listener = (e: SubPointerEvent) => void;
-
-/** 拖拽模式：标题栏 / 任意位置 / 禁用 */
-export type SubDragMode = 'title' | 'anywhere' | 'none';
-
-/** SubCanvas 构造选项 */
-export interface SubCanvasOptions {
-  rootApp: PIXI.Application;
-  bounds: Rect;
-  parent?: SubCanvas | null;
-  clipToBounds?: boolean;
-  dragMode?: SubDragMode;
-  dragBounds?: () => Rect | null;
-  dragBringToFront?: boolean;
-  tapThreshold?: number;
-  onDragStart?: (e: { x: number; y: number }) => void;
-  onDrag?: (e: { x: number; y: number }) => void;
-  onDragEnd?: (e: { x: number; y: number }) => void;
-  onDestroy?: () => void;
-}
 
 /* ---- 拖拽系统 ---- */
 
 /** 用于标记可拖拽的 Container（标题栏），避免事件冲突 */
 const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
-
-/** 拖拽回调集。由 dragMode 决定安装方式 */
-type DragHandlers = {
-  onStart?: (p: { x: number; y: number }) => void;
-  onDrag?: (p: { x: number; y: number }) => void;
-  onEnd?: (p: { x: number; y: number }) => void;
-  getBounds?: () => Rect | null;
-  bringToFront: boolean;
-};
 
 /* ===================================================
  * SubCanvas 类
@@ -98,16 +34,25 @@ export class SubCanvas {
   private _syncing = false;
   /** clipToBounds 遮罩 Graphics */
   private _mask: PIXI.Graphics | null = null;
-  /** 拦截事件用的透明容器（dragMode === 'anywhere' 时创建） */
+  /** （已废弃，dragMode=anywhere 不再创建 _bg，改用 handlePointer 拖拽） */
   private _bg: PIXI.Container | null = null;
+  /** handlePointer 拖拽用的起始坐标 */
+  private _dragLocalStart: { x: number; y: number } | null = null;
+  /** window 级拖拽事件绑定，防鼠标移出 canvas 后粘手 */
+  private _onWindowMove: ((e: PointerEvent) => void) | null = null;
+  private _onWindowUp: ((e: PointerEvent) => void) | null = null;
   /** 已安装拖拽的 handle 容器 */
   private _dragHandles: WeakSet<PIXI.Container> = new WeakSet();
   /** dragMode 回调集 */
   private _dragHandlers: DragHandlers | null = null;
+  /** 拖拽模式，用于 handlePointer 判断 */
+  private _dragMode: SubDragMode | null = null;
   /** 每个 handle 的清理函数索引（用于 removeChild 时解绑事件） */
   private _perHandleCleanups: Map<PIXI.Container, () => void> = new Map();
   /** 判定 tap 的移动阈值（px） */
   private _tapThreshold: number;
+  /** 正在被拖拽（用于事件捕获，防止同级收到 move/up） */
+  private _isDragging = false;
   /** pointerdown 的起始位置，用于区分 tap 和 drag */
   private _pressStart: { x: number; y: number; clientX: number; clientY: number } | null = null;
   private _pressMoved = false;
@@ -132,6 +77,9 @@ export class SubCanvas {
       this.updateMask();
     }
 
+    /* eventMode = 'static' 让 PIXI 事件系统能穿透到子对象（_bg、按钮等） */
+    this.stage.eventMode = 'static';
+
     /* 挂到父级 stage 或 rootApp.stage */
     if (this.parent) {
       this.parent.stage.addChild(this.stage);
@@ -141,6 +89,7 @@ export class SubCanvas {
 
     /* 初始化拖拽系统 */
     if (opts.dragMode && opts.dragMode !== 'none') {
+      this._dragMode = opts.dragMode;
       this._dragHandlers = {
         onStart: opts.onDragStart,
         onDrag: opts.onDrag,
@@ -148,10 +97,8 @@ export class SubCanvas {
         getBounds: opts.dragBounds,
         bringToFront: opts.dragBringToFront !== false,
       };
-      /* dragMode === 'anywhere' 时创建一个透明层拦截全区域事件 */
-      if (opts.dragMode === 'anywhere') {
-        this._ensureDragBg();
-      }
+      /* dragMode === 'anywhere'：不创建 _bg，由 handlePointer 直接处理拖拽 */
+      /* dragMode === 'title'：只拖 labeled handle（标题栏等），由 installDragOnHandle 走 PIXI 事件 */
       /* 已有的 handle 容器（如已完成 addChild 的标题栏）也要安装拖拽 */
       for (const child of this.stage.children) {
         if (child.label === DRAG_HANDLE_LABEL && !this._dragHandles.has(child)) {
@@ -465,91 +412,17 @@ export class SubCanvas {
 
   private _installDragOnHandle(handle: PIXI.Container): void {
     if (!this._dragHandlers) return;
-    const handlers = this._dragHandlers;
-    const root = this.rootApp.stage;
-    let dragging = false;
-    let startLocalX = 0;
-    let startLocalY = 0;
-    let startBoundsX = 0;
-    let startBoundsY = 0;
-
-    /**
-     * 核心拖拽计算：
-     * 用 clientX/Y 做相对位移（不受 PIXI 坐标变换影响），
-     * 叠加到 startBounds 得到新位置，再根据 dragBounds 约束 clamp。
-     */
-    const applyDrag = (clientX: number, clientY: number) => {
-      const local = { x: clientX, y: clientY };
-      let nx = startBoundsX + (local.x - startLocalX);
-      let ny = startBoundsY + (local.y - startLocalY);
-      const constraint = handlers.getBounds?.() ?? this.parent?.bounds ?? null;
-      if (constraint) {
-        nx = Math.max(0, Math.min(nx, constraint.width - this._bounds.width));
-        ny = Math.max(0, Math.min(ny, constraint.height - this._bounds.height));
-      }
-      this.setPosition(nx, ny);
-      handlers.onDrag?.({ x: nx, y: ny });
-    };
-
-    const onDown = (e: PIXI.FederatedPointerEvent) => {
-      e.stopPropagation();
-      const parent = this.stage.parent;
-      if (!parent) return;
-      const local = e.getLocalPosition(parent);
-      dragging = true;
-      startLocalX = local.x;
-      startLocalY = local.y;
-      startBoundsX = this._bounds.x;
-      startBoundsY = this._bounds.y;
-      if (handlers.bringToFront) this.bringToFront();
-      /* 安装 window-level 事件——关键：鼠标移出 canvas 仍能接收 move */
-      window.addEventListener('pointermove', onWindowMove);
-      window.addEventListener('pointerup', onWindowUp);
-      window.addEventListener('pointercancel', onWindowUp);
-      handlers.onStart?.({ x: this._bounds.x, y: this._bounds.y });
-    };
-
-    const onWindowMove = (e: PointerEvent) => {
-      if (!dragging) return;
-      applyDrag(e.clientX, e.clientY);
-    };
-
-    const onWindowUp = () => {
-      if (!dragging) return;
-      dragging = false;
-      window.removeEventListener('pointermove', onWindowMove);
-      window.removeEventListener('pointerup', onWindowUp);
-      window.removeEventListener('pointercancel', onWindowUp);
-      handlers.onEnd?.({ x: this._bounds.x, y: this._bounds.y });
-    };
-
-    const onPxiMove = (e: PIXI.FederatedPointerEvent) => {
-      if (!dragging) return;
-      const parent = this.stage.parent;
-      if (!parent) return;
-      const local = e.getLocalPosition(parent);
-      applyDrag(local.x, local.y);
-    };
-
-    const onPxiUp = () => {
-      if (!dragging) return;
-      onWindowUp();
-    };
-
-    handle.on('pointerdown', onDown);
-    root.on('pointermove', onPxiMove);
-    root.on('pointerup', onPxiUp);
-    root.on('pointerupoutside', onPxiUp);
-
-    this._perHandleCleanups.set(handle, () => {
-      handle.off('pointerdown', onDown);
-      root.off('pointermove', onPxiMove);
-      root.off('pointerup', onPxiUp);
-      root.off('pointerupoutside', onPxiUp);
-      window.removeEventListener('pointermove', onWindowMove);
-      window.removeEventListener('pointerup', onWindowUp);
-      window.removeEventListener('pointercancel', onWindowUp);
+    const cleanup = installDragOnHandle(handle, this._dragHandlers, {
+      getBounds: () => this._bounds,
+      parentBounds: () => this.parent?.bounds ?? null,
+      setPosition: (x, y) => this.setPosition(x, y),
+      bringToFront: () => this.bringToFront(),
+      rootStage: this.rootApp.stage,
+      stage: this.stage,
+      onDragActive: () => { this._isDragging = true; },
+      onDragInactive: () => { this._isDragging = false; },
     });
+    this._perHandleCleanups.set(handle, cleanup);
   }
 
   private _uninstallDragOnHandle(handle: PIXI.Container): void {
@@ -558,6 +431,57 @@ export class SubCanvas {
       cleanup();
       this._perHandleCleanups.delete(handle);
     }
+  }
+
+  /* ---- dragMode=anywhere 辅助（handlePointer + window fallback） ---- */
+
+  private _installWindowDragFallback(): void {
+    this._uninstallWindowDragFallback();
+    this._onWindowMove = (e: PointerEvent) => {
+      if (!this._isDragging || !this._dragLocalStart) return;
+      this._applyAnywhereDrag(e.clientX, e.clientY);
+    };
+    this._onWindowUp = () => { this._endAnywhereDrag(); };
+    window.addEventListener('pointermove', this._onWindowMove);
+    window.addEventListener('pointerup', this._onWindowUp);
+  }
+
+  private _uninstallWindowDragFallback(): void {
+    if (this._onWindowMove) { window.removeEventListener('pointermove', this._onWindowMove); this._onWindowMove = null; }
+    if (this._onWindowUp) { window.removeEventListener('pointerup', this._onWindowUp); this._onWindowUp = null; }
+  }
+
+  private _applyAnywhereDrag(clientX: number, clientY: number): void {
+    if (!this._dragLocalStart) return;
+    const dx = clientX - this._dragLocalStart.x;
+    const dy = clientY - this._dragLocalStart.y;
+    if (!this._isDragging && dx * dx + dy * dy >= this._tapThreshold * this._tapThreshold) {
+      this._isDragging = true;
+      if (this._dragHandlers?.bringToFront) this.bringToFront();
+      this._dragHandlers?.onStart?.({ x: this._bounds.x, y: this._bounds.y });
+    }
+    if (!this._isDragging) return;
+    let nx = this._bounds.x + dx;
+    let ny = this._bounds.y + dy;
+    const pb = this.parent?.bounds ?? null;
+    if (pb) {
+      nx = Math.max(0, Math.min(nx, pb.width - this._bounds.width));
+      ny = Math.max(0, Math.min(ny, pb.height - this._bounds.height));
+    }
+    this.setPosition(nx, ny);
+    this._dragHandlers?.onDrag?.({ x: nx, y: ny });
+    this._dragLocalStart = { x: clientX, y: clientY };
+  }
+
+  private _endAnywhereDrag(): void {
+    if (this._isDragging) {
+      this._dragHandlers?.onEnd?.({ x: this._bounds.x, y: this._bounds.y });
+      this._pressStart = null;
+      this._pressMoved = false;
+    }
+    this._uninstallWindowDragFallback();
+    this._dragLocalStart = null;
+    this._isDragging = false;
   }
 
   /* ---- 子 region 创建 ---- */
@@ -642,6 +566,26 @@ export class SubCanvas {
     if (gx < gb.x || gx > gb.x + gb.width) return false;
     if (gy < gb.y || gy > gb.y + gb.height) return false;
 
+    /* ------ dragMode=anywhere: 在 handlePointer 里直接管理拖拽（不依赖 PIXI EventSystem） ------ */
+    /* 必须在 _isDragging 吞噬之前执行，否则后续 move/up 会被提前拦截 */
+    if (this._dragMode === 'anywhere') {
+      if (type === 'pointerdown') {
+        this._dragLocalStart = { x: gx, y: gy };
+        this._isDragging = false;
+        this._installWindowDragFallback();
+      } else if (this._dragLocalStart && type === 'pointermove') {
+        this._applyAnywhereDrag(gx, gy);
+        if (this._isDragging) return true;
+      } else if (this._dragLocalStart && (type === 'pointerup' || type === 'pointerleave')) {
+        this._endAnywhereDrag();
+      }
+    }
+
+    /* 拖拽期间吞噬 move/up 事件，防止同级收到（如窗口拖拽时 IC 也跟着平移） */
+    if (this._isDragging && (type === 'pointermove' || type === 'pointerup' || type === 'pointerleave')) {
+      return true;
+    }
+
     /* 按 z-order 倒序下传子 region（视觉顶层的先得到事件） */
     for (let i = this._subRegions.length - 1; i >= 0; i--) {
       if (this._subRegions[i].handlePointer(type, e)) return true;
@@ -708,6 +652,7 @@ export class SubCanvas {
   destroy(): void {
     if (this._destroyed) return;
     this._destroyed = true;
+    this._isDragging = false;
     /* 先清理拖拽事件（window-level 事件必须主动 remove） */
     for (const cleanup of this._perHandleCleanups.values()) cleanup();
     this._perHandleCleanups.clear();

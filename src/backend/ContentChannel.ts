@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { MockBackend } from './MockBackend';
-import type { SubCanvas } from '../framework/SubCanvas';
+import type { SubCanvas } from '@framework/SubCanvas';
 
 export interface ChannelMessage {
   windowId: string;

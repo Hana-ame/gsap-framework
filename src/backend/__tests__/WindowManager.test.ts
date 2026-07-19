@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MockBackend } from '../MockBackend';
 import { WindowManager } from '../WindowManager';
-import { SubCanvas } from '../../framework/SubCanvas';
+import { SubCanvas } from '@framework/SubCanvas';
 
 let mockDestroyed = false;
 

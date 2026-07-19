@@ -40,6 +40,7 @@ import { ComponentMinesweeperDisplay } from './component-minesweeper/ComponentMi
 import { ComponentStarfieldDisplay } from './component-starfield/ComponentStarfieldDisplay';
 import { ComponentClockDisplay } from './component-clock/ComponentClockDisplay';
 import { ComponentBreakoutDisplay } from './component-breakout/ComponentBreakoutDisplay';
+
 import { ComponentTypingEffectDisplay } from './component-typing-effect/ComponentTypingEffectDisplay';
 import { ComponentTetrisDisplay } from './component-tetris/ComponentTetrisDisplay';
 import { ComponentWavesDisplay } from './component-waves/ComponentWavesDisplay';
@@ -49,6 +50,9 @@ import { ComponentTextInputDisplay } from './component-text-input/ComponentTextI
 import { ComponentLayersDisplay } from './component-layers/ComponentLayersDisplay';
 import { ComponentTutorialIcBrDisplay } from './component-tutorial-ic-br/ComponentTutorialIcBrDisplay';
 import { ComponentTutorialGsapIcDisplay } from './component-tutorial-gsap-ic/ComponentTutorialGsapIcDisplay';
+import { ComponentIcChunksDisplay } from './component-ic-chunks/ComponentIcChunksDisplay';
+import { ComponentDemoDisplay } from './component-demo/ComponentDemoDisplay';
+import { ComponentDemoAnywhereDisplay } from './component-demo-anywhere/ComponentDemoAnywhereDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -101,6 +105,9 @@ export const EXAMPLES = [
   'component-layers',
   'component-tutorial-ic-br',
   'component-tutorial-gsap-ic',
+  'component-ic-chunks',
+  'component-demo',
+  'component-demo-anywhere',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -159,4 +166,7 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-layers': ComponentLayersDisplay,
   'component-tutorial-ic-br': ComponentTutorialIcBrDisplay,
   'component-tutorial-gsap-ic': ComponentTutorialGsapIcDisplay,
+  'component-ic-chunks': ComponentIcChunksDisplay,
+  'component-demo': ComponentDemoDisplay,
+  'component-demo-anywhere': ComponentDemoAnywhereDisplay,
 };

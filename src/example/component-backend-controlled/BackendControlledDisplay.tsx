@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { MockBackend, WindowManager, ContentChannel } from '../../backend';
 
 const DEMO_LINES = [

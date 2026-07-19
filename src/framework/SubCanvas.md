@@ -69,6 +69,8 @@ new SubCanvas({
 ```
 不要直接 `new SubCanvas` — 必须通过 `SubCanvasProxy.createRegion` 或 `SubCanvas.createRegion` 创建。
 
+构造后 `this.stage.eventMode` 自动设为 `'static'`（非 `'none'`），确保 PIXI 事件系统能穿透 stage 到达子对象（按钮、drag handle 等）。
+
 ### 只读属性
 | 属性 | 类型 | 说明 |
 |---|---|---|
@@ -165,9 +167,26 @@ createRegion(bounds, {
 })
 ```
 
-**实现**：在 `SubCanvas` 构造函数中初始化 drag handlers。扫描 `stage.children` 中 label=`'subcanvas-drag-handle'` 的 child → 在其上安装 `pointerdown` → 按 `dragMode`：`'title'` 只响应 handle child 上的按下；`'anywhere'` 自动添加全透明 bg child（label='subcanvas-drag-handle'，zIndex=-1）使整个表面可拖。
+**实现**：在 `SubCanvas` 构造函数中初始化 drag handlers。扫描 `stage.children` 中 label=`'subcanvas-drag-handle'` 的 child → 在其上安装 `pointerdown` → 按 `dragMode`：
+- `'title'`：只响应 handle child 上的按下（PIXI 原生事件）
+- `'anywhere'`：由 `handlePointer` 直接处理，走 AABB 命中检测（见下方 "anywhere 实现"）
 
 **拖动事件流**：`handle.on('pointerdown')` 启动 → 挂 `window.addEventListener('pointermove'/'pointerup')`（DOM 级事件，无视 PIXI hit-test 边界问题）+ `app.stage.on('pointermove'/'pointerup')`（PIXI 级，handle 同 frame 事件）。位置取 `e.clientX/Y`（canvas 全屏，client=canvas 坐标）。
+
+**`dragMode='anywhere'` 实现**（2026-07-20 重写）：
+
+**背景**：原先依赖 PIXI EventSystem 做命中检测（`_bg` 容器 + `eventMode = 'static'` + `hitArea`）。但 PIXI v8 的 hit-test 算法会跳过 `eventMode = 'none'` 的容器及其子树，而 SubCanvas 的 `stage`（`PIXI.Container`）默认 `eventMode = undefined`（PIXI 视作 `'none'`），导致 `_bg` 永远无法被命中，`anywhere` 拖拽完全失效。
+
+**新实现**：
+- 不再创建 `_bg` 透明容器，不依赖 PIXI EventSystem
+- 拖拽逻辑在 `SubCanvas.handlePointer` 内，复用框架已有的 AABB 事件路由（`proxy.routePointer` → `SubCanvas.handlePointer` → AABB hit-test），这套路由不依赖 PIXI 的 `eventMode`
+- 流程：`pointerdown` 记录起始坐标 → `pointermove` 超过 `tapThreshold`（默认 4px）后启动拖拽 → `_applyAnywhereDrag(clientX, clientY)` 逐帧 `setPosition` → `pointerup/leave` 调用 `_endAnywhereDrag()` 结束
+- 拖拽启动时通过 `_installWindowDragFallback()` 挂 `window.addEventListener('pointermove'/'pointerup')` 作为跨 canvas 边界 fallback；结束自动解绑
+
+**粘手 bug 修复**：重写后拖拽走 `proxy.routePointer`，但 PixiApp 的 `makePointerHandler` 中有 `e.target !== proxy.canvas` 过滤鼠标事件。快速移出 canvas 后 `pointerup` 的 `target` 不再是 canvas → 被过滤 → 收不到 up → `_isDragging` 永不重置 → 粘手。修复：拖拽启动时挂 window 级 `pointermove/up` 事件（DOM 级事件不检查 `e.target`），`_endAnywhereDrag()` 中自动解绑。
+
+**边界情况**：
+- 拖拽结束后清除 `_pressStart`，防止 tap 检测误触发
 
 **constraint clamp**：每帧在 `dragBounds` 内 clamp `setPosition`，保证窗口不被拖出父级。
 

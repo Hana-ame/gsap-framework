@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { gsap } from 'gsap';
 
 export function ComponentGsapDisplay() {

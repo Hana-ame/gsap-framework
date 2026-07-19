@@ -25,7 +25,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": false,
-    "noUncheckedSideEffectImports": false
+    "noUncheckedSideEffectImports": false,
+    "paths": {
+      "@framework": ["./src/framework/index.ts"],
+      "@framework/*": ["./src/framework/*"]
+    }
   },
   "include": ["src"]
 }

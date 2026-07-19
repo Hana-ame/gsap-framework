@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createLoadingImage, type PixiImageHandle } from '../../components';
 
 interface Slot {

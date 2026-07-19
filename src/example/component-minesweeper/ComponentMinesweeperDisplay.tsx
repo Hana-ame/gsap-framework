@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '@framework';
 
 const ROWS = 12;
 const COLS = 12;

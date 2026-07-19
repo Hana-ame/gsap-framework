@@ -80,7 +80,7 @@ vi.mock('pixi.js', async () => {
 
 import * as PIXI from 'pixi.js';
 import { gsap } from 'gsap';
-import { EventBus } from '../../framework/EventBus';
+import { EventBus } from '@framework/EventBus';
 import { createFullscreenManager } from '../FullscreenManager';
 
 describe('createFullscreenManager', () => {

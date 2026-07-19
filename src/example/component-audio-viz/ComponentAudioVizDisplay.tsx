@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
 
 const BAR_COUNT = 64;
 const BAR_WIDTH = 6;

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, createComponent, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 
 const css = `
 .cr-hint {

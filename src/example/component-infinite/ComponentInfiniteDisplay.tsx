@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, InfiniteCanvas, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
-import type { Chunk } from '../../framework';
+import { startPixiApp, InfiniteCanvas, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import type { Chunk } from '@framework';
 
 const COLORS = [0x1a2a3a, 0x2a1a3a, 0x1a3a2a, 0x3a2a1a, 0x3a1a2a, 0x2a3a1a];
 

@@ -116,6 +116,8 @@ region.eventMode; region.label;
 
 Drag handlers are installed on **window-level** `pointermove`/`pointerup` for reliability (events fire even when pointer leaves the canvas). Bounds clamping and `bringToFront` on drag start are built in.
 
+During a drag, subsequent `pointermove`/`pointerup`/`pointerleave` are **consumed** by the dragging SubCanvas — sibling regions (e.g. an InfiniteCanvas behind a window) won't receive them. This prevents the "drag penetration" problem where dragging a window also pans the canvas beneath.
+
 ### Drag callbacks
 
 ```ts
@@ -747,6 +749,17 @@ Export from `src/components/index.ts` and optionally register via `registerCompo
 
 ## 经验教训与收获
 
+## Text Effects — `text()`
+
+一行创建文字动效：
+
+```ts
+import { text } from './framework';
+text(canvas.stage, 'Hello World', 'typewriter');
+```
+
+支持 7 种动效：`typewriter` / `fadeInChars` / `fadeIn` / `slideIn` / `scaleBounce` / `charRain` / `scramble`。详见 [`SPEC.md`](SPEC.md#text-effects--text-一行动效)。
+
 架构决策记录在 [`src/LEARNINGS.md`](src/LEARNINGS.md)。
 
 | 来源 | 提炼模式 |
@@ -758,6 +771,15 @@ Export from `src/components/index.ts` and optionally register via `registerCompo
 | InfiniteCanvas 拖拽响应 | 50ms 时间窗口算速度代替最后两帧采样 |
 | InfiniteCanvas chunk sync | 缓存 chunk 范围，拖动时 O(n) → O(1) |
 | SubCanvas `clipToBounds` mask | PixiJS v8 的 stencil mask 用 `getGlobalBounds(mask)` 定位，mask Graphics **必须**是 stage 的子对象（`stage.addChild(mask)`），否则无父级变换，`getGlobalBounds` 始终返回 `(0,0)`，导致裁剪区域偏移 `(bounds.x, bounds.y)` |
+
+## Known Issues
+
+### Layer violations
+
+| Issue | Details |
+|-------|---------|
+| `framework/register-components.ts` imports from `components/` | `index.ts` has `import './register-components'` (side-effect). Anyone doing `import { x } from '@framework'` transitively loads `components/PixiWindow/PixiConfirm/Scrollable`. If any of those components ever use the `@framework` barrel instead of sub-path imports, a hard runtime circular dependency forms. |
+| `backend/WindowManager.ts` imports from `components/` and `example/` | Backend layer (`src/backend/`) depends on `createWindow` from `components/` and `mountDisplays` from `example/`. Production code should not depend on demo code. |
 
 ## Deploy
 

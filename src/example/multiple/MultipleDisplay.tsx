@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel } from '../../framework';
+import { startPixiApp, makeInfoPanel } from '@framework';
 import { mountDisplays } from '../_shared/Displays';
 
 export function MultipleDisplay() {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
 
 type Grid = Uint8Array;
 

@@ -9,7 +9,7 @@ import {
   makeButton,
   type SubCanvasProxy,
   type Chunk,
-} from '../../framework';
+} from '@framework';
 
 // ============================================================
 //  ████████ 教程：从零搭建 GSAP Framework

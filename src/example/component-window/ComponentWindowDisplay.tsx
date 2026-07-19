@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
 import { createWindow, type GameWindow, type GameWindowOptions } from '../../components';
 
 type WinKey = 'A' | 'B' | 'C';

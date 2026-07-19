@@ -400,9 +400,10 @@ container.hitArea = new PIXI.Rectangle(0, 0, width, height);
 proxy.showPerfMeasure(true);   // 显示
 proxy.showPerfMeasure(false);  // 隐藏
 
-// 独立使用
-const perf = new PerfDisplay(ticker, () => stage, { x, y, fontSize, color });
-perf.enable();
+// 独立使用（不依赖 proxy）
+import { enablePerfMeasure, disablePerfMeasure } from '../framework';
+enablePerfMeasure();
+disablePerfMeasure();
 ```
 
 ### Metrics
@@ -416,7 +417,7 @@ perf.enable();
 
 ### Integration
 
-`startPixiApp` 自动创建 `PerfDisplay`，传入 `SubCanvasProxy` 的 `perfDisplay` 属性。`showPerfMeasure()` 调用 `PerfDisplay.enable/disable` 控制添加到 `app.stage`。
+`startPixiApp` 自动创建 `PerfDisplay`，`SubCanvasProxy.showPerfMeasure()` 通过 `enablePerfMeasure/disablePerfMeasure` 控制添加到 `app.stage`。
 
 ---
 

@@ -9,7 +9,7 @@ import {
   makeButton,
   type SubCanvasProxy,
   type Chunk,
-} from '../../framework';
+} from '@framework';
 
 export function ComponentTutorialGsapIcDisplay() {
   useEffect(() => {

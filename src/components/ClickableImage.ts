@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { textPresets, type SubCanvas, type SubPointerEvent, type EventBus } from '../framework';
+import { textPresets, type SubCanvas, type SubPointerEvent, type EventBus } from '@framework';
 import type { FullscreenShowEvent } from './FullscreenManager';
 
 export interface ClickableImageOptions {
