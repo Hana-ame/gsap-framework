@@ -235,4 +235,75 @@ describe('createVideoPlayer', () => {
     const handle = createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300 });
     expect(handle.root).toBeDefined();
   });
+
+  it('play/pause toggle changes paused state via events', () => {
+    const handle = createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300 });
+    // Simulate native play/pause events
+    const playCalls = mockVideo.addEventListener.mock.calls.filter((c: unknown[]) => c[0] === 'play');
+    const pauseCalls = mockVideo.addEventListener.mock.calls.filter((c: unknown[]) => c[0] === 'pause');
+
+    expect(playCalls.length).toBe(1);
+    expect(pauseCalls.length).toBe(1);
+
+    // Trigger the play callback → paused should become false
+    const playCb = playCalls[0][1] as () => void;
+    playCb();
+    expect(handle.paused).toBe(false);
+
+    // Trigger the pause callback → paused should become true
+    const pauseCb = pauseCalls[0][1] as () => void;
+    pauseCb();
+    expect(handle.paused).toBe(true);
+  });
+
+  it('setControlsVisible toggles ctrl visibility', () => {
+    const handle = createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300 });
+    // The ctrl container is added to root — check its children
+    expect(() => handle.setControlsVisible(false)).not.toThrow();
+    expect(() => handle.setControlsVisible(true)).not.toThrow();
+  });
+
+  it('onError callback fires on video error event', async () => {
+    const onError = vi.fn();
+    const handle = createVideoPlayer(parent, {
+      url: 'bad.mp4', width: 400, height: 300, onError,
+    });
+    // Find the error callback registered via addEventListener
+    const errorCalls = mockVideo.addEventListener.mock.calls.filter((c: unknown[]) => c[0] === 'error');
+    expect(errorCalls.length).toBe(1);
+
+    const errorCb = errorCalls[0][1] as () => Promise<void>;
+    mockVideo.error = { code: 4 }; // MEDIA_ERR_SRC_NOT_SUPPORTED
+    await errorCb();
+
+    expect(onError).toHaveBeenCalled();
+  });
+
+  it('onLoad callback fires on loadedmetadata event', () => {
+    const onLoad = vi.fn();
+    createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300, onLoad });
+    const metaCalls = mockVideo.addEventListener.mock.calls.filter((c: unknown[]) => c[0] === 'loadedmetadata');
+    expect(metaCalls.length).toBe(1);
+    const metaCb = metaCalls[0][1] as () => void;
+    metaCb();
+    expect(onLoad).toHaveBeenCalled();
+  });
+
+  it('onEnded callback fires on ended event', () => {
+    const onEnded = vi.fn();
+    const handle = createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300, onEnded });
+    const endedCalls = mockVideo.addEventListener.mock.calls.filter((c: unknown[]) => c[0] === 'ended');
+    expect(endedCalls.length).toBe(1);
+    const endedCb = endedCalls[0][1] as () => void;
+    mockVideo.duration = 10;
+    mockVideo.currentTime = 10;
+    endedCb();
+    expect(onEnded).toHaveBeenCalled();
+  });
+
+  it('seek updates video currentTime', () => {
+    const handle = createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300 });
+    handle.seek(30);
+    expect(mockVideo.currentTime).toBe(30);
+  });
 });

@@ -10,6 +10,10 @@ function mockPixiObj(extra: Record<string, unknown> = {}): Record<string, unknow
       (this.children as unknown[]).push(child);
       return child;
     }),
+    addChildAt: vi.fn(function (this: Record<string, unknown>, child: unknown, _index: number) {
+      (this.children as unknown[]).push(child);
+      return child;
+    }),
     removeChild: vi.fn(),
     destroy: vi.fn(),
     eventMode: null,
@@ -126,5 +130,97 @@ describe('makeStepper', () => {
       (c as Record<string, unknown>).text !== undefined
     );
     expect(textChildren.length).toBeGreaterThan(0);
+  });
+
+  it('minus/plus buttons respect min/max bounds', async () => {
+    const { makeStepper } = await import('../ui-helpers');
+    // Set up with getValue returning 0 (at min)
+    let val = 0;
+    const onChange = vi.fn((v: number) => { val = v; });
+    const st = makeStepper('MinMax', () => val, onChange, 0, 3);
+    const minusBtn = st.container.children[2];
+    const plusBtn = st.container.children[3];
+
+    // At min, minus should not fire
+    const prevMinusCalls = onChange.mock.calls.length;
+    if (minusBtn && typeof (minusBtn as Record<string, unknown>).emit === 'function') {
+      ((minusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
+    }
+    // onChange not called because current (0) is not > min (0)
+    expect(onChange.mock.calls.length).toBe(prevMinusCalls);
+
+    // Use plus to reach max
+    if (plusBtn && typeof (plusBtn as Record<string, unknown>).emit === 'function') {
+      ((plusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
+      ((plusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
+      ((plusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
+    }
+    // Should have gone 0→1→2→3 (3 calls)
+    expect(onChange).toHaveBeenCalledTimes(3);
+
+    // At max (3), plus should not fire
+    const prevPlusCalls = onChange.mock.calls.length;
+    if (plusBtn && typeof (plusBtn as Record<string, unknown>).emit === 'function') {
+      ((plusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
+    }
+    expect(onChange.mock.calls.length).toBe(prevPlusCalls);
+  });
+});
+
+describe('makeInfoPanel', () => {
+  it('creates panel with title, lines, background', async () => {
+    const stageContainer = {
+      children: [] as unknown[],
+      sortableChildren: false,
+      addChild: vi.fn(function (this: Record<string, unknown>, child: unknown) {
+        (this.children as unknown[]).push(child);
+        return child;
+      }),
+      eventMode: null,
+    };
+    // Pass as SubCanvas-like (has .stage)
+    const subCanvas = { stage: stageContainer, bounds: { x: 0, y: 0, width: 800, height: 600 } };
+    const { makeInfoPanel } = await import('../ui-helpers');
+    const panel = makeInfoPanel(subCanvas as never, {
+      title: 'Info',
+      lines: ['line1', 'line2'],
+      x: 20,
+      y: 30,
+    });
+    expect(panel).toBeDefined();
+    expect(panel.eventMode).toBe('none');
+    expect(panel.zIndex).toBe(2147483647);
+    expect(stageContainer.sortableChildren).toBe(true);
+    expect(stageContainer.addChild).toHaveBeenCalledWith(panel);
+  });
+
+  it('accepts SubCanvas as parent', async () => {
+    const subCanvasStage = {
+      addChild: vi.fn(),
+      eventMode: null,
+      sortableChildren: false,
+    };
+    const subCanvas = {
+      stage: subCanvasStage,
+      bounds: { x: 0, y: 0, width: 800, height: 600 },
+    };
+    const { makeInfoPanel } = await import('../ui-helpers');
+    const panel = makeInfoPanel(subCanvas as never, {
+      title: 'Test',
+      lines: ['content'],
+    });
+    expect(subCanvasStage.addChild).toHaveBeenCalledWith(panel);
+  });
+
+  it('panel has title text child', async () => {
+    const stageContainer = { children: [], addChild: vi.fn(), sortableChildren: false, eventMode: null };
+    const subCanvas = { stage: stageContainer, bounds: { x: 0, y: 0, width: 800, height: 600 } };
+    const { makeInfoPanel } = await import('../ui-helpers');
+    const panel = makeInfoPanel(subCanvas as never, {
+      title: 'My Title',
+      lines: ['a', 'b'],
+    });
+    // panel's children: bg (graphics) + title + body = 3
+    expect(panel.children.length).toBe(3);
   });
 });

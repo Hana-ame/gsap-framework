@@ -130,7 +130,44 @@ describe('createWindow', () => {
 
   it('setTitle updates title text', () => {
     const win = createWindow({ parent: mockParent as never, title: 'Original', width: 400, height: 300 });
-    expect(() => win.setTitle('Updated')).not.toThrow();
+    win.setTitle('Updated');
+    // The title is a PIXI.Text in win.stage.children — find it and verify text
+    const texts = createdObjects.filter((o) => (o as Record<string, unknown>).text !== undefined);
+    const titleText = texts.find((t) => (t as Record<string, unknown>).text === 'Updated');
+    expect(titleText).toBeDefined();
+  });
+
+  it('setTitle on destroyed window does not throw', () => {
+    const win = createWindow({ parent: mockParent as never, title: 'Test', width: 400, height: 300 });
+    win.destroy();
+    expect(() => win.setTitle('Ignored')).not.toThrow();
+  });
+
+  it('creates content region with correct size', () => {
+    const win = createWindow({ parent: mockParent as never, title: 'Test', width: 400, height: 300 });
+    expect(win.content).toBeDefined();
+    // The content SubCanvas is created via win.createRegion (the second createRegion call)
+    // with bounds offset by TITLE_BAR_H (22px).
+    expect(win.createRegion).toHaveBeenCalledWith(
+      { x: 0, y: 22, width: 400, height: 278 },
+      { clipToBounds: true },
+    );
+  });
+
+  it('calls onClose when close button clicked', () => {
+    const onClose = vi.fn();
+    const win = createWindow({ parent: mockParent as never, title: 'Test', width: 400, height: 300, onClose });
+    // Find close button (pointerdown handler)
+    const closeBtns = createdObjects.filter((o) => (o as Record<string, unknown>).on);
+    const closeBtn = closeBtns.find((o) => (o as Record<string, unknown>).cursor === 'pointer');
+    if (closeBtn) {
+      ((closeBtn as Record<string, unknown>).on as ReturnType<typeof vi.fn>).mock.calls.forEach((call: unknown[]) => {
+        if (call[0] === 'pointerdown') {
+          (call[1] as (e: unknown) => void)({ stopPropagation: vi.fn() });
+        }
+      });
+    }
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('closable=true creates close button (pointerdown handler)', () => {

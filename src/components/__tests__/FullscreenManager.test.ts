@@ -71,21 +71,19 @@ vi.mock('pixi.js', async () => {
 });
 
 import * as PIXI from 'pixi.js';
+import { gsap } from '../../framework/gsap-pixi';
+import { EventBus } from '../../framework/EventBus';
 import { createFullscreenManager } from '../FullscreenManager';
 
-function mockEventBus() {
-  return { on: vi.fn(() => vi.fn()), emit: vi.fn(), off: vi.fn(), clear: vi.fn(), listenerCount: vi.fn() };
-}
-
 describe('createFullscreenManager', () => {
-  let proxy: { stage: PIXI.Container; bus: ReturnType<typeof mockEventBus> };
+  let proxy: { stage: PIXI.Container; bus: EventBus };
 
   beforeEach(() => {
     vi.clearAllMocks();
     createdObjects.length = 0;
     proxy = {
       stage: new PIXI.Container(),
-      bus: mockEventBus(),
+      bus: new EventBus(),
     } as never;
   });
 
@@ -97,20 +95,20 @@ describe('createFullscreenManager', () => {
 
   it('sets stage sortableChildren and adds container', () => {
     createFullscreenManager(proxy as never);
-    expect(proxy.stage.sortableChildren).toBe(true);
+    expect((proxy.stage as Record<string, unknown>).sortableChildren).toBe(true);
     expect(proxy.stage.children.length).toBe(1);
   });
 
   it('subscribes to fullscreen:show event', () => {
     createFullscreenManager(proxy as never);
-    expect(proxy.bus.on).toHaveBeenCalledWith('fullscreen:show', expect.any(Function));
+    expect(proxy.bus.listenerCount('fullscreen:show')).toBe(1);
   });
 
   it('destroy removes container from stage', () => {
     const fm = createFullscreenManager(proxy as never);
     const container = proxy.stage.children[0];
     fm.destroy();
-    expect(container.parent).toBeNull();
+    expect((container as Record<string, unknown>).parent).toBeNull();
   });
 
   it('destroy is idempotent', () => {
@@ -122,5 +120,49 @@ describe('createFullscreenManager', () => {
   it('destroy runs without error when no active tweens', () => {
     const fm = createFullscreenManager(proxy as never);
     expect(() => fm.destroy()).not.toThrow();
+  });
+
+  it('show via bus event creates gsap animation', () => {
+    createFullscreenManager(proxy as never);
+
+    proxy.bus.emit('fullscreen:show', {
+      texture: {} as never,
+      texW: 200,
+      texH: 150,
+      thumbGlobalX: 0,
+      thumbGlobalY: 0,
+      thumbW: 100,
+      thumbH: 75,
+    });
+
+    expect(gsap.to).toHaveBeenCalled();
+  });
+
+  it('double fullscreen:show triggers gsap twice', () => {
+    createFullscreenManager(proxy as never);
+    proxy.bus.emit('fullscreen:show', {
+      texture: {} as never, texW: 200, texH: 150,
+      thumbGlobalX: 0, thumbGlobalY: 0, thumbW: 100, thumbH: 75,
+    });
+    const firstGaspCalls = (gsap.to as ReturnType<typeof vi.fn>).mock.calls.length;
+
+    proxy.bus.emit('fullscreen:show', {
+      texture: {} as never, texW: 300, texH: 200,
+      thumbGlobalX: 10, thumbGlobalY: 10, thumbW: 120, thumbH: 90,
+    });
+
+    expect((gsap.to as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(firstGaspCalls);
+  });
+
+  it('show on destroyed manager does not call gsap', () => {
+    const fm = createFullscreenManager(proxy as never);
+    fm.destroy();
+    (gsap.to as ReturnType<typeof vi.fn>).mockClear();
+
+    proxy.bus.emit('fullscreen:show', {
+      texture: {} as never, texW: 200, texH: 150,
+      thumbGlobalX: 0, thumbGlobalY: 0, thumbW: 100, thumbH: 75,
+    });
+    expect(gsap.to).not.toHaveBeenCalled();
   });
 });
