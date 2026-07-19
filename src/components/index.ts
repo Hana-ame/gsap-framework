@@ -1,4 +1,4 @@
-export { showLoading } from './Loading';
+export { showLoading, createLoading } from './Loading';
 export type { LoadingOptions } from './Loading';
 export { createWindow } from './PixiWindow';
 export type { GameWindow, GameWindowOptions } from './PixiWindow';

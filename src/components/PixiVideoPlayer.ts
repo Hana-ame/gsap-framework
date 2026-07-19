@@ -26,6 +26,7 @@ export interface PixiVideoPlayerHandle {
   destroy(): void;
   destroyed: boolean;
   setControlsVisible(v: boolean): void;
+  readonly stage: PIXI.Container;
   readonly root: PIXI.Container;
   readonly paused: boolean;
   readonly duration: number;
@@ -473,6 +474,7 @@ export function createVideoPlayer(
       controlsVisible = v;
       ctrl.visible = v;
     },
+    get stage() { return root; },
     get root() { return root; },
     get destroyed() { return destroyed; },
     get paused() { return paused; },

@@ -78,8 +78,8 @@ export function ComponentCutsceneDisplay() {
       fadeStart = performance.now();
       buttonLayer.visible = false;
       if (player) {
-        player.root.alpha = 0;
-        player.root.visible = true;
+        player.stage.alpha = 0;
+        player.stage.visible = true;
         skipLayer.visible = true;
         skipPrompt.alpha = 0;
         root!.stage.addChild(skipPrompt);
@@ -102,8 +102,8 @@ export function ComponentCutsceneDisplay() {
       console.log(`[Cutscene] backToIdle state=${state} currentTime=${player?.currentTime} duration=${player?.duration}`);
       state = 'idle';
       if (player) {
-        player.root.alpha = 1;
-        player.root.visible = false;
+        player.stage.alpha = 1;
+        player.stage.visible = false;
         player.pause();
         player.seek(0);
       }
@@ -139,10 +139,10 @@ export function ComponentCutsceneDisplay() {
         const elapsed = performance.now() - fadeStart;
         const t = Math.min(1, elapsed / FADE_DURATION);
         if (state === 'fading-in') {
-          if (player) player.root.alpha = t;
+          if (player) player.stage.alpha = t;
           if (t >= 1) state = 'playing';
         } else {
-          if (player) player.root.alpha = 1 - t;
+          if (player) player.stage.alpha = 1 - t;
           if (t >= 1) backToIdle();
         }
       }
@@ -172,8 +172,8 @@ export function ComponentCutsceneDisplay() {
           onEnded: onVideoEnded,
           onDebug: (msg) => { console.log(`[PixiVideoPlayer] ${msg}`); },
         });
-        player.root.alpha = 1;
-        player.root.visible = false;
+        player.stage.alpha = 1;
+        player.stage.visible = false;
       } catch (err) {
         console.error('[Cutscene] createVideoPlayer failed:', err);
       }

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework/PixiApp';
-import type { SubCanvas, SubPointerEvent } from '../../framework/SubCanvas';
+import { startPixiApp, makeButton, type SubCanvas, type SubPointerEvent, type Stepper } from '../../framework';
 
 type Grid = Uint8Array;
 
@@ -73,40 +72,6 @@ function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
 }
 
-function makeButton(
-  label: string,
-  w: number,
-  h: number,
-  onClick: () => void,
-  bg: number = BTN_BG,
-): PIXI.Container {
-  const btn = new PIXI.Container();
-  const g = new PIXI.Graphics().roundRect(0, 0, w, h, 6).fill({ color: bg, alpha: 0.92 });
-  g.stroke({ width: 1.5, color: 0x446 });
-  btn.addChild(g);
-  const t = new PIXI.Text({
-    text: label,
-    style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
-  });
-  t.anchor.set(0.5);
-  t.x = w / 2;
-  t.y = h / 2;
-  btn.addChild(t);
-  btn.eventMode = 'static';
-  btn.cursor = 'pointer';
-  btn.hitArea = new PIXI.Rectangle(0, 0, w, h);
-  btn.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-    e.stopPropagation();
-    onClick();
-  });
-  return btn;
-}
-
-interface Stepper {
-  container: PIXI.Container;
-  width: number;
-  refresh: () => void;
-}
 
 function makeStepper(
   label: string,

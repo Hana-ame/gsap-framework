@@ -93,7 +93,7 @@ export interface InfiniteCanvasOptions {
   preloadMargin?: number;
   chunkCreate: (chunk: Chunk) => void;
   chunkDestroy: (chunk: Chunk) => void;
-  onDrag?: (x: number, y: number) => void;
+  onDrag?: (worldX: number, worldY: number) => void;
   onTap?: (worldX: number, worldY: number) => void;
   decelerate?: boolean;
   zoom?: number;
@@ -101,14 +101,26 @@ export interface InfiniteCanvasOptions {
   maxZoom?: number;
 }
 
+/**
+ * 插件化的无限平移/缩放画布。
+ *
+ * 内部维护一个 `worldContainer`（PIXI.Container），通过 `_scrollX/_scrollY`
+ * （屏幕像素偏移）和 `_zoom`（缩放）变换，将世界空间映射到视口。
+ *
+ * `_scrollX/_scrollY` 是 worldContainer 在父 SubCanvas stage 中的
+ * x/y 位置。它们**不是世界坐标**，而是世界原点在屏幕上的像素位置。
+ * 视口中心的世界坐标通过公式 `(viewportCenter - scroll) / zoom` 计算。
+ */
 export class InfiniteCanvas {
   readonly parent: SubCanvas;
-  readonly worldContainer: PIXI.Container;
   readonly chunkSize: number;
 
+  /** worldContainer 承载所有 chunk 内容，通过 x/y/scale 实现平移和缩放 */
+  readonly worldContainer: PIXI.Container;
+
   private _viewport: Rect;
-  private _worldX = 0;
-  private _worldY = 0;
+  private _scrollX = 0;
+  private _scrollY = 0;
   private _zoom: number;
   private _minZoom: number;
   private _maxZoom: number;
@@ -120,7 +132,7 @@ export class InfiniteCanvas {
   private _preloadMargin: number;
   private _decelerate: DeceleratePlugin;
   private _plugins: InfiniteCanvasPlugin[] = [];
-  private _dragHandlers: (() => void)[] = [];
+  private _dragCleanups: (() => void)[] = [];
   private _destroyed = false;
   private _tickFn: (() => void) | null = null;
   private _eventShield: PIXI.Container | null = null;
@@ -143,10 +155,6 @@ export class InfiniteCanvas {
     this.worldContainer.scale.set(this._zoom);
     this.parent.stage.addChild(this.worldContainer);
 
-    // PIXI 事件护盾：阻止 PIXI pointerdown 冒泡到父 SubCanvas 的 drag handle
-    // InfiniteCanvas 用 SubCanvas proxy 事件处理拖拽，不需要 PIXI 事件路径。
-    // 不加这个护盾时，父子 SubCanvas 的 PIXI drag handle（如 window 的 anywhere drag）
-    // 会和 InfiniteCanvas 的 proxy 拖拽同时触发，导致 window 和 canvas 一起动。
     const shield = new PIXI.Container();
     shield.eventMode = 'static';
     shield.hitArea = new PIXI.Rectangle(0, 0, this._viewport.width, this._viewport.height);
@@ -165,12 +173,14 @@ export class InfiniteCanvas {
     this._syncChunks();
   }
 
+  /** 添加插件，按 priority 升序执行 */
   addPlugin(plugin: InfiniteCanvasPlugin): void {
     plugin.parent = this;
     this._plugins.push(plugin);
     this._plugins.sort((a, b) => a.priority - b.priority);
   }
 
+  /** 移除插件（触发 onDestroy） */
   removePlugin(name: string): void {
     const idx = this._plugins.findIndex((p) => p.name === name);
     if (idx >= 0) {
@@ -179,26 +189,50 @@ export class InfiniteCanvas {
     }
   }
 
-  get worldX(): number { return this._worldX; }
-  get worldY(): number { return this._worldY; }
+  /**
+   * 视口中心在世界空间中的 X 坐标。
+   *
+   * 这个值在 zoom 时保持不变（zoom 不改变"我在看世界哪个点"），
+   * 只受平移影响。不像 `_scrollX` 会在 zoom 时重新计算而跳跃。
+   */
+  get worldX(): number {
+    return (this._viewport.width / 2 - this._scrollX) / this._zoom;
+  }
+
+  /**
+   * 视口中心在世界空间中的 Y 坐标。
+   *
+   * 参见 `worldX`。
+   */
+  get worldY(): number {
+    return (this._viewport.height / 2 - this._scrollY) / this._zoom;
+  }
+
   get zoom(): number { return this._zoom; }
 
   get viewport(): Readonly<Rect> { return this._viewport; }
 
+  /**
+   * 设置缩放，保持指定屏幕点 (cx, cy) 下的世界点不动。
+   * @param zoom 目标缩放（会自动 clamp 到 minZoom/maxZoom）
+   * @param cx 缩放中心的屏幕 X（默认视口中心）
+   * @param cy 缩放中心的屏幕 Y（默认视口中心）
+   */
   setZoom(zoom: number, cx?: number, cy?: number): void {
     const centerX = cx ?? this._viewport.width / 2;
     const centerY = cy ?? this._viewport.height / 2;
     const world = this.screenToWorld(centerX, centerY);
     this._zoom = Math.max(this._minZoom, Math.min(this._maxZoom, zoom));
     this.worldContainer.scale.set(this._zoom);
-    this._worldX = centerX - world.x * this._zoom;
-    this._worldY = centerY - world.y * this._zoom;
-    this.worldContainer.x = this._worldX;
-    this.worldContainer.y = this._worldY;
+    this._scrollX = centerX - world.x * this._zoom;
+    this._scrollY = centerY - world.y * this._zoom;
+    this.worldContainer.x = this._scrollX;
+    this.worldContainer.y = this._scrollY;
     this._syncChunks();
     for (const p of this._plugins) p.onResize?.();
   }
 
+  /** 更新视口矩形（如 resize 时），触发 chunk 重算 */
   setViewport(rect: Rect): void {
     this._viewport = rect;
     if (this._eventShield) {
@@ -208,49 +242,70 @@ export class InfiniteCanvas {
     for (const p of this._plugins) p.onResize?.();
   }
 
+  /**
+   * 平移画布（屏幕像素空间）。
+   *
+   * dx/dy 是屏幕像素偏移，不是世界坐标偏移。
+   * 拖拽时鼠标移动 dx 像素，画布跟随移动 dx 像素，
+   * 保持鼠标下的世界点跟手（即使 zoom ≠ 1）。
+   */
   panBy(dx: number, dy: number): void {
-    this._worldX += dx;
-    this._worldY += dy;
-    this.worldContainer.x = this._worldX;
-    this.worldContainer.y = this._worldY;
+    this._scrollX += dx;
+    this._scrollY += dy;
+    this.worldContainer.x = this._scrollX;
+    this.worldContainer.y = this._scrollY;
     this._syncChunks();
-    this._onDrag?.(this._worldX, this._worldY);
+    this._onDrag?.(this.worldX, this.worldY);
   }
 
+  /**
+   * 直接设置滚动偏移（内部使用的是 `_scrollX`/`_scrollY` 屏幕像素值）。
+   *
+   * 适用于保存/恢复视口位置。通常用 `centerOn` 代替。
+   * @deprecated 用 centerOn(worldX, worldY) 代替，更直观
+   */
   panTo(x: number, y: number): void {
     this._decelerate.stop();
-    this._worldX = x;
-    this._worldY = y;
-    this.worldContainer.x = x;
-    this.worldContainer.y = y;
+    this._scrollX = x;
+    this._scrollY = y;
+    this.worldContainer.x = this._scrollX;
+    this.worldContainer.y = this._scrollY;
     this._syncChunks();
-    this._onDrag?.(x, y);
+    this._onDrag?.(this.worldX, this.worldY);
   }
 
+  /**
+   * 居中到世界坐标点。视口中心将对齐到 (worldCX, worldCY)。
+   * 这是 "我想看世界上的 (x, y) 点" 的正确方式。
+   */
   centerOn(worldCX: number, worldCY: number): void {
     const vw = this._viewport.width / 2;
     const vh = this._viewport.height / 2;
     this.panTo(vw - worldCX * this._zoom, vh - worldCY * this._zoom);
   }
 
+  /** 屏幕坐标 → 世界坐标 */
   screenToWorld(screenX: number, screenY: number): { x: number; y: number } {
     return {
-      x: (screenX - this._worldX) / this._zoom,
-      y: (screenY - this._worldY) / this._zoom,
+      x: (screenX - this._scrollX) / this._zoom,
+      y: (screenY - this._scrollY) / this._zoom,
     };
   }
 
+  /** 世界坐标 → 屏幕坐标 */
   worldToScreen(worldX: number, worldY: number): { x: number; y: number } {
     return {
-      x: worldX * this._zoom + this._worldX,
-      y: worldY * this._zoom + this._worldY,
+      x: worldX * this._zoom + this._scrollX,
+      y: worldY * this._zoom + this._scrollY,
     };
   }
 
+  /** 获取指定 chunk 坐标的 Chunk 对象（未加载则返回 undefined） */
   getChunkAt(cx: number, cy: number): Chunk | undefined {
     return this._chunks.get(`${cx},${cy}`);
   }
 
+  /** 遍历所有已加载的 chunk */
   eachChunk(fn: (chunk: Chunk) => void): void {
     for (const chunk of this._chunks.values()) fn(chunk);
   }
@@ -264,8 +319,8 @@ export class InfiniteCanvas {
     }
     for (const p of this._plugins) p.onDestroy?.();
     this._plugins = [];
-    for (const cleanup of this._dragHandlers) cleanup();
-    this._dragHandlers = [];
+    for (const cleanup of this._dragCleanups) cleanup();
+    this._dragCleanups = [];
     for (const chunk of this._chunks.values()) this._chunkDestroy(chunk);
     this._chunks.clear();
     if (this._eventShield) {
@@ -300,16 +355,16 @@ export class InfiniteCanvas {
     let dragging = false;
     let startClientX = 0;
     let startClientY = 0;
-    let startWorldX = 0;
-    let startWorldY = 0;
+    let startScrollX = 0;
+    let startScrollY = 0;
 
     const onPress = (e: SubPointerEvent) => {
       for (const p of this._plugins) p.onDown?.(e);
       dragging = true;
       startClientX = e.globalX;
       startClientY = e.globalY;
-      startWorldX = this._worldX;
-      startWorldY = this._worldY;
+      startScrollX = this._scrollX;
+      startScrollY = this._scrollY;
     };
 
     const onMove = (e: SubPointerEvent) => {
@@ -317,12 +372,12 @@ export class InfiniteCanvas {
       if (!dragging) return;
       const dx = e.globalX - startClientX;
       const dy = e.globalY - startClientY;
-      this._worldX = startWorldX + dx;
-      this._worldY = startWorldY + dy;
-      this.worldContainer.x = this._worldX;
-      this.worldContainer.y = this._worldY;
+      this._scrollX = startScrollX + dx;
+      this._scrollY = startScrollY + dy;
+      this.worldContainer.x = this._scrollX;
+      this.worldContainer.y = this._scrollY;
       this._syncChunks();
-      this._onDrag?.(this._worldX, this._worldY);
+      this._onDrag?.(this.worldX, this.worldY);
     };
 
     const onRelease = (e: SubPointerEvent) => {
@@ -342,13 +397,13 @@ export class InfiniteCanvas {
     this.parent.onRelease(onRelease);
     if (this._onTap) this.parent.onTap(onTap);
 
-    this._dragHandlers.push(
+    this._dragCleanups.push(
       () => this.parent.offPointer('pointerdown', onPress),
       () => this.parent.offPointer('pointermove', onMove),
       () => this.parent.offPointer('pointerup', onRelease),
     );
     if (this._onTap) {
-      this._dragHandlers.push(() => this.parent.offPointer('tap', onTap));
+      this._dragCleanups.push(() => this.parent.offPointer('tap', onTap));
     }
   }
 
@@ -361,8 +416,8 @@ export class InfiniteCanvas {
     const cs = this.chunkSize;
 
     const z = this._zoom;
-    const worldLeft = -this._worldX / z;
-    const worldTop = -this._worldY / z;
+    const worldLeft = -this._scrollX / z;
+    const worldTop = -this._scrollY / z;
     const worldRight = worldLeft + this._viewport.width / z;
     const worldBottom = worldTop + this._viewport.height / z;
     const minCx = Math.floor(worldLeft / cs) - margin;

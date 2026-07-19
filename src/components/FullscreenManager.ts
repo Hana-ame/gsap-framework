@@ -16,6 +16,8 @@ export interface FullscreenShowEvent {
 }
 
 export interface FullscreenManager {
+  readonly stage: PIXI.Container;
+  readonly destroyed: boolean;
   destroy(): void;
 }
 
@@ -295,6 +297,8 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   });
 
   return {
+    get stage() { return container; },
+    get destroyed() { return destroyed; },
     destroy() {
       if (destroyed) return;
       destroyed = true;

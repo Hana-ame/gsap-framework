@@ -63,7 +63,7 @@ export function WindowCanvasDisplay() {
       win.content.stage.addChild(zoomOut);
 
       const resetBtn = makeButton('reset', 50, 24, () => {
-        ic.panTo(0, 0);
+        ic.centerOn(0, 0);
         ic.setZoom(1, VW / 2, VH / 2);
         updateCoord();
       });

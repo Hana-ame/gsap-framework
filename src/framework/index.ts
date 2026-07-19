@@ -16,6 +16,6 @@ export {
   createComponent,
   createComponentFromMap,
 } from './component';
-export type { ComponentOptions, Component, ComponentFactory } from './component';
+export type { ComponentOptions, Component, ComponentFactory, ComponentHandle } from './component';
 
 import './register-components';

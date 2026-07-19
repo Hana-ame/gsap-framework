@@ -31,6 +31,18 @@ import { WindowCanvasDisplay } from './component-window-canvas/WindowCanvasDispl
 import { ComponentTutorialDisplay } from './component-tutorial/ComponentTutorialDisplay';
 import { ComponentSingleWindowDisplay } from './component-single-window/ComponentSingleWindowDisplay';
 import { BackendControlledDisplay } from './component-backend-controlled/BackendControlledDisplay';
+import { ComponentParticleRainDisplay } from './component-particle-rain/ComponentParticleRainDisplay';
+import { ComponentFiltersDisplay } from './component-filters/ComponentFiltersDisplay';
+import { ComponentSnakeDisplay } from './component-snake/ComponentSnakeDisplay';
+import { ComponentDrawingDisplay } from './component-drawing/ComponentDrawingDisplay';
+import { ComponentAudioVizDisplay } from './component-audio-viz/ComponentAudioVizDisplay';
+import { ComponentMinesweeperDisplay } from './component-minesweeper/ComponentMinesweeperDisplay';
+import { ComponentStarfieldDisplay } from './component-starfield/ComponentStarfieldDisplay';
+import { ComponentClockDisplay } from './component-clock/ComponentClockDisplay';
+import { ComponentBreakoutDisplay } from './component-breakout/ComponentBreakoutDisplay';
+import { ComponentTypingEffectDisplay } from './component-typing-effect/ComponentTypingEffectDisplay';
+import { ComponentTetrisDisplay } from './component-tetris/ComponentTetrisDisplay';
+import { ComponentWavesDisplay } from './component-waves/ComponentWavesDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -50,20 +62,32 @@ export const EXAMPLES = [
   'component-picture-drag',
   'component-video-player',
   'component-video-player-dom',
+  'component-waves',
   'component-cutscene',
   'component-cutscene-minimal',
+  'component-drawing',
+  'component-filters',
+  'component-particle-rain',
   'component-2048',
   'component-conway',
   'component-life-map',
+  'component-audio-viz',
   'component-avd',
+  'component-breakout',
+  'component-clock',
   'component-colony',
   'component-gsap',
   'component-infinite',
   'component-registry',
+  'component-minesweeper',
   'component-multi-window',
   'component-window-canvas',
   'component-tutorial',
   'component-single-window',
+  'component-snake',
+  'component-starfield',
+  'component-tetris',
+  'component-typing-effect',
   'component-backend-controlled',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
@@ -90,19 +114,31 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-picture-drag': ComponentPictureDragDisplay,
   'component-video-player': ComponentVideoPlayerDisplay,
   'component-video-player-dom': ComponentVideoPlayerDomDisplay,
+  'component-waves': ComponentWavesDisplay,
   'component-cutscene': ComponentCutsceneDisplay,
   'component-cutscene-minimal': ComponentCutsceneMinimalDisplay,
+  'component-drawing': ComponentDrawingDisplay,
+  'component-filters': ComponentFiltersDisplay,
+  'component-particle-rain': ComponentParticleRainDisplay,
   'component-2048': Component2048Display,
   'component-conway': ComponentConwayDisplay,
   'component-life-map': ComponentLifeMapDisplay,
+  'component-audio-viz': ComponentAudioVizDisplay,
   'component-avd': ComponentAvdDisplay,
+  'component-breakout': ComponentBreakoutDisplay,
+  'component-clock': ComponentClockDisplay,
   'component-colony': ComponentColonyDisplay,
   'component-gsap': ComponentGsapDisplay,
   'component-infinite': ComponentInfiniteDisplay,
   'component-registry': ComponentRegistryDisplay,
+  'component-minesweeper': ComponentMinesweeperDisplay,
   'component-multi-window': MultiWindowDisplay,
   'component-window-canvas': WindowCanvasDisplay,
   'component-tutorial': ComponentTutorialDisplay,
   'component-single-window': ComponentSingleWindowDisplay,
+  'component-snake': ComponentSnakeDisplay,
+  'component-starfield': ComponentStarfieldDisplay,
+  'component-tetris': ComponentTetrisDisplay,
+  'component-typing-effect': ComponentTypingEffectDisplay,
   'component-backend-controlled': BackendControlledDisplay,
 };

@@ -131,7 +131,7 @@ describe('createLoadingImage', () => {
       x: 0, y: 0, width: 200, height: 150,
     });
     expect(img).toBeDefined();
-    expect(img.container).toBeDefined();
+    expect(img.stage).toBeDefined();
     expect(typeof img.destroy).toBe('function');
     expect(typeof img.setUrl).toBe('function');
     expect(typeof img.setErrorHintVisible).toBe('function');

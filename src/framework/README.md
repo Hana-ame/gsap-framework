@@ -20,7 +20,7 @@ PixiApp.startPixiApp()
 | `SubCanvasProxy.ts` | 顶层 orchestrator。`createRegion` / `destroyAll` / `routePointer` / `getTopCanvases`。暴露 `bus` / `ticker` / `renderer`。 |
 | `EventBus.ts` | 带类型的 pub-sub。`on` / `off` / `emit` / `clear`。handler 自带 try-catch 防止单 handler 拖垮全链。 |
 | `index.ts` | 公开 re-export。**外部只 import 此文件，不 deep import**。 |
-| `InfiniteCanvas.ts` | 泛化无限拖拽 + chunk 化加载/卸载系统。插件架构（drag/decelerate），帧率无关惯性，自动 chunk 创建/销毁。支持 `addPlugin`/`removePlugin`。 |
+| `InfiniteCanvas.ts` | 泛化无限拖拽 + chunk 化加载/卸载系统。插件架构（drag/decelerate），帧率无关惯性，自动 chunk 创建/销毁。支持 `addPlugin`/`removePlugin`。内部 `_scrollX/_scrollY` 是屏幕像素偏移，`worldX/worldY` getter 返回视口中心世界坐标（zoom 稳定）。 |
 | `component.ts` | Component 注册表工厂。`registerComponent('type', factory)` → `createComponent('type', opts)`。 |
 | `ui-helpers.ts` | `makeButton` / `makeStepper` 通用 PIXI 控件。 |
 | `gsap-pixi.ts` | GSAP 3.15 + PixiPlugin 注册。可直接 `gsap.to(sprite, { pixi: { alpha: 0 } })`。 |

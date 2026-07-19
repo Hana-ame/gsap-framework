@@ -51,7 +51,7 @@ export function ComponentInfiniteDisplay() {
       });
 
       const coordText = new PIXI.Text({
-        text: 'world: (0, 0)',
+        text: `world: (${ic.worldX.toFixed(0)}, ${ic.worldY.toFixed(0)})`,
         style: { fontSize: 12, fill: 0x88aacc, fontFamily: 'monospace' },
       });
       coordText.x = 12;
@@ -86,10 +86,9 @@ export function ComponentInfiniteDisplay() {
         zoomText.text = 'zoom: 1.0x';
       });
       addBtn('reset', 276, () => {
-        ic.panTo(0, 0);
+        ic.centerOn(0, 0);
         ic.setZoom(1, root.bounds.width / 2, root.bounds.height / 2);
         zoomText.text = 'zoom: 1.0x';
-        coordText.text = 'world: (0, 0)';
       });
     });
 

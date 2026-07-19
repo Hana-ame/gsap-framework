@@ -35,7 +35,7 @@ const stop = startPixiApp((proxy) => {
 | | |
 |---|---|
 | **SubCanvas** | Region-based canvas subdivision, recursive event routing, drag (`title` / `anywhere` / `none`) |
-| **InfiniteCanvas** | Plugin-based infinite pan/zoom canvas with chunked lazy loading, deceleration, zoom-to-pointer |
+| **InfiniteCanvas** | Plugin-based infinite pan/zoom canvas with chunked lazy loading, deceleration, zoom-to-pointer. `worldX/worldY` returns viewport-center world coordinates (stable during zoom). |
 | **Component Registry** | `registerComponent` / `createComponent` — unified factory API for all UI components |
 | **GSAP Integration** | `gsap-pixi.ts` — PixiPlugin pre-registered with PIXI, ready for `gsap.to(obj, { pixi: { ... } })` |
 | **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |

@@ -243,7 +243,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     if (win.destroyed) return;
     messageText.text = m;
     messageText.visible = true;
-    if (image) image.container.visible = false;
+    if (image) image.stage.visible = false;
   };
   win.setImage = (url: string) => {
     if (win.destroyed) return;

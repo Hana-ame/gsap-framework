@@ -1,30 +1,10 @@
-import * as PIXI from 'pixi.js';
 import { registerComponent, type Component, type ComponentOptions } from './component';
-import { createWindow } from '../components/PixiWindow';
-import { createConfirm } from '../components/PixiConfirm';
-import { createScrollable } from '../components/Scrollable';
+import { createWindow, type GameWindowOptions } from '../components/PixiWindow';
+import { createConfirm, type PixiConfirmOptions } from '../components/PixiConfirm';
+import { createScrollable, type ScrollableOptions } from '../components/Scrollable';
 
-interface WindowComponentOptions extends ComponentOptions {
-  title: string;
-  draggable?: boolean;
-  dragMode?: 'title' | 'anywhere' | 'none';
-  closable?: boolean;
-  onClose?: () => void;
-}
-
-registerComponent<WindowComponentOptions>('window', (opts) => {
-  const win = createWindow({
-    parent: opts.parent,
-    title: opts.title,
-    width: opts.width,
-    height: opts.height,
-    x: opts.x,
-    y: opts.y,
-    draggable: opts.draggable,
-    dragMode: opts.dragMode,
-    closable: opts.closable,
-    onClose: opts.onClose,
-  });
+registerComponent<GameWindowOptions>('window', (opts) => {
+  const win = createWindow(opts);
   return {
     type: 'window',
     stage: win.stage,
@@ -33,45 +13,8 @@ registerComponent<WindowComponentOptions>('window', (opts) => {
   };
 });
 
-interface ConfirmComponentOptions extends ComponentOptions {
-  title: string;
-  message?: string;
-  image?: string;
-  imageMaxWidth?: number;
-  imageMaxHeight?: number;
-  draggable?: boolean;
-  dragMode?: 'title' | 'anywhere' | 'none';
-  closable?: boolean;
-  keepOpen?: boolean;
-  onClose?: () => void;
-  okText?: string;
-  cancelText?: string;
-  buttons?: import('../components/PixiConfirm').PixiConfirmButton[];
-  onResult?: (result: import('../components/PixiConfirm').PixiConfirmResult, confirm: import('../components/PixiConfirm').PixiConfirm) => void;
-}
-
-registerComponent<ConfirmComponentOptions>('confirm', (opts) => {
-  const conf = createConfirm({
-    parent: opts.parent,
-    title: opts.title,
-    message: opts.message,
-    image: opts.image,
-    imageMaxWidth: opts.imageMaxWidth,
-    imageMaxHeight: opts.imageMaxHeight,
-    width: opts.width,
-    height: opts.height,
-    x: opts.x,
-    y: opts.y,
-    draggable: opts.draggable,
-    dragMode: opts.dragMode,
-    closable: opts.closable,
-    keepOpen: opts.keepOpen,
-    onClose: opts.onClose,
-    okText: opts.okText,
-    cancelText: opts.cancelText,
-    buttons: opts.buttons,
-    onResult: opts.onResult,
-  });
+registerComponent<PixiConfirmOptions>('confirm', (opts) => {
+  const conf = createConfirm(opts);
   return {
     type: 'confirm',
     stage: conf.stage,
@@ -80,23 +23,10 @@ registerComponent<ConfirmComponentOptions>('confirm', (opts) => {
   };
 });
 
-interface ScrollableComponentOptions extends ComponentOptions {
-  direction?: 'vertical' | 'horizontal';
-  scrollbar?: boolean;
-  accept?: { x?: number; y?: number };
-}
-
-registerComponent<ScrollableComponentOptions>('scrollable', (opts) => {
-  const sc = createScrollable({
-    parent: opts.parent,
-    width: opts.width,
-    height: opts.height,
-    direction: opts.direction,
-    scrollbar: opts.scrollbar,
-    accept: opts.accept,
-  });
+registerComponent<ScrollableOptions>('scrollable', (opts) => {
+  const sc = createScrollable(opts);
   const origAddChild = sc.content.addChild.bind(sc.content);
-  sc.content.addChild = ((...children: PIXI.Container[]) => {
+  sc.content.addChild = ((...children: Parameters<typeof sc.content.addChild>) => {
     const r = origAddChild(...children);
     sc.recalc();
     return r;
@@ -108,5 +38,3 @@ registerComponent<ScrollableComponentOptions>('scrollable', (opts) => {
     get destroyed() { return sc.destroyed; },
   };
 });
-
-

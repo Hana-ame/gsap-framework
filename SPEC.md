@@ -382,9 +382,9 @@ const ic = new InfiniteCanvas({
 
 | 方法 | 说明 |
 |------|------|
-| `panBy(dx, dy)` | 平移（screen-space，自动 /zoom） |
-| `panTo(x, y)` | 跳到世界坐标 |
-| `centerOn(wx, wy)` | 居中到世界点 |
+| `panBy(dx, dy)` | 平移（屏幕像素空间，zoom 自动抵消——鼠标拖 dx 像素，世界跟手） |
+| `panTo(x, y)` | 设置滚动偏移（已弃用，见下方修复记录；用 `centerOn` 代替） |
+| `centerOn(wx, wy)` | 居中到世界点——视口中心对准世界坐标 (wx, wy) |
 | `setZoom(zoom, cx?, cy?)` | 缩放，保持 (cx,cy) 下的世界点不动 |
 | `screenToWorld(sx, sy)` | 屏幕坐标 → 世界坐标 |
 | `worldToScreen(wx, wy)` | 世界坐标 → 屏幕坐标 |
@@ -396,7 +396,7 @@ const ic = new InfiniteCanvas({
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `.worldX` / `.worldY` | number | 当前世界偏移 |
+| `.worldX` / `.worldY` | number | 视口中心的世界坐标（zoom 时不变） |
 | `.zoom` | number | 当前缩放 |
 | `.viewport` | Rect | 视口矩形 |
 | `.loadedChunkCount` | number | 当前加载的 chunk 数 |
@@ -726,22 +726,26 @@ SubPointerEvent:
 
 #### InfiniteCanvas 拖拽与 zoom
 
-InfiniteCanvas 的 `_worldX/_worldY` 是 `worldContainer` 在父 SubCanvas stage 空间的偏移量（像素单位，不是世界坐标）。
+InfiniteCanvas 内部用 `_scrollX/_scrollY`（worldContainer 在父 SubCanvas stage 中的像素偏移）和 `_zoom` 实现平移和缩放。
+
+`_scrollX` 不是世界坐标。它是世界原点（0,0）在屏幕上的像素位置。例如 `_scrollX = 0` 且 `zoom = 1` 时，世界原点在视口左上角。
+
+**为什么拖拽用 screen delta 而不是 world delta？**
 
 拖拽时鼠标在 screen 空间移动 `dx`，保持世界点跟手的条件是：
 
 ```
-startClientX + dx = _worldX_new + worldPoint * zoom
-worldPoint = (startClientX - _worldX_old) / zoom
-→ _worldX_new = _worldX_old + dx     ← zoom 完全抵消
+startClientX + dx = _scrollX_new + worldPoint * zoom
+worldPoint = (startClientX - _scrollX_old) / zoom
+→ _scrollX_new = _scrollX_old + dx     ← zoom 完全抵消
 ```
 
-同理 `panBy` 也直接用 screen delta：
+所以 `panBy` 直接用 screen delta：
 
 ```
 panBy(dx, dy):
-  _worldX += dx       ← 不是 dx / zoom
-  _worldY += dy
+  _scrollX += dx       ← 不是 dx / zoom
+  _scrollY += dy
 ```
 
 `setZoom` 不受影响，因为它是绝对值计算（zoom-to-pointer 公式）：
@@ -750,8 +754,24 @@ panBy(dx, dy):
 setZoom(newZoom, cx, cy):
   world = screenToWorld(cx, cy)     ← 缩放前世界点
   _zoom = newZoom
-  _worldX = cx - world.x * _zoom   ← 调整偏移使世界点保持在(cx,cy)下
+  _scrollX = cx - world.x * _zoom   ← 调整偏移使世界点保持在(cx,cy)下
 ```
+
+**为什么 `.worldX` getter 不能直接返回 `_scrollX`？**
+
+早期实现中 `.worldX` 直接返回 `_scrollX`。但这在 zoom 时跳跃——`setZoom` 重新计算 `_scrollX` 来保持缩放中心点不变，导致 `_scrollX` 变化，显示的世界坐标也跟着变，让用户误以为世界在移动。
+
+修正后 `.worldX` 返回**视口中心的世界坐标**：
+
+```
+worldX = (viewportWidth / 2 - _scrollX) / zoom
+```
+
+这个值在 zoom 时保持不变（因为只有 `_scrollX` 变，分子分母配合抵消），只受平移影响。同理 `.onDrag` 回调现在传 `worldX/worldY`（视口中心），而不是 `_scrollX/_scrollY`。
+
+> **注意**：`_scrollX` 仍然是内部唯一的"状态变量"。`worldX` 是派生值（derived state），不存储，每次 getter 计算。
+
+#### 风险边界
 
 #### 风险边界
 
@@ -849,13 +869,28 @@ GSAP 和 PIXI.Ticker 都基于 rAF，直接共存无需特殊同步。
 ```
 setZoom(newZoom, cx, cy):
   1. 缩放前：worldPoint = screenToWorld(cx, cy)
-     = ((cx - worldX) / zoom, (cy - worldY) / zoom)
-  2. 应用缩放：zoom = clamp(newZoom, min, max)
-     worldContainer.scale.set(zoom)
+     = ((cx - _scrollX) / _zoom, (cy - _scrollY) / _zoom)
+  2. 应用缩放：_zoom = clamp(newZoom, min, max)
+     worldContainer.scale.set(_zoom)
   3. 调整偏移使 worldPoint 保持在 (cx, cy) 下：
-     worldX = cx - worldPoint.x * zoom
-     worldY = cy - worldPoint.y * zoom
+     _scrollX = cx - worldPoint.x * _zoom
+     _scrollY = cy - worldPoint.y * _zoom
 ```
+
+### InfiniteCanvas world 坐标修复记录
+
+**问题**：`worldX`/`worldY` getter 返回了 `_scrollX`/`_scrollY`（世界容器在父 SubCanvas 中的屏幕像素偏移），而不是真正的世界坐标。zoom 时 `setZoom` 会重新计算 `_scrollX` 来保持缩放中心点不动，导致 `worldX`/`worldY` 跳跃，用户以为世界在动。
+
+**修复**：`worldX`/`worldY` 改为返回 **视口中心在世界空间中的坐标**。由 `(viewportCenter - _scroll) / zoom` 计算，zoom 时不变（scroll 的变化被 zoom 抵消），只响应平移。
+
+**波及修改**：
+- `.worldX`/`.worldY` getter 语义变更（2026-07-19）
+- `.onDrag` 回调参数从 `_scrollX`/`_scrollY` 改为 `worldX`/`worldY`（视口中心）
+- 示例中 reset 从 `panTo(0,0) + setZoom(1)` 改为 `centerOn(0,0) + setZoom(1)`
+- 内部 `_worldX/_worldY` 重命名为 `_scrollX/_scrollY`，明确其语义是屏幕像素偏移
+- `panTo(x,y)` 标记为 `@deprecated`，推荐使用 `centerOn(worldX, worldY)`
+
+**教训**：不要将内部状态变量直接暴露为"语义化" getter。派生值（derived state）应通过 getter 计算，内部状态变量用下划线前缀并用说明性命名（如 `_scrollX` 而非 `_worldX`）。
 
 ### 组件注册表适配器模式
 

@@ -30,7 +30,7 @@ export interface PixiImageHandle {
   setErrorHintVisible(visible: boolean): void;
   destroy(): void;
   readonly destroyed: boolean;
-  readonly container: PIXI.Container;
+  readonly stage: PIXI.Container;
 }
 
 export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): PixiImageHandle {
@@ -181,6 +181,6 @@ export function createLoadingImage(parent: SubCanvas, opts: PixiImageOptions): P
     get destroyed() {
       return destroyed;
     },
-    container,
+    get stage() { return container; },
   };
 }

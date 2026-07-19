@@ -16,6 +16,12 @@ export interface Component<T extends ComponentOptions = ComponentOptions> {
   readonly destroyed: boolean;
 }
 
+export interface ComponentHandle {
+  readonly stage: PIXI.Container;
+  destroy(): void;
+  readonly destroyed: boolean;
+}
+
 export type ComponentFactory<T extends ComponentOptions = ComponentOptions> = (opts: T) => Component<T>;
 
 const registry = new Map<string, ComponentFactory>();

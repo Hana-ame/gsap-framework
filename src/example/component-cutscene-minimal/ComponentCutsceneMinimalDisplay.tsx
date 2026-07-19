@@ -60,12 +60,12 @@ export function ComponentCutsceneMinimalDisplay() {
         showControls: true,
         onDebug: (msg) => { console.log(`[Minimal] ${msg}`); },
       });
-      player.root.visible = false;
+      player.stage.visible = false;
 
       startBtn.on('pointerdown', () => {
         if (!player) return;
         startContainer.visible = false;
-        player.root.visible = true;
+        player.stage.visible = true;
         player.play();
       });
     });

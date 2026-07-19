@@ -52,15 +52,19 @@ describe('InfiniteCanvas', () => {
   it('panBy moves world coordinates', () => {
     const ic = makeCanvas();
     ic.panBy(100, 50);
-    expect(ic.worldX).toBe(100);
-    expect(ic.worldY).toBe(50);
+    // panBy(dx,dy) shifts viewport center in world space by -dx/zoom, -dy/zoom
+    // initial _worldX=0, zoom=1, viewport 800×600 → worldX=(400-0)/1=400
+    // after panBy(100,50): _worldX=100 → worldX=(400-100)/1=300
+    expect(ic.worldX).toBe(300);
+    expect(ic.worldY).toBe(250);
   });
 
-  it('panTo sets absolute world position', () => {
+  it('panTo sets world coordinate at viewport center', () => {
     const ic = makeCanvas();
     ic.panTo(300, 200);
-    expect(ic.worldX).toBe(300);
-    expect(ic.worldY).toBe(200);
+    // panTo(x,y) sets _worldX=x → worldX=(viewportW/2 - x)/zoom
+    expect(ic.worldX).toBe(100);
+    expect(ic.worldY).toBe(100);
   });
 
   it('setZoom clamps to min/max', () => {
@@ -93,8 +97,9 @@ describe('InfiniteCanvas', () => {
   it('centerOn sets world position to center specified point', () => {
     const ic = makeCanvas();
     ic.centerOn(500, 400);
-    expect(ic.worldX).toBe(-100);
-    expect(ic.worldY).toBe(-100);
+    // centerOn(worldCX, worldCY) → viewport center = (500, 400) in world space
+    expect(ic.worldX).toBe(500);
+    expect(ic.worldY).toBe(400);
   });
 
   it('addPlugin and removePlugin', () => {
@@ -223,7 +228,9 @@ describe('InfiniteCanvas', () => {
     releaseCb({ globalX: 120, globalY: 220 } as never);
 
     // decelerate should not throw, and drag position should be updated
-    expect(ic.worldX).toBe(20);
-    expect(ic.worldY).toBe(20);
+    // drag (100→120, 200→220) = dx=20, dy=20 → _worldX=20, _worldY=20
+    // worldX = (400 - 20) / 1 = 380
+    expect(ic.worldX).toBe(380);
+    expect(ic.worldY).toBe(280);
   });
 });

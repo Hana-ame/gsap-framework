@@ -117,12 +117,12 @@ describe('showLoading', () => {
     expect(typeof hide).toBe('function');
   });
 
-  it('adds overlay, spinner, and label to stage', () => {
+  it('adds wrapper container to stage', () => {
     showLoading(mockSC as never);
-    expect(mockSC.stage.addChild).toHaveBeenCalledTimes(3);
+    expect(mockSC.stage.addChild).toHaveBeenCalledTimes(1);
   });
 
-  it('hide function removes children from stage', () => {
+  it('hide function removes container from stage', () => {
     const hide = showLoading(mockSC as never);
     hide();
     expect(mockSC.stage.removeChild).toHaveBeenCalled();
@@ -130,7 +130,7 @@ describe('showLoading', () => {
 
   it('does not add spinner when showSpinner is false', () => {
     showLoading(mockSC as never, { showSpinner: false });
-    expect(mockSC.stage.addChild).toHaveBeenCalledTimes(2);
+    expect(mockSC.stage.addChild).toHaveBeenCalledTimes(1);
   });
 
   it('accepts string as text option', () => {
