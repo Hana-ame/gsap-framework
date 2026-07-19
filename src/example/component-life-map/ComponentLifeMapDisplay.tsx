@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, type SubCanvas, type SubPointerEvent, type Stepper } from '../../framework';
+import { startPixiApp, makeButton, makeStepper, type SubCanvas, type SubPointerEvent, type Stepper } from '../../framework';
 
 type Grid = Uint8Array;
 
@@ -70,69 +70,6 @@ function countLive(grid: Grid): number {
 
 function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
-}
-
-
-function makeStepper(
-  label: string,
-  getValue: () => number,
-  onChange: (v: number) => void,
-  min: number,
-  max: number,
-): Stepper {
-  const wrap = new PIXI.Container();
-  const lbl = new PIXI.Text({
-    text: label,
-    style: { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' },
-  });
-  lbl.x = 0;
-  lbl.y = 2;
-  wrap.addChild(lbl);
-
-  const btnW = 22;
-  const btnH = 22;
-  const valW = 36;
-  const rowY = 20;
-
-  let current = getValue();
-
-  const valText = new PIXI.Text({
-    text: String(current),
-    style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
-  });
-  valText.anchor.set(0.5, 0);
-  valText.x = lbl.width + 6 + btnW + valW / 2;
-  valText.y = rowY + 3;
-  wrap.addChild(valText);
-
-  const minus = makeButton('-', btnW, btnH, () => {
-    if (current > min) {
-      current -= 1;
-      valText.text = String(current);
-      onChange(current);
-    }
-  });
-  minus.x = lbl.width + 6;
-  minus.y = rowY;
-  wrap.addChild(minus);
-
-  const plus = makeButton('+', btnW, btnH, () => {
-    if (current < max) {
-      current += 1;
-      valText.text = String(current);
-      onChange(current);
-    }
-  });
-  plus.x = lbl.width + 6 + btnW + valW;
-  plus.y = rowY;
-  wrap.addChild(plus);
-
-  const width = lbl.width + 6 + btnW + valW + btnW;
-  const refresh = () => {
-    current = getValue();
-    valText.text = String(current);
-  };
-  return { container: wrap, width, refresh };
 }
 
 interface TileRefs {

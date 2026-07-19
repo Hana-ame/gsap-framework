@@ -6,7 +6,7 @@ export { EventBus } from './EventBus';
 export { startPixiApp, debugBodyCanvases } from './PixiApp';
 export { InfiniteCanvas } from './InfiniteCanvas';
 export type { InfiniteCanvasOptions, Chunk, InfiniteCanvasPlugin } from './InfiniteCanvas';
-export { makeButton, makeStepper } from './ui-helpers';
+export { makeButton, makeStepper, TXT } from './ui-helpers';
 export type { Stepper } from './ui-helpers';
 export { gsap } from './gsap-pixi';
 export {

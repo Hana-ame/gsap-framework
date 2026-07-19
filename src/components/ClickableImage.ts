@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
-import type { SubCanvas, SubPointerEvent } from '../framework/SubCanvas';
-import type { EventBus } from '../framework/EventBus';
+import { TXT, type SubCanvas, type SubPointerEvent, type EventBus } from '../framework';
 import type { FullscreenShowEvent } from './FullscreenManager';
 
 export interface ClickableImageOptions {
@@ -54,7 +53,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
 
   const placeholderText = new PIXI.Text({
     text: 'loading...',
-    style: { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' },
+    style: TXT.dim,
   });
   placeholderText.x = (thumbW - placeholderText.width) / 2;
   placeholderText.y = (thumbH - placeholderText.height) / 2;

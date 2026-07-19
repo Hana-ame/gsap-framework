@@ -38,6 +38,7 @@ const stop = startPixiApp((proxy) => {
 | **InfiniteCanvas** | Plugin-based infinite pan/zoom canvas with chunked lazy loading, deceleration, zoom-to-pointer. `worldX/worldY` returns viewport-center world coordinates (stable during zoom). |
 | **Component Registry** | `registerComponent` / `createComponent` — unified factory API for all UI components |
 | **GSAP Integration** | `gsap-pixi.ts` — PixiPlugin pre-registered with PIXI, ready for `gsap.to(obj, { pixi: { ... } })` |
+| **TXT style constants** | Centralized `TXT.btn`, `TXT.label`, `TXT.dim`, `TXT.coord`, `TXT.heading` — one place to change global font/color |
 | **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |
 | **Components** | Window / Confirm / Scrollable / Image / ClickableImage / FullscreenManager / AVD (visual novel engine) |
 | **Backend Control** | `MockBackend` + `WindowManager` + `ContentChannel` — backend-driven UI via command protocol, WS-ready |
@@ -205,6 +206,8 @@ In production, replace `MockBackend` with a WebSocket connection. The command pr
 | learningPixi | 函数引用状态机、场景可见性切换、纯工具函数、Texture Atlas 别名 |
 | GSAP | PixiPlugin 集成、Ticker lerp → GSAP tween 替换、动画状态简化、Graphics onUpdate 重绘 |
 | Component Registry | 统一工厂适配器模式、`registerComponent` / `createComponent` API |
+| InfiniteCanvas 拖拽响应 | 用 50ms 时间窗口计算速度代替最后两帧采样，避免鼠标静止后松手仍有惯性滑动 |
+| InfiniteCanvas chunk sync | 缓存 chunk 范围 (minCx/maxCx/minCy/maxCy)，拖动时跨 chunk 时才执行 sync，大部分帧从 O(n) → O(1) |
 
 ## Conventions
 

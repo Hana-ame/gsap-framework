@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createClickableImage, createFullscreenManager, type ClickableImage } from '../../components';
 
 const IMAGES = [
@@ -50,7 +50,7 @@ export function ComponentClickableImageDisplay() {
 
         const label = new PIXI.Text({
           text: img.label,
-          style: { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' },
+          style: TXT.dim,
         });
         label.x = x;
         label.y = y + THUMB + 4;

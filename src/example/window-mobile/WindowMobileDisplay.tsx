@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework/PixiApp';
-import { createConfirm } from '../../components/PixiConfirm';
-import { showLoading } from '../../components/Loading';
-import type { PixiConfirm } from '../../components/PixiConfirm';
-import type { SubCanvas } from '../../framework/SubCanvas';
+import { startPixiApp, type SubCanvas } from '../../framework';
+import { createConfirm, showLoading } from '../../components';
+import type { PixiConfirm } from '../../components';
 
 const TITLE_BAR_H = 22;
 const MOBILE_BREAKPOINT = 600;

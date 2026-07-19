@@ -1,5 +1,13 @@
 import * as PIXI from 'pixi.js';
 
+export const TXT = {
+  btn:      { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' } as const,
+  label:    { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' } as const,
+  dim:      { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' } as const,
+  coord:    { fontSize: 11, fill: 0x88aacc, fontFamily: 'monospace' } as const,
+  heading:  { fontSize: 14, fill: 0xffffff, fontFamily: 'monospace' } as const,
+};
+
 export function makeButton(
   label: string,
   w: number,
@@ -13,7 +21,7 @@ export function makeButton(
   btn.addChild(g);
   const t = new PIXI.Text({
     text: label,
-    style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
+    style: TXT.btn,
   });
   t.anchor.set(0.5);
   t.x = w / 2;
@@ -45,7 +53,7 @@ export function makeStepper(
   const wrap = new PIXI.Container();
   const lbl = new PIXI.Text({
     text: label,
-    style: { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' },
+    style: TXT.label,
   });
   lbl.x = 0;
   lbl.y = 2;
@@ -60,7 +68,7 @@ export function makeStepper(
 
   const valText = new PIXI.Text({
     text: String(current),
-    style: { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
+    style: TXT.btn,
   });
   valText.anchor.set(0.5, 0);
   valText.x = lbl.width + 6 + btnW + valW / 2;

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework/PixiApp';
-import type { SubCanvas } from '../../framework/SubCanvas';
+import { startPixiApp, type SubCanvas } from '../../framework';
 
 type Board = number[][];
 type Direction = 'up' | 'down' | 'left' | 'right';

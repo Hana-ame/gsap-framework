@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { TXT } from '../framework';
 import { MockBackend } from './MockBackend';
 import {
   type BackendCommand,
@@ -135,7 +136,7 @@ export class WindowManager {
     } else {
       const text = new PIXI.Text({
         text: `content: ${type}`,
-        style: { fontSize: 14, fill: 0xffffff, fontFamily: 'monospace' },
+        style: TXT.heading,
       });
       text.x = 16;
       text.y = 16;

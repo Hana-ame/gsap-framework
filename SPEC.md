@@ -909,6 +909,56 @@ setZoom(newZoom, cx, cy):
   const win = createComponent('window', { parent, title: '...', width, height });
 ```
 
+### TXT 样式常量
+
+框架在 `src/framework/ui-helpers.ts` 定义了一组统一样式常量，用于替代各处散落的内联 `PIXI.TextStyle`：
+
+```typescript
+export const TXT = {
+  btn:     { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
+  label:   { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' },
+  dim:     { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' },
+  coord:   { fontSize: 11, fill: 0x88aacc, fontFamily: 'monospace' },
+  heading: { fontSize: 14, fill: 0xffffff, fontFamily: 'monospace' },
+};
+```
+
+如需统一调整主题字体/颜色，只需修改 `TXT` 中各字段的定义。`makeButton`、`makeStepper` 已使用 `TXT.btn` / `TXT.label`。外部代码可通过 `import { TXT } from '../../framework'` 获取。
+
+### 演进记录：2026-07-19 代码质量优化
+
+**目标**：消除重复实现、统一导入规范、补齐 ComponentHandle 遗漏。
+
+**修改列表**：
+
+| 文件 | 变更 |
+|------|------|
+| `FullscreenManager.ts` | 接口补上 `readonly destroyed: boolean`，成为第 8 个完全符合 `ComponentHandle` 的组件 |
+| `ComponentLifeMapDisplay.tsx` | 删除 61 行本地 `makeStepper` 重复实现；改用 `import { makeStepper } from '../../framework'` |
+| `ClickableImage.ts` | 深导入 `../framework/SubCanvas` / `../framework/EventBus` → barrel `../framework` |
+| 10 个 example 文件 | `../../framework/PixiApp` → `../../framework`（使用 barrel） |
+| `ui-helpers.ts` | 新增 `TXT` 样式常量，`makeButton`/`makeStepper` 改用 `TXT.btn`/`TXT.label` |
+| 9 个外部文件 | 内联 `style` → `TXT.dim` / `TXT.coord` / `TXT.heading` |
+
+**强制约定**：所有 `src/example/` 和 `src/backend/` 代码**禁止**深导入 framework/components 内部模块。只能通过 `../../framework`（barrel）和 `../../components`（barrel）导入。已修复此前的 21 处违规。
+
+### 演进记录：2026-07-19 拖拽响应优化
+
+**问题**：
+1. `component-infinite`：鼠标静止后松手，仍有惯性滑动
+2. `component-window-canvas`：拖动响应不够极致
+
+**定位**：
+1. `DeceleratePlugin.onUp()` 只用 `_saved` 最后两个点算速度——如果浏览器在鼠标停住后没有产生 `pointermove`，最后两个采样来自用户还在移动时，速度不为零
+2. `_syncChunks()` 在每次 `onMove` 都遍历全部 chunk（~12 个），即使 chunk 边界未变
+
+**修改**：
+
+| 文件 | 变更 |
+|------|------|
+| `InfiniteCanvas.ts DeceleratePlugin` | 新增 `_lastMoveTime` 追踪最后 `onMove` 时间；`onUp` 用 50ms 时间窗口算速度（比最后两帧采样更准确）；如果最后一次移动超过 50ms 前直接跳过减速 |
+| `InfiniteCanvas.ts _syncChunks` | 新增 `_lastChunkRange` 缓存 (minCx/maxCx/minCy/maxCy)；每次先算范围对比，不变则直接 return；`destroy()` 时重置 |
+
 ### Resize 与浏览器缩放
 
 ```

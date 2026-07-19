@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp } from '../../framework/PixiApp';
+import { startPixiApp, type SubCanvas } from '../../framework';
 import { createVideoPlayer, createScrollable } from '../../components';
 import type { PixiVideoPlayerHandle, Scrollable } from '../../components';
-import type { SubCanvas } from '../../framework/SubCanvas';
 
 const STABLE_MP4_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4';
 

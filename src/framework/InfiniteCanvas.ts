@@ -23,6 +23,7 @@ export interface InfiniteCanvasPlugin {
 
 const FRICTION = 0.95;
 const MIN_SPEED = 0.1;
+const VELOCITY_WINDOW = 50;
 
 class DeceleratePlugin implements InfiniteCanvasPlugin {
   readonly name = 'decelerate';
@@ -32,24 +33,38 @@ class DeceleratePlugin implements InfiniteCanvasPlugin {
   private _vx = 0;
   private _vy = 0;
   private _active = false;
+  private _lastMoveTime = 0;
 
   onDown(): void {
     this._saved = [];
     this._vx = 0;
     this._vy = 0;
     this._active = false;
+    this._lastMoveTime = 0;
   }
 
   onMove(e: SubPointerEvent): void {
     const now = performance.now();
+    this._lastMoveTime = now;
     this._saved.push({ x: e.globalX, y: e.globalY, time: now });
     if (this._saved.length > 60) this._saved.shift();
   }
 
   onUp(): void {
-    if (this._saved.length < 2) return;
-    const last = this._saved[this._saved.length - 1];
-    const prev = this._saved[this._saved.length - 2];
+    const snapshot = this._saved;
+    this._saved = [];
+    if (performance.now() - this._lastMoveTime > VELOCITY_WINDOW) return;
+
+    if (snapshot.length < 2) return;
+    const last = snapshot[snapshot.length - 1];
+    let prev = snapshot[0];
+    const cutoff = last.time - VELOCITY_WINDOW;
+    for (let i = snapshot.length - 2; i >= 0; i--) {
+      if (snapshot[i].time <= cutoff) {
+        prev = snapshot[i];
+        break;
+      }
+    }
     const dt = last.time - prev.time;
     if (dt <= 0) return;
     this._vx = (last.x - prev.x) / dt;
@@ -136,6 +151,7 @@ export class InfiniteCanvas {
   private _destroyed = false;
   private _tickFn: (() => void) | null = null;
   private _eventShield: PIXI.Container | null = null;
+  private _lastChunkRange: { minCx: number; maxCx: number; minCy: number; maxCy: number } | null = null;
 
   constructor(opts: InfiniteCanvasOptions) {
     this.parent = opts.parent;
@@ -321,6 +337,7 @@ export class InfiniteCanvas {
     this._plugins = [];
     for (const cleanup of this._dragCleanups) cleanup();
     this._dragCleanups = [];
+    this._lastChunkRange = null;
     for (const chunk of this._chunks.values()) this._chunkDestroy(chunk);
     this._chunks.clear();
     if (this._eventShield) {
@@ -424,6 +441,12 @@ export class InfiniteCanvas {
     const maxCx = Math.ceil(worldRight / cs) + margin;
     const minCy = Math.floor(worldTop / cs) - margin;
     const maxCy = Math.ceil(worldBottom / cs) + margin;
+
+    const range = this._lastChunkRange;
+    if (range && range.minCx === minCx && range.maxCx === maxCx && range.minCy === minCy && range.maxCy === maxCy) {
+      return;
+    }
+    this._lastChunkRange = { minCx, maxCx, minCy, maxCy };
 
     const needed = new Set<string>();
     for (let cx = minCx; cx <= maxCx; cx++) {
