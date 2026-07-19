@@ -256,6 +256,7 @@ export class SubCanvas {
       this._uninstallDragOnHandle(child);
       this._dragHandles.delete(child);
     }
+    if (this._bg === child) this._bg = null;
     return this.stage.removeChild(child) as T;
   }
 

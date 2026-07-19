@@ -533,6 +533,7 @@ unsub(); // 取消订阅
 | `createFullscreenManager(proxy)` | 全屏看图管理器（缩放+拖动+双击+滑动关闭） | 缩放拖拽 |
 | `showLoading(sc, opts)` | 加载遮罩（显示 spinner） | 否 |
 | `makeButton(label, w, h, onClick, bg?)` | 按钮 | 否 |
+| `mountDisplays(sc)` | 示例工具：十字准星+点击波纹+计数器（挂载到任意 SubCanvas） | 否 |
 | `makeStepper(label, getValue, onChange, min, max)` | 步进器 | 否 |
 
 ### AVD（视觉小说引擎）
@@ -557,6 +558,83 @@ avd.setScript([
 avd.next();       // 推进对话
 avd.goTo(5);      // 跳到第 5 句
 avd.destroy();    // 清理
+```
+
+---
+
+## 后端控制架构
+
+### 架构概览
+
+```
+MockBackend / WebSocket (命令源)
+    ↓
+WindowManager (缓冲层)
+    ├── 管理窗口生命周期 (open/close/move/resize)
+    ├── 路由内容到对应窗口
+    └── 维护窗口状态
+ContentChannel (WS 流式内容通道)
+    ↓
+Framework API → PIXI 渲染
+```
+
+### 命令协议
+
+每条命令遵循统一接口：
+
+```ts
+interface BackendCommand {
+  id: string;
+  type: BackendCommandType;
+  payload: Record<string, unknown>;
+  timestamp: number;
+}
+```
+
+支持的命令类型：
+
+| type | payload | 作用 |
+|------|---------|------|
+| `open-window` | `{ id, title, x, y, width, height }` | 创建窗口 |
+| `close-window` | `{ id }` | 关闭窗口 |
+| `move-window` | `{ id, x, y }` | 移动窗口 |
+| `resize-window` | `{ id, width, height }` | 缩放窗口 |
+| `set-title` | `{ id, title }` | 改标题 |
+| `set-content` | `{ windowId, type }` | 设置窗口内容 |
+| `clear-content` | `{ windowId }` | 清空窗口内容 |
+| `stream-content` | `{ windowId, text, seq, total, done }` | WS 流式内容块 |
+| `ping` | `{}` | 心跳 |
+
+### 层职责
+
+| 层 | 文件 | 职责 |
+|----|------|------|
+| MockBackend | `backend/MockBackend.ts` | JS 模拟后端，支持 `send` / `sendSequence` / `connect` / `disconnect`，通过 `on('command', ...)` 通知下游 |
+| WindowManager | `backend/WindowManager.ts` | 缓冲层：接收命令 → 调用 `createWindow` / `setPosition` 等框架 API，管理窗口注册表 |
+| ContentChannel | `backend/ContentChannel.ts` | WS 流式内容：分块接收 `stream-content` → 组装 → 渲染到目标窗口 |
+
+### 生产替换
+
+开发环境用 `MockBackend` 模拟后端行为。生产环境将 `MockBackend` 替换为 WebSocket 连接：
+
+```ts
+// MockBackend 和 WebSocket 使用相同的 BackendCommand 接口
+const backend = new WebSocketBackend('wss://...');
+// 同一套 WindowManager + ContentChannel 直接使用
+```
+
+### 数据流（窗口创建示例）
+
+```
+MockBackend.send('open-window', { id, title, x, y, w, h })
+  ↓
+WindowManager.handleCommand({ type: 'open-window', payload: ... })
+  ↓
+createWindow({ parent, title, x, y, w, h })
+  ↓
+SubCanvas.createRegion(...) → PIXI 渲染
+  ↓
+WindowManager 注册窗口到 Map
 ```
 
 ---

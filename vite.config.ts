@@ -11,6 +11,8 @@ export default defineConfig({
     sourcemap: true,
   },
   test: {
-    include: ['src/framework/utils/__tests__/**/*.test.ts'],
+    include: [
+      'src/**/__tests__/**/*.test.ts',
+    ],
   },
 })

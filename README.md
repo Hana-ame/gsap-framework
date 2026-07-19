@@ -40,6 +40,7 @@ const stop = startPixiApp((proxy) => {
 | **GSAP Integration** | `gsap-pixi.ts` — PixiPlugin pre-registered with PIXI, ready for `gsap.to(obj, { pixi: { ... } })` |
 | **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |
 | **Components** | Window / Confirm / Scrollable / Image / ClickableImage / FullscreenManager / AVD (visual novel engine) |
+| **Backend Control** | `MockBackend` + `WindowManager` + `ContentChannel` — backend-driven UI via command protocol, WS-ready |
 | **Performance** | Bounds calc vs view sync separation, window-level pointer events for smooth drag, 80ms debounced resize |
 
 ## Structure
@@ -48,7 +49,8 @@ const stop = startPixiApp((proxy) => {
 src/
   framework/    PIXI core + GSAP + EventBus + Component Registry + InfiniteCanvas
   components/   Window, Confirm, Scrollable, Image, FullscreenManager, AVD, etc.
-  example/      30+ routes demonstrating everything
+  backend/      MockBackend + WindowManager + ContentChannel (backend-driven UI control)
+  example/      32+ routes demonstrating everything
 ```
 
 ## Secondary Development Guide
@@ -152,6 +154,39 @@ tl.to(sprite, { pixi: { x: 100 }, duration: 0.3 })
 
 > `pixi: { rotation }` uses **degrees**. `pixi: { x, y, scale, alpha, tint }` map to PIXI properties directly.
 
+### Backend-driven UI
+
+Control the display via a mock or real backend:
+
+```
+MockBackend (JS commands)
+    ↓
+WindowManager (buffer layer — window lifecycle)
+    ├── create/close/move/resize windows
+    └── route content to windows
+ContentChannel (WS-streamed content)
+    ↓
+Framework API → PIXI rendering
+```
+
+```ts
+import { MockBackend, WindowManager, ContentChannel } from '../backend';
+
+const backend = new MockBackend();
+backend.connect();
+
+const wm = new WindowManager(backend, rootSubCanvas);
+const cc = new ContentChannel(backend);
+
+// Backend sends commands — WindowManager executes them
+backend.send('open-window', { id: 'w1', title: 'Demo', x: 100, y: 100, width: 400, height: 300 });
+
+// WS-streamed content
+cc.simulateStream('w1', ['[chunk 1/3]', '[chunk 2/3]', '[chunk 3/3]'], 300);
+```
+
+In production, replace `MockBackend` with a WebSocket connection. The command protocol (`BackendCommand`) maps 1:1.
+
 ### Communication patterns
 
 | Method | When to use |
@@ -159,6 +194,17 @@ tl.to(sprite, { pixi: { x: 100 }, duration: 0.3 })
 | **EventBus** | Loose coupling, cross-component, multi-window |
 | **Direct calls** | Tight coupling, parent-child within one component |
 | **GSAP timeline** | Animation sequencing between related elements |
+
+## 经验教训与收获
+
+所有外部代码分析、架构决策、模式提炼记录在 [`src/LEARNINGS.md`](src/LEARNINGS.md)。涵盖：
+
+| 来源 | 提炼模式 |
+|------|----------|
+| pixi-viewport | 插件系统架构、惯性滚动、zoom-to-pointer、坐标系映射 |
+| learningPixi | 函数引用状态机、场景可见性切换、纯工具函数、Texture Atlas 别名 |
+| GSAP | PixiPlugin 集成、Ticker lerp → GSAP tween 替换、动画状态简化、Graphics onUpdate 重绘 |
+| Component Registry | 统一工厂适配器模式、`registerComponent` / `createComponent` API |
 
 ## Conventions
 

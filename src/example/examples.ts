@@ -29,6 +29,8 @@ import { ComponentRegistryDisplay } from './component-registry/ComponentRegistry
 import { MultiWindowDisplay } from './component-multi-window/MultiWindowDisplay';
 import { WindowCanvasDisplay } from './component-window-canvas/WindowCanvasDisplay';
 import { ComponentTutorialDisplay } from './component-tutorial/ComponentTutorialDisplay';
+import { ComponentSingleWindowDisplay } from './component-single-window/ComponentSingleWindowDisplay';
+import { BackendControlledDisplay } from './component-backend-controlled/BackendControlledDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -61,6 +63,8 @@ export const EXAMPLES = [
   'component-multi-window',
   'component-window-canvas',
   'component-tutorial',
+  'component-single-window',
+  'component-backend-controlled',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -99,4 +103,6 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-multi-window': MultiWindowDisplay,
   'component-window-canvas': WindowCanvasDisplay,
   'component-tutorial': ComponentTutorialDisplay,
+  'component-single-window': ComponentSingleWindowDisplay,
+  'component-backend-controlled': BackendControlledDisplay,
 };
