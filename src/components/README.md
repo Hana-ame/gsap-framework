@@ -20,4 +20,5 @@
 | `AvdPortraitLayer.ts` | `PortraitLayer` | AVD 立绘层（左右插槽、fade in/out、高亮）。 |
 | `AvdInlineLayout.ts` | `buildInlineLayout` 等 | AVD 行内布局（图文混排、CJK 自动换行）。 |
 | `AvdScript.ts` | `parseAvdScriptJSON` | AVD JSON 剧本解析（元信息、台本行、角色表）。 |
+| `TextInput.ts` | `createTextInput` | HTML `<input>` 叠在 canvas 上。GSAP fade-in、密码模式、maxLength、onChange/onSubmit。 |
 | `index.ts` | (全部公开导出) | 公开 API。**外部只 import 此文件**。 |

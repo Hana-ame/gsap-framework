@@ -16,15 +16,17 @@ PixiApp.startPixiApp()
 | 文件 | 职责 |
 |------|------|
 | `PixiApp.ts` | `startPixiApp(onReady?)` 启动 `PIXI.Application`，挂 canvas 到 body，监听 4 种 pointer 事件馈入 SubCanvasProxy。含 WebGL probe / dev-mode 调试栏 / single-canvas 断言。 |
-| `SubCanvas.ts` | 核心。AABB 容器，含 stage/bounds/ticker/event-routing/tag-based-drag/z-order/clip-to-bounds/子区域管理。610 行。 |
-| `SubCanvasProxy.ts` | 顶层 orchestrator。`createRegion` / `destroyAll` / `routePointer` / `getTopCanvases`。暴露 `bus` / `ticker` / `renderer`。 |
+| `SubCanvas.ts` | 核心。AABB 容器，含 stage/bounds/ticker/event-routing/tag-based-drag/z-order/clip-to-bounds/子区域管理。727 行。 |
+| `SubCanvasProxy.ts` | 顶层 orchestrator。`createRegion` / `destroyAll` / `routePointer` / `getTopCanvases`。暴露 `bus` / `ticker` / `renderer` / `showPerfMeasure`。 |
 | `EventBus.ts` | 带类型的 pub-sub。`on` / `off` / `emit` / `clear`。handler 自带 try-catch 防止单 handler 拖垮全链。 |
-| `index.ts` | 公开 re-export。**外部只 import 此文件，不 deep import**。 |
 | `InfiniteCanvas.ts` | 泛化无限拖拽 + chunk 化加载/卸载系统。插件架构（drag/decelerate），帧率无关惯性，自动 chunk 创建/销毁。支持 `addPlugin`/`removePlugin`。内部 `_scrollX/_scrollY` 是屏幕像素偏移，`worldX/worldY` getter 返回视口中心世界坐标（zoom 稳定）。 |
 | `component.ts` | Component 注册表工厂。`registerComponent('type', factory)` → `createComponent('type', opts)`。 |
-| `ui-helpers.ts` | `makeButton` / `makeStepper` 通用 PIXI 控件。 |
+| `ui-helpers.ts` | `makeButton` / `makeStepper` / `makeInfoPanel` 通用 PIXI 控件。 |
 | `gsap-pixi.ts` | GSAP 3.15 + PixiPlugin 注册。可直接 `gsap.to(sprite, { pixi: { alpha: 0 } })`。 |
-| `utils/` | 纯函数工具集（math/color/rect），零 PIXI 依赖，59 个测试覆盖。 |
+| `perf.ts` | `PerfDisplay` — 屏幕 FPS / frametime / 对象数 HUD。 |
+| `Layer.ts` | `LayerManager` / `LayerImpl` — 命名 z-order 层抽象。 |
+| `text-effects.ts` | `runTextEffect` — GSAP 驱动的文字动效（typewriter / fadeIn / slideIn / scramble 等 7 种）。 |
+| `utils/` | 纯函数工具集（math/color/rect），零 PIXI 依赖。 |
 | `index.ts` | 公开 re-export。**外部只 import 此文件，不 deep import**。 |
 | `NOTES.md` | drag / z-order / event-routing 设计笔记 & 踩坑记录。 |
 
