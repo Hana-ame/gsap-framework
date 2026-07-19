@@ -286,7 +286,8 @@ export function runTextEffect(
         onComplete: setCompleted,
       });
 
-      const totalTime = units / step;
+      const timePerChar = 1 / step;
+      const totalTime = units * timePerChar;
 
       const revealAt = (pos: number) => {
         const shown = Math.min(units, Math.floor(pos));
@@ -308,12 +309,9 @@ export function runTextEffect(
         }
       };
 
-      for (let i = 0; i <= units; i += step) {
-        const t = i / step;
+      for (let i = 0; i <= units; i++) {
+        const t = i * timePerChar;
         timeline!.call(() => revealAt(i), undefined, t);
-      }
-      if (units % step !== 0) {
-        timeline!.call(() => revealAt(units), undefined, totalTime);
       }
       timeline!.call(setCompleted, undefined, totalTime);
       break;
