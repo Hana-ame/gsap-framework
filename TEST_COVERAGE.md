@@ -1,6 +1,6 @@
 # Test Coverage
 
-**599 tests across 44 files, all passing.**
+**650 tests across 46 files, all passing.**
 
 ## Configuration
 
@@ -37,7 +37,7 @@ src/
 │   ├── PixiImage.test.ts               #   Load success/error, placeholders (14)
 │   ├── PixiVideoPlayer.test.ts         #   Play/pause/seek, error/load/ended events (15)
 │   ├── PixiWindow.test.ts              #   Window creation, title, close, content region (12)
-│   ├── Scrollable.test.ts              #   Scroll creation, scrollTo/by, recalc (10)
+│       ├── Scrollable.test.ts              #   Scroll creation, scrollTo/by, recalc, sync (13)
 │   └── TextInput.test.ts               #   Input creation, events, destroy (14)
 │
 ├── example/__tests__/
@@ -56,9 +56,11 @@ src/
     ├── register-components.test.ts     #   Component registration (varies)
     ├── SubCanvas.test.ts               #   Event routing, bounds, nesting (14)
     ├── SubCanvas.clip.test.ts          #   Clip-to-bounds (varies)
+    ├── SubCanvas.delegates.test.ts     #   Property delegates (17)
     ├── SubCanvas.drag.test.ts          #   Drag behavior (varies)
     ├── SubCanvas.lifecycle.test.ts     #   Lifecycle (varies)
     ├── SubCanvasProxy.test.ts          #   Proxy routing (14)
+    ├── text-effects.test.ts            #   7 effect types, skip, destroy (17)
     ├── component.test.ts               #   Component registry (10)
     └── ui-helpers.test.ts              #   Button, stepper, info panel (14)
 ```
@@ -68,9 +70,9 @@ src/
 | Module | Files | Tests | Status |
 |--------|-------|-------|--------|
 | `src/backend/` | 3 source, 3 test | 38 | Full |
-| `src/components/` | 14 source, 15 test | ~200 | Near-full |
+| `src/components/` | 15 source, 15 test | ~210 | Near-full |
 | `src/example/` | 3 source, 4 test | ~100 | Full |
-| `src/framework/` | 11 source, 14 test | ~260 | Near-full |
+| `src/framework/` | 12 source, 17 test | ~290 | Near-full |
 | Root (`src/index`, `src/main`) | 2 source, 2 test | 6 | Partial |
 
 ## Testing Patterns
@@ -121,7 +123,6 @@ Style B provides type safety for pixi.js exports the tests don't override but ca
 | File | Missing Coverage | Reason |
 |------|----------------|--------|
 | `src/framework/PixiApp.ts` | Internal functions `probeWebGL()`, `showFatalOverlay()`, `assertSingleBodyCanvas()` | Not exported; require DOM/WebGL environment |
-| `src/framework/Layer.ts` | `LayerManager` accept PIXI.Container directly | Works via delegation, hard to test without real PIXI |
 | `src/backend/types.ts` | All types | Pure interface definitions — no executable logic |
 | `src/framework/perf.ts` | `_onTick` internal FPS calculation | Relies on real ticker `deltaMS` values |
 | `src/framework/utils/math.ts` | `randomFloat` seeds/uniform distribution | Statistical test would be flaky |

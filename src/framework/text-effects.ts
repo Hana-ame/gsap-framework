@@ -1,16 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { gsap } from './gsap-pixi';
+import gsap from 'gsap';
 
 export type TextEffectType = 'typewriter' | 'fadeInChars' | 'fadeIn' | 'slideIn' | 'scaleBounce' | 'charRain' | 'scramble';
-
-export interface TextEffectOptions {
-  x?: number;
-  y?: number;
-  maxWidth?: number;
-  speed?: number;
-  duration?: number;
-  lineHeight?: number;
-}
 
 export interface TextEffectHandle {
   readonly container: PIXI.Container;
@@ -201,14 +192,23 @@ function splitIntoLines(text: string, charWidths: number[], maxWidth: number): {
   return { lines, lineWidths };
 }
 
-export function runTextEffect(
-  parent: PIXI.Container,
-  text: string | TextSegment[],
-  textStyle: PIXI.TextStyle,
-  type: TextEffectType,
-  opts: TextEffectOptions = {},
-): TextEffectHandle {
+export function runTextEffect(opts: {
+  parent: PIXI.Container;
+  text: string | TextSegment[];
+  textStyle: PIXI.TextStyle;
+  type: TextEffectType;
+  x?: number;
+  y?: number;
+  maxWidth?: number;
+  speed?: number;
+  duration?: number;
+  lineHeight?: number;
+}): TextEffectHandle {
   const {
+    parent,
+    text,
+    textStyle,
+    type,
     x = 0,
     y = 0,
     maxWidth = Infinity,
@@ -243,7 +243,7 @@ export function runTextEffect(
   }
 
   const isSegments = Array.isArray(text);
-  const segments: TextSegment[] = isSegments ? text : [{ kind: 'text', text: text as string }];
+  let segments: TextSegment[] = isSegments ? text : [{ kind: 'text', text: text as string }];
 
   const chars = Array.from(isSegments ? (text as TextSegment[]).map(s => s.kind === 'text' ? s.text : '').join('') : (text as string));
 
@@ -251,7 +251,12 @@ export function runTextEffect(
   let singleText: PIXI.Text | null = null;
   let charTexts: PIXI.Text[] = [];
 
-  if (isSegments || type === 'typewriter' || type === 'charRain' || type === 'scramble') {
+  const isFadeInChars = type === 'fadeInChars';
+  if (!isSegments && isFadeInChars) {
+    segments = Array.from(text as string).map(c => ({ kind: 'text' as const, text: c }));
+  }
+
+  if (isSegments || type === 'typewriter' || type === 'charRain' || type === 'scramble' || isFadeInChars) {
     layout = buildLayout(segments, textStyle, maxWidth, lineHeight);
     container.addChild(layout.container);
   } else {
@@ -274,7 +279,6 @@ export function runTextEffect(
       }
 
       const units = layout.totalUnits;
-      let revealed = 0;
       const step = Math.max(1, speed);
 
       if (units === 0) {
@@ -287,7 +291,6 @@ export function runTextEffect(
       });
 
       const timePerChar = 1 / step;
-      const totalTime = units * timePerChar;
 
       const revealAt = (pos: number) => {
         const shown = Math.min(units, Math.floor(pos));
@@ -309,46 +312,41 @@ export function runTextEffect(
         }
       };
 
-      for (let i = 0; i <= units; i++) {
-        const t = i * timePerChar;
-        timeline!.call(() => revealAt(i), undefined, t);
-      }
-      timeline!.call(setCompleted, undefined, totalTime);
+      const proxy = { value: 0 };
+      timeline!.to(proxy, {
+        value: units,
+        duration: units * timePerChar,
+        ease: 'none',
+        onUpdate: () => revealAt(proxy.value),
+      });
       break;
     }
 
     case 'fadeInChars': {
-      if (layout) {
-        const fadeItems: (PIXI.Text | PIXI.Sprite)[] = [];
-        for (const item of layout.items) {
-          if (item.textObj) fadeItems.push(item.textObj);
-          if (item.sprite) fadeItems.push(item.sprite);
-        }
-        for (const fi of fadeItems) fi.alpha = 0;
+      if (!layout) break;
+      if (layout.totalUnits === 0) {
+        setCompleted();
+        break;
+      }
 
-        let totalDone = 0;
-        for (let i = 0; i < fadeItems.length; i++) {
-          const t = gsap.to(fadeItems[i], {
-            alpha: 1,
-            duration: Math.min(duration, 0.4),
-            delay: i * (Math.min(duration, 0.4) / Math.max(fadeItems.length, 1)),
-            ease: 'power2.out',
-            onComplete: () => {
-              totalDone++;
-              if (totalDone >= fadeItems.length) setCompleted();
-            },
-          });
-          tweens.push(t);
-        }
-      } else if (singleText) {
-        singleText.alpha = 0;
-        singleText.visible = false;
-        const t = gsap.to(singleText, {
+      const fadeItems: (PIXI.Text | PIXI.Sprite)[] = [];
+      for (const item of layout.items) {
+        if (item.textObj) fadeItems.push(item.textObj);
+        if (item.sprite) fadeItems.push(item.sprite);
+      }
+      for (const fi of fadeItems) fi.alpha = 0;
+
+      let totalDone = 0;
+      for (let i = 0; i < fadeItems.length; i++) {
+        const t = gsap.to(fadeItems[i], {
           alpha: 1,
-          duration,
+          duration: Math.min(duration, 0.4),
+          delay: i * (Math.min(duration, 0.4) / Math.max(fadeItems.length, 1)),
           ease: 'power2.out',
-          onComplete: setCompleted,
-          onStart: () => { singleText!.visible = true; },
+          onComplete: () => {
+            totalDone++;
+            if (totalDone >= fadeItems.length) setCompleted();
+          },
         });
         tweens.push(t);
       }

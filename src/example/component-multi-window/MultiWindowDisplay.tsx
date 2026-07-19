@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, makeInfoPanel, TXT, type SubCanvas, type SubCanvasProxy, type Component } from '../../framework';
+import { startPixiApp, createComponent, makeButton, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy, type Component } from '../../framework';
 
 const COLORS = [
   0x4488ff, 0xff4488, 0x44ff88, 0xff8844, 0x8844ff,
@@ -39,7 +39,7 @@ export function MultiWindowDisplay() {
 
       const countText = new PIXI.Text({
         text: 'windows: 12',
-        style: TXT.dim,
+        style: textPresets.dim,
       });
       countText.x = 12;
       countText.y = 30;

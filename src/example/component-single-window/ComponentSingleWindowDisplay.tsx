@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow } from '../../components';
 import { mountDisplays } from '../_shared/Displays';
 
@@ -27,7 +27,7 @@ export function ComponentSingleWindowDisplay() {
 
       const title = new PIXI.Text({
         text: 'single window — draggable',
-        style: TXT.heading,
+        style: textPresets.heading,
       });
       title.x = 12;
       title.y = 12;

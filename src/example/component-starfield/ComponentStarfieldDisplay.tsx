@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { gsap } from 'gsap';
 
 const STAR_LAYERS = 4;
 const STARS_PER_LAYER = 80;

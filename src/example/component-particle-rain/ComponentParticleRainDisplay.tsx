@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { gsap } from 'gsap';
 
 type Mode = 'rain' | 'snow' | 'fireflies' | 'confetti';
 

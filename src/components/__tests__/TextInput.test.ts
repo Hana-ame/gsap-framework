@@ -16,7 +16,7 @@ vi.mock('../../framework/gsap-pixi', () => ({
 }));
 
 vi.mock('../../framework/ui-helpers', () => ({
-  TXT: { dim: { fontSize: 12, fill: 0x888899 } },
+  textPresets: { dim: { fontSize: 12, fill: 0x888899 } },
   makeButton: vi.fn(),
   makeStepper: vi.fn(),
 }));

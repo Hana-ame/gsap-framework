@@ -629,12 +629,12 @@ const stepper = makeStepper('Size', () => value, onChange, 1, 100);
 
 预置文字样式：
 ```ts
-import { TXT } from './framework';
-TXT.btn    // 按钮文本
-TXT.label  // 标签
-TXT.dim    // 灰暗文本
-TXT.coord  // 坐标文本
-TXT.heading // 标题
+import { textPresets } from './framework';
+textPresets.btn    // 按钮文本
+textPresets.label  // 标签
+textPresets.dim    // 灰暗文本
+textPresets.coord  // 坐标文本
+textPresets.heading // 标题
 ```
 
 ---

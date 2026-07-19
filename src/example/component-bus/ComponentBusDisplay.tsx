@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, EventBus, TXT, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, EventBus, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createWindow, type GameWindow } from '../../components';
 
 type BusPayload = { from: string; text: string; n: number };
@@ -64,7 +64,7 @@ export function ComponentBusDisplay() {
       sendRef.current.stage.addChild(sendBtn);
       const sendHint = new PIXI.Text({
         text: 'click to emit · drag anywhere',
-        style: TXT.dim,
+        style: textPresets.dim,
       });
       sendHint.x = 12;
       sendHint.y = 78;

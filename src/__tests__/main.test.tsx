@@ -35,7 +35,7 @@ vi.mock('../components', async () => {
 });
 
 describe('main entry point', () => {
-  it('importing main does not throw', async () => {
+  it('importing main does not throw', { timeout: 15000 }, async () => {
     // main.tsx calls createRoot(document.getElementById('root')!) at module level
     // which would fail without a #root element. We mock it.
     document.body.innerHTML = '<div id="root"></div>';

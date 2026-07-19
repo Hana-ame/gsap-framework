@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, makeInfoPanel } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel } from '../../framework';
 import { mountDisplays } from '../_shared/Displays';
 
 export function SingleDisplay() {
@@ -17,7 +17,7 @@ export function SingleDisplay() {
 
       const title = new PIXI.Text({
         text: 'single window — full viewport',
-        style: TXT.heading,
+        style: textPresets.heading,
       });
       title.x = 12;
       title.y = 12;

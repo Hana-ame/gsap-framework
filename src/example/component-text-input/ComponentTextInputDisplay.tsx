@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 import { createTextInput, type TextInputHandle } from '../../components/TextInput';
 
 export function ComponentTextInputDisplay() {
@@ -40,7 +40,7 @@ export function ComponentTextInputDisplay() {
       const addRow = (label: string, input: TextInputHandle) => {
         const lbl = new PIXI.Text({
           text: label,
-          style: TXT.label,
+          style: textPresets.label,
         });
         lbl.x = 40;
         lbl.y = y + 6;

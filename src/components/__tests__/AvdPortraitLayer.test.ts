@@ -1,13 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../../framework/gsap-pixi', () => ({
+vi.mock('gsap', () => ({
+  default: { to: vi.fn((target: unknown, vars: Record<string, unknown>) => vars), killTweensOf: vi.fn(), registerPlugin: vi.fn() },
   gsap: { to: vi.fn((target: unknown, vars: Record<string, unknown>) => vars), killTweensOf: vi.fn(), registerPlugin: vi.fn() },
   PixiPlugin: { registerPIXI: vi.fn() },
 }));
 
 import * as PIXI from 'pixi.js';
 import { PortraitLayer } from '../AvdPortraitLayer';
-import { gsap } from '../../framework/gsap-pixi';
+import { gsap } from 'gsap';
 
 const MOCK_OPTS = { W: 800, portraitY: 100, portraitMaxH: 400, portraitFadeMs: 300 };
 

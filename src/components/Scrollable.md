@@ -5,13 +5,14 @@ A scrollable container for PIXI content. Supports wheel, mouse drag, and touch d
 ## API
 
 ```ts
-createScrollable(parent: SubCanvas, opts: ScrollableOptions): Scrollable
+createScrollable(opts: ScrollableOptions): Scrollable
 ```
 
 ### ScrollableOptions
 
 ```ts
 {
+  parent: SubCanvas;
   width: number;
   height: number;
   direction?: 'vertical' | 'horizontal';  // default 'vertical'
@@ -30,6 +31,7 @@ createScrollable(parent: SubCanvas, opts: ScrollableOptions): Scrollable
   scrollTo(x, y): void;
   scrollBy(dx, dy): void;
   recalc(): void;              // re-measure after content changes
+  sync(): void;                 // sync view position (cheap, O(1))
   destroy(): void;
   destroyed: boolean;
 }
@@ -38,7 +40,8 @@ createScrollable(parent: SubCanvas, opts: ScrollableOptions): Scrollable
 ## Usage
 
 ```ts
-const scroll = createScrollable(sc, {
+const scroll = createScrollable({
+  parent: sc,
   width: 300,
   height: 400,
   direction: 'vertical',

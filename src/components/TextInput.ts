@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { gsap } from '../framework/gsap-pixi';
-import { TXT } from '../framework/ui-helpers';
+import { gsap } from 'gsap';
+import { textPresets } from '../framework';
 
 export interface TextInputOptions {
   x: number;
@@ -74,7 +74,7 @@ export function createTextInput(parent: PIXI.Container, opts: TextInputOptions):
 
   const label = new PIXI.Text({
     text: placeholder,
-    style: { ...TXT.dim, fontSize, fontFamily, fill: 0x555566 },
+    style: { ...textPresets.dim, fontSize, fontFamily, fill: 0x555566 },
   });
   label.x = 10;
   label.y = (height - label.height) / 2;

@@ -8,6 +8,20 @@ export interface PerfDisplayOptions {
   textAlpha?: number;
 }
 
+let _rootDisplay: PerfDisplay | null = null;
+
+export function setRootDisplay(d: PerfDisplay | null): void {
+  _rootDisplay = d;
+}
+
+export function enablePerfMeasure(): void {
+  _rootDisplay?.enable();
+}
+
+export function disablePerfMeasure(): void {
+  _rootDisplay?.disable();
+}
+
 export class PerfDisplay {
   readonly container: PIXI.Container;
 

@@ -1,6 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../../framework/gsap-pixi', () => ({
+vi.mock('gsap', () => ({
+  default: {
+    to: vi.fn((_target: unknown, vars: Record<string, unknown>) => {
+      if (typeof vars.onComplete === 'function') vars.onComplete();
+      return { kill: vi.fn() };
+    }),
+    killTweensOf: vi.fn(),
+    registerPlugin: vi.fn(),
+  },
   gsap: {
     to: vi.fn((_target: unknown, vars: Record<string, unknown>) => {
       if (typeof vars.onComplete === 'function') vars.onComplete();
@@ -71,7 +79,7 @@ vi.mock('pixi.js', async () => {
 });
 
 import * as PIXI from 'pixi.js';
-import { gsap } from '../../framework/gsap-pixi';
+import { gsap } from 'gsap';
 import { EventBus } from '../../framework/EventBus';
 import { createFullscreenManager } from '../FullscreenManager';
 

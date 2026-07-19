@@ -21,7 +21,7 @@ PixiApp.startPixiApp()
 | `EventBus.ts` | 带类型的 pub-sub。`on` / `off` / `emit` / `clear`。handler 自带 try-catch 防止单 handler 拖垮全链。 |
 | `InfiniteCanvas.ts` | 泛化无限拖拽 + chunk 化加载/卸载系统。插件架构（drag/decelerate），帧率无关惯性，自动 chunk 创建/销毁。支持 `addPlugin`/`removePlugin`。内部 `_scrollX/_scrollY` 是屏幕像素偏移，`worldX/worldY` getter 返回视口中心世界坐标（zoom 稳定）。 |
 | `component.ts` | Component 注册表工厂。`registerComponent('type', factory)` → `createComponent('type', opts)`。 |
-| `ui-helpers.ts` | `makeButton` / `makeStepper` / `makeInfoPanel` 通用 PIXI 控件。 |
+| `ui-helpers.ts` | `makeButton` / `makeStepper` / `makeInfoPanel` / `textPresets` 通用 PIXI 控件。 |
 | `gsap-pixi.ts` | GSAP 3.15 + PixiPlugin 注册。可直接 `gsap.to(sprite, { pixi: { alpha: 0 } })`。 |
 | `perf.ts` | `PerfDisplay` — 屏幕 FPS / frametime / 对象数 HUD。 |
 | `Layer.ts` | `LayerManager` / `LayerImpl` — 命名 z-order 层抽象。 |

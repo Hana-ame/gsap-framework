@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeStepper, makeInfoPanel, TXT, type SubCanvasProxy, type Stepper } from '../../framework';
+import { startPixiApp, makeButton, makeStepper, makeInfoPanel, textPresets, type SubCanvasProxy, type Stepper } from '../../framework';
 
 export function ComponentUiHelpersDisplay() {
   const steppersRef = useRef<Stepper[]>([]);
@@ -17,9 +17,9 @@ export function ComponentUiHelpersDisplay() {
       makeInfoPanel(sc, {
         title: 'UI 辅助工具',
         lines: [
-          '用途：演示 makeButton()、makeStepper() 和 TXT 样式预设。',
+          '用途：演示 makeButton()、makeStepper() 和 textPresets 样式预设。',
           '测试方法：点击按钮查看"已点击："更新，调整步进器改变预览框。',
-          '预期：按钮显示不同颜色，步进器实时改变预览尺寸/速度/亮度，所有 TXT 预设正确渲染。',
+          '预期：按钮显示不同颜色，步进器实时改变预览尺寸/速度/亮度，所有 textPresets 预设正确渲染。',
         ],
         x: window.innerWidth - 400,
         y: window.innerHeight - 150,
@@ -31,7 +31,7 @@ export function ComponentUiHelpersDisplay() {
       let y = 0;
 
       const mkHeader = (text: string) => {
-        const t = new PIXI.Text({ text, style: TXT.heading });
+        const t = new PIXI.Text({ text, style: textPresets.heading });
         t.x = 0;
         t.y = y;
         t.eventMode = 'none';
@@ -39,10 +39,10 @@ export function ComponentUiHelpersDisplay() {
         y += 24;
       };
 
-      mkHeader('TXT presets');
-      (Object.entries(TXT) as [string, PIXI.TextStyle][]).forEach(([name, style]) => {
+      mkHeader('textPresets');
+      (Object.entries(textPresets) as [string, PIXI.TextStyle][]).forEach(([name, style]) => {
         const t = new PIXI.Text({
-          text: `TXT.${name}  —  The quick brown fox jumps over the lazy dog`,
+          text: `textPresets.${name}  —  The quick brown fox jumps over the lazy dog`,
           style: { ...style, fill: style.fill as number || 0xffffff },
         });
         t.x = 16;
@@ -71,7 +71,7 @@ export function ComponentUiHelpersDisplay() {
       addBtn('Ghost', 0x1a1a2e);
       y += 40;
 
-      const clickLabel = new PIXI.Text({ text: 'clicked: —', style: TXT.label });
+      const clickLabel = new PIXI.Text({ text: 'clicked: —', style: textPresets.label });
       clickLabel.x = 0;
       clickLabel.y = y;
       clickLabel.eventMode = 'none';
@@ -129,17 +129,17 @@ export function ComponentUiHelpersDisplay() {
 
       const code = new PIXI.Text({
         text: [
-          'import { makeButton, makeStepper, TXT } from \'../../framework\';',
+          'import { makeButton, makeStepper, textPresets } from \'../../framework\';',
           '',
           'const btn = makeButton(label, w, h, onClick, bgColor?);',
           'const stepper = makeStepper({ label, getValue, onChange, min, max });',
           '  // returns { container, width, refresh }',
           '',
-          'TXT.btn     — button text style',
-          'TXT.label   — label text style',
-          'TXT.dim     — dim text style',
-          'TXT.coord   — coordinate text style',
-          'TXT.heading — heading text style',
+          'textPresets.btn     — button text style',
+          'textPresets.label   — label text style',
+          'textPresets.dim     — dim text style',
+          'textPresets.coord   — coordinate text style',
+          'textPresets.heading — heading text style',
         ].join('\n'),
         style: { fontSize: 11, fill: 0x666688, fontFamily: 'monospace', lineHeight: 18 },
       });
@@ -168,5 +168,5 @@ export function ComponentUiHelpersDisplay() {
 
 ComponentUiHelpersDisplay.head = {
   title: 'Component: UI Helpers',
-  description: 'makeButton, makeStepper, TXT style presets — reusable UI building blocks.',
+  description: 'makeButton, makeStepper, textPresets style presets — reusable UI building blocks.',
 };

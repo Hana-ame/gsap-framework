@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import type { SubCanvasProxy } from '../framework/SubCanvasProxy';
-import { gsap } from '../framework/gsap-pixi';
+import { gsap } from 'gsap';
 
 export interface FullscreenShowEvent {
   texture: PIXI.Texture;

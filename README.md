@@ -40,7 +40,7 @@ const stop = startPixiApp((proxy) => {
 | **Component Registry** | `registerComponent` / `createComponent` — unified factory API for all UI components |
 | **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |
 | **GSAP Integration** | PixiPlugin pre-registered, ready for `gsap.to(obj, { pixi: { ... } })` |
-| **TXT style constants** | Centralized `TXT.btn`, `TXT.label`, `TXT.dim`, `TXT.coord`, `TXT.heading` |
+| **textPresets** | Centralized `textPresets.btn`, `textPresets.label`, `textPresets.dim`, `textPresets.coord`, `textPresets.heading` |
 | **PerfDisplay** | On-screen FPS/frametime/object count HUD |
 | **Backend Control** | `MockBackend` + `WindowManager` + `ContentChannel` — backend-driven UI via command protocol |
 | **Components** | Window / Confirm / Scrollable / Loading / Image / ClickableImage / FullscreenManager / TextInput / VideoPlayer / AVD |
@@ -294,8 +294,7 @@ Two variants:
 ```ts
 import { createVideoPlayer } from '../components';
 
-const player = createVideoPlayer({
-  parent: root,
+const player = createVideoPlayer(parent, {
   url: 'https://example.com/video.mp4',
   width: 640, height: 360,
   autoplay: false,
@@ -309,6 +308,7 @@ player.play();
 player.pause();
 player.seek(30);
 player.stage;     // PIXI Container
+player.destroy();
 ```
 
 **React DOM** (`VideoPlayer` component):
@@ -606,28 +606,28 @@ tl.to(sprite, { pixi: { x: 100 }, duration: 0.3 })
 
 ---
 
-## TXT Style Constants
+## textPresets — Style Constants
 
 Centralized text style presets in `ui-helpers.ts`.
 
 ```ts
-import { TXT } from '../framework';
+import { textPresets } from '../framework';
 
 // Available presets:
-TXT.btn      // { fontSize: 12, fill: 0xccccee, fontFamily: 'monospace', fontWeight: 'bold' }
-TXT.label    // { fontSize: 11, fill: 0x8888aa, fontFamily: 'monospace' }
-TXT.dim      // { fontSize: 10, fill: 0x556688, fontFamily: 'monospace' }
-TXT.coord    // { fontSize: 10, fill: 0x6688aa, fontFamily: 'monospace' }
-TXT.heading  // { fontSize: 14, fill: 0x8888cc, fontFamily: 'monospace', fontWeight: 'bold' }
+textPresets.btn      // { fontSize: 12, fill: 0xccccee, fontFamily: 'monospace', fontWeight: 'bold' }
+textPresets.label    // { fontSize: 11, fill: 0x8888aa, fontFamily: 'monospace' }
+textPresets.dim      // { fontSize: 10, fill: 0x556688, fontFamily: 'monospace' }
+textPresets.coord    // { fontSize: 10, fill: 0x6688aa, fontFamily: 'monospace' }
+textPresets.heading  // { fontSize: 14, fill: 0x8888cc, fontFamily: 'monospace', fontWeight: 'bold' }
 
-new PIXI.Text({ text: 'Hello', style: TXT.label });
+new PIXI.Text({ text: 'Hello', style: textPresets.label });
 ```
 
 ---
 
 ## PerfDisplay
 
-On-screen FPS/frametime/object count overlay.
+On-screen FPS/frametime/object count overlay. The root PerfDisplay is created automatically by `startPixiApp`.
 
 ```ts
 import { startPixiApp } from '../framework';
@@ -637,12 +637,10 @@ const stop = startPixiApp((proxy) => {
   proxy.showPerfMeasure(false); // hide
 });
 
-// Standalone:
-import { PerfDisplay } from '../framework';
-const perf = new PerfDisplay(app.ticker, () => app.stage, {
-  x: 10, y: 10, fontSize: 11, color: 0x88ff88,
-});
-perf.enable();
+// Toggle from anywhere:
+import { enablePerfMeasure, disablePerfMeasure } from '../framework';
+enablePerfMeasure();
+disablePerfMeasure();
 ```
 
 ---

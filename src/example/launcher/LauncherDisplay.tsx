@@ -38,7 +38,7 @@ const APPS: AppEntry[] = [
   { route: 'component-multi-window', label: 'Stress: MultiWindow', hint: '12+ draggable windows — test drag + z-order', glyph: '\u25A6', accent: '#6a4a3a' },
   { route: 'component-window-canvas', label: 'Window + InfiniteCanvas', hint: 'InfiniteCanvas inside a draggable window — SubCanvas nests anything', glyph: '\u25A8', accent: '#3a5a6a' },
   { route: 'component-fullscreen', label: 'Component: Fullscreen', hint: 'FullscreenManager — click/dblclick/drag/close', glyph: '\u2316', accent: '#5a3a6a' },
-  { route: 'component-ui-helpers', label: 'Component: UI Helpers', hint: 'makeButton + makeStepper + TXT presets', glyph: '\u2699', accent: '#3a6a5a' },
+  { route: 'component-ui-helpers', label: 'Component: UI Helpers', hint: 'makeButton + makeStepper + textPresets', glyph: '\u2699', accent: '#3a6a5a' },
   { route: 'component-text-input', label: 'Component: TextInput', hint: 'canvas text input — text/password/maxLength/placeholder', glyph: '\u270E', accent: '#4a5a6a' },
   { route: 'component-layers', label: 'Component: Layers', hint: 'LayerManager — named layers, z-order, show/hide, alpha, front/back', glyph: '\u25A6', accent: '#5a4a6a' },
   { route: 'component-audio-viz', label: 'Component: Audio Viz', hint: 'audio frequency visualization', glyph: '\u266B', accent: '#6a4a5a' },

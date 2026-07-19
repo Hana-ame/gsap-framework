@@ -82,7 +82,7 @@ React 的角色只到 `useEffect(() => startPixiApp(...), [])`。之后所有 UI
 - **不是引擎** — 没有物理、粒子、音频管理。跟 GSAP、Howler、PIXI 粒子各司其职
 - **不是状态管理** — 没有 Redux/MobX。EventBus 解决跨组件通信，局部状态就在模块级变量里
 
-## 为什么有 48 个 example
+## 为什么有 50 个 example
 
 每个 example 对应一个 framework/component 特性。它们的作用：
 

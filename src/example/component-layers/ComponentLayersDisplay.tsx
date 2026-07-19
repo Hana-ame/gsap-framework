@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, makeButton, makeInfoPanel, LayerManager, type SubCanvasProxy, type Layer } from '../../framework';
-import { gsap } from '../../framework/gsap-pixi';
+import { gsap } from 'gsap';
 
 const COLORS = [0x4488ff, 0xff4488, 0x44ff88, 0xffaa44, 0xaa44ff, 0x44ccff];
 const NAMES = ['bg', 'game', 'ui', 'overlay', 'fx', 'debug'];

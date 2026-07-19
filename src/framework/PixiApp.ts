@@ -5,7 +5,7 @@
 import * as PIXI from 'pixi.js';
 import { SubCanvasProxy } from './SubCanvasProxy';
 import { SubPointerType } from './SubCanvas';
-import { PerfDisplay } from './perf';
+import { PerfDisplay, setRootDisplay } from './perf';
 
 const POINTER_TYPES: SubPointerType[] = [
   'pointerdown',
@@ -127,6 +127,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
   let destroyed = false;
   let proxy: SubCanvasProxy | null = null;
   let innerCleanup: (() => void) | undefined;
+  let perfDisplay: PerfDisplay | null = null;
 
   let resizeTimer: ReturnType<typeof setTimeout> | null = null;
   const onResize = () => {
@@ -188,7 +189,8 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
 
       app.stage.eventMode = 'static';
 
-      _rootPerfDisplay = new PerfDisplay(app.ticker, () => app.stage);
+      perfDisplay = new PerfDisplay(app.ticker, () => app.stage);
+      setRootDisplay(perfDisplay);
 
       assertSingleBodyCanvas(canvas);
       bodyCanvases.add(canvas);
@@ -202,7 +204,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
       }
 
       try {
-        proxy = new SubCanvasProxy({ app, perfDisplay: _rootPerfDisplay });
+        proxy = new SubCanvasProxy({ app });
         const returned = onReady?.(proxy);
         if (typeof returned === 'function') innerCleanup = returned;
         if (typeof app.ticker.maxFPS === 'number' && app.ticker.maxFPS > 0) {
@@ -294,8 +296,9 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
     innerCleanup?.();
     proxy?.destroyAll();
     proxy = null;
-    _rootPerfDisplay?.destroy();
-    _rootPerfDisplay = null;
+    perfDisplay?.destroy();
+    perfDisplay = null;
+    setRootDisplay(null);
     // Let app.destroy handle canvas removal (removeView=true) to avoid
     // NotFoundError from double-removal.
     if (mounted) {
@@ -307,13 +310,6 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
       // already destroyed
     }
   };
-}
-
-// 模块级单例，方便其他模块在无 proxy 的场景下获取 perf 实例
-let _rootPerfDisplay: PerfDisplay | null = null;
-
-export function getRootPerfDisplay(): PerfDisplay | null {
-  return _rootPerfDisplay;
 }
 
 export function debugBodyCanvases(): HTMLCanvasElement[] {

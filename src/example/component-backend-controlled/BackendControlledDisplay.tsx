@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { MockBackend, WindowManager, ContentChannel } from '../../backend';
 
 const DEMO_LINES = [
@@ -42,7 +42,7 @@ export function BackendControlledDisplay() {
 
       const title = new PIXI.Text({
         text: 'backend-controlled display',
-        style: TXT.heading,
+        style: textPresets.heading,
       });
       title.x = 12;
       title.y = 12;

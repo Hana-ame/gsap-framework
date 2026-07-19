@@ -271,7 +271,7 @@ const stop = startPixiApp((proxy) => {
   // proxy.canvas    — HTMLCanvasElement
 
   // 创建根 SubCanvas（全屏）
-  const root = proxy.createRoot();
+  const root = proxy.createRegion({ x: 0, y: 0, width: 800, height: 600 });
 
   // 创建子区域
   const panel = root.createRegion(
@@ -329,12 +329,12 @@ proxy.showPerfMeasure(false);  // 隐藏
 
 每次 `startPixiApp` 会自动创建一个绑定了 `app.ticker` + `app.stage` 的 `PerfDisplay` 实例，通过 `SubCanvasProxy.showPerfMeasure()` 控制。
 
-独立使用：
+独立开关（不依赖 proxy）：
 
 ```ts
-import { PerfDisplay } from '../framework';
-const perf = new PerfDisplay(ticker, () => stage, { x: 10, y: 10 });
-perf.enable();
+import { enablePerfMeasure, disablePerfMeasure } from '../framework';
+enablePerfMeasure();
+disablePerfMeasure();
 ```
 
 显示内容：
@@ -972,12 +972,12 @@ setZoom(newZoom, cx, cy):
   const win = createComponent('window', { parent, title: '...', width, height });
 ```
 
-### TXT 样式常量
+### textPresets 样式常量
 
 框架在 `src/framework/ui-helpers.ts` 定义了一组统一样式常量，用于替代各处散落的内联 `PIXI.TextStyle`：
 
 ```typescript
-export const TXT = {
+export const textPresets = {
   btn:     { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' },
   label:   { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' },
   dim:     { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' },
@@ -986,7 +986,7 @@ export const TXT = {
 };
 ```
 
-如需统一调整主题字体/颜色，只需修改 `TXT` 中各字段的定义。`makeButton`、`makeStepper` 已使用 `TXT.btn` / `TXT.label`。外部代码可通过 `import { TXT } from '../../framework'` 获取。
+如需统一调整主题字体/颜色，只需修改 `textPresets` 中各字段的定义。`makeButton`、`makeStepper` 已使用 `textPresets.btn` / `textPresets.label`。外部代码可通过 `import { textPresets } from '../../framework'` 获取。
 
 ### 演进记录：2026-07-19 代码质量优化
 
@@ -1000,9 +1000,9 @@ export const TXT = {
 | `ComponentLifeMapDisplay.tsx` | 删除 61 行本地 `makeStepper` 重复实现；改用 `import { makeStepper } from '../../framework'` |
 | `ClickableImage.ts` | 深导入 `../framework/SubCanvas` / `../framework/EventBus` → barrel `../framework` |
 | 10 个 example 文件 | `../../framework/PixiApp` → `../../framework`（使用 barrel） |
-| `ui-helpers.ts` | 新增 `TXT` 样式常量，`makeButton`/`makeStepper` 改用 `TXT.btn`/`TXT.label` |
-| 9 个外部文件 | 内联 `style` → `TXT.dim` / `TXT.coord` / `TXT.heading` |
+| `ui-helpers.ts` | 新增 `textPresets` 样式常量，`makeButton`/`makeStepper` 改用 `textPresets.btn`/`textPresets.label` |
 
+| 9 个外部文件 | 内联 `style` → `textPresets.dim` / `textPresets.coord` / `textPresets.heading` |
 **强制约定**：所有 `src/example/` 和 `src/backend/` 代码**禁止**深导入 framework/components 内部模块。只能通过 `../../framework`（barrel）和 `../../components`（barrel）导入。已修复此前的 21 处违规。
 
 ### 演进记录：2026-07-19 拖拽响应优化

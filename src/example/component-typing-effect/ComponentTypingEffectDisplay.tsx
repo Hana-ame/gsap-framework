@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, makeInfoPanel, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment } from '../../framework';
+import { startPixiApp, makeButton, makeInfoPanel, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment } from '../../framework';
+import { gsap } from 'gsap';
 
 const DEMO_TEXTS = [
   'The quick brown fox jumps over the lazy dog.',
@@ -125,7 +126,11 @@ export function ComponentTypingEffectDisplay() {
           input = t;
         }
 
-        const handle = runTextEffect(canvas.stage, input, textStyle, type as any, {
+        const handle = runTextEffect({
+          parent: canvas.stage,
+          text: input,
+          textStyle,
+          type: type as any,
           x: (canvas.bounds.width - Math.min(canvas.bounds.width - 80, 600)) / 2,
           y: canvas.bounds.height / 2 - 20,
           maxWidth: canvas.bounds.width - 80,

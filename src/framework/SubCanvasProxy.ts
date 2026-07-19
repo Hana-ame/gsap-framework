@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Rect, SubCanvas, SubPointerType } from './SubCanvas';
 import { EventBus } from './EventBus';
-import { PerfDisplay } from './perf';
+import { enablePerfMeasure, disablePerfMeasure } from './perf';
 
 // SubCanvasProxy — 对 PIXI.Application 的轻量封装，
 // 管理一组顶层 SubCanvas 并提供事件路由中枢。
@@ -9,23 +9,20 @@ import { PerfDisplay } from './perf';
 
 export interface SubCanvasProxyOptions {
   app: PIXI.Application;
-  perfDisplay?: PerfDisplay;
 }
 
 export class SubCanvasProxy {
   private app: PIXI.Application;
   private topCanvases: SubCanvas[] = [];
   private _bus = new EventBus();
-  private _perfDisplay: PerfDisplay | null;
 
   constructor(opts: SubCanvasProxyOptions) {
     this.app = opts.app;
-    this._perfDisplay = opts.perfDisplay ?? null;
   }
 
   showPerfMeasure(show: boolean): void {
-    if (show) this._perfDisplay?.enable();
-    else this._perfDisplay?.disable();
+    if (show) enablePerfMeasure();
+    else disablePerfMeasure();
   }
 
   get bus(): EventBus {
@@ -33,18 +30,22 @@ export class SubCanvasProxy {
   }
 
   get canvas(): HTMLCanvasElement {
+    console.warn('[SubCanvasProxy] .canvas 是透传 accessor，建议改用 proxy.createRegion() 获取 SubCanvas 再操作。');
     return this.app.canvas as HTMLCanvasElement;
   }
 
   get ticker(): PIXI.Ticker {
+    console.warn('[SubCanvasProxy] .ticker 是透传 accessor，建议改用 SubCanvas.ticker。');
     return this.app.ticker;
   }
 
   get renderer(): PIXI.Renderer {
+    console.warn('[SubCanvasProxy] .renderer 是透传 accessor，建议改用 SubCanvas.renderer。');
     return this.app.renderer;
   }
 
   get stage(): PIXI.Container {
+    console.warn('[SubCanvasProxy] .stage 是透传 accessor，建议改用 SubCanvas.stage。');
     return this.app.stage;
   }
 

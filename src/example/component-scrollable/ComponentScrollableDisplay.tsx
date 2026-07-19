@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '../../framework';
 import { createScrollable, type Scrollable } from '../../components';
 
 function fillVertical(sc: SubCanvas) {
@@ -102,7 +102,7 @@ export function ComponentScrollableDisplay() {
       const mkLabel = (text: string, x: number, y: number) => {
         const t = new PIXI.Text({
           text,
-          style: TXT.dim,
+          style: textPresets.dim,
         });
         t.x = x;
         t.y = y;

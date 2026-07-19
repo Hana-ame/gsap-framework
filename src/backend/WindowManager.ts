@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { TXT } from '../framework';
+import { textPresets } from '../framework';
 import { MockBackend } from './MockBackend';
 import {
   type BackendCommand,
@@ -136,7 +136,7 @@ export class WindowManager {
     } else {
       const text = new PIXI.Text({
         text: `content: ${type}`,
-        style: TXT.heading,
+        style: textPresets.heading,
       });
       text.x = 16;
       text.y = 16;

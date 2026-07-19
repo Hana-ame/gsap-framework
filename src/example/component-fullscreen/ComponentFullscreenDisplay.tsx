@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, TXT, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, textPresets, makeInfoPanel, type SubCanvasProxy } from '../../framework';
 import { createClickableImage, createFullscreenManager, type ClickableImage } from '../../components';
 
 const SLOTS = [
@@ -70,7 +70,7 @@ export function ComponentFullscreenDisplay() {
 
         const label = new PIXI.Text({
           text: slot.label,
-          style: TXT.dim,
+          style: textPresets.dim,
         });
         label.x = x;
         label.y = y + THUMB + 4;

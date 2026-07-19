@@ -2,7 +2,7 @@
  * UI 帮助函数
  *
  * 提供框架内通用 UI 组件的工厂函数：
- *   - TXT：预设字体样式（按钮、标签、暗淡、坐标、标题）
+ *   - textPresets：预设字体样式（按钮、标签、暗淡、坐标、标题）
  *   - makeButton：圆角按钮
  *   - makeStepper：加减步进器（带 +/- 按钮和值显示）
  *   - makeInfoPanel：浮动信息面板（半透明背景 + 标题 + 正文）
@@ -15,7 +15,7 @@ import * as PIXI from 'pixi.js';
 import type { SubCanvas } from './SubCanvas';
 
 /**
- * TXT：预设字体样式对象。
+ * textPresets：预设字体样式对象。
  * 选择 monospace 是为了在半透明背景上保持一致的字符宽度和高度，
  * 避免 proportional 字体对齐不一致的问题。
  *
@@ -26,7 +26,7 @@ import type { SubCanvas } from './SubCanvas';
  *   coord  — 坐标显示，蓝灰色
  *   heading — 标题，白色
  */
-export const TXT = {
+export const textPresets = {
   btn:      { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' } as const,
   label:    { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' } as const,
   dim:      { fontSize: 11, fill: 0x888888, fontFamily: 'monospace' } as const,
@@ -56,7 +56,7 @@ export function makeButton(
   btn.addChild(g);
   const t = new PIXI.Text({
     text: label,
-    style: TXT.btn,
+    style: textPresets.btn,
   });
   t.anchor.set(0.5);
   t.x = w / 2;
@@ -104,7 +104,7 @@ export function makeStepper(opts: {
   const wrap = new PIXI.Container();
   const lbl = new PIXI.Text({
     text: label,
-    style: TXT.label,
+    style: textPresets.label,
   });
   lbl.x = 0;
   lbl.y = 2;
@@ -119,7 +119,7 @@ export function makeStepper(opts: {
 
   const valText = new PIXI.Text({
     text: String(current),
-    style: TXT.btn,
+    style: textPresets.btn,
   });
   valText.anchor.set(0.5, 0);
   valText.x = lbl.width + 6 + btnW + valW / 2;

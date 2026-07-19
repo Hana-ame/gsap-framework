@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { gsap } from '../framework/gsap-pixi';
+import { gsap } from 'gsap';
 import { DialogueBox, type DialogueBoxOptions } from './AvdDialogueBox';
 import { PortraitLayer, type AvdPortraitPos } from './AvdPortraitLayer';
 import {

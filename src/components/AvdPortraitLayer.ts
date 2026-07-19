@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { gsap } from '../framework/gsap-pixi';
+import { gsap } from 'gsap';
 
 export type AvdPortraitPos = 'left' | 'center' | 'right';
 

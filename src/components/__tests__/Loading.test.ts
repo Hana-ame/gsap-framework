@@ -1,22 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('gsap', () => ({
-  default: {
+vi.mock('gsap', () => {
+  const m = {
     to: vi.fn((_target: unknown, _vars: Record<string, unknown>) => ({ kill: vi.fn() })),
     killTweensOf: vi.fn(),
     registerPlugin: vi.fn(),
-  },
-  PixiPlugin: { registerPIXI: vi.fn() },
-}));
-
-vi.mock('../../framework/gsap-pixi', () => ({
-  gsap: {
-    to: vi.fn((_target: unknown, _vars: Record<string, unknown>) => ({ kill: vi.fn() })),
-    killTweensOf: vi.fn(),
-    registerPlugin: vi.fn(),
-  },
-  PixiPlugin: { registerPIXI: vi.fn() },
-}));
+  };
+  return { default: m, gsap: m, PixiPlugin: { registerPIXI: vi.fn() } };
+});
 
 type MockContainer = {
   children: unknown[];

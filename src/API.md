@@ -401,15 +401,19 @@ function createTextInput(container: PIXI.Container, opts: TextInputOptions): Tex
 PIXI-rendered video with playback controls.
 
 ```ts
-interface VideoPlayerOptions {
-  parent: SubCanvas
+interface PixiVideoPlayerOptions {
   url: string
+  x?: number
+  y?: number
   width: number
   height: number
-  autoplay?: boolean
-  muted?: boolean
   loop?: boolean
+  muted?: boolean
+  autoplay?: boolean
   showControls?: boolean
+  hidePlayButton?: boolean
+  onLoad?: () => void
+  onError?: (e: Error) => void
   onEnded?: () => void
 }
 
@@ -418,11 +422,12 @@ interface PixiVideoPlayerHandle {
   play(): void
   pause(): void
   seek(time: number): void
+  setControlsVisible(v: boolean): void
   destroy(): void
   readonly destroyed: boolean
 }
 
-function createVideoPlayer(opts: VideoPlayerOptions): PixiVideoPlayerHandle
+function createVideoPlayer(parent: SubCanvas, opts: PixiVideoPlayerOptions): PixiVideoPlayerHandle
 ```
 
 ---
