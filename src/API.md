@@ -32,6 +32,7 @@ class SubCanvasProxy {
   getTopCanvases(): SubCanvas[]
   destroyAll(): void
   onWindowResize(fn: () => void): () => void
+  showPerfMeasure(show: boolean): void
 }
 ```
 
@@ -86,18 +87,19 @@ class SubCanvas {
 
   // sub-regions
   createRegion(bounds: Rect, opts?: SubRegionOpts): SubCanvas
-  getChildren(): SubCanvas[]
+  readonly subRegions: readonly SubCanvas[]
 
   // event listeners (AABB routing)
   onPress(fn: Listener): this
   onMove(fn: Listener): this
   onRelease(fn: Listener): this
+  onTap(fn: Listener): this
   onLeave(fn: Listener): this
   offPointer(type: SubPointerType, fn: Listener): this
   onResize(fn: (bounds: Rect) => void): this
 
   // lifecycle
-  destroy(options?: { children?: boolean; texture?: boolean }): void
+  destroy(): void
 }
 ```
 
@@ -125,7 +127,7 @@ interface Rect {
   height: number
 }
 
-type SubPointerType = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerleave'
+type SubPointerType = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerleave' | 'tap'
 
 interface SubPointerEvent {
   type: SubPointerType
@@ -306,7 +308,7 @@ interface Scrollable {
   readonly destroyed: boolean
 }
 
-function createScrollable(parent: SubCanvas, opts: ScrollableOptions): Scrollable
+function createScrollable(opts: ScrollableOptions): Scrollable
 ```
 
 ---
@@ -359,6 +361,151 @@ interface FullscreenShowEvent {
 
 // Listens for 'fullscreen:show' on bus. Singleton — only one overlay at a time.
 function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManager
+```
+
+---
+
+### createTextInput
+
+HTML `<input>` overlaid on canvas, positioned via `requestAnimationFrame` + `getBounds()`.
+
+```ts
+interface TextInputOptions {
+  x: number
+  y: number
+  width: number
+  height: number
+  placeholder?: string
+  password?: boolean
+  maxLength?: number
+  onChange?: (value: string) => void
+  onSubmit?: (value: string) => void
+}
+
+interface TextInputHandle {
+  focus(): void
+  blur(): void
+  getValue(): string
+  setValue(v: string): void
+  setEnabled(enabled: boolean): void
+  destroy(): void
+}
+
+function createTextInput(container: PIXI.Container, opts: TextInputOptions): TextInputHandle
+```
+
+---
+
+### createVideoPlayer
+
+PIXI-rendered video with playback controls.
+
+```ts
+interface VideoPlayerOptions {
+  parent: SubCanvas
+  url: string
+  width: number
+  height: number
+  autoplay?: boolean
+  muted?: boolean
+  loop?: boolean
+  showControls?: boolean
+  onEnded?: () => void
+}
+
+interface PixiVideoPlayerHandle {
+  readonly stage: PIXI.Container
+  play(): void
+  pause(): void
+  seek(time: number): void
+  destroy(): void
+  readonly destroyed: boolean
+}
+
+function createVideoPlayer(opts: VideoPlayerOptions): PixiVideoPlayerHandle
+```
+
+---
+
+### Avd — Visual Novel Engine
+
+Script-driven dialogue system with typewriter text, character portraits, fade transitions.
+
+```ts
+interface AvdOptions {
+  boxWidth?: number
+  boxHeight?: number
+  boxX?: number
+  boxY?: number
+  bgColor?: number
+  bgAlpha?: number
+  speakerColor?: number
+  textColor?: number
+  fontSize?: number
+  fontFamily?: string
+  portraitLeftX?: number
+  portraitRightX?: number
+  portraitWidth?: number
+  portraitHeight?: number
+  fadeDuration?: number
+  typewriterSpeed?: number
+}
+
+interface AvdState { speaker: string; text: string; portrait?: Texture; portraitPos?: 'left' | 'right' }
+
+class Avd {
+  constructor(stage: Container, screenW: number, screenH: number, ticker: Ticker, opts?: AvdOptions)
+  setScript(script: AvdState[]): void
+  next(): void
+  goTo(index: number): void
+  setTypewriterSpeed(speed: number): void
+  getState(): 'typing' | 'between' | 'done'
+  destroy(): void
+}
+
+// Parse from JSON
+function parseAvdScriptJSON(json: string, resolveTexture: (name: string) => Texture | undefined): AvdState[]
+```
+
+---
+
+### createLoading
+
+```ts
+interface LoadingOptions {
+  text?: string
+  spinnerColor?: number
+  showSpinner?: boolean
+  overlayColor?: number
+  overlayAlpha?: number
+}
+
+function createLoading(parent: SubCanvas, opts?: LoadingOptions): ComponentHandle
+function showLoading(parent: SubCanvas, opts?: LoadingOptions | string): () => void
+```
+
+---
+
+### PerfDisplay
+
+On-screen FPS/frametime/object count HUD.
+
+```ts
+interface PerfDisplayOptions {
+  x?: number
+  y?: number
+  fontSize?: number
+  color?: number
+}
+
+class PerfDisplay {
+  constructor(ticker: Ticker, getStage: () => Container, opts?: PerfDisplayOptions)
+  enable(): void
+  disable(): void
+  toggle(): void
+  destroy(): void
+  readonly destroyed: boolean
+}
 ```
 
 ---

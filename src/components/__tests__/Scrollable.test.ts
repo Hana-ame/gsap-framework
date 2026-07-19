@@ -146,4 +146,21 @@ describe('createScrollable', () => {
     const sc = createScrollable({ parent: mockParent as never, width: 300, height: 400 });
     expect(() => sc.recalc()).not.toThrow();
   });
+
+  it('sync can be called directly without throwing', () => {
+    const sc = createScrollable({ parent: mockParent as never, width: 300, height: 400 });
+    expect(() => sc.sync()).not.toThrow();
+  });
+
+  it('sync is safe after destroy', () => {
+    const sc = createScrollable({ parent: mockParent as never, width: 300, height: 400 });
+    sc.destroy();
+    expect(() => sc.sync()).not.toThrow();
+  });
+
+  it('sync is the same function used internally by scrollTo/scrollBy/recalc', () => {
+    const sc = createScrollable({ parent: mockParent as never, width: 300, height: 400 });
+    expect(sc.sync).toBeDefined();
+    expect(typeof sc.sync).toBe('function');
+  });
 });

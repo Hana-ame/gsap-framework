@@ -1,3 +1,7 @@
+// PixiApp — PIXI.Application 的启动/销毁编排层。
+// 职责：WebGL 探测、画布注入、窗口 resize 节流、
+// window 级 pointer 路由、dev 健康检查、崩溃兜底遮罩。
+
 import * as PIXI from 'pixi.js';
 import { SubCanvasProxy } from './SubCanvasProxy';
 import { SubPointerType } from './SubCanvas';
@@ -17,6 +21,7 @@ function listBodyCanvases(): HTMLCanvasElement[] {
   return Array.from(document.body.querySelectorAll('canvas'));
 }
 
+// 保证 body 中只有一个 PIXI canvas，避免 HMR / 重复 init 导致多个画布叠加
 function assertSingleBodyCanvas(incoming?: HTMLCanvasElement): void {
   if (typeof document === 'undefined') return;
   const all = listBodyCanvases();
@@ -40,6 +45,7 @@ interface WebGLReport {
   err?: string;
 }
 
+// 在 PIXI 初始化前先探测 WebGL 能力，失败时可提前给出兼容性提示
 function probeWebGL(): WebGLReport {
   if (typeof document === 'undefined') return { ok: false, err: 'no document' };
   const canvas = document.createElement('canvas');
@@ -72,6 +78,7 @@ function probeWebGL(): WebGLReport {
   }
 }
 
+// 致命错误全屏覆盖层，用户可截图上报，避免白屏无从排查
 function showFatalOverlay(title: string, body: string): void {
   if (typeof document === 'undefined') return;
   const el = document.createElement('div');
@@ -135,6 +142,9 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
     }, 80);
   };
 
+  // 在 window 层监听 pointer 而非 canvas 层，原因：
+  // 1. 鼠标快速移出 canvas 时仍能收到 pointerup，不会"卡键"
+  // 2. 多指/多 region 场景下统一分发
   const makePointerHandler = (type: SubPointerType) => (e: PointerEvent) => {
     if (!proxy) return;
     if (e.target !== proxy.canvas) return;
@@ -146,6 +156,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
   });
   window.addEventListener('resize', onResize);
 
+  // 固定全屏 + 设备像素对齐 + high-performance 策略
   const initOpts: Partial<PIXI.ApplicationOptions> = {
     width: window.innerWidth,
     height: window.innerHeight,
@@ -158,6 +169,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
     hello: false,
   };
 
+  // 异步 init 是 v8 的必要变化；init 成功后才可操作 stage/renderer
   app
     .init(initOpts)
     .then(() => {
@@ -206,6 +218,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
           }
         });
 
+        // dev 下的健康检查：采样 32x32 区域，若有子节点但全黑则告警
         if (import.meta.env.DEV) {
           setTimeout(() => {
             if (destroyed) return;
@@ -271,6 +284,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
       );
     });
 
+  // 销毁顺序：事件 → proxy → perf → app.destroy，避免 cleanup 中引用已释放资源
   return () => {
     destroyed = true;
     POINTER_TYPES.forEach((type) => {
@@ -295,6 +309,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
   };
 }
 
+// 模块级单例，方便其他模块在无 proxy 的场景下获取 perf 实例
 let _rootPerfDisplay: PerfDisplay | null = null;
 
 export function getRootPerfDisplay(): PerfDisplay | null {

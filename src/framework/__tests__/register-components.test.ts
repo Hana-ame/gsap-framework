@@ -36,7 +36,7 @@ vi.mock('../../components/Scrollable', () => ({
   }),
 }));
 
-import { createComponent, getComponentFactory, registeredTypes } from '../component';
+import { createComponent, _getComponentFactory, _registeredTypes } from '../component';
 import '../register-components';
 
 describe('register-components adapter', () => {
@@ -45,16 +45,16 @@ describe('register-components adapter', () => {
   });
 
   it('registers window, confirm, scrollable', () => {
-    const types = registeredTypes();
+    const types = _registeredTypes();
     expect(types).toContain('window');
     expect(types).toContain('confirm');
     expect(types).toContain('scrollable');
   });
 
-  it('getComponentFactory returns factory for each type', () => {
-    expect(getComponentFactory('window')).toBeDefined();
-    expect(getComponentFactory('confirm')).toBeDefined();
-    expect(getComponentFactory('scrollable')).toBeDefined();
+  it('_getComponentFactory returns factory for each type', () => {
+    expect(_getComponentFactory('window')).toBeDefined();
+    expect(_getComponentFactory('confirm')).toBeDefined();
+    expect(_getComponentFactory('scrollable')).toBeDefined();
   });
 
   it('createComponent("window") returns a Component', () => {

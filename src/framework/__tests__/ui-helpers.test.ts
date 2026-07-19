@@ -91,7 +91,7 @@ describe('makeButton', () => {
 describe('makeStepper', () => {
   it('creates stepper with container, width, refresh', async () => {
     const { makeStepper } = await import('../ui-helpers');
-    const st = makeStepper('Count', () => 5, vi.fn(), 0, 10);
+    const st = makeStepper({ label: 'Count', getValue: () => 5, onChange: vi.fn(), min: 0, max: 10 });
     expect(st.container).toBeDefined();
     expect(typeof st.width).toBe('number');
     expect(typeof st.refresh).toBe('function');
@@ -102,7 +102,7 @@ describe('makeStepper', () => {
     const { makeStepper } = await import('../ui-helpers');
     let val = 5;
     const onChange = vi.fn((v: number) => { val = v; });
-    const st = makeStepper('Count', () => val, onChange, 0, 10);
+    const st = makeStepper({ label: 'Count', getValue: () => val, onChange, min: 0, max: 10 });
     const minusBtn = st.container.children[2];
     if (minusBtn && typeof (minusBtn as Record<string, unknown>).emit === 'function') {
       ((minusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
@@ -114,7 +114,7 @@ describe('makeStepper', () => {
     const { makeStepper } = await import('../ui-helpers');
     let val = 5;
     const onChange = vi.fn((v: number) => { val = v; });
-    const st = makeStepper('Count', () => val, onChange, 0, 10);
+    const st = makeStepper({ label: 'Count', getValue: () => val, onChange, min: 0, max: 10 });
     const plusBtn = st.container.children[3];
     if (plusBtn && typeof (plusBtn as Record<string, unknown>).emit === 'function') {
       ((plusBtn as Record<string, unknown>).emit as (e: string, d: unknown) => void)('pointerdown', { stopPropagation: vi.fn() });
@@ -125,7 +125,7 @@ describe('makeStepper', () => {
   it('refresh updates displayed value', async () => {
     const { makeStepper } = await import('../ui-helpers');
     const val = 3;
-    const st = makeStepper('Count', () => val, vi.fn(), 0, 10);
+    const st = makeStepper({ label: 'Count', getValue: () => val, onChange: vi.fn(), min: 0, max: 10 });
     const textChildren = st.container.children.filter((c: unknown) =>
       (c as Record<string, unknown>).text !== undefined
     );
@@ -137,7 +137,7 @@ describe('makeStepper', () => {
     // Set up with getValue returning 0 (at min)
     let val = 0;
     const onChange = vi.fn((v: number) => { val = v; });
-    const st = makeStepper('MinMax', () => val, onChange, 0, 3);
+    const st = makeStepper({ label: 'MinMax', getValue: () => val, onChange, min: 0, max: 3 });
     const minusBtn = st.container.children[2];
     const plusBtn = st.container.children[3];
 

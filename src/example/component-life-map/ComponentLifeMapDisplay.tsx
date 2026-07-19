@@ -337,25 +337,25 @@ function buildControlPanel(refs: LifeMapRefs): void {
   randomBtn.y = 60;
   region.stage.addChild(randomBtn);
 
-  const speedStepper = makeStepper('Speed', () => state!.speed, refs.setSpeed, MIN_FPS, MAX_FPS);
+  const speedStepper = makeStepper({ label: 'Speed', getValue: () => state!.speed, onChange: refs.setSpeed, min: MIN_FPS, max: MAX_FPS });
   speedStepper.container.x = 360;
   speedStepper.container.y = 46;
   region.stage.addChild(speedStepper.container);
   refs.steppers.speed = speedStepper;
 
-  const cellSizeStepper = makeStepper('Zoom', () => state!.cellSize, refs.setCellSize, MIN_CELL_SIZE, MAX_CELL_SIZE);
+  const cellSizeStepper = makeStepper({ label: 'Zoom', getValue: () => state!.cellSize, onChange: refs.setCellSize, min: MIN_CELL_SIZE, max: MAX_CELL_SIZE });
   cellSizeStepper.container.x = 360 + speedStepper.width + 12;
   cellSizeStepper.container.y = 46;
   region.stage.addChild(cellSizeStepper.container);
   refs.steppers.zoom = cellSizeStepper;
 
-  const rowsStepper = makeStepper('Rows', () => state!.worldRows, refs.setRows, MIN_WORLD_ROWS, MAX_WORLD_ROWS);
+  const rowsStepper = makeStepper({ label: 'Rows', getValue: () => state!.worldRows, onChange: refs.setRows, min: MIN_WORLD_ROWS, max: MAX_WORLD_ROWS });
   rowsStepper.container.x = 360 + speedStepper.width + 12 + cellSizeStepper.width + 12;
   rowsStepper.container.y = 46;
   region.stage.addChild(rowsStepper.container);
   refs.steppers.rows = rowsStepper;
 
-  const colsStepper = makeStepper('Cols', () => state!.worldCols, refs.setCols, MIN_WORLD_COLS, MAX_WORLD_COLS);
+  const colsStepper = makeStepper({ label: 'Cols', getValue: () => state!.worldCols, onChange: refs.setCols, min: MIN_WORLD_COLS, max: MAX_WORLD_COLS });
   colsStepper.container.x = rowsStepper.container.x + rowsStepper.width + 12;
   colsStepper.container.y = 46;
   region.stage.addChild(colsStepper.container);

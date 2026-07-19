@@ -107,19 +107,19 @@ export function ComponentUiHelpersDisplay() {
         content.addChild(preview);
       };
 
-      const s1 = makeStepper('size  ', () => size, (v) => { size = v; refreshPreview(); }, 10, 150, 10);
+      const s1 = makeStepper({ label: 'size  ', getValue: () => size, onChange: (v) => { size = v; refreshPreview(); }, min: 10, max: 150, step: 10 });
       s1.container.x = 0;
       s1.container.y = y;
       content.addChild(s1.container);
       steppersRef.current.push(s1);
 
-      const s2 = makeStepper('speed ', () => speed, (v) => { speed = v; refreshPreview(); }, 1, 10);
+      const s2 = makeStepper({ label: 'speed ', getValue: () => speed, onChange: (v) => { speed = v; refreshPreview(); }, min: 1, max: 10 });
       s2.container.x = s1.width + 20;
       s2.container.y = y;
       content.addChild(s2.container);
       steppersRef.current.push(s2);
 
-      const s3 = makeStepper('bright', () => brightness, (v) => { brightness = v; refreshPreview(); }, 0, 255, 10);
+      const s3 = makeStepper({ label: 'bright', getValue: () => brightness, onChange: (v) => { brightness = v; refreshPreview(); }, min: 0, max: 255, step: 10 });
       s3.container.x = s1.width + 20 + s2.width + 20;
       s3.container.y = y;
       content.addChild(s3.container);
@@ -132,7 +132,7 @@ export function ComponentUiHelpersDisplay() {
           'import { makeButton, makeStepper, TXT } from \'../../framework\';',
           '',
           'const btn = makeButton(label, w, h, onClick, bgColor?);',
-          'const stepper = makeStepper(label, getValue, onChange, min, max);',
+          'const stepper = makeStepper({ label, getValue, onChange, min, max });',
           '  // returns { container, width, refresh }',
           '',
           'TXT.btn     — button text style',

@@ -21,7 +21,7 @@ import {
 //  建议配合 SPEC.md 的「二次开发指南」一起阅读。
 // ============================================================
 
-export function ComponentTutorialDisplay() {
+export function ComponentTutorialIcBrDisplay() {
   // ----- React 部分：管理 PIXI 的生命周期 -----
   // 框架的每个 example 都是一个 React 组件。
   // useEffect 在组件挂载时启动 PIXI，返回的清理函数在卸载时销毁。
@@ -320,13 +320,14 @@ export function ComponentTutorialDisplay() {
       // 这里创建一个独立的 InfiniteCanvas 展示其效果。
 
       // 先创建一个 SubCanvas 来放置 InfiniteCanvas
+      const IC_W = 300, IC_H = 260;
       const icRegion = root.createRegion(
-        { x: 210, y: 50, width: 220, height: 200 },
+        { x: window.innerWidth - IC_W - 16, y: window.innerHeight - IC_H - 16, width: IC_W, height: IC_H },
         { dragMode: 'none', clipToBounds: true },
       );
 
       const icBorder = new PIXI.Graphics()
-        .rect(0, 0, 220, 200)
+        .rect(0, 0, IC_W, IC_H)
         .stroke({ width: 1, color: 0x3a4a5a });
       const icLabel = new PIXI.Text({
         text: '▼ InfiniteCanvas',
@@ -339,7 +340,7 @@ export function ComponentTutorialDisplay() {
       const CHUNK = 80;
       const ic = new InfiniteCanvas({
         parent: icRegion,
-        viewport: { x: 0, y: 0, width: 220, height: 200 },
+        viewport: { x: 0, y: 0, width: IC_W, height: IC_H },
         chunkSize: CHUNK,
         preloadMargin: 2,                                        // 预加载 2 圈
         chunkCreate: (chunk: Chunk) => {
@@ -377,11 +378,11 @@ export function ComponentTutorialDisplay() {
       //   worldToScreen(wx,wy) → 世界坐标 → 屏幕坐标
 
       addBtn('IC +zoom', () => {
-        ic.setZoom(ic.zoom * 1.4, 180, 150);                    // 以区域中心缩放
+        ic.setZoom(ic.zoom * 1.4, IC_W / 2, IC_H / 2);
       });
       addBtn('IC reset', () => {
         ic.panTo(0, 0);
-        ic.setZoom(1, 180, 150);
+        ic.setZoom(1, IC_W / 2, IC_H / 2);
       });
 
       // ==========================================================
@@ -488,9 +489,9 @@ const css = `
 `;
 
 // 这个 head 属性被 Launcher 用来展示路由信息
-ComponentTutorialDisplay.head = {
-  title: '📖 Tutorial',
+ComponentTutorialIcBrDisplay.head = {
+  title: '📖 Tutorial IC BR',
   description:
-    'Heavily-commented walkthrough: SubCanvas, GSAP, InfiniteCanvas, EventBus, Component Registry, and cleanup patterns.',
+    'Tutorial with InfiniteCanvas positioned at the bottom-right corner.',
   meta: [{ name: 'theme-color', content: '#0a0a14' }],
 };

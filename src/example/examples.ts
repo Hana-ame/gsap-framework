@@ -47,6 +47,8 @@ import { ComponentFullscreenDisplay } from './component-fullscreen/ComponentFull
 import { ComponentUiHelpersDisplay } from './component-ui-helpers/ComponentUiHelpersDisplay';
 import { ComponentTextInputDisplay } from './component-text-input/ComponentTextInputDisplay';
 import { ComponentLayersDisplay } from './component-layers/ComponentLayersDisplay';
+import { ComponentTutorialIcBrDisplay } from './component-tutorial-ic-br/ComponentTutorialIcBrDisplay';
+import { ComponentTutorialGsapIcDisplay } from './component-tutorial-gsap-ic/ComponentTutorialGsapIcDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -97,6 +99,8 @@ export const EXAMPLES = [
   'component-ui-helpers',
   'component-text-input',
   'component-layers',
+  'component-tutorial-ic-br',
+  'component-tutorial-gsap-ic',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -153,4 +157,6 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-ui-helpers': ComponentUiHelpersDisplay,
   'component-text-input': ComponentTextInputDisplay,
   'component-layers': ComponentLayersDisplay,
+  'component-tutorial-ic-br': ComponentTutorialIcBrDisplay,
+  'component-tutorial-gsap-ic': ComponentTutorialGsapIcDisplay,
 };

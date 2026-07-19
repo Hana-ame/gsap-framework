@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, gsap, makeButton, makeInfoPanel, type SubCanvasProxy } from '../../framework';
+import { startPixiApp, gsap, makeButton, makeInfoPanel, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment } from '../../framework';
 
 const DEMO_TEXTS = [
   'The quick brown fox jumps over the lazy dog.',
@@ -8,14 +8,26 @@ const DEMO_TEXTS = [
   'SubCanvas provides region-based rendering.',
   'Each SubCanvas has its own coordinate space.',
   'Event routing with proper hit-test claiming.',
-  'Infinite canvas with chunked lazy loading.',
-  'Typewriter effect with variable speed.',
+  '动画文字效果支持中文显示。',
   'Fade in characters one by one.',
   'Slide in from the left edge.',
   'Scale up with bounce easing.',
+  'Typewriter with adjustable speed.',
 ];
 
+const EFFECT_TYPES = [
+  'typewriter',
+  'fadeInChars',
+  'fadeIn',
+  'slideIn',
+  'scaleBounce',
+  'charRain',
+  'scramble',
+] as const;
+
 export function ComponentTypingEffectDisplay() {
+  const effectRef = useRef<TextEffectHandle | null>(null);
+
   useEffect(() => {
     const stop = startPixiApp((proxy: SubCanvasProxy) => {
       const root = proxy.createRegion({
@@ -23,7 +35,7 @@ export function ComponentTypingEffectDisplay() {
         width: window.innerWidth,
         height: window.innerHeight,
       });
-      makeInfoPanel(root, { title: '打字效果', lines: ['目的：打字机文字动画 — 字符逐个出现。', '操作：点击在不同文本样本上触发打字效果。', '预期：文字逐字出现带光标闪烁。速度和样式可调节。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
+      makeInfoPanel(root, { title: '打字效果', lines: ['目的：多种文字动画效果，支持跳过和完成状态检测。', '操作：点击效果按钮测试，点击"跳过"立即完成动画，观察"完成"状态变化。', '预期：每个效果正常播放，跳过立刻显示完整文字，completed 属性正确切换。'], x: window.innerWidth - 400, y: window.innerHeight - 150 });
 
       const panel = root.createRegion(
         { x: 12, y: 12, width: 160, height: window.innerHeight - 24 },
@@ -35,172 +47,136 @@ export function ComponentTypingEffectDisplay() {
         { dragMode: 'none' },
       );
 
-      const cx = canvas.bounds.width / 2;
-      const cy = canvas.bounds.height / 2;
-
-      const display = new PIXI.Text({
-        text: '',
-        style: { fontSize: 18, fill: 0x88aacc, fontFamily: 'monospace', wordWrap: true, wordWrapWidth: canvas.bounds.width - 80 },
-      });
-      display.anchor.set(0.5);
-      display.x = cx;
-      display.y = cy;
-      canvas.stage.addChild(display);
-
-      const info = new PIXI.Text({
-        text: 'choose an effect',
+      const statusText = new PIXI.Text({
+        text: 'completed: false | choose an effect',
         style: { fontSize: 12, fill: 0x556688, fontFamily: 'monospace' },
       });
-      info.x = 12;
-      info.y = canvas.bounds.height - 24;
-      canvas.stage.addChild(info);
+      statusText.x = 12;
+      statusText.y = canvas.bounds.height - 24;
+      canvas.stage.addChild(statusText);
 
-      function typewriter(text: string, speed: number = 40) {
-        gsap.killTweensOf(display);
-        display.text = '';
-        display.alpha = 1;
-        display.scale.set(1);
-        display.x = cx;
-        display.y = cy;
-        let i = 0;
-        const chars = text.split('');
-        const tl = gsap.timeline();
-        for (const ch of chars) {
-          tl.call(() => { display.text += ch; }, undefined, i * speed / 1000);
-          i++;
+      const statusText2 = new PIXI.Text({
+        text: 'inline mode: off',
+        style: { fontSize: 11, fill: 0x445566, fontFamily: 'monospace' },
+      });
+      statusText2.x = 12;
+      statusText2.y = canvas.bounds.height - 44;
+      canvas.stage.addChild(statusText2);
+
+      let inlineMode = false;
+
+      const ctx = {
+        text: DEMO_TEXTS[0],
+      };
+
+      function makeIconTexture(color: number, shape: 'circle' | 'star' | 'diamond'): PIXI.Texture {
+        const g = new PIXI.Graphics();
+        const s = 28;
+        if (shape === 'circle') {
+          g.circle(s / 2, s / 2, s / 2 - 2).fill({ color });
+        } else if (shape === 'star') {
+          g.star(s / 2, s / 2, 5, s / 2 - 2, (s / 2 - 2) * 0.4).fill({ color });
+        } else {
+          g.poly([s / 2, 2, s - 2, s / 2, s / 2, s - 2, 2, s / 2]).fill({ color });
         }
-        info.text = `typewriter · ${chars.length} chars · ${(chars.length * speed / 1000).toFixed(1)}s`;
+        return proxy.renderer.generateTexture(g);
       }
 
-      function fadeIn(text: string) {
-        gsap.killTweensOf(display);
-        display.text = text;
-        display.scale.set(1);
-        display.x = cx;
-        display.y = cy;
-        display.alpha = 0;
-        gsap.to(display, { pixi: { alpha: 1 }, duration: 1.2, ease: 'power2.out' });
-        info.text = 'fade in';
+      function buildInlineSegments(): TextSegment[] {
+        inlineMode = true;
+        statusText2.text = 'inline mode: on';
+        return [
+          { kind: 'text', text: 'Hello! ' },
+          { kind: 'image', texture: makeIconTexture(0xff6688, 'circle'), width: 28, height: 28 },
+          { kind: 'text', text: ' This text has ' },
+          { kind: 'image', texture: makeIconTexture(0x66ff88, 'star'), width: 28, height: 28 },
+          { kind: 'text', text: ' inline images ' },
+          { kind: 'image', texture: makeIconTexture(0x6688ff, 'diamond'), width: 28, height: 28 },
+          { kind: 'text', text: ' mixed in. 支持中文与图标混排。' },
+          { kind: 'image', texture: makeIconTexture(0xffaa44, 'circle'), width: 28, height: 28 },
+        ];
       }
 
-      function slideIn(text: string) {
-        gsap.killTweensOf(display);
-        display.text = text;
-        display.alpha = 1;
-        display.scale.set(1);
-        display.x = -canvas.bounds.width;
-        display.y = cy;
-        gsap.to(display, { pixi: { x: cx }, duration: 0.8, ease: 'power3.out' });
-        info.text = 'slide in';
+      function updateStatus(completed: boolean) {
+        const label = inlineMode ? '(inline)' : ctx.text.slice(0, 30);
+        statusText.text = `completed: ${completed} | ${label}${!inlineMode && ctx.text.length > 30 ? '…' : ''}`;
       }
 
-      function scaleBounce(text: string) {
-        gsap.killTweensOf(display);
-        display.text = text;
-        display.alpha = 1;
-        display.scale.set(0);
-        display.x = cx;
-        display.y = cy;
-        gsap.to(display.scale, { x: 1, y: 1, duration: 0.7, ease: 'back.out(3)' });
-        info.text = 'scale bounce';
-      }
-
-      function charRain(text: string) {
-        gsap.killTweensOf(display);
-        display.text = '';
-        display.alpha = 1;
-        display.scale.set(1);
-        display.x = cx;
-        display.y = cy;
-
-        const container = new PIXI.Container();
-        container.eventMode = 'none';
-        canvas.stage.addChild(container);
-
-        const chars = text.split('');
-        const totalW = chars.length * 12;
-        const startX = cx - totalW / 2;
-
-        for (let i = 0; i < chars.length; i++) {
-          const ch = new PIXI.Text({
-            text: chars[i],
-            style: { fontSize: 18, fill: 0x88aacc, fontFamily: 'monospace' },
-          });
-          ch.anchor.set(0.5);
-          ch.x = startX + i * 12;
-          ch.y = -20 - Math.random() * 100;
-          ch.alpha = 0;
-          container.addChild(ch);
-          gsap.to(ch, {
-            y: cy,
-            alpha: 1,
-            duration: 0.5 + Math.random() * 0.4,
-            delay: i * 0.04,
-            ease: 'bounce.out',
-          });
+      function runEffect(type: string) {
+        if (effectRef.current) {
+          effectRef.current.destroy();
+          effectRef.current = null;
         }
 
-        gsap.delayedCall(chars.length * 0.04 + 0.7, () => {
-          container.removeFromParent();
-          container.destroy({ children: true });
-          display.text = text;
+        const textStyle = new PIXI.TextStyle({
+          fontSize: 18,
+          fill: 0x88aacc,
+          fontFamily: 'monospace',
+          wordWrap: true,
+          wordWrapWidth: canvas.bounds.width - 80,
         });
-        info.text = 'char rain';
-      }
 
-      function scrambleEffect(text: string) {
-        gsap.killTweensOf(display);
-        display.text = '';
-        display.alpha = 1;
-        display.scale.set(1);
-        display.x = cx;
-        display.y = cy;
-
-        const chars = text.split('');
-        const current = new Array(chars.length).fill('');
-        let pos = 0;
-
-        const tl = gsap.timeline();
-        for (let i = 0; i < chars.length; i++) {
-          const scrambleCount = 2 + Math.floor(Math.random() * 3);
-          for (let s = 0; s < scrambleCount; s++) {
-            const scrambleChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 62)];
-            tl.call(() => {
-              current[pos] = scrambleChar;
-              display.text = current.join('');
-            }, undefined, (i * 0.08 + s * 0.03));
-          }
-          tl.call(() => {
-            current[pos] = chars[pos];
-            display.text = current.join('');
-            pos++;
-          }, undefined, (i * 0.08 + scrambleCount * 0.03));
+        let input: string | TextSegment[];
+        if (inlineMode) {
+          input = buildInlineSegments();
+        } else {
+          const t = DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)];
+          ctx.text = t;
+          input = t;
         }
-        info.text = 'scramble effect';
+
+        const handle = runTextEffect(canvas.stage, input, textStyle, type as any, {
+          x: (canvas.bounds.width - Math.min(canvas.bounds.width - 80, 600)) / 2,
+          y: canvas.bounds.height / 2 - 20,
+          maxWidth: canvas.bounds.width - 80,
+          speed: 40,
+          duration: 0.8,
+        });
+
+        effectRef.current = handle;
+        updateStatus(handle.completed);
+
+        const checkId = setInterval(() => {
+          if (handle.completed) {
+            updateStatus(true);
+            clearInterval(checkId);
+          }
+        }, 100);
       }
 
-      let y = 4;
-      const effects = [
-        ['typewriter', () => { const t = DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)]; typewriter(t, 30 + Math.random() * 40); }],
-        ['fade in', () => fadeIn(DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)])],
-        ['slide in', () => slideIn(DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)])],
-        ['scale bounce', () => scaleBounce(DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)])],
-        ['char rain', () => charRain(DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)])],
-        ['scramble', () => scrambleEffect(DEMO_TEXTS[Math.floor(Math.random() * DEMO_TEXTS.length)])],
-      ];
+      function skipCurrent() {
+        if (effectRef.current && !effectRef.current.completed) {
+          effectRef.current.skip();
+          updateStatus(true);
+        }
+      }
 
-      for (const [label, fn] of effects) {
-        const btn = makeButton(label as string, 140, 28, fn as () => void, 0x1a1a2e);
+      let btnY = 4;
+      const addBtn = (label: string, color: number, onClick: () => void) => {
+        const btn = makeButton(label, 140, 28, onClick, color);
         btn.x = 10;
-        btn.y = y;
+        btn.y = btnY;
         panel.stage.addChild(btn);
-        y += 34;
+        btnY += 34;
+      };
+
+      for (const type of EFFECT_TYPES) {
+        addBtn(type, 0x1a1a2e, () => runEffect(type));
       }
 
-      typewriter(DEMO_TEXTS[0]);
+      btnY += 6;
+      addBtn('inline', 0x2a3a2a, () => {
+        inlineMode = !inlineMode;
+        statusText2.text = `inline mode: ${inlineMode ? 'on' : 'off'}`;
+        runEffect('typewriter');
+      });
+      addBtn('skip', 0x4a3a1a, skipCurrent);
+
+      runEffect('typewriter');
 
       return () => {
-        gsap.killTweensOf(display);
+        if (effectRef.current) effectRef.current.destroy();
+        gsap.killTweensOf(canvas.stage.children);
       };
     });
 

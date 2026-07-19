@@ -1,6 +1,31 @@
+/* ===================================================
+ * UI 帮助函数
+ *
+ * 提供框架内通用 UI 组件的工厂函数：
+ *   - TXT：预设字体样式（按钮、标签、暗淡、坐标、标题）
+ *   - makeButton：圆角按钮
+ *   - makeStepper：加减步进器（带 +/- 按钮和值显示）
+ *   - makeInfoPanel：浮动信息面板（半透明背景 + 标题 + 正文）
+ *
+ * 这些函数返回 PIXI Container，可以添加到任意 SubCanvas.stage。
+ * 注意 eventMode 和事件处理已内置，不要重复绑定。
+ * =================================================== */
+
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from './SubCanvas';
 
+/**
+ * TXT：预设字体样式对象。
+ * 选择 monospace 是为了在半透明背景上保持一致的字符宽度和高度，
+ * 避免 proportional 字体对齐不一致的问题。
+ *
+ * 各个样式按用途命名：
+ *   btn    — 按钮文字，白色粗体
+ *   label  — 通用标签，淡紫灰色
+ *   dim    — 辅助信息，灰色（如坐标值）
+ *   coord  — 坐标显示，蓝灰色
+ *   heading — 标题，白色
+ */
 export const TXT = {
   btn:      { fontSize: 13, fill: 0xffffff, fontFamily: 'monospace', fontWeight: 'bold' } as const,
   label:    { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' } as const,
@@ -9,6 +34,15 @@ export const TXT = {
   heading:  { fontSize: 14, fill: 0xffffff, fontFamily: 'monospace' } as const,
 };
 
+/**
+ * 创建圆角按钮。
+ * 默认颜色 #1a1a2e（深蓝黑），圆角 6px，边框 1.5px #446。
+ * text anchor 居中定位 (w/2, h/2)。
+ * eventMode = 'static'，cursor = 'pointer'。
+ * hitArea 用 Rectangle 替代 Graphics，避免 PIXI 额外计算 Graphics 的 hit-test。
+ *
+ * onClick 中的 e.stopPropagation() 是为了防止 PIXI 事件冒泡到父容器。
+ */
 export function makeButton(
   label: string,
   w: number,
@@ -44,14 +78,29 @@ export interface Stepper {
   refresh: () => void;
 }
 
-export function makeStepper(
-  label: string,
-  getValue: () => number,
-  onChange: (v: number) => void,
-  min: number,
-  max: number,
-  step: number = 1,
-): Stepper {
+/**
+ * 加减步进器。
+ *
+ * 布局：label ｜ [-] ｜ value ｜ [+]
+ *   - label 在 y=2
+ *   - [-] [+] 按钮在 rowY=20，宽 btnW=22
+ *   - value 文字在 [-] 和 [+] 之间居中
+ *
+ * 通过 refresh() 从外部同步最新值（因为 getValue 只在校验时调用，
+ * 外部状态变化时调用 refresh 保持显示一致）。
+ *
+ * step 参数 > 1 时按钮文字会显示步长（如 +5, -5）。
+ * 当 step > 9 时按钮宽度从 22 增加到 28，保证两位数步长不溢出。
+ */
+export function makeStepper(opts: {
+  label: string;
+  getValue: () => number;
+  onChange: (v: number) => void;
+  min: number;
+  max: number;
+  step?: number;
+}): Stepper {
+  const { label, getValue, onChange, min, max, step = 1 } = opts;
   const wrap = new PIXI.Container();
   const lbl = new PIXI.Text({
     text: label,
@@ -118,6 +167,17 @@ export interface InfoPanelOptions {
   maxWidth?: number;
 }
 
+/**
+ * 浮动信息面板。
+ *
+ * 半透明深色背景（#0a0a14, alpha 0.85），圆角 8px，1px 边框。
+ * 面板自身 eventMode = 'none'（不拦截点击），
+ * zIndex 设为 2147483647（接近 int32 max）确保在顶层。
+ * 因为框架内其他元素不会设置这么高的 zIndex，可以保证 info panel 始终可见。
+ *
+ * parent 参数可以接受 PIXI.Container 或 SubCanvas，
+ * 内部通过 instanceof 判断取出 stage。
+ */
 export function makeInfoPanel(parent: PIXI.Container | SubCanvas, opts: InfoPanelOptions): PIXI.Container {
   const stage = parent instanceof PIXI.Container ? parent : parent.stage;
   const { title, lines, x = 14, y: py = 14, maxWidth = 360 } = opts;

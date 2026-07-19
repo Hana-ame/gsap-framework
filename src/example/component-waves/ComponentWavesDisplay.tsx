@@ -149,19 +149,19 @@ export function ComponentWavesDisplay() {
 
       let y = 4;
 
-      const ampStepper = makeStepper('amplitude', () => amplitude, (v) => { amplitude = v; }, 5, 80);
+      const ampStepper = makeStepper({ label: 'amplitude', getValue: () => amplitude, onChange: (v) => { amplitude = v; }, min: 5, max: 80 });
       ampStepper.container.x = 10;
       ampStepper.container.y = y;
       root.stage.addChild(ampStepper.container);
       y += 54;
 
-      const speedStepper = makeStepper('speed', () => speedMul, (v) => { speedMul = v; }, 0, 5);
+      const speedStepper = makeStepper({ label: 'speed', getValue: () => speedMul, onChange: (v) => { speedMul = v; }, min: 0, max: 5 });
       speedStepper.container.x = 10;
       speedStepper.container.y = y;
       root.stage.addChild(speedStepper.container);
       y += 54;
 
-      const freqStepper = makeStepper('frequency', () => freqMul, (v) => { freqMul = v; }, 1, 20);
+      const freqStepper = makeStepper({ label: 'frequency', getValue: () => freqMul, onChange: (v) => { freqMul = v; }, min: 1, max: 20 });
       freqStepper.container.x = 10;
       freqStepper.container.y = y;
       root.stage.addChild(freqStepper.container);

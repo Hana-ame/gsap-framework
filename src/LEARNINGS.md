@@ -338,6 +338,134 @@ registerComponent<WindowComponentOptions>('window', (opts) => {
 
 
 
+---
+
+## TextInput — Canvas Text Input with DOM Overlay (Jul 2026)
+
+### Problem
+
+之前的 `TextInput` 在 focus 时创建一个隐藏的 `<input>`，用 `container.getBounds() * dpr + canvasRect` 定位。在 `autoDensity: true` + DPR > 1 时坐标翻倍偏移，输入框出现在屏幕外，无法 input。
+
+### Solution: Always-visible DOM Overlay + PIXI Dual Path
+
+```ts
+// 1. PIXI container 负责 "静止态" 视觉 + 事件兜底
+container.eventMode = 'static';
+container.hitArea = new PIXI.Rectangle(0, 0, width, height);
+
+// 2. DOM overlay 始终定位在 PIXI 容器上方，始终可点击
+overlay.style.pointerEvents = 'auto';  // 即使 opacity: 0 也拦截点击
+requestAnimationFrame(() => reposition());
+
+// 3. GSAP 控制 focus/blur 透明度过渡
+// focus:  overlay 淡入 (0→1) + borderColor 过渡
+// blur:   overlay 淡出 (1→0)，但保持 pointer-events: auto
+```
+
+### Positioning Fix
+
+不能用 `dpr` 缩放坐标。`autoDensity: true` 时 `getBounds()` 已经返回 CSS 像素值：
+```ts
+// ❌ 错误
+input.style.left = (rect.x * dpr + canvasRect.left) + 'px';
+
+// ✅ 正确
+overlay.style.left = (cr.left + bounds.x) + 'px';
+```
+
+### PixiJS v8 Event Mode Requirement
+
+Container 默认 `eventMode = 'passive'`，不会接收事件。需要显式设置 `'static'` + `hitArea`：
+```ts
+container.eventMode = 'static';
+container.hitArea = new PIXI.Rectangle(0, 0, width, height);
+```
+
+否则点击永远不会触发 `pointerdown`。
+
+### Dual Click Path
+
+两层点击拦截，保证在任何场景下都能 focus：
+1. **DOM overlay `pointerdown`** — 覆盖在 PIXI 容器上方，即使透明也拦截点击
+2. **PIXI container `pointerdown`** — 当 SubCanvas 事件路由不影响 PIXI 事件系统时生效
+
+---
+
+## PerfDisplay — On-Screen Performance HUD (Jul 2026)
+
+### API Design
+
+```ts
+// 通过 proxy 控制（推荐）
+proxy.showPerfMeasure(true);   // 显示
+proxy.showPerfMeasure(false);  // 隐藏
+
+// 独立使用
+const perf = new PerfDisplay(ticker, () => stage, { x, y, fontSize, color });
+perf.enable();
+```
+
+### Metrics
+
+| 指标 | 实现 |
+|------|------|
+| FPS | 60 帧滚动平均，`1000 / avgFrameTime` |
+| Frame time | `ticker.deltaMS` 的 60 帧平均 |
+| Object count | 递归遍历 `stage.children`，含 RenderGroup |
+| Resolution | `stage.width × stage.height` |
+
+### Integration
+
+`startPixiApp` 自动创建 `PerfDisplay`，传入 `SubCanvasProxy` 的 `perfDisplay` 属性。`showPerfMeasure()` 调用 `PerfDisplay.enable/disable` 控制添加到 `app.stage`。
+
+---
+
+## makeInfoPanel — Floating Info Panel Placement (Jul 2026)
+
+### Problem
+
+`makeInfoPanel` 默认位置 `(14, 14)` 且 `zIndex: 2147483647`，覆盖了其他 UI 控件（如 ComponentDrawingDisplay 的工具面板、ComponentWavesDisplay 的控件区）。
+
+### Rule of Thumb
+
+放置信息面板时：
+- **左侧有工具面板** → 放底部 `y: window.innerHeight - 120`
+- **全屏画布** → 放右上角或右下角
+- 明确传入 `x`、`y` 参数，不要依赖默认值
+
+---
+
+## makeStepper — Live Parameter Control Pattern (Jul 2026)
+
+为 `ComponentWavesDisplay` 添加了三个 `makeStepper` 控件（amplitude / speed / frequency），演示了如何将硬编码常量变为运行时可调的实时参数：
+
+```ts
+let amplitude = 30;
+const ampStepper = makeStepper('amplitude', () => amplitude, (v) => { amplitude = v; }, 5, 80);
+```
+
+波形计算中直接引用变量（非常量），GSAP ticker 每帧读取最新值。
+
+---
+
+---
+
+## SubCanvas clipToBounds mask 坐标
+
+PixiJS v8 中 `container.mask = graphics` 时：
+
+1. **mask 必须是 container 的孩子**，否则不继承 container 的 transform，stencil 位置和内容对不上。PixiJS v8 的 StencilMaskPipe 会自动设置 `mask.includeInBuild = false`，mask 不渲染到 color buffer。
+2. **mask 局部坐标必须在 `(0, 0)`**。如果 mask 已经作为孩子继承了 container 的 position 变换，再设 `mask.x = bounds.x` 会导致 stencil 在世界空间双重偏移。
+3. 修正：`this._mask` 为 `this.stage` 的孩子，`rect(0, 0, w, h)` 不设 `x/y`。
+
+---
+
+## PixiWindow / PixiConfirm 不设 clipToBounds
+
+窗口的 content 子区域已有自己的 `clipToBounds: true`，窗口本身不需要。窗口的 `dragBounds` 已经将位置钳在父级边界内，不会溢出。
+
+---
+
 ## Future Topics (to investigate)
 
 - [ ] **pixi-viewport ClampPlugin** — bounding box constraints that interact with decelerate

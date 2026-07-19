@@ -1,3 +1,7 @@
+// Layer — 基于 zIndex 的分层系统。
+// LayerManager 管理一组命名层，每个层是一个独立的 PIXI.Container，
+// 通过 sortableChildren 实现层叠顺序。类比 DOM 的 z-index 层。
+
 import * as PIXI from 'pixi.js';
 
 export interface Layer {
@@ -18,11 +22,13 @@ export class LayerManager {
   private _layers: Map<string, LayerImpl> = new Map();
   private _destroyed = false;
 
+  // 需要父容器启用 sortableChildren，否则 zIndex 不生效
   constructor(parent: PIXI.Container) {
     this._parent = parent;
     this._parent.sortableChildren = true;
   }
 
+  // 重名时销毁旧层再建（而非报错），适应 HMR 热替换场景
   add(name: string, zIndex: number): Layer {
     if (this._layers.has(name)) {
       console.warn(`[LayerManager] overwriting layer: "${name}"`);
@@ -54,6 +60,8 @@ export class LayerManager {
     return [...this._layers.keys()];
   }
 
+  // zIndex 只增不减。注意 IEEE 754 双精度超过 2^25 时 +1 永不进位，
+  // 当前场景不会撞到此限制，但需知晓。
   bringToFront(name: string): void {
     const layer = this._layers.get(name);
     if (!layer) return;
@@ -76,6 +84,7 @@ export class LayerManager {
     layer.container.zIndex = min - 1;
   }
 
+  // 防御性编程：destroyed 标志防止重复销毁
   destroy(): void {
     if (this._destroyed) return;
     this._destroyed = true;
@@ -92,6 +101,8 @@ export class LayerManager {
   }
 }
 
+// LayerImpl 不对外暴露，强制通过 LayerManager 操作层，
+// 避免外部直接 new 导致层脱离管理器管控
 class LayerImpl implements Layer {
   readonly name: string;
   readonly container: PIXI.Container;

@@ -54,6 +54,8 @@ const APPS: AppEntry[] = [
   { route: 'component-starfield', label: 'Component: Starfield', hint: 'parallax starfield with mouse tracking', glyph: '\u2605', accent: '#4a4a6a' },
   { route: 'component-tetris', label: 'Component: Tetris', hint: 'classic tetris game, keyboard controls', glyph: '\u25A0', accent: '#5a3a3a' },
   { route: 'component-tutorial', label: 'Component: Tutorial', hint: 'heavily-commented walkthrough: SubCanvas, GSAP, InfiniteCanvas, EventBus, Registry', glyph: '\u2753', accent: '#4a6a6a' },
+  { route: 'component-tutorial-ic-br', label: 'Component: Tutorial IC BR', hint: 'tutorial copy with InfiniteCanvas at bottom-right', glyph: '\u2198', accent: '#4a6a6a' },
+  { route: 'component-tutorial-gsap-ic', label: 'Component: Tutorial GSAP+IC', hint: 'tutorial variant: full-demo IC, GSAP buttons animate pan/zoom', glyph: '\u25C7', accent: '#4a6a8a' },
   { route: 'component-typing-effect', label: 'Component: Typing Effect', hint: 'typewriter text animation', glyph: '\u270D', accent: '#4a6a4a' },
   { route: 'component-waves', label: 'Component: Waves', hint: 'interactive waveform visualization', glyph: '\u2248', accent: '#3a6a8a' },
 ];

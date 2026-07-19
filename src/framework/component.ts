@@ -1,3 +1,7 @@
+// component — 组件工厂注册表模式。
+// 外部通过 registerComponent 注册类型名到工厂函数，
+// createComponent 按名查找并实例化。类似 DI 容器的最小版本。
+
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from './SubCanvas';
 
@@ -24,8 +28,10 @@ export interface ComponentHandle {
 
 export type ComponentFactory<T extends ComponentOptions = ComponentOptions> = (opts: T) => Component<T>;
 
+// 全局注册表，所有组件工厂共享此容器
 const registry = new Map<string, ComponentFactory>();
 
+// 注册全局可覆写，HMR 场景下可能重复注册，warn 而非 throw
 export function registerComponent<T extends ComponentOptions>(
   type: string,
   factory: ComponentFactory<T>,
@@ -36,16 +42,7 @@ export function registerComponent<T extends ComponentOptions>(
   registry.set(type, factory);
 }
 
-export function registeredTypes(): string[] {
-  return [...registry.keys()];
-}
-
-export function getComponentFactory<T extends ComponentOptions = ComponentOptions>(
-  type: string,
-): ComponentFactory<T> | undefined {
-  return registry.get(type) as ComponentFactory<T> | undefined;
-}
-
+// 从注册表按 type 查找工厂并创建组件，未注册时抛异常而非静默失败
 export function createComponent<T extends ComponentOptions = ComponentOptions>(
   type: string,
   opts: T,
@@ -55,8 +52,15 @@ export function createComponent<T extends ComponentOptions = ComponentOptions>(
   return factory(opts);
 }
 
-export function createComponentFromMap<T extends ComponentOptions = ComponentOptions>(
-  opts: { type: string } & T,
-): Component<T> {
-  return createComponent(opts.type, opts);
+// 供测试/工具使用
+/* @internal */
+export function _registeredTypes(): string[] {
+  return [...registry.keys()];
+}
+
+/* @internal */
+export function _getComponentFactory<T extends ComponentOptions = ComponentOptions>(
+  type: string,
+): ComponentFactory<T> | undefined {
+  return registry.get(type) as ComponentFactory<T> | undefined;
 }

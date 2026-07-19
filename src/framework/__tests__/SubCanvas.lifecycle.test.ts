@@ -96,9 +96,9 @@ describe('SubCanvas lifecycle', () => {
   it('child subRegions removed from parent on destroy', () => {
     const parent = new SubCanvas({ rootApp: mockApp(), bounds: { x: 0, y: 0, width: 800, height: 600 } });
     const child = parent.createRegion({ x: 100, y: 100, width: 200, height: 150 });
-    expect(parent.getChildren()).toHaveLength(1);
+    expect(parent.subRegions).toHaveLength(1);
     child.destroy();
-    expect(parent.getChildren()).toHaveLength(0);
+    expect(parent.subRegions).toHaveLength(0);
   });
 
   it('createRegion on destroyed parent returns valid sub but parent destroyed prevents proper cleanup', () => {

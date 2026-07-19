@@ -2,9 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   registerComponent,
   createComponent,
-  createComponentFromMap,
-  getComponentFactory,
-  registeredTypes,
+  _getComponentFactory,
+  _registeredTypes,
 } from '../component';
 
 function dummy(opts: any = {}) {
@@ -17,23 +16,23 @@ function dummy(opts: any = {}) {
 }
 
 describe('component registry', () => {
-  it('registeredTypes starts empty', () => {
-    expect(registeredTypes()).toEqual([]);
+  it('_registeredTypes starts empty', () => {
+    expect(_registeredTypes()).toEqual([]);
   });
 
   it('registerComponent adds a type', () => {
     registerComponent('a', dummy);
-    expect(registeredTypes()).toContain('a');
+    expect(_registeredTypes()).toContain('a');
   });
 
-  it('getComponentFactory returns the factory', () => {
+  it('_getComponentFactory returns the factory', () => {
     const factory = () => dummy({ type: 'b' });
     registerComponent('b', factory);
-    expect(getComponentFactory('b')).toBe(factory);
+    expect(_getComponentFactory('b')).toBe(factory);
   });
 
-  it('getComponentFactory returns undefined for unknown type', () => {
-    expect(getComponentFactory('nonexistent')).toBeUndefined();
+  it('_getComponentFactory returns undefined for unknown type', () => {
+    expect(_getComponentFactory('nonexistent')).toBeUndefined();
   });
 
   it('createComponent calls the factory and returns the component', () => {
@@ -44,12 +43,6 @@ describe('component registry', () => {
 
   it('createComponent throws for unknown type', () => {
     expect(() => createComponent('unknown', {} as any)).toThrow('unknown');
-  });
-
-  it('createComponentFromMap extracts type from opts', () => {
-    registerComponent('d', (opts) => dummy({ type: 'd', ...opts }));
-    const result = createComponentFromMap({ type: 'd', parent: {} as any, width: 200, height: 100 });
-    expect(result.type).toBe('d');
   });
 
   it('registerComponent warns on override', () => {
