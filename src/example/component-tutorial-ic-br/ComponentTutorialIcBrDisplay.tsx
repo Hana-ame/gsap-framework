@@ -1,15 +1,9 @@
+// Example: Tutorial combining infinite canvas with breakout mechanics
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import {
-  startPixiApp,
-  gsap,
-  InfiniteCanvas,
-  EventBus,
-  createComponent,
-  makeButton,
-  type SubCanvasProxy,
-  type Chunk,
-} from '@framework';
+import { gsap } from 'gsap';
+import { startPixiApp, InfiniteCanvas, EventBus, type SubCanvasProxy, type Chunk } from '@framework';
+import { createWindow, createConfirm, makeButton } from '@components';
 
 // ============================================================
 //  ████████ 教程：从零搭建 GSAP Framework
@@ -386,25 +380,22 @@ export function ComponentTutorialIcBrDisplay() {
       });
 
       // ==========================================================
-      //  第 9 步：Component Registry（组件注册表）
+      //  第 9 步：组件工厂直接调用
       //  ==========================================================
-      // 框架提供了 registerComponent / createComponent 统一工厂 API。
-      // 已注册的类型：'window' / 'confirm' / 'scrollable'
-      //
-      // createComponent(type, opts) 返回 { type, stage, destroy, destroyed }
-      // 适合通过配置或 JSON 动态创建组件。
+      // createWindow() / createConfirm() / createScrollable()
+      // 直接调用，类型安全，无需注册表间接层。
 
       addBtn('reg window', () => {
-        const win = createComponent('window', {
+        const win = createWindow({
           parent: root,
-          title: 'Registry Window',
+          title: 'Factory Window',
           x: 250 + Math.random() * 80,
           y: 370 + Math.random() * 60,
           width: 250,
           height: 180,
         });
         const txt = new PIXI.Text({
-          text: 'createComponent(\'window\')\nworks via registry adapter',
+          text: 'created via createWindow()',
           style: { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' },
         });
         txt.x = 14;
@@ -413,11 +404,10 @@ export function ComponentTutorialIcBrDisplay() {
       });
 
       addBtn('reg confirm', () => {
-        // createComponent 是泛型函数，需要显式泛型参数才能正确推导选项类型
-        createComponent<import('../../framework').ComponentOptions & { title: string; message?: string }>('confirm', {
+        createConfirm({
           parent: root,
-          title: 'Confirm via Registry',
-          message: 'Created with createComponent(\'confirm\')',
+          title: 'Confirm via Factory',
+          message: 'Created with createConfirm()',
           x: 280 + Math.random() * 80,
           y: 400 + Math.random() * 60,
           width: 320,

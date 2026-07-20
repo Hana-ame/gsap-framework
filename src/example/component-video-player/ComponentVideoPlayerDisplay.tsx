@@ -1,7 +1,10 @@
+// Example: Video player rendered on SubCanvas (PixiJS sprite)
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
+import { startPixiApp, type SubCanvas } from '@framework';
+import { makeInfoPanel } from '@components';
 import { createVideoPlayer, createScrollable } from '../../components';
+// NOTE: this example uses createVideoPlayer/createScrollable() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 import type { PixiVideoPlayerHandle, Scrollable } from '../../components';
 
 const STABLE_MP4_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4';

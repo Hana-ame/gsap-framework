@@ -1,3 +1,4 @@
+/** Mixed text-and-image inline layout renderer for ADV dialogue lines. */
 import * as PIXI from 'pixi.js';
 
 export type AvdTextSegment =

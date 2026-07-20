@@ -1,3 +1,4 @@
+// React error boundary for catching rendering errors gracefully
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {

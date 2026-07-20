@@ -1,18 +1,18 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createElement, useState, useEffect } from 'react';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { createElement, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
 const useHashExample = (await import('../useHashExample')).useHashExample;
 
 function Harness({ onResult }: { onResult: (v: string | null) => void }) {
   const ex = useHashExample();
-  useEffect(() => { onResult(ex); }, [ex]);
+  useEffect(() => { onResult(ex); }, [ex, onResult]);
   return null;
 }
 
 describe('useHashExample', () => {
   let container: HTMLDivElement;
-  let root: any;
+  let root: ReturnType<typeof createRoot>;
 
   beforeEach(() => {
     container = document.createElement('div');

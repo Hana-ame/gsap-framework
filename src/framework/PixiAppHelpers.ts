@@ -1,3 +1,4 @@
+/** PixiAppHelpers — PixiApp 的工具函数：pointer 类型列表与全局坐标转换。 */
 import type { SubPointerType } from './SubCanvasTypes';
 
 export const POINTER_TYPES: SubPointerType[] = [

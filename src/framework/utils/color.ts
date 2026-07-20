@@ -1,3 +1,4 @@
+/** color — 颜色转换与操作工具（RGB/HSL/hex 互转、插值）。 */
 export interface RgbColor {
   r: number;
   g: number;

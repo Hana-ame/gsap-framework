@@ -1,3 +1,4 @@
+/** SubCanvasTypes — SubCanvas 体系共享的类型定义（Rect、事件、选项）。 */
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from './SubCanvas';
 

@@ -1,6 +1,8 @@
+// Example: Particle rain effect on SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { makeButton, makeInfoPanel } from '@components';
 import { gsap } from 'gsap';
 
 type Mode = 'rain' | 'snow' | 'fireflies' | 'confetti';

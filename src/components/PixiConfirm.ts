@@ -1,3 +1,4 @@
+/** Modal confirmation dialog with customisable buttons, rendered in PixiJS. */
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '@framework/SubCanvas';
 import { createLoadingImage, type PixiImageHandle } from './PixiImage';
@@ -52,7 +53,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
   const x = opts.x ?? 60;
   const y = opts.y ?? 60;
   const draggable = opts.draggable !== false;
-  const dragMode = draggable ? (opts.dragMode ?? 'anywhere') : 'none';
+  const dragMode = draggable ? (opts.dragMode ?? 'title') : 'none';
   const closable = opts.closable !== false;
   const okText = opts.okText ?? 'OK';
   const cancelText = opts.cancelText ?? 'Cancel';

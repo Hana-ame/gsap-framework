@@ -1,7 +1,10 @@
+// Example: Event bus communication between components
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, EventBus, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, EventBus, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { textPresets, makeInfoPanel } from '@components';
 import { createWindow, type GameWindow } from '../../components';
+// NOTE: this example uses createWindow() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 
 type BusPayload = { from: string; text: string; n: number };
 

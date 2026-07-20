@@ -1,7 +1,9 @@
+// Example: PixiJS-rendered confirmation dialog
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '@framework';
 import { createConfirm, showLoading } from '../../components';
+// NOTE: this example uses createConfirm() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 import type { PixiConfirm } from '../../components';
 
 export function PixiConfirmDisplay() {

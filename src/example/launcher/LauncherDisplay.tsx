@@ -1,3 +1,4 @@
+// Example: Launcher UI for browsing and selecting examples from the gallery
 import { useEffect, useState } from 'react';
 
 interface AppEntry {
@@ -34,7 +35,7 @@ const APPS: AppEntry[] = [
   { route: 'component-life-map', label: 'Component: Life Map', hint: 'Conway on big toroidal world, Google-Maps-style mouse-drag panning, click to toggle cell', glyph: '\u29C9', accent: '#3a4a6a' },
   { route: 'component-gsap', label: 'Component: GSAP', hint: 'GSAP animation showcase — box position/scale/rotation/alpha/timeline', glyph: '\u25C7', accent: '#4a6a8a' },
   { route: 'component-infinite', label: 'Component: InfiniteCanvas', hint: 'InfiniteCanvas — chunked grid, drag pan, zoom in/out, decelerate', glyph: '\u2316', accent: '#6a4a6a' },
-  { route: 'component-registry', label: 'Component: Registry', hint: 'createComponent("window"|"confirm"|"scrollable") — unified factory API', glyph: '\u229E', accent: '#4a6a5a' },
+  { route: 'component-registry', label: 'Component: Factories', hint: 'createWindow / createConfirm / createScrollable — direct factory calls', glyph: '\u229E', accent: '#4a6a5a' },
   { route: 'component-multi-window', label: 'Stress: MultiWindow', hint: '12+ draggable windows — test drag + z-order', glyph: '\u25A6', accent: '#6a4a3a' },
   { route: 'component-window-canvas', label: 'Window + InfiniteCanvas', hint: 'InfiniteCanvas inside a draggable window — SubCanvas nests anything', glyph: '\u25A8', accent: '#3a5a6a' },
   { route: 'component-fullscreen', label: 'Component: Fullscreen', hint: 'FullscreenManager — click/dblclick/drag/close', glyph: '\u2316', accent: '#5a3a6a' },
@@ -61,6 +62,13 @@ const APPS: AppEntry[] = [
   { route: 'component-waves', label: 'Component: Waves', hint: 'interactive waveform visualization', glyph: '\u2248', accent: '#3a6a8a' },
   { route: 'component-demo', label: 'Component: Demo', hint: 'draggable SubCanvas + colored blocks + text + click tint', glyph: '\u25A3', accent: '#4a3a8a' },
   { route: 'component-demo-anywhere', label: 'Component: Demo Anywhere', hint: 'same but dragMode=anywhere — click colored blocks to also drag', glyph: '\u25A3', accent: '#3a6a8a' },
+  { route: 'component-wm-adapter', label: 'Component: WM Adapter', hint: 'WindowManagerAdapter — backend window lifecycle', glyph: '\u25A2', accent: '#2a5a6a' },
+  { route: 'component-stream-adapter', label: 'Component: Stream Adapter', hint: 'ContentChannelAdapter — streamed chunk assembly', glyph: '\u21C9', accent: '#2a6a5a' },
+  { route: 'component-wm-multi', label: 'Component: WM Multi', hint: 'WindowManagerAdapter — 12 backend-driven windows', glyph: '\u25A6', accent: '#2a4a6a' },
+  { route: 'component-wm-canvas', label: 'Component: WM Canvas', hint: 'WindowManagerAdapter — InfiniteCanvas inside backend window', glyph: '\u25A8', accent: '#2a6a4a' },
+  { route: 'component-ecosystem', label: 'Component: Ecosystem', hint: 'food chain — grass, herbivores, carnivores on infinite canvas', glyph: '\u29C9', accent: '#2a5a3a' },
+  { route: 'component-ecosystem-py', label: 'Component: Ecosystem (Python)', hint: 'ecosystem via Python backend + WebSocket', glyph: '\u29C9', accent: '#3a2a6a' },
+  // new example entries go here — append to end, do not insert in the middle
 ];
 
 function accentToText(hex: string): string {

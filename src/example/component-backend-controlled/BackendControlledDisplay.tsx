@@ -1,7 +1,10 @@
+// Example: SubCanvas state controlled by a backend/mock service
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { textPresets } from '@components';
 import { MockBackend, WindowManager, ContentChannel } from '../../backend';
+import { WindowManagerAdapter, ContentChannelAdapter } from '../../adapters';
 
 const DEMO_LINES = [
   '[SYSTEM] initializing connection...',
@@ -33,6 +36,8 @@ export function BackendControlledDisplay() {
     const backend = new MockBackend();
     let wm: WindowManager | null = null;
     let cc: ContentChannel | null = null;
+    let wmAdapter: WindowManagerAdapter | null = null;
+    let ccAdapter: ContentChannelAdapter | null = null;
     let root: SubCanvas | null = null;
 
     const stop = startPixiApp((proxy: SubCanvasProxy) => {
@@ -81,8 +86,10 @@ export function BackendControlledDisplay() {
 
       backend.connect(600);
 
-      wm = new WindowManager(backend, root);
+      wm = new WindowManager(backend);
       cc = new ContentChannel(backend);
+      wmAdapter = new WindowManagerAdapter(wm, root);
+      ccAdapter = new ContentChannelAdapter(cc);
 
       setTimeout(() => {
         backend.sendSequence([
@@ -120,9 +127,9 @@ export function BackendControlledDisplay() {
       }, 200);
 
       setTimeout(() => {
-        const sw = wm?.getWindow('win-1');
-        if (sw && cc) {
-          cc.attachStage('win-1-stream', sw.content);
+        const swStage = wmAdapter?.getContentStage('win-1');
+        if (swStage && ccAdapter) {
+          ccAdapter.attachStage('win-1-stream', swStage);
           cc.simulateStream('win-1-stream', DEMO_LINES, 350);
         }
       }, 4000);
@@ -133,6 +140,8 @@ export function BackendControlledDisplay() {
     });
 
     return () => {
+      ccAdapter?.destroy();
+      wmAdapter?.destroy();
       cc?.destroy();
       wm?.destroy();
       backend.destroy();

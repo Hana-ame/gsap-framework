@@ -20,7 +20,7 @@
 10. **`src/framework/component.ts`** — 组件注册表工厂模式
 11. **`src/framework/gsap-pixi.ts`** — GSAP + PixiPlugin 集成
 12. **`src/framework/Layer.ts`** — z-order 分层管理
-13. **`src/framework/ui-helpers.ts`** — 按钮、步进器、textPresets 样式常量
+13. **`src/components/ui-helpers.ts`** — 按钮、步进器、textPresets 样式常量
 14. **`src/framework/text-effects.ts`** — GSAP 文字动效
 15. **`src/framework/utils/`** — math / color / rect 纯函数工具
 

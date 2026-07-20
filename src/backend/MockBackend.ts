@@ -1,10 +1,10 @@
-import type { BackendCommand, BackendCommandType, BackendStatus } from './types';
-
-type Handler<T = unknown> = (payload: T) => void;
+/** Mock backend that simulates native window management via command queuing. */
+import type { BackendCommand, BackendCommandType, BackendStatus, BackendEventMap } from './types';
+import { EventBus } from '../framework/EventBus';
 
 export class MockBackend {
   private _status: BackendStatus = 'disconnected';
-  private listeners = new Map<string, Set<Handler>>();
+  private _bus = new EventBus();
   private timers: ReturnType<typeof setTimeout>[] = [];
   private seq = 0;
 
@@ -12,18 +12,12 @@ export class MockBackend {
     return this._status;
   }
 
-  on<K extends keyof BackendEventMap>(event: K, fn: Handler<BackendEventMap[K]>): () => void {
-    let set = this.listeners.get(event);
-    if (!set) {
-      set = new Set();
-      this.listeners.set(event, set);
-    }
-    set.add(fn as Handler);
-    return () => set?.delete(fn as Handler);
+  on<K extends keyof BackendEventMap>(event: K, fn: (payload: BackendEventMap[K]) => void): () => void {
+    return this._bus.on(event, fn);
   }
 
   private emit<K extends keyof BackendEventMap>(event: K, payload: BackendEventMap[K]): void {
-    this.listeners.get(event)?.forEach((fn) => (fn as Handler)(payload));
+    this._bus.emit(event, payload);
   }
 
   connect(delay = 500): void {
@@ -61,12 +55,6 @@ export class MockBackend {
 
   destroy(): void {
     this.disconnect();
-    this.listeners.clear();
+    this._bus.clear();
   }
-}
-
-interface BackendEventMap {
-  command: BackendCommand;
-  status: BackendStatus;
-  error: Error;
 }

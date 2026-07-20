@@ -1,3 +1,4 @@
+/** Video player with controls (play/pause, seek, volume) rendered in PixiJS. */
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from '@framework';
 import { buildVideoPlayerSceneGraph, fmt } from './PixiVideoPlayerScene';
@@ -76,9 +77,9 @@ export function createVideoPlayer(
 
   // ── scene graph ──
   const {
-    root: sceneRoot, mask, hoverHit, bg, videoSprite,
-    cpb, ctrl, ctrlBg, playBtn, playIcon,
-    timeText, progBg, progFill, seekHit,
+    root: sceneRoot, hoverHit, videoSprite,
+    cpb, ctrl, playBtn,
+    timeText, seekHit,
     drawPlayIcon, drawProgress, barX, barW,
   } = buildVideoPlayerSceneGraph(width, height, cpbVisibleAllowed, showControlsOpt);
 

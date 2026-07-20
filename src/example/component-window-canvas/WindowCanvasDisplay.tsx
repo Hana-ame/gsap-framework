@@ -1,7 +1,10 @@
+// Example: Canvas-based window rendering inside SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, InfiniteCanvas, makeButton, makeInfoPanel, textPresets, type SubCanvasProxy } from '@framework';
+import { startPixiApp, InfiniteCanvas, type SubCanvasProxy } from '@framework';
+import { makeButton, makeInfoPanel, textPresets } from '@components';
 import { createWindow } from '../../components';
+// NOTE: this example uses createWindow() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 
 const COLORS = [0x1a2a3a, 0x2a1a3a, 0x1a3a2a, 0x3a2a1a, 0x3a1a2a, 0x2a3a1a];
 

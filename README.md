@@ -37,19 +37,21 @@ const stop = startPixiApp((proxy) => {
 | **SubCanvas** | Region-based canvas subdivision, recursive event routing, drag (`title` / `anywhere` / `none`) |
 | **LayerManager** | Named z-ordered layers — zero-overhead abstraction over PIXI.Container + zIndex |
 | **InfiniteCanvas** | Plugin-based infinite pan/zoom canvas with chunked lazy loading, deceleration, zoom-to-pointer |
-| **Component Registry** | `registerComponent` / `createComponent` — unified factory API for all UI components |
+| **Component factories** | `createWindow` / `createConfirm` / `createScrollable` — direct factory calls, no registry indirection |
 | **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |
 | **GSAP Integration** | PixiPlugin pre-registered, ready for `gsap.to(obj, { pixi: { ... } })` |
 | **textPresets** | Centralized `textPresets.btn`, `textPresets.label`, `textPresets.dim`, `textPresets.coord`, `textPresets.heading` |
 | **PerfDisplay** | On-screen FPS/frametime/object count HUD |
 | **Backend Control** | `MockBackend` + `WindowManager` + `ContentChannel` — backend-driven UI via command protocol |
 | **Components** | Window / Confirm / Scrollable / Loading / Image / ClickableImage / FullscreenManager / TextInput / VideoPlayer / AVD |
+| **AVD Framework** | `DialogueStateMachine` / `TypingEngine` / `RosterManager` / `DialogueBox` / `PortraitLayer` / `AvdController` |
 
 ## Structure
 
 ```
 src/
-  framework/    SubCanvas, InfiniteCanvas, EventBus, LayerManager, Component Registry, GSAP, PerfDisplay, UI helpers
+  framework/    SubCanvas, InfiniteCanvas, EventBus, LayerManager, GSAP, PerfDisplay, UI helpers
+  avd/          DialogueStateMachine, TypingEngine, RosterManager, DialogueBox, PortraitLayer, AvdController, AvdScript
   components/   Window, Confirm, Scrollable, Loading, Image, FullscreenManager, VideoPlayer, AVD, TextInput
   backend/      MockBackend + WindowManager + ContentChannel (backend-driven UI control)
   example/      50 routes demonstrating everything
@@ -163,7 +165,7 @@ const win = createWindow({
   width: 280, height: 200,
   x: 40, y: 60,
   draggable: true,
-  dragMode: 'anywhere',   // 'title' | 'anywhere' | 'none'
+  dragMode: 'title',   // 'title' | 'anywhere' | 'none'
   closable: true,
   onClose: () => console.log('closed'),
 });
@@ -405,7 +407,48 @@ const script = parseAvdScriptJSON(jsonString, (assetName) => textureMap[assetNam
 avd.setScript(script);
 ```
 
+### AVD Framework — `src/avd/`
+
+A dedicated framework layer for visual novel dialogue, built on top of `framework/`. Composed of independently testable modules replacing the monolithic `components/Avd`.
+
+| Module | Responsibility |
+|--------|---------------|
+| `DialogueStateMachine` | typing → between → done FSM (zero PIXI dependency) |
+| `TypingEngine` | Per-frame character reveal using `framework/text-effects-layout` |
+| `RosterManager` | Roster data + highlight logic (zero PIXI dependency) |
+| `DialogueBox` | Background box + speaker name + arrow renderer |
+| `PortraitLayer` | Portrait renderer with fade / setAll bulk mode |
+| `AvdController` | Thin orchestrator tying all modules together |
+| `AvdScript` | JSON script parser with parallel texture loading |
+
+```ts
+import { AvdController } from '../avd';
+
+const avd = new AvdController(parentContainer, ticker, {
+  screenW: 800, screenH: 600,
+});
+
+avd.setScript([
+  { speaker: 'Narrator', text: '...' },
+  { speaker: 'Hero', text: 'Hello!' },
+]);
+avd.next();                    // advance/complete typewriter
+avd.setTypewriterSpeed(60);
+avd.getState();                // 'typing' | 'between' | 'done'
+avd.setRoster({ Alice: { pos: 'left', texture: tex } });
+avd.setRosterMode('persistent');
+avd.destroy();
+```
+
+Compared to the legacy `components/Avd`:
+- **TypingEngine** reuses `text-effects-layout.buildLayout` (eliminates `AvdInlineLayout` duplication)
+- **DialogueStateMachine** is pure logic — testable without PIXI
+- **RosterManager** decouples roster data from rendering
+- **PortraitLayer.setAll()** handles persistent mode with one bulk call
+
 ---
+
+
 
 ## InfiniteCanvas
 
@@ -487,55 +530,6 @@ Built-in plugins: `DeceleratePlugin` (inertia), enabled by default (`decelerate:
 
 ---
 
-## Component Registry
-
-Unified factory API: `registerComponent` / `createComponent`.
-
-### Pre-registered types
-
-| Type | Factory | Options |
-|---|---|---|
-| `'window'` | `createWindow` | `GameWindowOptions` |
-| `'confirm'` | `createConfirm` | `PixiConfirmOptions` |
-| `'scrollable'` | `createScrollable` | `ScrollableOptions` |
-
-### Usage
-
-```ts
-import { createComponent } from '../framework';
-
-// Dynamic creation from options map
-const win = createComponent('window', {
-  parent: root, title: 'Hello', width: 300, height: 200,
-});
-console.log(win.type);     // 'window'
-console.log(win.stage);    // PIXI.Container
-win.destroy();
-```
-
-### Registering a custom component
-
-```ts
-import { registerComponent, createComponent } from '../framework';
-
-registerComponent<MyOptions>('my-panel', (opts) => {
-  const panel = createMyPanel(opts);
-  return {
-    type: 'my-panel',
-    stage: panel.stage,
-    destroy: panel.destroy,
-    get destroyed() { return panel.stage.destroyed; },
-  };
-});
-
-// Anywhere in the app:
-const panel = createComponent('my-panel', { parent: root, width: 200, height: 100 });
-```
-
-### ComponentHandle contract
-
-Every component returns `{ stage: PIXI.Container, destroy(): void, destroyed: boolean }`. This is the `ComponentHandle` interface.
-
 ---
 
 ## EventBus
@@ -613,7 +607,7 @@ tl.to(sprite, { pixi: { x: 100 }, duration: 0.3 })
 Centralized text style presets in `ui-helpers.ts`.
 
 ```ts
-import { textPresets } from '../framework';
+import { textPresets } from '../components';
 
 // Available presets:
 textPresets.btn      // { fontSize: 12, fill: 0xccccee, fontFamily: 'monospace', fontWeight: 'bold' }
@@ -652,7 +646,7 @@ disablePerfMeasure();
 Compact info panel used in all example routes.
 
 ```ts
-import { makeInfoPanel } from '../framework';
+import { makeInfoPanel } from '../components';
 
 makeInfoPanel(root, {
   title: 'Example',
@@ -735,7 +729,7 @@ export function createMyPanel(opts: MyPanelOptions) {
 }
 ```
 
-Export from `src/components/index.ts` and optionally register via `registerComponent`.
+Export from `src/components/index.ts`.
 
 ### Coding conventions
 
@@ -767,10 +761,11 @@ text(canvas.stage, 'Hello World', 'typewriter');
 | pixi-viewport | 插件系统架构、惯性滚动、zoom-to-pointer、坐标系映射 |
 | learningPixi | 函数引用状态机、场景可见性切换、纯工具函数、Texture Atlas 别名 |
 | GSAP | PixiPlugin 集成、Ticker lerp → GSAP tween 替换、动画状态简化、Graphics onUpdate 重绘 |
-| Component Registry | 统一工厂适配器模式 |
 | InfiniteCanvas 拖拽响应 | 50ms 时间窗口算速度代替最后两帧采样 |
 | InfiniteCanvas chunk sync | 缓存 chunk 范围，拖动时 O(n) → O(1) |
 | SubCanvas `clipToBounds` mask | PixiJS v8 的 stencil mask 用 `getGlobalBounds(mask)` 定位，mask Graphics **必须**是 stage 的子对象（`stage.addChild(mask)`），否则无父级变换，`getGlobalBounds` 始终返回 `(0,0)`，导致裁剪区域偏移 `(bounds.x, bounds.y)` |
+| DragController handle/anywhere 冲突 | 重构提取 `DragController` 后，`SubCanvas.addChild` 在 `dragMode: 'anywhere'` 时也会为 `DRAG_HANDLE_LABEL` 子对象调用 `installHandle`。handle 的 `pointerdown` 立即设置共享的 `_isDragging=true`（而旧代码使用局部变量），导致 `handlePointer` 早早吞没后续 move/up 事件，内嵌 SubCanvas（如 InfiniteCanvas）收不到指针事件。修复：`addChild` 仅在 `mode === 'title'` 时安装 handle，且 `_applyAnywhereDrag` 改用 `getBounds()`（local）代替 `globalBounds()` 做位置基准，避免嵌套偏移误差。 |
+| `SubCanvas.handlePointer` children-first | `'anywhere'` 模式下 `pointerdown` 先遍历子节点尝试消费事件，子节点消费后跳过父级 drag 激活但仍触发 `bringToFront`，避免内嵌 InfiniteCanvas 被窗口拖拽吞没。 |
 
 ## Known Issues
 
@@ -778,7 +773,6 @@ text(canvas.stage, 'Hello World', 'typewriter');
 
 | Issue | Details |
 |-------|---------|
-| `framework/register-components.ts` imports from `components/` | `index.ts` has `import './register-components'` (side-effect). Anyone doing `import { x } from '@framework'` transitively loads `components/PixiWindow/PixiConfirm/Scrollable`. If any of those components ever use the `@framework` barrel instead of sub-path imports, a hard runtime circular dependency forms. |
 | `backend/WindowManager.ts` imports from `components/` and `example/` | Backend layer (`src/backend/`) depends on `createWindow` from `components/` and `mountDisplays` from `example/`. Production code should not depend on demo code. |
 
 ## Deploy

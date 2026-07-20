@@ -1,5 +1,6 @@
+/** Barrel exports for all component modules. */
 export { showLoading, createLoading } from './Loading';
-export type { LoadingOptions } from './Loading';
+export type { LoadingOptions, LoadingHandle } from './Loading';
 export { createWindow } from './PixiWindow';
 export type { GameWindow, GameWindowOptions } from './PixiWindow';
 export { createConfirm } from './PixiConfirm';
@@ -22,3 +23,6 @@ export { parseAvdScriptJSON } from './AvdScript';
 export type { AvdScriptJSON, AvdMetaJSON, AvdRosterEntryJSON, AvdLineJSON, AvdTextSegmentJSON, AvdAssetResolver, AvdParsedScript } from './AvdScript';
 export { createTextInput } from './TextInput';
 export type { TextInputHandle, TextInputOptions } from './TextInput';
+
+export { makeButton, makeStepper, makeInfoPanel, textPresets } from './ui-helpers';
+export type { Stepper, InfoPanelOptions } from './ui-helpers';

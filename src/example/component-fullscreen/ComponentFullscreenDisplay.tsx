@@ -1,6 +1,8 @@
+// Example: Fullscreen API integration with SubCanvas
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, makeInfoPanel, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { textPresets, makeInfoPanel } from '@components';
 import { createClickableImage, createFullscreenManager, type ClickableImage } from '../../components';
 
 const SLOTS = [

@@ -1,6 +1,8 @@
+// Example: Conway's Game of Life simulation on SubCanvas
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
+import { startPixiApp, type SubCanvas } from '@framework';
+import { makeInfoPanel } from '@components';
 
 type Grid = Uint8Array;
 

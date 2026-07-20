@@ -1,3 +1,4 @@
+/** ADV visual novel engine: orchestrates dialogue, portraits, and script playback. */
 import * as PIXI from 'pixi.js';
 import { gsap } from 'gsap';
 import { DialogueBox, type DialogueBoxOptions } from './AvdDialogueBox';

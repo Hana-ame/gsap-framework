@@ -67,14 +67,14 @@ vi.mock('pixi.js', async () => {
 
 describe('makeButton', () => {
   it('creates container with eventMode static', async () => {
-    const { makeButton } = await import('../ui-helpers');
+    const { makeButton } = await import('../../components/ui-helpers');
     const btn = makeButton('Test', 100, 30, vi.fn());
     expect(btn.eventMode).toBe('static');
     expect(btn.cursor).toBe('pointer');
   });
 
   it('click handler fires onClick', async () => {
-    const { makeButton } = await import('../ui-helpers');
+    const { makeButton } = await import('../../components/ui-helpers');
     const onClick = vi.fn();
     const btn = makeButton('Test', 100, 30, onClick);
     btn.emit('pointerdown', { stopPropagation: vi.fn() } as never);
@@ -82,7 +82,7 @@ describe('makeButton', () => {
   });
 
   it('creates children (graphics + texts)', async () => {
-    const { makeButton } = await import('../ui-helpers');
+    const { makeButton } = await import('../../components/ui-helpers');
     const btn = makeButton('Test', 100, 30, vi.fn());
     expect(btn.children.length).toBeGreaterThanOrEqual(2);
   });
@@ -90,7 +90,7 @@ describe('makeButton', () => {
 
 describe('makeStepper', () => {
   it('creates stepper with container, width, refresh', async () => {
-    const { makeStepper } = await import('../ui-helpers');
+    const { makeStepper } = await import('../../components/ui-helpers');
     const st = makeStepper({ label: 'Count', getValue: () => 5, onChange: vi.fn(), min: 0, max: 10 });
     expect(st.container).toBeDefined();
     expect(typeof st.width).toBe('number');
@@ -99,7 +99,7 @@ describe('makeStepper', () => {
   });
 
   it('minus button fires onChange with decremented value', async () => {
-    const { makeStepper } = await import('../ui-helpers');
+    const { makeStepper } = await import('../../components/ui-helpers');
     let val = 5;
     const onChange = vi.fn((v: number) => { val = v; });
     const st = makeStepper({ label: 'Count', getValue: () => val, onChange, min: 0, max: 10 });
@@ -111,7 +111,7 @@ describe('makeStepper', () => {
   });
 
   it('plus button fires onChange with incremented value', async () => {
-    const { makeStepper } = await import('../ui-helpers');
+    const { makeStepper } = await import('../../components/ui-helpers');
     let val = 5;
     const onChange = vi.fn((v: number) => { val = v; });
     const st = makeStepper({ label: 'Count', getValue: () => val, onChange, min: 0, max: 10 });
@@ -123,7 +123,7 @@ describe('makeStepper', () => {
   });
 
   it('refresh updates displayed value', async () => {
-    const { makeStepper } = await import('../ui-helpers');
+    const { makeStepper } = await import('../../components/ui-helpers');
     const val = 3;
     const st = makeStepper({ label: 'Count', getValue: () => val, onChange: vi.fn(), min: 0, max: 10 });
     const textChildren = st.container.children.filter((c: unknown) =>
@@ -133,7 +133,7 @@ describe('makeStepper', () => {
   });
 
   it('minus/plus buttons respect min/max bounds', async () => {
-    const { makeStepper } = await import('../ui-helpers');
+    const { makeStepper } = await import('../../components/ui-helpers');
     // Set up with getValue returning 0 (at min)
     let val = 0;
     const onChange = vi.fn((v: number) => { val = v; });
@@ -180,7 +180,7 @@ describe('makeInfoPanel', () => {
     };
     // Pass as SubCanvas-like (has .stage)
     const subCanvas = { stage: stageContainer, bounds: { x: 0, y: 0, width: 800, height: 600 } };
-    const { makeInfoPanel } = await import('../ui-helpers');
+    const { makeInfoPanel } = await import('../../components/ui-helpers');
     const panel = makeInfoPanel(subCanvas as never, {
       title: 'Info',
       lines: ['line1', 'line2'],
@@ -204,7 +204,7 @@ describe('makeInfoPanel', () => {
       stage: subCanvasStage,
       bounds: { x: 0, y: 0, width: 800, height: 600 },
     };
-    const { makeInfoPanel } = await import('../ui-helpers');
+    const { makeInfoPanel } = await import('../../components/ui-helpers');
     const panel = makeInfoPanel(subCanvas as never, {
       title: 'Test',
       lines: ['content'],
@@ -215,7 +215,7 @@ describe('makeInfoPanel', () => {
   it('panel has title text child', async () => {
     const stageContainer = { children: [], addChild: vi.fn(), sortableChildren: false, eventMode: null };
     const subCanvas = { stage: stageContainer, bounds: { x: 0, y: 0, width: 800, height: 600 } };
-    const { makeInfoPanel } = await import('../ui-helpers');
+    const { makeInfoPanel } = await import('../../components/ui-helpers');
     const panel = makeInfoPanel(subCanvas as never, {
       title: 'My Title',
       lines: ['a', 'b'],

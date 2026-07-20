@@ -1,6 +1,8 @@
+// Example: Minesweeper game on SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { makeButton, makeInfoPanel } from '@components';
 
 const ROWS = 12;
 const COLS = 12;

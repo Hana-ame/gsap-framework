@@ -1,33 +1,50 @@
-import * as PIXI from 'pixi.js';
-import { textPresets } from '@framework';
+/** High-level window lifecycle manager: open, close, move, resize. */
 import { MockBackend } from './MockBackend';
-import {
-  type BackendCommand,
-  type BackendCommandType,
-  type WindowSpec,
-} from './types';
-import { createWindow, type GameWindow } from '../components';
-import type { SubCanvas } from '@framework/SubCanvas';
-import { mountDisplays } from '../example/_shared/Displays';
+import { EventBus } from '../framework/EventBus';
+import type { BackendCommand, WindowSpec } from './types';
+
+export interface WindowManagerEventMap {
+  'window-opened': { spec: WindowSpec };
+  'window-closed': { id: string };
+  'window-moved': { id: string; x: number; y: number };
+  'window-resized': { id: string; width: number; height: number };
+  'window-title-changed': { id: string; title: string };
+  'content-set': { windowId: string; type: string };
+  'content-cleared': { windowId: string };
+  'window-hidden': { id: string };
+  'window-shown': { id: string };
+  'window-focused': { id: string };
+}
 
 interface ManagedWindow {
   spec: WindowSpec;
-  instance: GameWindow;
-  contentCleanup: (() => void) | null;
 }
 
 export class WindowManager {
   private backend: MockBackend;
-  private parent: SubCanvas;
   private windows = new Map<string, ManagedWindow>();
   private unsubs: (() => void)[] = [];
+  private _bus = new EventBus();
 
-  constructor(backend: MockBackend, parent: SubCanvas) {
+  constructor(backend: MockBackend) {
     this.backend = backend;
-    this.parent = parent;
     this.unsubs.push(
       backend.on('command', (cmd) => this.handleCommand(cmd)),
     );
+  }
+
+  on<K extends keyof WindowManagerEventMap>(
+    event: K,
+    fn: (payload: WindowManagerEventMap[K]) => void,
+  ): () => void {
+    return this._bus.on(event, fn);
+  }
+
+  private emit<K extends keyof WindowManagerEventMap>(
+    event: K,
+    payload: WindowManagerEventMap[K],
+  ): void {
+    this._bus.emit(event, payload);
   }
 
   private handleCommand(cmd: BackendCommand): void {
@@ -53,8 +70,7 @@ export class WindowManager {
         );
         break;
       case 'set-title': {
-        const w = this.windows.get(cmd.payload.id as string);
-        if (w) w.instance.setTitle(cmd.payload.title as string);
+        this.setTitle(cmd.payload.id as string, cmd.payload.title as string);
         break;
       }
       case 'set-content':
@@ -75,93 +91,75 @@ export class WindowManager {
     }
   }
 
-  openWindow(spec: WindowSpec): GameWindow | null {
-    if (this.windows.has(spec.id)) return null;
-    const win = createWindow({
-      parent: this.parent,
-      title: spec.title,
-      x: spec.x,
-      y: spec.y,
-      width: spec.width,
-      height: spec.height,
-      draggable: true,
-      closable: true,
-      onClose: () => this.closeWindow(spec.id),
-    });
-    this.windows.set(spec.id, { spec, instance: win, contentCleanup: null });
-    return win;
+  openWindow(spec: WindowSpec): boolean {
+    if (this.windows.has(spec.id)) return false;
+    this.windows.set(spec.id, { spec });
+    this.emit('window-opened', { spec });
+    return true;
   }
 
   closeWindow(id: string): void {
-    const w = this.windows.get(id);
-    if (!w) return;
-    w.contentCleanup?.();
-    w.instance.destroy();
+    if (!this.windows.has(id)) return;
     this.windows.delete(id);
+    this.emit('window-closed', { id });
   }
 
   moveWindow(id: string, x: number, y: number): void {
-    this.windows.get(id)?.instance.setPosition(x, y);
+    const w = this.windows.get(id);
+    if (!w) return;
+    w.spec = { ...w.spec, x, y };
+    this.emit('window-moved', { id, x, y });
   }
 
   resizeWindow(id: string, width: number, height: number): void {
-    this.windows.get(id)?.instance.setSize(width, height);
+    const w = this.windows.get(id);
+    if (!w) return;
+    w.spec = { ...w.spec, width, height };
+    this.emit('window-resized', { id, width, height });
+  }
+
+  setTitle(id: string, title: string): void {
+    const w = this.windows.get(id);
+    if (!w) return;
+    w.spec = { ...w.spec, title };
+    this.emit('window-title-changed', { id, title });
+  }
+
+  setContent(windowId: string, type: string): void {
+    if (!this.windows.has(windowId)) return;
+    this.emit('content-set', { windowId, type });
+  }
+
+  clearContent(windowId: string): void {
+    if (!this.windows.has(windowId)) return;
+    this.emit('content-cleared', { windowId });
   }
 
   hideWindow(id: string): void {
-    const w = this.windows.get(id);
-    if (w) w.instance.visible = false;
+    if (!this.windows.has(id)) return;
+    this.emit('window-hidden', { id });
   }
 
   showWindow(id: string): void {
-    const w = this.windows.get(id);
-    if (w) w.instance.visible = true;
+    if (!this.windows.has(id)) return;
+    this.emit('window-shown', { id });
   }
 
   focusWindow(id: string): void {
-    const w = this.windows.get(id);
-    if (w) w.instance.bringToFront();
+    if (!this.windows.has(id)) return;
+    this.emit('window-focused', { id });
   }
 
-  getWindow(id: string): GameWindow | undefined {
-    return this.windows.get(id)?.instance;
-  }
-
-  private setContent(windowId: string, type: string): void {
-    const w = this.windows.get(windowId);
-    if (!w) return;
-    this.clearContent(windowId);
-    if (type === 'ripple') {
-      w.contentCleanup = mountDisplays(w.instance.content);
-    } else {
-      const text = new PIXI.Text({
-        text: `content: ${type}`,
-        style: textPresets.heading,
-      });
-      text.x = 16;
-      text.y = 16;
-      w.instance.content.stage.addChild(text);
-      w.contentCleanup = () => {
-        text.removeFromParent();
-        text.destroy();
-      };
-    }
-  }
-
-  private clearContent(windowId: string): void {
-    const w = this.windows.get(windowId);
-    if (!w) return;
-    w.contentCleanup?.();
-    w.contentCleanup = null;
-    w.instance.content.removeChildren();
-  }
-
-  getWindowCount(): number {
-    return this.windows.size;
+  getWindow(id: string): WindowSpec | undefined {
+    return this.windows.get(id)?.spec;
   }
 
   getOpenWindows(): WindowSpec[] {
     return [...this.windows.values()].map((w) => ({ ...w.spec }));
+  }
+
+  getWindowCount(): number {
+    return this.windows.size;
   }
 
   closeAll(): void {
@@ -174,5 +172,6 @@ export class WindowManager {
     this.closeAll();
     this.unsubs.forEach((u) => u());
     this.unsubs = [];
+    this._bus.clear();
   }
 }

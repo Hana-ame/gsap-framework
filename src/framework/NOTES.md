@@ -339,7 +339,68 @@ Window 提供的只是**容器**和**事件路由之外的事**（drag / focus /
 
 ---
 
-## 6. 相关文件
+## 6. SubCanvas Position Model — 有感 vs 无感
+
+### 6.1 问题
+
+SubCanvas 的 `bounds` 同时包含 `{x, y, width, height}`——它既知道自己的大小，也知道自己的位置。这让 SubCanvas 在消费层（children 是否感知父级位置？）和自身层（SubCanvas 自己是否知道自己在哪？）表现出不同的"感受"。
+
+### 6.2 现状：有感（self-aware position）
+
+| 感知点 | 体现 |
+|--------|------|
+| `bounds` 含 `x, y` | 自身存储了位置 |
+| `globalBounds()` | 递归算全局坐标，用于 hit-test |
+| `setPosition(x, y)` | 对外暴露定位方法 |
+| `handlePointer()` | 用 `globalBounds` 做 hit-test + 坐标转换 |
+| `_dragContext()` | 把 `globalBounds` 传给 DragController 做约束 |
+
+### 6.3 如果改成完全无感（pure size, no position）
+
+把 `bounds` 拆成 `size`（SubCanvas 只管宽高），位置由外部布局管理器决定。
+
+**收益**：
+- 内部逻辑更纯（不关心在哪，只关心多大）
+- 可以插入不同的布局策略（居中、等比、dock）
+
+**代价**：
+- hit-test 必须有外部管理器告知"你当前在哪"
+- 拖拽必须由外部管理位置变化
+- 每个 `setSize` 必须由外部重新计算并 setPosition
+- 每多加一层布局抽象，就多一份事件坐标变换的复杂度
+
+### 6.4 现有方案对比
+
+| 方案 | 代表 | 原理 | 适用场景 |
+|------|------|------|---------|
+| **无感 + 布局管理器** | Qt Layout, Java LayoutManager | SubCanvas 只报 size，外部 LayoutManager 算 x/y | 结构化 UI（按钮、面板） |
+| **有感 + 绝对定位** | **当前 SubCanvas**, DOM `position: absolute` | 自己记 x/y，外部直接设 | 自由布局、游戏、窗口 |
+| **附着式锚点** | iOS AutoLayout, CSS Flexbox | 用边/边距约束算位置 | 自适应面板布局 |
+
+### 6.5 结论：保持有感
+
+游戏画布场景下，窗口、弹框、region 天然需要知道自己在哪：
+
+- 拖拽：拖的时候自己算新位置
+- hit-test：点的时候自己判断是否命中
+- z-order：浮顶需要知道自己和兄弟的关系
+- 分层叠放：region 树形嵌套，每个节点自己管自己的坐标
+
+引入布局管理器增加复杂度，在这个场景下没有实际收益。**SubCanvas 的 `bounds` 含 x/y 是功能需求，不是设计失误。**
+
+### 6.6 PIXI 原生对比
+
+SubCanvas 的事件系统有意绕开 PIXI 的 `FederatedPointerEvent`，原因：
+
+- 监听器拿到的 `x/y` 已经是 region-local 坐标，不用在每个 handler 里写 `getLocalPosition`
+- 内建 tap 检测（press→move→up 自动区分 tap 和 drag）
+- window 级 pointer fallback（鼠标移出 canvas 不会脱手）
+
+这不是"没对齐 PIXI 原生"，而是对 PIXI 事件系统的功能补充。
+
+---
+
+## 7. 相关文件
 
 - `src/components/windowing/Window.tsx` — HTML Window（React 组件）
 - `src/components/windowing/Window.md` — HTML Window API 文档

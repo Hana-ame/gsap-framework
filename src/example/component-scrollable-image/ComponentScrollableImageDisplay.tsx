@@ -1,6 +1,8 @@
+// Example: Scrollable image viewer with zoom support
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { makeInfoPanel } from '@components';
 import { createClickableImage, createFullscreenManager } from '../../components';
 
 const IMAGES = [

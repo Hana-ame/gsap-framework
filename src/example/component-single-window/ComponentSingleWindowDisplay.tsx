@@ -1,7 +1,10 @@
+// Example: Single managed window instance
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { makeInfoPanel, textPresets } from '@components';
 import { createWindow, type GameWindow } from '../../components';
+// NOTE: this example uses createWindow() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 import { mountDisplays } from '../_shared/Displays';
 
 export function ComponentSingleWindowDisplay() {

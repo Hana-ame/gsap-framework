@@ -1,5 +1,7 @@
+// Example: Loading screen with progress indication
 import { useEffect, useRef, useState } from 'react';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { makeInfoPanel } from '@components';
 import { showLoading } from '../../components';
 
 export function ComponentLoadingDisplay() {

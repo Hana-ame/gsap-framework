@@ -1,6 +1,8 @@
+// Example: Animated wave/water effect on SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, makeStepper, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { makeButton, makeInfoPanel, makeStepper } from '@components';
 
 const ROWS = 12;
 const COLS = 20;

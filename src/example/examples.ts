@@ -1,3 +1,4 @@
+// Example registry mapping example IDs to their display components
 import type { ComponentType } from 'react';
 import { SingleDisplay } from './single/SingleDisplay';
 import { MultipleDisplay } from './multiple/MultipleDisplay';
@@ -53,6 +54,12 @@ import { ComponentTutorialGsapIcDisplay } from './component-tutorial-gsap-ic/Com
 import { ComponentIcChunksDisplay } from './component-ic-chunks/ComponentIcChunksDisplay';
 import { ComponentDemoDisplay } from './component-demo/ComponentDemoDisplay';
 import { ComponentDemoAnywhereDisplay } from './component-demo-anywhere/ComponentDemoAnywhereDisplay';
+import { WmAdapterDisplay } from './component-wm-adapter/WmAdapterDisplay';
+import { StreamAdapterDisplay } from './component-stream-adapter/StreamAdapterDisplay';
+import { WmMultiDisplay } from './component-wm-multi/WmMultiDisplay';
+import { WmCanvasDisplay } from './component-wm-canvas/WmCanvasDisplay';
+import { ComponentEcosystemDisplay } from './component-ecosystem/ComponentEcosystemDisplay';
+import { ComponentEcosystemPyDisplay } from './component-ecosystem-py/ComponentEcosystemPyDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -108,6 +115,12 @@ export const EXAMPLES = [
   'component-ic-chunks',
   'component-demo',
   'component-demo-anywhere',
+  'component-wm-adapter',
+  'component-stream-adapter',
+  'component-wm-multi',
+  'component-wm-canvas',
+  'component-ecosystem',
+  'component-ecosystem-py',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -169,4 +182,10 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-ic-chunks': ComponentIcChunksDisplay,
   'component-demo': ComponentDemoDisplay,
   'component-demo-anywhere': ComponentDemoAnywhereDisplay,
+  'component-wm-adapter': WmAdapterDisplay,
+  'component-stream-adapter': StreamAdapterDisplay,
+  'component-wm-multi': WmMultiDisplay,
+  'component-wm-canvas': WmCanvasDisplay,
+  'component-ecosystem': ComponentEcosystemDisplay,
+  'component-ecosystem-py': ComponentEcosystemPyDisplay,
 };

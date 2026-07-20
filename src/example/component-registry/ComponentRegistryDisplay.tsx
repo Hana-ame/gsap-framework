@@ -1,6 +1,8 @@
+// Example: Component registry pattern for dynamic component management
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { createWindow, createConfirm, createScrollable, makeButton, makeInfoPanel } from '@components';
 
 const css = `
 .cr-hint {
@@ -28,17 +30,15 @@ export function ComponentRegistryDisplay() {
       });
 
       makeInfoPanel(root, {
-        title: '组件注册中心',
+        title: '组件工厂演示',
         lines: [
-          '用途：演示 createComponent() 统一工厂方法，创建窗口、确认框和滚动面板。',
-          '测试方法：点击按钮通过注册中心创建组件，与直接调用创建函数对比。',
-          '预期效果：createComponent(\'window\') 与 createWindow() 结果一致，所有注册类型均可使用。',
+          '用途：演示 createWindow() / createConfirm() / createScrollable() 直接调用。',
         ],
         x: window.innerWidth - 400, y: window.innerHeight - 150,
       });
 
       const hint = new PIXI.Text({
-        text: 'createComponent(\'window\' | \'confirm\' | \'scrollable\')',
+        text: 'createWindow / createConfirm / createScrollable',
         style: { fontSize: 11, fill: 0x666688, fontFamily: 'monospace' },
       });
       hint.x = 12;
@@ -55,18 +55,16 @@ export function ComponentRegistryDisplay() {
       };
 
       addBtn('create window', () => {
-        const win = createComponent('window', {
+        const win = createWindow({
           parent: root,
           title: `Window ${Math.random().toString(36).slice(2, 5)}`,
           x: 200 + Math.random() * 100,
           y: 100 + Math.random() * 100,
           width: 280,
           height: 180,
-          draggable: true,
-          closable: true,
         });
         const txt = new PIXI.Text({
-          text: 'created via createComponent(\'window\')',
+          text: 'created via createWindow()',
           style: { fontSize: 12, fill: 0xaaaacc, fontFamily: 'monospace' },
         });
         txt.x = 14;
@@ -75,10 +73,10 @@ export function ComponentRegistryDisplay() {
       });
 
       addBtn('create confirm', () => {
-        createComponent('confirm', {
+        createConfirm({
           parent: root,
           title: 'Confirm',
-          message: 'Created via createComponent(\'confirm\')',
+          message: 'Created via createConfirm()',
           x: 220 + Math.random() * 100,
           y: 120 + Math.random() * 100,
           width: 320,
@@ -98,15 +96,15 @@ export function ComponentRegistryDisplay() {
       });
 
       addBtn('create scrollable', () => {
-        const sc = createComponent('scrollable', {
+        const sc = createScrollable({
           parent: root,
-          x: 250 + Math.random() * 80,
-          y: 150 + Math.random() * 80,
           width: 240,
           height: 200,
           direction: 'vertical',
           scrollbar: true,
         });
+        sc.stage.x = 250 + Math.random() * 80;
+        sc.stage.y = 150 + Math.random() * 80;
 
         for (let i = 0; i < 20; i++) {
           const item = new PIXI.Text({
@@ -115,16 +113,16 @@ export function ComponentRegistryDisplay() {
           });
           item.x = 10;
           item.y = i * 26;
-          sc.stage.addChild(item);
+          sc.content.addChild(item);
         }
 
         const title = new PIXI.Text({
-          text: 'createComponent(\'scrollable\')',
+          text: 'createScrollable()',
           style: { fontSize: 11, fill: 0x4466aa, fontFamily: 'monospace' },
         });
         title.x = 10;
         title.y = 4;
-        sc.stage.addChild(title);
+        sc.content.addChild(title);
       });
     });
 
@@ -134,13 +132,13 @@ export function ComponentRegistryDisplay() {
   return (
     <div className="cr-hint">
       <style>{css}</style>
-      click buttons to create components via registry
+      click buttons to create components
     </div>
   );
 }
 
 ComponentRegistryDisplay.head = {
-  title: 'Component Registry',
-  description: 'Create window/confirm/scrollable via createComponent() — the unified factory API.',
+  title: 'Component Factories',
+  description: 'Create window/confirm/scrollable via createWindow() / createConfirm() / createScrollable().',
   meta: [{ name: 'theme-color', content: '#0a0a14' }],
 };

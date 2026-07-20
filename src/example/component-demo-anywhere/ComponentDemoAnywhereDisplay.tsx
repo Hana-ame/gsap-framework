@@ -1,3 +1,4 @@
+// Example: Demo component that can be placed anywhere in the scene
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvasProxy } from '@framework';

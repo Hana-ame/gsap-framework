@@ -1,3 +1,4 @@
+/** Dialogue box component for the ADV visual-novel engine. */
 import * as PIXI from 'pixi.js';
 import type { AvdState } from './Avd';
 

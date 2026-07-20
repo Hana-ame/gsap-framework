@@ -17,7 +17,7 @@ describe('SubCanvas drag behavior', () => {
       );
       const bg = child.stage.children.find((c) => (c as PIXI.Container).label === 'subcanvas-drag-handle');
       expect(bg).toBeUndefined();
-      expect((child as any)._dragMode).toBe('anywhere');
+      expect(child.dragMode).toBe('anywhere');
     });
   });
 

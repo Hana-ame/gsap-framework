@@ -1,6 +1,8 @@
+// Example: Cutscene / sequential animation playback
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
+import { startPixiApp, type SubCanvas } from '@framework';
+import { makeInfoPanel } from '@components';
 import { createVideoPlayer } from '../../components';
 import type { PixiVideoPlayerHandle } from '../../components';
 

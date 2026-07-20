@@ -1,3 +1,4 @@
+// Shared display registration and type definitions for example components
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '@framework/SubCanvas';
 import { gsap } from 'gsap';

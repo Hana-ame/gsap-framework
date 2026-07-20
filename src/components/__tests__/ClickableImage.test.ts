@@ -153,13 +153,13 @@ describe('createClickableImage', () => {
   });
 
   it('press-release within threshold emits fullscreen:show', () => {
-    const ci = createClickableImage(parent, bus, { url: 'test.png', x: 0, y: 0, width: 100, height: 100 });
+    createClickableImage(parent, bus, { url: 'test.png', x: 0, y: 0, width: 100, height: 100 });
 
     // Simulate Assets.load resolving (texture loaded)
     bus.emit('fullscreen:show', vi.fn()); // trigger to let loadedTexture be set... 
     // Actually we need the Assets.load to resolve first. The mock returns {width:100, height:100}
     // but the callback is async. Let's just verify the fullscreen:show event is emitted.
-    const emitSpy = vi.spyOn(bus, 'emit');
+    vi.spyOn(bus, 'emit');
 
     // Simulate press then release within threshold
     // onPress stores context, onRelease emits if within threshold
@@ -185,8 +185,8 @@ describe('createClickableImage', () => {
   });
 
   it('release beyond threshold does not emit fullscreen:show', () => {
-    const ci = createClickableImage(parent, bus, { url: 'test.png', x: 0, y: 0, width: 100, height: 100 });
-    const emitSpy = vi.spyOn(bus, 'emit');
+    createClickableImage(parent, bus, { url: 'test.png', x: 0, y: 0, width: 100, height: 100 });
+    vi.spyOn(bus, 'emit');
 
     const pressHandler = (parent.onPress as ReturnType<typeof vi.fn>).mock.calls[0]?.[0];
     const releaseHandler = (parent.onRelease as ReturnType<typeof vi.fn>).mock.calls[0]?.[0];

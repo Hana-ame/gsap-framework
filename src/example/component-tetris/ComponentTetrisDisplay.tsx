@@ -1,6 +1,8 @@
+// Example: Tetris game on SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { makeButton, makeInfoPanel } from '@components';
 
 const COLS = 10;
 const ROWS = 20;

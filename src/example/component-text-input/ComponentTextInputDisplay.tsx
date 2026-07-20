@@ -1,6 +1,8 @@
+// Example: Text input field rendered on SubCanvas
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, makeInfoPanel, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { textPresets, makeInfoPanel } from '@components';
 import { createTextInput, type TextInputHandle } from '../../components/TextInput';
 
 export function ComponentTextInputDisplay() {

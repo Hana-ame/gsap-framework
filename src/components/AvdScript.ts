@@ -1,3 +1,4 @@
+/** Script parser and runtime for ADV visual-novel commands and branching. */
 import type { AvdLine, AvdRoster, AvdRosterMode } from './Avd';
 import type { AvdPortraitPos } from './AvdPortraitLayer';
 import type { AvdTextSegment } from './AvdInlineLayout';

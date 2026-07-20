@@ -1,3 +1,4 @@
+/** Scrollable container with mouse-wheel and drag support for PixiJS. */
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from '@framework/SubCanvas';
 

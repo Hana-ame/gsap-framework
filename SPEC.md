@@ -22,6 +22,19 @@ PIXI v8 游戏 UI 框架。组件可拖动，支持无限画布。
 │  └──────────┘  └──────────┘ │ ComponentRegistry│ │
 │                              └────────────────┘ │
 ├──────────────────────────────────────────────────┤
+│  AVD Framework Layer (src/avd/)                  │
+│  ┌──────────────┐ ┌──────────────┐              │
+│  │AvdController │ │DialogueState │              │
+│  │(orchestrator)│ │  Machine     │              │
+│  └──────────────┘ └──────────────┘              │
+│  ┌──────────────┐ ┌──────────────┐              │
+│  │ TypingEngine │ │RosterManager │              │
+│  │(per-frame)   │ │(data + rules)│              │
+│  └──────────────┘ └──────────────┘              │
+│  ┌──────────────┐ ┌──────────────┐              │
+│  │ DialogueBox  │ │PortraitLayer │              │
+│  └──────────────┘ └──────────────┘              │
+├──────────────────────────────────────────────────┤
 │  Components Layer (src/components/)              │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐        │
 │  │ PixiWin  │ │PixiConfirm│ │Scrollable│  ...   │
@@ -44,7 +57,8 @@ PIXI v8 游戏 UI 框架。组件可拖动，支持无限画布。
 
 | 层 | 职责 | 依赖 PIXI | 依赖 GSAP |
 |----|------|-----------|----------|
-| Framework | 画布管理、事件路由、坐标系统、无限画布、组件注册表 | ✅ | ✅ (`gsap-pixi.ts`) |
+| Framework | 画布管理、事件路由、坐标系统、无限画布 | ✅ | ✅ (`gsap-pixi.ts`) |
+| AVD Framework | 视觉小说引擎：FSM、打字机、花名册、对话框、立绘 | ✅ | PortraitLayer |
 | Components | 窗口、弹窗、滚动、图片、AVD 等 UI 组件 | ✅ | 部分组件 |
 
 **重要**：所有组件都在 `src/components/` 下。其中有动画需求的（FullscreenManager、Loading、AvdPortraitLayer、Displays）额外引入了 GSAP，用 `gsap.to/timeline` 替换了早期的手写 `lerp + rAF` ticker。纯布局/交互组件（PixiWindow、PixiConfirm、Scrollable）不依赖 GSAP。
@@ -64,32 +78,13 @@ Pointer Event (DOM) → PixiApp.routePointer
   bus.on('event-name', handler) → return unsubscribe
 ```
 
-### Component Registry 适配器模式
-
-```
-原始工厂（不同签名）：
-  createWindow({ parent, title, width, height, ... }) → GameWindow (SubCanvas)
-  createScrollable({ parent, width, height, ... }) → Scrollable { stage, content }
-  createConfirm({ parent, title, message, ... }) → PixiConfirm (SubCanvas)
-
-适配器（统一为 Component<T>）：
-  registerComponent('window', (opts) => {
-    const win = createWindow(opts);
-    return { type, stage: win.stage, destroy, destroyed };
-  });
-
-消费者：createComponent('window', opts) → Component
-```
-
-目前注册了 3 个类型：`window` / `confirm` / `scrollable`。
-
-Component 接口只有一个 `stage: PIXI.Container`，对于需要暴露 `content` SubCanvas 的组件（如 PixiWindow），目前只能通过 `createWindow` 直接拿，不走 registry。如果 registry 组件也需要访问 `content`，可以在 Component 上加可选字段 `content?: SubCanvas`。
+> **2026-07-20**: `ComponentRegistry`/`registerComponent` 已删除。组件直接通过 `createWindow`/`createConfirm`/`createScrollable` 调用，不再经过统一工厂适配器。详见 README 学习表。
 
 ### PIXI vs GSAP 的关系
 
 - **Components 层（PixiWindow、PixiConfirm、Scrollable）**：纯 PIXI，无 GSAP。拖动通过 SubCanvas 的内置 `dragMode` 实现（基于 PIXI 事件 + window-level pointermove）。
 - **Animated 组件（FullscreenManager、Loading、AvdPortraitLayer）**：GSAP 用于动画 timeline / tween，替换了早期的手写 `lerp + rAF` ticker。
-- **`gsap-pixi.ts`**：Framework 层统一导出 `gsap` 实例（已注册 PixiPlugin + `registerPIXI(PIXI)`），外部只需 `import { gsap } from '../framework'`。
+- **`gsap-pixi.ts`**：GSAP 实例注册 PixiPlugin。外部直接 `import { gsap } from 'gsap'`（不再从 `@framework` 重导出）。
 
 ---
 
@@ -140,32 +135,7 @@ src/components/          ← 你的组件放这里
 
 `src/components/index.ts` 是组件层的唯一入口。外部只允许 `import { createMyWidget } from '../components'`。
 
-### 三、注册到统一工厂（可选）
-
-如果希望组件也能通过 `createComponent('my-widget', opts)` 创建，在 `src/framework/register-components.ts` 中添加适配器：
-
-```ts
-import { createMyWidget } from '../components/MyWidget';
-
-registerComponent<MyWidgetOptions>('my-widget', (opts) => {
-  const widget = createMyWidget(opts);
-  return {
-    type: 'my-widget',
-    stage: widget.stage,
-    destroy: widget.destroy,
-    get destroyed() { return widget.destroyed; },
-  };
-});
-```
-
-这样消费者可以用统一 API：
-
-```ts
-const w = createComponent('my-widget', { parent: root, width: 100, height: 50 });
-w.destroy();
-```
-
-### 四、GSAP 使用规范
+### 三、GSAP 使用规范
 
 | 场景 | 做法 |
 |------|------|
@@ -179,7 +149,7 @@ w.destroy();
 
 `pixi: { rotation }` 单位是 **度**（不是弧度）。如需弧度，直接用 `gsap.to(obj, { rotation: Math.PI * 2 })` 绕开 PixiPlugin。
 
-### 五、拖拽实现规范
+### 四、拖拽实现规范
 
 如果组件需要拖拽，不要自己写 pointer 事件。已有的拖拽方案：
 
@@ -197,19 +167,19 @@ stage.on('pointerdown', (e) => {
 // 纯 PIXI stage.on('pointermove') 在快速拖动时会丢事件
 ```
 
-### 六、性能守则
+### 五、性能守则
 
 1. **bounds 计算与视图同步分离** — 参考 `Scrollable.ts` 的 `recalc()` vs `sync()` 模式。前者 O(n)，只在增删子节点时调用；后者 O(1)，每帧频繁调用。
 2. **destroy guard** — 所有异步回调（GSAP onComplete、setTimeout、fetch.then）第一行检查 `if (destroyed) return`，防止组件已销毁后操作 PIXI 对象。
 3. **GSAP tween 清理** — 组件 destroy 时调用 `gsap.killTweensOf(obj)`，防止 gsap 持有已销毁对象的引用。
 
-### 七、EventBus 使用约定
+### 六、EventBus 使用约定
 
 - 事件名统一为 `namespace:action` 格式（如 `fullscreen:show`、`item:select`）
 - 组件销毁时调用 `bus.off(event, handler)` 或利用 `on()` 返回的 unsubscribe 函数
 - EventBus 适合**跨组件通信**。父子组件通信直接用函数调用更简单
 
-### 八、InfiniteCanvas 插件开发
+### 七、InfiniteCanvas 插件开发
 
 ```ts
 import type { InfiniteCanvasPlugin } from '../framework';
@@ -231,7 +201,7 @@ ic.removePlugin('grid');
 
 内置插件：DeceleratePlugin（priority=50）。
 
-### 九、import 规则
+### 八、import 规则
 
 ```
 外部代码
@@ -241,7 +211,7 @@ ic.removePlugin('grid');
 
 TypeScript paths 别名（`@framework/*`、`@components/*`）已配置在 `tsconfig.json`，但 **构建时不保证生效**（取决于 bundler）。生产代码用相对路径。
 
-### 十、测试
+### 九、测试
 
 ```sh
 npm run test          # vitest 运行
@@ -250,7 +220,7 @@ npm run typecheck     # tsc --noEmit
 npm run lint          # eslint
 ```
 
-测试放在 `src/` 下对应目录（如 `src/framework/EventBus.test.ts`）。纯函数优先测试，PIXI 相关组件用 registry smoke test 验证（参考 `src/framework/register-components.test.ts`）。
+测试放在 `src/` 下对应目录（如 `src/framework/EventBus.test.ts`）。纯函数优先测试。
 
 CI pipeline 在 `.github/workflows/ci.yml`：lint → tsc → test → build。
 
@@ -450,32 +420,6 @@ interface InfiniteCanvasPlugin {
 
 插件按 priority 升序执行。内置 DeceleratePlugin（priority=50）。
 
-### 组件注册表
-
-```ts
-import { registerComponent, createComponent, registeredTypes } from '../framework';
-
-// 注册
-registerComponent<MyOptions>('my-type', (opts) => ({
-  type: 'my-type',
-  stage: myPIXIContainer,
-  destroy: () => cleanup(),
-  get destroyed() { return isDestroyed; },
-}));
-
-// 使用
-const comp = createComponent('my-type', {
-  parent: root,
-  width: 200,
-  height: 100,
-  // 自定义选项...
-});
-
-comp.destroy();
-```
-
-已注册类型：`window` / `confirm` / `scrollable`（在 `register-components.ts` 中通过适配器包装原始工厂）。
-
 ### GSAP 动画
 
 ```ts
@@ -530,6 +474,7 @@ bus.listenerCount('evt');  // 查询
 **内部实现** — `Map<string, Set<Handler>>`，每个事件一个 Set。`on()` 返回 unsubscribe 函数。`emit()` 遍历 Set 快照，单个 handler 抛异常不影响其他。用在：
 - `FullscreenManager` ↔ `ClickableImage`：`fullscreen:show` / `fullscreen:hide` / `fullscreen:active` / `fullscreen:inactive`
 - 自定义组件间通信
+- `MockBackend`、`WindowManager`、`ContentChannel` 各自组合一个私有 `EventBus` 实例替代手写的 `Map<string, Set<Handler>>` + `on/off/emit`，消除三份重复实现
 
 ### LayerManager
 
@@ -594,9 +539,9 @@ unsub(); // 取消订阅
 | `createVideoPlayer(parent, opts)` | PIXI 视频播放器 | 否 |
 | `createFullscreenManager(proxy)` | 全屏看图管理器（缩放+拖动+双击+滑动关闭） | 缩放拖拽 |
 | `showLoading(sc, opts)` | 加载遮罩（显示 spinner） | 否 |
-| `makeButton(label, w, h, onClick, bg?)` | 按钮 | 否 |
+| `makeButton(label, w, h, onClick, bg?)` | 按钮 | 否 | components/ui-helpers |
 | `mountDisplays(sc)` | 示例工具：十字准星+点击波纹+计数器（挂载到任意 SubCanvas） | 否 |
-| `makeStepper(label, getValue, onChange, min, max, step?)` | 步进器（step 支持 +10 快速调节） | 否 |
+| `makeStepper(label, getValue, onChange, min, max, step?)` | 步进器（step 支持 +10 快速调节） | 否 | components/ui-helpers |
 | `LayerManager(stage)` | 命名层系统（z-order、show/hide、alpha、bringToFront） | 否 |
 
 ### AVD（视觉小说引擎）
@@ -623,6 +568,78 @@ avd.goTo(5);      // 跳到第 5 句
 avd.destroy();    // 清理
 ```
 
+### AVD Framework (`src/avd/`)
+
+Built on top of `framework/`, this layer decomposes the monolithic `components/Avd` into independently testable modules.
+
+#### 模块一览
+
+| 模块 | 类型 | 职责 | PIXI 依赖 |
+|------|------|------|-----------|
+| `DialogueStateMachine` | 类 | typing → between → done 状态机，纯逻辑 | ❌ |
+| `TypingEngine` | 类 | per-frame 字符 reveal，复用 `text-effects-layout.buildLayout` | ✅ |
+| `RosterManager` | 类 | 花名册数据 + speaker-only/persistent 规则 | ❌ |
+| `DialogueBox` | 类 | 对话框背景、说话者名字、箭头动画 | ✅ |
+| `PortraitLayer` | 类 | 立绘渲染、淡入淡出、setAll 批量模式（persistent） | ✅ + GSAP |
+| `AvdController` | 类 | 协调器：组装以上模块、管理 tick、处理点击 | ✅ |
+| `AvdScript` | 函数 | JSON 脚本解析、并行纹理加载 | ✅ |
+
+#### 架构图
+
+```
+AvdController
+  ├── DialogueStateMachine  (line index + state)
+  ├── TypingEngine          (text-effects-layout → per-frame reveal)
+  ├── RosterManager         (roster data → portrait resolution)
+  ├── DialogueBox           (box + name + arrow)
+  └── PortraitLayer         (portrait slots + fade)
+
+Ticker callback:
+  typing → typingEngine.update(deltaMS)
+          → if complete → fsm.advance() → 'between'
+  between → dialogueBox.updateArrow(state, phase)
+```
+
+#### 生命周期
+
+```
+constructor(parent, ticker, opts)
+  ├── resolveAvdOptions(opts) — 填充默认值（响应式宽高）
+  ├── new DialogueBox(...)
+  ├── new PortraitLayer(...)
+  ├── new RosterManager()
+  ├── new TypingEngine()
+  ├── new DialogueStateMachine(onLineEnter, onStateChange)
+  └── ticker.add(tickFn)
+
+setScript(lines)
+  └── fsm.setScript(lineCount) → onLineEnter(0) → _loadLine(0)
+      ├── roster.getPortraitForSpeaker(...)
+      ├── roster.setSpeaker(...)
+      ├── portraitLayer.setTarget(...) / setAll(...)
+      ├── typingEngine.start(text, speed, style, ...)
+      └── dialogueBox.setTextContainer(...) + fade in
+
+user click:
+  typing → typingEngine.complete() → fsm.advance() → 'between'
+  between → fsm.advance() → next line or done
+
+destroy:
+  ticker.remove + typingEngine + dialogueBox + portraitLayer + overlay
+```
+
+#### 与 `components/Avd` 的关键区别
+
+| 方面 | `components/Avd` (旧) | `src/avd/` (新) |
+|------|----------------------|-----------------|
+| 行数 | 473 | 控制器 119 + 引擎 137 + FSM 85 |
+| 打字机实现 | 自制 per-frame + 文字切片 | 复用 `text-effects-layout.buildLayout` |
+| 内联排版 | `AvdInlineLayout.ts` (182 行，与框架重复) | 已经不存在，由框架提供 |
+| 状态机 | 内嵌于 Avd 类 | `DialogueStateMachine` 纯逻辑 |
+| 花名册 | 内嵌于 Avd 类 | `RosterManager` 独立 |
+| persistent 立绘 | `_applyRosterHighlight` 逐 slot 操作 | `PortraitLayer.setAll()` 批量调用 |
+| callbacks | 分散在 `_onAdvanceClick` / `_tick` | `StateMachineCallbacks` 统一 |
+
 ---
 
 ## 后端控制架构
@@ -632,14 +649,21 @@ avd.destroy();    // 清理
 ```
 MockBackend / WebSocket (命令源)
     ↓
-WindowManager (缓冲层)
-    ├── 管理窗口生命周期 (open/close/move/resize)
-    ├── 路由内容到对应窗口
-    └── 维护窗口状态
-ContentChannel (WS 流式内容通道)
+WindowManager (数据层 — 零 PIXI 依赖)
+    ├── 管理窗口状态 (open/close/move/resize)
+    └── 通过事件通知下游
+ContentChannel (数据层 — 零 PIXI 依赖)
+    └── 流式内容重组 → 通过事件通知下游
     ↓
-Framework API → PIXI 渲染
+WindowManagerAdapter (PIXI 桥接)
+    ├── 监听 WindowManager 事件
+    └── 创建/销毁/移动 PIXI 窗口 + 内容渲染
+ContentChannelAdapter (PIXI 桥接)
+    ├── 监听 ContentChannel onFlushed 事件
+    └── 将重组后的文本渲染到 SubCanvas
 ```
+
+**核心拆分**：`backend/` 是纯数据层，零 PIXI/组件依赖。所有 PIXI 渲染逻辑移入 `src/adapters/`。后端可替换为真实 WebSocket 而无需改动渲染逻辑。
 
 ### 命令协议
 
@@ -670,11 +694,32 @@ interface BackendCommand {
 
 ### 层职责
 
-| 层 | 文件 | 职责 |
-|----|------|------|
-| MockBackend | `backend/MockBackend.ts` | JS 模拟后端，支持 `send` / `sendSequence` / `connect` / `disconnect`，通过 `on('command', ...)` 通知下游 |
-| WindowManager | `backend/WindowManager.ts` | 缓冲层：接收命令 → 调用 `createWindow` / `setPosition` 等框架 API，管理窗口注册表 |
-| ContentChannel | `backend/ContentChannel.ts` | WS 流式内容：分块接收 `stream-content` → 组装 → 渲染到目标窗口 |
+| 层 | 位置 | 职责 | 依赖 PIXI |
+|----|------|------|-----------|
+| MockBackend | `backend/MockBackend.ts` | JS 模拟后端，`send` / `sendSequence` / `connect` / `disconnect`，通过 `on('command', ...)` 通知下游 | ❌ |
+| WindowManager | `backend/WindowManager.ts` | 纯数据：接收命令 → 更新窗口规格 → 发出 `'window-opened'` / `'window-moved'` 等事件。维护 `Map<id, WindowSpec>` | ❌ |
+| ContentChannel | `backend/ContentChannel.ts` | 纯数据：分块接收 `stream-content` → 组装 → 通过 `onFlushed` 发出 `FlushedData`。移除 `attachStage`/`detachStage`（已移交 adapter） | ❌ |
+| WindowManagerAdapter | `adapters/WindowManagerAdapter.ts` | 监听 WindowManager 事件 → 创建/销毁/移动 `GameWindow（PixiWindow）`。处理 `set-content` 渲染。暴露 `getContentStage(id)` | ✅ |
+| ContentChannelAdapter | `adapters/ContentChannelAdapter.ts` | 监听 ContentChannel `onFlushed` → 将重组文本渲染到已注册的 SubCanvas。管理 `attachStage`/`detachStage` | ✅ |
+
+### WindowManager 事件
+
+WindowManager 通过 `on()` 方法发出以下事件，Adapter 监听后执行对应 PIXI 操作：
+
+```ts
+interface WindowManagerEventMap {
+  'window-opened': { spec: WindowSpec }
+  'window-closed': { id: string }
+  'window-moved': { id: string; x: number; y: number }
+  'window-resized': { id: string; width: number; height: number }
+  'window-title-changed': { id: string; title: string }
+  'content-set': { windowId: string; type: string }
+  'content-cleared': { windowId: string }
+  'window-hidden': { id: string }
+  'window-shown': { id: string }
+  'window-focused': { id: string }
+}
+```
 
 ### 生产替换
 
@@ -683,7 +728,7 @@ interface BackendCommand {
 ```ts
 // MockBackend 和 WebSocket 使用相同的 BackendCommand 接口
 const backend = new WebSocketBackend('wss://...');
-// 同一套 WindowManager + ContentChannel 直接使用
+// 同一套 WindowManager + ContentChannel + adapters 直接使用
 ```
 
 ### 数据流（窗口创建示例）
@@ -692,12 +737,12 @@ const backend = new WebSocketBackend('wss://...');
 MockBackend.send('open-window', { id, title, x, y, w, h })
   ↓
 WindowManager.handleCommand({ type: 'open-window', payload: ... })
-  ↓
-createWindow({ parent, title, x, y, w, h })
-  ↓
-SubCanvas.createRegion(...) → PIXI 渲染
-  ↓
-WindowManager 注册窗口到 Map
+  ├── 存储 WindowSpec
+  └── emit('window-opened', { spec })
+      ↓
+WindowManagerAdapter._onWindowOpened(spec)
+  ├── createWindow({ parent, title, x, y, w, h })
+  └── SubCanvas.createRegion(...) → PIXI 渲染
 ```
 
 ---
@@ -955,26 +1000,9 @@ setZoom(newZoom, cx, cy):
 
 **教训**：不要将内部状态变量直接暴露为"语义化" getter。派生值（derived state）应通过 getter 计算，内部状态变量用下划线前缀并用说明性命名（如 `_scrollX` 而非 `_worldX`）。
 
-### 组件注册表适配器模式
-
-```
-原始工厂（不同签名）：
-  createWindow(opts) → GameWindow
-  createScrollable(opts) → Scrollable (with parent in opts)
-
-适配器（统一为 Component<T>）：
-  registerComponent('window', (opts) => {
-    const win = createWindow({ ...opts });
-    return { type: 'window', stage: win.stage, destroy, destroyed };
-  });
-
-消费者：
-  const win = createComponent('window', { parent, title: '...', width, height });
-```
-
 ### textPresets 样式常量
 
-框架在 `src/framework/ui-helpers.ts` 定义了一组统一样式常量，用于替代各处散落的内联 `PIXI.TextStyle`：
+框架在 `src/components/ui-helpers.ts` 定义了一组统一样式常量，用于替代各处散落的内联 `PIXI.TextStyle`：
 
 ```typescript
 export const textPresets = {
@@ -986,7 +1014,80 @@ export const textPresets = {
 };
 ```
 
-如需统一调整主题字体/颜色，只需修改 `textPresets` 中各字段的定义。`makeButton`、`makeStepper` 已使用 `textPresets.btn` / `textPresets.label`。外部代码可通过 `import { textPresets } from '../../framework'` 获取。
+如需统一调整主题字体/颜色，只需修改 `textPresets` 中各字段的定义。`makeButton`、`makeStepper` 已使用 `textPresets.btn` / `textPresets.label`。外部代码可通过 `import { textPresets } from '@components'` 或 `import { textPresets } from '../../components'` 获取。
+
+### 演进记录：2026-07-20 SubCanvas / InfiniteCanvas 关注点分离
+
+**目标**：消除 SubCanvas 上帝类（672 行，6 个关注点）和 InfiniteCanvas 的混合问题。
+
+**方案**：从 SubCanvas 提取 `DragController`（合并两种拖拽模式）和 `ZOrderManager`（z-index 纯函数）；从 InfiniteCanvas 提取 `InfiniteCanvasDrag`（press→move→release 状态+清理）。
+
+### DragController
+
+`src/framework/DragController.ts` — 统一管理两种拖拽模式：
+
+| 模式 | 入口 | 事件源 | 场景 |
+|------|------|--------|------|
+| `'title'` | `installHandle(container)` | PIXI `pointerdown` + window `pointermove/up` 兜底 | 标题栏拖拽 |
+| `'anywhere'` | `interceptPointer(type, e)` | SubCanvas.handlePointer 传入的 DOM PointerEvent | 全局拖拽 |
+
+`DragController` 持有 `_isDragging` 状态，SubCanvas 通过 `dragController.isDragging` 判断是否吞噬 move/up 事件。
+
+**SubCanvas 原私有拖拽字段全部移除**（`_bg`, `_dragLocalStart`, `_dragHandlers`, `_dragHandlers`, `_dragMode`, `_perHandleCleanups`, `_isDragging`, `_onWindowMove`, `_onWindowUp` 等 10+ 个），原 `SubCanvasDrag.ts` 删除，功能合并入 DragController。
+
+### ZOrderManager
+
+`src/framework/ZOrderManager.ts` — 两个纯函数：
+
+```ts
+bringToFront(stage: PIXI.Container): void   // zIndex = max + 1
+sendToBack(stage: PIXI.Container): void      // zIndex = min - 1
+```
+
+SubCanvas 的 `_subRegions` 数组同步逻辑保留在 SubCanvas 中（与事件路由顺序相关），只将 zIndex 计算提取。
+
+### InfiniteCanvasDrag
+
+`src/framework/InfiniteCanvasDrag.ts` — 提取原 `InfiniteCanvas._setupDrag()` 的 press→move→release 逻辑：
+
+- 管理 `dragging`, `startClientX/Y`, `startScrollX/Y` 状态
+- 负责插件事件分发（`p.onDown/onMove/onUp`）
+- 暴露 `setup()` / `destroy()` 接口
+- 条件注册 `onTap`（仅在 `hasTapHandler` 为 true 时，避免始终绑定）
+
+InfiniteCanvas 暴露只读 getter 供 Drag 访问：`plugins`, `scrollX`, `scrollY`，以及 `applyScroll(x,y)` / `dispatchTap(wx,wy)` 方法。
+
+### 结果
+
+| 指标 | 重构前 | 重构后 |
+|------|--------|--------|
+| SubCanvas.ts 行数 | 672 | ~280 |
+| 私有字段数 | ~25 | ~12 |
+| 关注点/类 | 6 | 1（其余 2 个提取到独立类） |
+| InfiniteCanvas.ts 行数 | 422 | ~300 |
+| 测试通过 | 659 | 659 |
+| 编译警告 | 0 | 0 |
+
+### 架构图更新
+
+```
+SubCanvas
+  ├── 区域树管理
+  ├── 事件路由（hit-test + tap 检测）
+  ├── clip-to-bounds 遮罩
+  ├── 生命周期
+  ├── ── DragController ── 拖拽（两种模式）
+  │       ├── installHandle('title')
+  │       └── interceptPointer('anywhere')
+  └── ── ZOrderManager ── bringToFront/sendToBack
+
+InfiniteCanvas
+  ├── 插件编排
+  ├── chunk 生命周期
+  ├── 坐标变换（zoom/scroll）
+  ├── ── InfiniteCanvasDrag ── press→move→release
+  └── ── DeceleratePlugin ── 惯性
+```
 
 ### 演进记录：2026-07-19 代码质量优化
 
@@ -1094,12 +1195,47 @@ text(stage, 'Big red', 'scaleBounce', {                // 弹性缩放
 
 | 问题 | 详情 |
 |------|------|
-| `framework/register-components.ts` 导入 `components/` | `index.ts` 通过 `import './register-components'` 副作用导入。任何人 `import { x } from '@framework'` 都会**透传加载** `PixiWindow/PixiConfirm/Scrollable`。哪天某个 component 改用 `@framework` barrel 就会形成运行时循环依赖。 |
 | `backend/WindowManager.ts` 导入 `components/` 和 `example/` | backend 层依赖 `createWindow`（components）和 `mountDisplays`（example）。生产代码不应依赖 demo 代码。 |
 
 ### 遗留导入路径（能跑，但指向旧来源）
 
 拆分后部分文件仍从 `SubCanvas.ts` 导入原属于 `SubCanvasTypes.ts` 的类型。2026-07 已清理了 `SubCanvasProxy.ts`、`InfiniteCanvasTypes.ts`、`utils/rect.ts` 和 `index.ts` 的 barrel，但如果新文件也这样写需要注意。
+
+### 演进记录：2026-07-20 UI helpers 移至 components/
+
+**目标**：消除 `framework/index.ts` 作为杂项出口（同时导出核心框架和 UI 控件/gsap）。
+
+**改动**：
+
+| 文件 | 变更 |
+|------|------|
+| `src/framework/ui-helpers.ts` | 删除，移至 `src/components/ui-helpers.ts` |
+| `src/components/ui-helpers.ts` | 从 framework 移入，SubCanvas import 改为 `@framework/SubCanvas` |
+| `src/components/index.ts` | 新增 `makeButton`/`makeStepper`/`makeInfoPanel`/`textPresets` 导出 |
+| `src/framework/index.ts` | 删除 ui-helpers 和 `gsap` 的 re-export |
+| `tsconfig.app.json` + `vite.config.ts` | 新增 `@components` 路径别名 |
+| 48 个消费者文件 | import 路径从 `@framework` 改为 `@components` |
+| 3 个 tutorial 文件 | `gsap` import 改为直接 `from 'gsap'` |
+| `TextInput.test.ts` | mock 路径 `../../framework/ui-helpers` → `../../components/ui-helpers` |
+| `ui-helpers.test.ts` | 移至 `src/components/__tests__/` |
+
+### 演进记录：2026-07-20 删除 Component Registry + 修复 anywhere drag 冲突
+
+**目标**：消除为「统一工厂」而引入的不必要适配器层，修复 `'anywhere'` dragMode 吞没子区域事件的根本问题。
+
+**改动**：
+
+| 文件 | 变更 |
+|------|------|
+| `src/framework/component.ts` | 删除（registry 核心） |
+| `src/framework/register-components.ts` | 删除（window/confirm/scrollable 适配器包装） |
+| `src/framework/index.ts` | 删除 `registerComponent`/`createComponent`/`registeredTypes` 导出和 `import './register-components'` |
+| `src/components/PixiWindow.ts` | 默认 dragMode 改回 `'anywhere'`；新增 `win.onPress(() => win.bringToFront())` |
+| `src/framework/SubCanvas.ts` | `handlePointer` 在 `'anywhere'` 模式下先遍历子节点，子节点消费事件则跳过父 drag 但仍调用 `bringToFront` |
+| 6 个消费者 | 从 `createComponent` 改为直接调用 `createWindow`/`createConfirm`/`createScrollable` |
+| 3 个测试文件 | 随 registry 删除 |
+
+**效果**：窗口任意位置点击 bring-to-front + 内嵌 InfiniteCanvas 可正常拖拽。不再需要单独设置 `dragMode: 'title'` 来避免冲突。
 
 ## 部署
 

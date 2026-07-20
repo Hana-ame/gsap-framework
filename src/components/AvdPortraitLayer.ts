@@ -1,3 +1,4 @@
+/** Portrait sprite layer with left/center/right positioning for the ADV engine. */
 import * as PIXI from 'pixi.js';
 import { gsap } from 'gsap';
 

@@ -1,5 +1,7 @@
+/** Clickable image thumbnail that opens in fullscreen view. */
 import * as PIXI from 'pixi.js';
-import { textPresets, type SubCanvas, type SubPointerEvent, type EventBus } from '@framework';
+import { type SubCanvas, type SubPointerEvent, type EventBus } from '@framework';
+import { textPresets } from '@components';
 import type { FullscreenShowEvent } from './FullscreenManager';
 
 export interface ClickableImageOptions {
@@ -38,7 +40,7 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
   let texW = 0;
   let texH = 0;
 
-  // Press/release click-threshold state
+  // Press/release click-threshold state (global/client coords — stable across parent scroll)
   let pressGlobalX = 0;
   let pressGlobalY = 0;
   let pressTexture: PIXI.Texture | null = null;
@@ -73,8 +75,8 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     const rx = e.x - opts.x;
     const ry = e.y - opts.y;
     if (rx < 0 || rx > thumbW || ry < 0 || ry > thumbH) return;
-    pressGlobalX = e.x;
-    pressGlobalY = e.y;
+    pressGlobalX = e.globalX;
+    pressGlobalY = e.globalY;
     pressTexture = loadedTexture;
     pressBounds = {
       x: parent.globalBounds.x + opts.x,
@@ -90,8 +92,8 @@ export function createClickableImage(parent: SubCanvas, bus: EventBus, opts: Cli
     const texture = pressTexture;
     const bounds = pressBounds;
     pressTexture = null;
-    const dx = e.x - pressGlobalX;
-    const dy = e.y - pressGlobalY;
+    const dx = e.globalX - pressGlobalX;
+    const dy = e.globalY - pressGlobalY;
     if (Math.abs(dx) > CLICK_THRESHOLD_PX || Math.abs(dy) > CLICK_THRESHOLD_PX) return;
     const ev: FullscreenShowEvent = {
       texture,

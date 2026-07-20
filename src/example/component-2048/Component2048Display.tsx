@@ -1,6 +1,8 @@
+// Example: 2048 game implemented on SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
+import { startPixiApp, type SubCanvas } from '@framework';
+import { makeInfoPanel } from '@components';
 
 type Board = number[][];
 type Direction = 'up' | 'down' | 'left' | 'right';

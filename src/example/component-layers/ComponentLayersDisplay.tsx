@@ -1,6 +1,8 @@
+// Example: Multi-layer rendering with independent Layer components
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, LayerManager, type SubCanvasProxy, type Layer } from '@framework';
+import { startPixiApp, LayerManager, type SubCanvasProxy, type Layer } from '@framework';
+import { makeButton, makeInfoPanel } from '@components';
 import { gsap } from 'gsap';
 
 const COLORS = [0x4488ff, 0xff4488, 0x44ff88, 0xffaa44, 0xaa44ff, 0x44ccff];
@@ -101,7 +103,7 @@ export function ComponentLayersDisplay() {
       });
 
       colX = 130;
-      let row2 = 62;
+      const row2 = 62;
       created.forEach((layer, i) => {
         const btn = makeButton('α', 28, 22, () => {
           gsap.to(layer.container, { alpha: layer.container.alpha < 0.5 ? 1 : 0.3, duration: 0.2 });

@@ -16,18 +16,20 @@ PixiApp.startPixiApp()
 | 文件 | 职责 |
 |------|------|
 | `PixiApp.ts` | `startPixiApp(onReady?)` 启动 `PIXI.Application`，挂 canvas 到 body，监听 4 种 pointer 事件馈入 SubCanvasProxy。含 WebGL probe / dev-mode 调试栏 / single-canvas 断言。 |
-| `SubCanvas.ts` | 核心。AABB 容器，含 stage/bounds/ticker/event-routing/tag-based-drag/z-order/clip-to-bounds/子区域管理。727 行。 |
+| `SubCanvas.ts` | 核心。AABB 容器，含 stage/bounds/ticker/event-routing/tag-based-drag/z-order/clip-to-bounds/子区域管理。~280 行（重构前 672 行）。 |
+| `DragController.ts` | 从 SubCanvas 提取的拖拽引擎。合并 `SubCanvasDrag.ts` 的 title 模式和内联的 anywhere 模式。`installHandle()` / `interceptPointer()` / `destroy()`。 |
+| `ZOrderManager.ts` | `bringToFront()` / `sendToBack()` 纯函数，从 SubCanvas 提取。 |
+| `InfiniteCanvasDrag.ts` | 从 InfiniteCanvas 提取的拖拽子模块。press→move→release 状态管理 + 插件事件分发。`setup()` / `destroy()`。 |
 | `SubCanvasProxy.ts` | 顶层 orchestrator。`createRegion` / `destroyAll` / `routePointer` / `getTopCanvases`。暴露 `bus` / `ticker` / `renderer` / `showPerfMeasure`。 |
 | `EventBus.ts` | 带类型的 pub-sub。`on` / `off` / `emit` / `clear`。handler 自带 try-catch 防止单 handler 拖垮全链。 |
 | `InfiniteCanvas.ts` | 泛化无限拖拽 + chunk 化加载/卸载系统。插件架构（drag/decelerate），帧率无关惯性，自动 chunk 创建/销毁。支持 `addPlugin`/`removePlugin`。内部 `_scrollX/_scrollY` 是屏幕像素偏移，`worldX/worldY` getter 返回视口中心世界坐标（zoom 稳定）。 |
 | `component.ts` | Component 注册表工厂。`registerComponent('type', factory)` → `createComponent('type', opts)`。 |
-| `ui-helpers.ts` | `makeButton` / `makeStepper` / `makeInfoPanel` / `textPresets` 通用 PIXI 控件。 |
 | `gsap-pixi.ts` | GSAP 3.15 + PixiPlugin 注册。可直接 `gsap.to(sprite, { pixi: { alpha: 0 } })`。 |
 | `perf.ts` | `PerfDisplay` + `enablePerfMeasure` / `disablePerfMeasure` — 屏幕 FPS / frametime / 对象数 HUD。 |
 | `Layer.ts` | `LayerManager` / `LayerImpl` — 命名 z-order 层抽象。 |
 | `text-effects.ts` | `runTextEffect` — GSAP 驱动的文字动效（typewriter / fadeIn / slideIn / scramble 等 7 种）。 |
 | `utils/` | 纯函数工具集（math/color/rect），零 PIXI 依赖。 |
-| `index.ts` | 公开 re-export。**外部只 import 此文件，不 deep import**。 |
+| `index.ts` | 公开 re-export（不再导出 UI helpers，见 `src/components/ui-helpers.ts`）。**外部只 import 此文件，不 deep import**。 |
 | `NOTES.md` | drag / z-order / event-routing 设计笔记 & 踩坑记录。 |
 
 ## InfiniteCanvas 插件系统
@@ -68,7 +70,26 @@ canvas.addPlugin(new MyPlugin());
 
 ## 变更记录
 
-### `dragMode: 'anywhere'` 重写（2026-07-20）
+### UI helpers 移至 components/（2026-07-20）
+
+`makeButton`、`makeStepper`、`makeInfoPanel`、`textPresets` 从 `src/framework/ui-helpers.ts` 移至 `src/components/ui-helpers.ts`，同时 `gsap` 从 `framework/index.ts` 的 re-export 中移除。
+
+- framework/index.ts 不再持有 UI 控件和 gsap，专注核心框架
+- 消费者从 `@framework` 改为 `@components` 导入这些功能
+- `@components` 路径别名已添加（tsconfig + vite）
+
+### 关注点分离：DragController + ZOrderManager + InfiniteCanvasDrag（2026-07-20）
+
+SubCanvas 从 672 行（6 个关注点）降至 ~280 行：
+- `DragController` — 合并 title/anywhere 两种拖拽模式，删除 `SubCanvasDrag.ts`
+- `ZOrderManager` — bringToFront/sendToBack 纯函数
+- SubCanvas 保留：区域树、事件路由、tap 检测、clip-to-bounds、生命周期
+
+InfiniteCanvas 从 422 行降至 ~300 行：
+- `InfiniteCanvasDrag` — 提取 press→move→release 状态 + 插件分发 + 清理
+- 暴露 `scrollX`/`scrollY`/`plugins`/`applyScroll()`/`dispatchTap()` 给 drag 类
+
+### `dragMode: 'anywhere'` 重写（2026-07-19）
 
 **原因**：PIXI v8 的 `EventSystem` 在 hit-test 时会跳过 `eventMode = 'none'` 的容器及其子树。SubCanvas 的 `stage` （`PIXI.Container`）默认 `eventMode` 为 `undefined`（PIXI 视作 `'none'`），导致 PIXI 永远找不到内部的 `_bg`（`eventMode = 'static'`），`pointerdown` 不触发，`anywhere` 拖拽完全失效。
 

@@ -1,3 +1,4 @@
+// Example: Basic demo showing core SubCanvas features
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvasProxy } from '@framework';

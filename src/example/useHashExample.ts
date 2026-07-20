@@ -1,3 +1,4 @@
+// Hook for reading and writing the current example ID from the URL hash
 import { useEffect, useState, useCallback } from 'react';
 import { isExample, type Example } from './examples';
 

@@ -1,6 +1,8 @@
+// Example: Typing text animation effect
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeInfoPanel, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment } from '@framework';
+import { startPixiApp, runTextEffect, type SubCanvasProxy, type TextEffectHandle, type TextSegment, type TextEffectType } from '@framework';
+import { makeButton, makeInfoPanel } from '@components';
 import { gsap } from 'gsap';
 
 const DEMO_TEXTS = [
@@ -130,7 +132,7 @@ export function ComponentTypingEffectDisplay() {
           parent: canvas.stage,
           text: input,
           textStyle,
-          type: type as any,
+          type: type as TextEffectType,
           x: (canvas.bounds.width - Math.min(canvas.bounds.width - 80, 600)) / 2,
           y: canvas.bounds.height / 2 - 20,
           maxWidth: canvas.bounds.width - 80,

@@ -1,7 +1,9 @@
+// Example: Floating window management adapted for mobile touch input
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvas } from '@framework';
 import { createConfirm, showLoading } from '../../components';
+// NOTE: this example uses createConfirm() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 import type { PixiConfirm } from '../../components';
 
 const TITLE_BAR_H = 22;

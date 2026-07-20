@@ -1,3 +1,4 @@
+/** Draggable, resizable window with title bar and close button, rendered in PixiJS. */
 import * as PIXI from 'pixi.js';
 import { SubCanvas, type SubDragMode } from '@framework/SubCanvas';
 
@@ -101,6 +102,8 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     { clipToBounds: true },
   );
   win.content = content;
+
+  win.onPress(() => { if (!win.destroyed) win.bringToFront(); });
 
   win.setTitle = (t: string) => {
     if (win.destroyed) return;

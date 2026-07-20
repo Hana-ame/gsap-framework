@@ -115,7 +115,7 @@ describe('InfiniteCanvas', () => {
   it('removing decelerate plugin prevents inertial scrolling', () => {
     const ic = makeCanvas();
     ic.removePlugin('decelerate');
-    const p = (ic as unknown as { _plugins: InfiniteCanvasPlugin[] })._plugins.find((x) => x.name === 'decelerate');
+    const p = (ic as unknown as { _pluginList: InfiniteCanvasPlugin[] })._pluginList.find((x) => x.name === 'decelerate');
     expect(p).toBeUndefined();
   });
 

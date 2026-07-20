@@ -1,6 +1,8 @@
+// Example: Multiple SubCanvas instances rendered simultaneously
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel } from '@framework';
+import { startPixiApp } from '@framework';
+import { makeInfoPanel } from '@components';
 import { mountDisplays } from '../_shared/Displays';
 
 export function MultipleDisplay() {

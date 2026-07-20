@@ -1,6 +1,8 @@
+// Example: Multiple independent windows managed simultaneously
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, createComponent, makeButton, makeInfoPanel, textPresets, type SubCanvas, type SubCanvasProxy, type Component } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { createWindow, type GameWindow, makeButton, makeInfoPanel, textPresets } from '@components';
 
 const COLORS = [
   0x4488ff, 0xff4488, 0x44ff88, 0xff8844, 0x8844ff,
@@ -10,7 +12,7 @@ const COLORS = [
 
 export function MultiWindowDisplay() {
   useEffect(() => {
-    const wins: Component[] = [];
+    const wins: GameWindow[] = [];
 
     const stop = startPixiApp((proxy: SubCanvasProxy) => {
       const root = proxy.createRegion({
@@ -51,7 +53,7 @@ export function MultiWindowDisplay() {
         const x = 60 + col * 200 + Math.random() * 40;
         const y = 80 + row * 180 + Math.random() * 30;
 
-        const win = createComponent('window', {
+        const win = createWindow({
           parent: root,
           title: `Window ${i + 1}`,
           x, y,
@@ -87,7 +89,7 @@ export function MultiWindowDisplay() {
         const i = wins.length;
         const x = 60 + Math.random() * 400;
         const y = 80 + Math.random() * 300;
-        const win = createComponent('window', {
+        const win = createWindow({
           parent: root,
           title: `Window ${i + 1}`,
           x, y,
@@ -127,6 +129,6 @@ export function MultiWindowDisplay() {
 
 MultiWindowDisplay.head = {
   title: 'Multi-Window Stress Test',
-  description: '12+ draggable windows via createComponent("window") — test drag smoothness and z-order.',
+  description: '12+ draggable windows via createWindow() — test drag smoothness and z-order.',
   meta: [{ name: 'theme-color', content: '#0a0a14' }],
 };

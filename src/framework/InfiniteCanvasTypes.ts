@@ -1,3 +1,4 @@
+/** InfiniteCanvasTypes — InfiniteCanvas 体系共享的类型定义（块、插件、选项）。 */
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from './SubCanvas';
 import type { SubPointerEvent, Rect } from './SubCanvasTypes';

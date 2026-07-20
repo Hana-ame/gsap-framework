@@ -1,3 +1,4 @@
+// Root example app component that renders the selected example
 import { useHashExample } from './useHashExample';
 import { exampleMap, DEFAULT_EXAMPLE } from './examples';
 import { LauncherDisplay } from './launcher/LauncherDisplay';

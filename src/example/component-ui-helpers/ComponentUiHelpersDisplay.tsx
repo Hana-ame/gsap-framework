@@ -1,6 +1,8 @@
+// Example: UI helper components (buttons, sliders, etc.)
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeStepper, makeInfoPanel, textPresets, type SubCanvasProxy, type Stepper } from '@framework';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { makeButton, makeStepper, makeInfoPanel, textPresets, type Stepper } from '@components';
 
 export function ComponentUiHelpersDisplay() {
   const steppersRef = useRef<Stepper[]>([]);
@@ -129,7 +131,7 @@ export function ComponentUiHelpersDisplay() {
 
       const code = new PIXI.Text({
         text: [
-          "import { makeButton, makeStepper } from '@framework';",
+          "import { makeButton, makeStepper } from '@components';",
           '',
           'const btn = makeButton(label, w, h, onClick, bgColor?);',
           'const stepper = makeStepper({ label, getValue, onChange, min, max });',

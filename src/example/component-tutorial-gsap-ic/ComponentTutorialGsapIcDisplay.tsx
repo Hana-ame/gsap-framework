@@ -1,15 +1,9 @@
+// Example: Tutorial combining GSAP animations with infinite canvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import {
-  startPixiApp,
-  gsap,
-  InfiniteCanvas,
-  EventBus,
-  createComponent,
-  makeButton,
-  type SubCanvasProxy,
-  type Chunk,
-} from '@framework';
+import { gsap } from 'gsap';
+import { startPixiApp, InfiniteCanvas, EventBus, type SubCanvasProxy, type Chunk } from '@framework';
+import { createWindow, createConfirm, makeButton } from '@components';
 
 export function ComponentTutorialGsapIcDisplay() {
   useEffect(() => {
@@ -178,17 +172,17 @@ export function ComponentTutorialGsapIcDisplay() {
         bus.emit('tutorial:increment', { step: 1 });
       });
 
-      // registry buttons
+      // factory buttons
       addBtn('reg window', () => {
-        const win = createComponent('window', {
+        const win = createWindow({
           parent: root,
-          title: 'Registry Window',
+          title: 'Factory Window',
           x: 250 + Math.random() * 80,
           y: 370 + Math.random() * 60,
           width: 250, height: 180,
         });
         const txt = new PIXI.Text({
-          text: 'createComponent(\'window\')\nworks via registry adapter',
+          text: 'created via createWindow()',
           style: { fontSize: 11, fill: 0xaaaacc, fontFamily: 'monospace' },
         });
         txt.x = 14; txt.y = 14;
@@ -196,10 +190,10 @@ export function ComponentTutorialGsapIcDisplay() {
       });
 
       addBtn('reg confirm', () => {
-        createComponent<import('../../framework').ComponentOptions & { title: string; message?: string }>('confirm', {
+        createConfirm({
           parent: root,
-          title: 'Confirm via Registry',
-          message: 'Created with createComponent(\'confirm\')',
+          title: 'Confirm via Factory',
+          message: 'Created with createConfirm()',
           x: 280 + Math.random() * 80,
           y: 400 + Math.random() * 60,
           width: 320, height: 160,

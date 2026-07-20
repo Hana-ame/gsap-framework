@@ -5,7 +5,7 @@ vi.mock('../../framework/gsap-pixi', () => ({
     to: vi.fn(() => ({ kill: vi.fn() })),
     killTweensOf: vi.fn(),
     timeline: vi.fn(() => {
-      const tl: any = { kill: vi.fn() };
+      const tl: Record<string, unknown> = { kill: vi.fn() };
       tl.to = vi.fn(() => tl);
       tl.call = vi.fn(() => tl);
       return tl;
@@ -15,7 +15,7 @@ vi.mock('../../framework/gsap-pixi', () => ({
   PixiPlugin: { registerPIXI: vi.fn() },
 }));
 
-vi.mock('../../framework/ui-helpers', () => ({
+vi.mock('../../components/ui-helpers', () => ({
   textPresets: { dim: { fontSize: 12, fill: 0x888899 } },
   makeButton: vi.fn(),
   makeStepper: vi.fn(),
@@ -106,14 +106,14 @@ describe('createTextInput', () => {
   it('setEnabled false dims the container', () => {
     const handle = createTextInput(parent as never, { x: 10, y: 20, width: 200, height: 40 });
     handle.setEnabled(false);
-    expect((handle.stage as any).alpha).toBe(0.5);
+    expect(handle.stage.alpha).toBe(0.5);
   });
 
   it('setEnabled true restores full alpha', () => {
     const handle = createTextInput(parent as never, { x: 10, y: 20, width: 200, height: 40 });
     handle.setEnabled(false);
     handle.setEnabled(true);
-    expect((handle.stage as any).alpha).toBe(1);
+    expect(handle.stage.alpha).toBe(1);
   });
 
   it('getValue returns current input text', () => {

@@ -1,6 +1,7 @@
+/** Text input field rendered in PixiJS with keyboard support. */
 import * as PIXI from 'pixi.js';
 import { gsap } from 'gsap';
-import { textPresets } from '@framework';
+import { textPresets } from '@components';
 
 export interface TextInputOptions {
   x: number;

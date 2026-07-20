@@ -1,3 +1,4 @@
+/** rect — 矩形几何工具：包含检测、相交、膨胀、合并。 */
 import type { Rect } from '../SubCanvasTypes';
 
 export function rectContains(rect: Rect, x: number, y: number): boolean {

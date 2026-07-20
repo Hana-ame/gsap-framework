@@ -1,3 +1,4 @@
+/** Scene-graph builder for the PixiJS video player controls UI. */
 import * as PIXI from 'pixi.js';
 
 const CTRL_H = 30;

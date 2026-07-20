@@ -1,3 +1,4 @@
+/** InfiniteCanvasDecelerate — 无限画布的惯性减速插件。 */
 import type { SubPointerEvent } from './SubCanvasTypes';
 import type { InfiniteCanvas } from './InfiniteCanvas';
 import type { InfiniteCanvasPlugin } from './InfiniteCanvasTypes';

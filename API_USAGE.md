@@ -617,7 +617,7 @@ avd.setRosterMode(parsed.rosterMode);
 | `rectClamp(child, parent)` | 将子矩形钳制在父矩形内 |
 | `rectSnap(rect, gridSize)` | 对齐到格点 |
 
-### UI Helpers (`framework/ui-helpers.ts`)
+### UI Helpers (`components/ui-helpers.ts`)
 
 ```ts
 const btn = makeButton('Click', 80, 28, onClick, 0x1a1a2e);
@@ -629,7 +629,7 @@ const stepper = makeStepper('Size', () => value, onChange, 1, 100);
 
 预置文字样式：
 ```ts
-import { textPresets } from './framework';
+import { textPresets } from './components';
 textPresets.btn    // 按钮文本
 textPresets.label  // 标签
 textPresets.dim    // 灰暗文本

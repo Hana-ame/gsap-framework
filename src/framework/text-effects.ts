@@ -1,3 +1,4 @@
+/** text-effects — 文字动效系统，提供打字机、逐字淡入、弹跳等 GSAP 驱动效果。 */
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
 import { CHARSET, buildLayout, type LayoutResult } from './text-effects-layout';
@@ -72,8 +73,6 @@ export function runTextEffect(opts: {
 
   let layout: LayoutResult | null = null;
   let singleText: PIXI.Text | null = null;
-  let charTexts: PIXI.Text[] = [];
-
   const isFadeInChars = type === 'fadeInChars';
   if (!isSegments && isFadeInChars) {
     segments = Array.from(text as string).map(c => ({ kind: 'text' as const, text: c }));
@@ -392,8 +391,8 @@ export function runTextEffect(opts: {
       case 'charRain':
         if (layout) {
           for (const item of layout.items) {
-            if (item.textObj) { item.textObj.alpha = 1; item.textObj.y = item.textObj.y; }
-            if (item.sprite) { item.sprite.alpha = 1; item.sprite.y = item.sprite.y; }
+            if (item.textObj) { item.textObj.alpha = 1; }
+            if (item.sprite) { item.sprite.alpha = 1; }
           }
         }
         break;

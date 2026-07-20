@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js';
+/** Content channel that batches and flushes messages per window. */
 import { MockBackend } from './MockBackend';
-import type { SubCanvas } from '@framework/SubCanvas';
+import { EventBus } from '../framework/EventBus';
 
 export interface ChannelMessage {
   windowId: string;
@@ -10,12 +10,14 @@ export interface ChannelMessage {
   total: number;
 }
 
-type Handler<T = unknown> = (payload: T) => void;
+export interface FlushedData {
+  windowId: string;
+  text: string;
+}
 
 export class ContentChannel {
   private backend: MockBackend;
-  private listeners = new Map<string, Set<Handler>>();
-  private stages = new Map<string, SubCanvas>();
+  private _bus = new EventBus();
   private buffers = new Map<string, string[]>();
   private unsubs: (() => void)[] = [];
 
@@ -31,26 +33,16 @@ export class ContentChannel {
     );
   }
 
-  onMessage(fn: Handler<ChannelMessage>): () => void {
-    let set = this.listeners.get('message');
-    if (!set) {
-      set = new Set();
-      this.listeners.set('message', set);
-    }
-    set.add(fn);
-    return () => set?.delete(fn);
+  onMessage(fn: (payload: ChannelMessage) => void): () => void {
+    return this._bus.on('message', fn);
   }
 
-  attachStage(windowId: string, stage: SubCanvas): void {
-    this.stages.set(windowId, stage);
-  }
-
-  detachStage(windowId: string): void {
-    this.stages.delete(windowId);
+  onFlushed(fn: (payload: FlushedData) => void): () => void {
+    return this._bus.on('flushed', fn);
   }
 
   private receive(msg: ChannelMessage): void {
-    this.listeners.get('message')?.forEach((fn) => fn(msg));
+    this._bus.emit('message', msg);
 
     if (!this.buffers.has(msg.windowId)) {
       this.buffers.set(msg.windowId, []);
@@ -68,17 +60,7 @@ export class ContentChannel {
     const full = parts.filter(Boolean).join('');
     this.buffers.delete(windowId);
 
-    const stage = this.stages.get(windowId);
-    if (!stage || stage.destroyed) return;
-
-    stage.removeChildren();
-    const text = new PIXI.Text({
-      text: full,
-      style: { fontSize: 12, fill: 0x88ff88, fontFamily: 'monospace', wordWrap: true, wordWrapWidth: stage.bounds.width - 24 },
-    });
-    text.x = 12;
-    text.y = 12;
-    stage.stage.addChild(text);
+    this._bus.emit('flushed', { windowId, text: full });
   }
 
   simulateStream(windowId: string, lines: string[], interval = 300): void {
@@ -99,8 +81,7 @@ export class ContentChannel {
   destroy(): void {
     this.unsubs.forEach((u) => u());
     this.unsubs = [];
-    this.listeners.clear();
-    this.stages.clear();
+    this._bus.clear();
     this.buffers.clear();
   }
 }

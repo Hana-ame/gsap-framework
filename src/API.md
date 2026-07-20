@@ -474,6 +474,116 @@ function parseAvdScriptJSON(json: string, resolveTexture: (name: string) => Text
 
 ---
 
+### AvdController — `src/avd/`
+
+Refactored visual novel engine with separated concerns.
+
+```ts
+import { AvdController, parseScript } from '../avd';
+
+interface AvdOptions {
+  screenW: number;                       // viewport width
+  screenH: number;                       // viewport height
+  boxWidth?: number;                     // dialogue box width
+  boxHeight?: number;                    // dialogue box height
+  boxX?: number;                         // dialogue box X
+  boxY?: number;                         // dialogue box Y
+  boxBg?: number;                        // background color
+  boxBgAlpha?: number;                   // background alpha
+  boxRadius?: number;                    // corner radius
+  boxPadding?: number;                   // inner padding
+  textColor?: number;                    // text color
+  textSize?: number;                     // text font size
+  fontFamily?: string;                   // font
+  typewriterSpeed?: number;              // chars/sec (default 30)
+  textFadeMs?: number;                   // fade in duration (default 200)
+  nameColor?: number;                    // speaker name color
+  nameSize?: number;                     // speaker name font size
+  portraitMaxH?: number;                 // max portrait height
+  portraitY?: number;                    // portrait Y position
+  portraitFadeMs?: number;               // portrait fade duration (default 300)
+  arrowColor?: number;                   // "next" arrow color
+  boxEnterMs?: number;                   // box slide-in duration (default 400)
+  boxEnterOffsetY?: number;              // box slide-in offset (default 80)
+  onLineEnter?: (line: AvdLine, index: number) => void
+  onLineExit?: (line: AvdLine, index: number) => void
+  onComplete?: () => void
+  onStateChange?: (state: AvdState) => void
+}
+
+interface AvdLine {
+  speaker?: string
+  text: string | AvdTextSegment[]
+  portrait?: Texture | null
+  portraitPos?: 'left' | 'center' | 'right' | null
+}
+
+type AvdTextSegment =
+  | { kind: 'text'; text: string }
+  | { kind: 'image'; texture: Texture; width?: number; height?: number }
+
+type AvdState = 'typing' | 'between' | 'done'
+
+class AvdController {
+  constructor(parent: Container, ticker: Ticker, options: AvdOptions)
+  setScript(lines: AvdLine[]): void
+  next(): void
+  applyOptions(partial: Partial<AvdOptions>): void
+  setTypewriterSpeed(charsPerSec: number): void
+  setRoster(roster: AvdRoster): void
+  setRosterMode(mode: 'speaker-only' | 'persistent'): void
+  getRoster(): AvdRoster
+  getRosterMode(): 'speaker-only' | 'persistent'
+  getState(): AvdState
+  getLineIndex(): number
+  getLineCount(): number
+  destroy(): void
+}
+```
+
+#### Supporting modules
+
+```ts
+// Pure FSM — no PIXI dependency
+class DialogueStateMachine {
+  constructor(callbacks: StateMachineCallbacks)
+  setScript(lineCount: number): void
+  advance(): void
+  goTo(index: number): void
+  reset(): void
+  get state(): AvdState
+  get lineIndex(): number
+  get isComplete(): boolean
+}
+
+// Per-frame character reveal (uses framework/text-effects-layout)
+class TypingEngine {
+  start(text: AvdText, speed: number, style: TextStyle, maxWidth: number, lineHeight: number): Container
+  update(deltaMS: number): void
+  complete(): void
+  destroy(): void
+  get active(): boolean
+  get progress(): number
+  get container(): Container | null
+}
+
+// Roster data + highlight rules
+class RosterManager {
+  setRoster(roster: AvdRoster): void
+  setMode(mode: AvdRosterMode): void
+  setSpeaker(speaker: string | null): void
+  getPortraitForSpeaker(speaker, linePortrait, linePortraitPos): { pos, texture }
+  getActivePortraits(): ActivePortrait[]
+}
+
+// JSON script parser
+async function parseScript(json: AvdScriptJSON, resolver: AvdAssetResolver): Promise<AvdParsedScript>
+```
+
+---
+
+
+
 ### createLoading
 
 ```ts
@@ -485,7 +595,7 @@ interface LoadingOptions {
   overlayAlpha?: number
 }
 
-function createLoading(parent: SubCanvas, opts?: LoadingOptions): ComponentHandle
+function createLoading(parent: SubCanvas, opts?: LoadingOptions): LoadingHandle
 function showLoading(parent: SubCanvas, opts?: LoadingOptions | string): () => void
 ```
 

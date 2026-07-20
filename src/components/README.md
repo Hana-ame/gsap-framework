@@ -21,4 +21,5 @@
 | `AvdInlineLayout.ts` | `buildInlineLayout` 等 | AVD 行内布局（图文混排、CJK 自动换行）。 |
 | `AvdScript.ts` | `parseAvdScriptJSON` | AVD JSON 剧本解析（元信息、台本行、角色表）。 |
 | `TextInput.ts` | `createTextInput` | HTML `<input>` 叠在 canvas 上。GSAP fade-in、密码模式、maxLength、onChange/onSubmit。 |
+| `ui-helpers.ts` | `makeButton` / `makeStepper` / `makeInfoPanel` / `textPresets` | 通用 PIXI UI 原语（按钮、步进器、信息面板、字体预设）。原在 `framework/`，2026-07-20 移入。 |
 | `index.ts` | (全部公开导出) | 公开 API。**外部只 import 此文件**。 |

@@ -1,7 +1,10 @@
+// Example: Scrollable content area within SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, textPresets, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { textPresets, makeInfoPanel } from '@components';
 import { createScrollable, type Scrollable } from '../../components';
+// NOTE: this example uses createScrollable() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 
 function fillVertical(sc: SubCanvas) {
   const scroll = createScrollable({

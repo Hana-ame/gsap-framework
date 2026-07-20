@@ -1,3 +1,4 @@
+/** Shared types for the backend layer: commands, statuses, and window specs. */
 export type BackendCommandType =
   | 'open-window'
   | 'close-window'

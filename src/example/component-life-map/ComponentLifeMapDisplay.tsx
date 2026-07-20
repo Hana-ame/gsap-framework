@@ -1,6 +1,8 @@
+// Example: Life map / terrain generation visualization
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeButton, makeStepper, type SubCanvas, type SubPointerEvent, type Stepper } from '@framework';
+import { startPixiApp, type SubCanvas, type SubPointerEvent } from '@framework';
+import { makeButton, makeStepper, type Stepper } from '@components';
 
 type Grid = Uint8Array;
 

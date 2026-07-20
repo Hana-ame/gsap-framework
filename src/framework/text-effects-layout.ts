@@ -1,3 +1,4 @@
+/** text-effects-layout — 文字布局引擎，将富文本段落实例化为 DisplayObject 网格。 */
 import * as PIXI from 'pixi.js';
 import type { TextSegment } from './text-effects';
 

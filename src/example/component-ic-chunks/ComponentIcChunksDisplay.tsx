@@ -1,12 +1,9 @@
+// Example: Infinite canvas chunk-based tile loading
+// Example: Infinite canvas chunk-based tile loading
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import {
-  startPixiApp,
-  InfiniteCanvas,
-  makeButton,
-  type SubCanvasProxy,
-  type Chunk,
-} from '@framework';
+import { startPixiApp, InfiniteCanvas, type SubCanvasProxy, type Chunk } from '@framework';
+import { makeButton } from '@components';
 
 // ============================================================
 //  InfiniteCanvas — 定义每个 chunk 里画什么

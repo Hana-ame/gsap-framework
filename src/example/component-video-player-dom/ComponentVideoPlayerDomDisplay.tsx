@@ -1,3 +1,4 @@
+// Example: Video player using DOM overlay on SubCanvas
 import { useEffect, useRef, useState } from 'react';
 import { VideoPlayer } from '../../components';
 import type { VideoPlayerHandle } from '../../components';

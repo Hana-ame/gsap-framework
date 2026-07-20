@@ -1,6 +1,9 @@
+// Example: Confirmation dialog using SubCanvas rendering
 import { useEffect, useRef, useState } from 'react';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { makeInfoPanel } from '@components';
 import { createConfirm, type PixiConfirm, type PixiConfirmOptions } from '../../components';
+// NOTE: this example uses createConfirm() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 
 export function ComponentConfirmDisplay() {
   const scRef = useRef<SubCanvas | null>(null);

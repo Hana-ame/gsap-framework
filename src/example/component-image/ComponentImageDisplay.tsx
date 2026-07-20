@@ -1,6 +1,8 @@
+// Example: Image loading, display, and interaction on SubCanvas
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { startPixiApp, type SubCanvas, type SubCanvasProxy } from '@framework';
+import { makeInfoPanel } from '@components';
 import { createLoadingImage, type PixiImageHandle } from '../../components';
 
 interface Slot {

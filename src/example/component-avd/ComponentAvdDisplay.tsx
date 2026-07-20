@@ -1,6 +1,8 @@
+// Example: AVD (Android Virtual Device) display emulator component
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import * as PIXI from 'pixi.js';
-import { startPixiApp, makeInfoPanel, type SubCanvas } from '@framework';
+import { startPixiApp, type SubCanvas } from '@framework';
+import { makeInfoPanel } from '@components';
 import { Avd, type AvdLine, type AvdState, type AvdOptions, type AvdTextSegment } from '../../components';
 
 const CONTROL_H = 80;

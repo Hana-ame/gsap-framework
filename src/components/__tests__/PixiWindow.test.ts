@@ -156,7 +156,7 @@ describe('createWindow', () => {
 
   it('calls onClose when close button clicked', () => {
     const onClose = vi.fn();
-    const win = createWindow({ parent: mockParent as never, title: 'Test', width: 400, height: 300, onClose });
+    createWindow({ parent: mockParent as never, title: 'Test', width: 400, height: 300, onClose });
     // Find close button (pointerdown handler)
     const closeBtns = createdObjects.filter((o) => (o as Record<string, unknown>).on);
     const closeBtn = closeBtns.find((o) => (o as Record<string, unknown>).cursor === 'pointer');

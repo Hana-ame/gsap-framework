@@ -1,19 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+// Example: Colony simulation (boid-like emergent behavior)
+import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '@framework/PixiApp';
 import type { SubCanvas, SubPointerEvent } from '@framework/SubCanvas';
+import { MockBackend, WindowManager } from '../../backend';
+import { WindowManagerAdapter } from '../../adapters';
 
 const TILE_SIZE = 256;
 const CELLS_PER_TILE = 16;
 const CELL_SIZE = TILE_SIZE / CELLS_PER_TILE;
-const VISIBLE_TILES = 3;
+const PRELOAD_MARGIN = 2;
 
 const GRASS_COLOR = 0x3a5a2a;
 const GRASS_VARIANT = 0x2a4a2a;
 const GRID_COLOR = 0x4a6a3a;
 
-const UI_COLOR = 0x1a1a2a;
-const UI_ACTIVE = 0x4a6a8a;
+const GROWTH_TIME = 8000;
+const HARVEST_REWARD: Record<string, number> = { flower: 3, bush: 4, tree: 5 };
+const PLANT_COST: Record<string, number> = { flower: 1, bush: 2, tree: 3 };
 
 type FloraType = 'flower' | 'bush' | 'tree' | 'rock';
 
@@ -25,355 +29,283 @@ const FLORA_COLOR_SETS: Record<FloraType, number[]> = {
 };
 
 interface PlacedFlora {
-  type: FloraType;
-  ci: number;
-  lx: number;
-  ly: number;
+  type: FloraType; ci: number; lx: number; ly: number; growth: number;
 }
 
 interface ColonyTile {
-  container: PIXI.Container;
-  bg: PIXI.Graphics;
-  fg: PIXI.Graphics;
-  flora: PlacedFlora[];
-  tx: number;
-  ty: number;
+  container: PIXI.Container; bg: PIXI.Graphics; fg: PIXI.Graphics;
+  flora: PlacedFlora[]; tx: number; ty: number;
 }
 
-interface ColonyState {
-  cameraX: number;
-  cameraY: number;
+interface GameState {
+  cameraX: number; cameraY: number;
   tiles: Map<string, ColonyTile>;
   worldContainer: PIXI.Container;
-  viewportW: number;
-  viewportH: number;
+  viewportW: number; viewportH: number;
   selectedTool: FloraType | 'erase' | null;
-  selectedColor: number;
-  uiPanel: PIXI.Container | null;
-  uiExpanded: boolean;
-  uiToolBtns: Map<string, PIXI.Container>;
-  coordsText: PIXI.Text | null;
+  coins: number;
+  tickerCleanup: (() => void) | null;
+  backend: MockBackend | null;
+  wm: WindowManager | null;
+  wmAdapter: WindowManagerAdapter | null;
+  toolButtons: PIXI.Container[];
+  _lastCenterKey: string;
 }
 
 function tileKey(tx: number, ty: number): string { return `${tx},${ty}`; }
-function worldToTile(wx: number, wy: number): { tx: number; ty: number } {
+function worldToTile(wx: number, wy: number) {
   return { tx: Math.floor(wx / TILE_SIZE), ty: Math.floor(wy / TILE_SIZE) };
 }
-function cellLocal(wx: number, wy: number, tx: number, ty: number): { cx: number; cy: number } {
-  return {
-    cx: Math.floor((wx - tx * TILE_SIZE) / CELL_SIZE),
-    cy: Math.floor((wy - ty * TILE_SIZE) / CELL_SIZE),
-  };
+function cellLocal(wx: number, wy: number, tx: number, ty: number) {
+  return { cx: Math.floor((wx - tx * TILE_SIZE) / CELL_SIZE), cy: Math.floor((wy - ty * TILE_SIZE) / CELL_SIZE) };
 }
 
-function drawTileBg(s: ColonyState, tile: ColonyTile): void {
-  const g = tile.bg;
-  g.clear();
+function drawTileBg(tile: ColonyTile): void {
+  const g = tile.bg; g.clear();
   g.rect(0, 0, TILE_SIZE, TILE_SIZE).fill({ color: GRASS_COLOR });
   for (let i = 0; i < 60; i++) {
     const x = (i * 137 + tile.tx * 71) % TILE_SIZE;
     const y = (i * 251 + tile.ty * 43) % TILE_SIZE;
-    const r = 3 + ((i * 7 + tile.tx) % 5);
-    g.circle(x, y, r).fill({ color: GRASS_VARIANT, alpha: 0.3 });
+    g.circle(x, y, 3 + ((i * 7 + tile.tx) % 5)).fill({ color: GRASS_VARIANT, alpha: 0.3 });
   }
   g.stroke({ width: 0.5, color: GRID_COLOR, alpha: 0.3 });
   for (let c = 0; c <= CELLS_PER_TILE; c++) {
-    const p = c * CELL_SIZE;
-    g.moveTo(0, p).lineTo(TILE_SIZE, p);
-    g.moveTo(p, 0).lineTo(p, TILE_SIZE);
+    g.moveTo(0, c * CELL_SIZE).lineTo(TILE_SIZE, c * CELL_SIZE);
+    g.moveTo(c * CELL_SIZE, 0).lineTo(c * CELL_SIZE, TILE_SIZE);
   }
 }
 
 function drawTileFlora(tile: ColonyTile): void {
-  const g = tile.fg;
-  g.clear();
+  const g = tile.fg; g.clear();
   for (const f of tile.flora) {
-    const x = f.lx * CELL_SIZE + CELL_SIZE / 2;
-    const y = f.ly * CELL_SIZE + CELL_SIZE / 2;
+    const x = f.lx * CELL_SIZE + CELL_SIZE / 2, y = f.ly * CELL_SIZE + CELL_SIZE / 2;
     const color = FLORA_COLOR_SETS[f.type][f.ci];
-    if (f.type === 'flower') {
-      const r = CELL_SIZE * 0.45;
-      g.circle(x, y, r).fill({ color });
-      g.circle(x, y, r * 0.3).fill({ color: 0xffff88, alpha: 0.6 });
+    const gr = Math.min(1, f.growth / GROWTH_TIME);
+    if (f.type === 'rock') {
+      g.ellipse(x, y, CELL_SIZE * 0.45, CELL_SIZE * 0.35).fill({ color });
+      g.stroke({ width: 1, color: 0x444444, alpha: 0.5 });
+    } else if (gr < 1) {
+      const r = CELL_SIZE * (0.15 + gr * 0.3);
+      g.circle(x, y, r).fill({ color, alpha: 0.4 + gr * 0.6 });
+      if (gr > 0.5) g.circle(x, y, r * 0.3).fill({ color: 0xffff88, alpha: 0.3 });
+    } else if (f.type === 'flower') {
+      g.circle(x, y, CELL_SIZE * 0.45).fill({ color });
+      g.circle(x, y, CELL_SIZE * 0.13).fill({ color: 0xffff88, alpha: 0.6 });
     } else if (f.type === 'bush') {
       g.circle(x, y, CELL_SIZE * 0.5).fill({ color });
       g.stroke({ width: 1, color, alpha: 0.5 });
     } else if (f.type === 'tree') {
       g.rect(x - 1.5, y - CELL_SIZE * 0.2, 3, CELL_SIZE * 0.55).fill({ color: 0x4a3a2a });
-      g.circle(x, y - CELL_SIZE * 0.25, CELL_SIZE * 0.45).fill({ color: color, alpha: 0.85 });
-    } else if (f.type === 'rock') {
-      const rx = CELL_SIZE * 0.45;
-      const ry = CELL_SIZE * 0.35;
-      g.ellipse(x, y, rx, ry).fill({ color });
-      g.stroke({ width: 1, color: 0x444444, alpha: 0.5 });
+      g.circle(x, y - CELL_SIZE * 0.25, CELL_SIZE * 0.45).fill({ color, alpha: 0.85 });
     }
   }
 }
 
-function loadTile(s: ColonyState, tx: number, ty: number): ColonyTile {
-  const container = new PIXI.Container();
-  container.x = tx * TILE_SIZE;
-  container.y = ty * TILE_SIZE;
-  container.eventMode = 'none';
-  s.worldContainer.addChild(container);
-
-  const bg = new PIXI.Graphics();
-  bg.eventMode = 'none';
-  container.addChild(bg);
-
-  const fg = new PIXI.Graphics();
-  fg.eventMode = 'none';
-  container.addChild(fg);
-
-  const tile: ColonyTile = { container, bg, fg, flora: [], tx, ty };
-  drawTileBg(s, tile);
-  s.tiles.set(tileKey(tx, ty), tile);
-  return tile;
+function loadTile(s: GameState, tx: number, ty: number): ColonyTile {
+  const c = new PIXI.Container(); c.x = tx * TILE_SIZE; c.y = ty * TILE_SIZE; c.eventMode = 'none';
+  s.worldContainer.addChild(c);
+  const bg = new PIXI.Graphics(); bg.eventMode = 'none'; c.addChild(bg);
+  const fg = new PIXI.Graphics(); fg.eventMode = 'none'; c.addChild(fg);
+  const tile: ColonyTile = { container: c, bg, fg, flora: [], tx, ty };
+  drawTileBg(tile); s.tiles.set(tileKey(tx, ty), tile); return tile;
 }
 
-function unloadTile(s: ColonyState, key: string): void {
-  const tile = s.tiles.get(key);
-  if (!tile) return;
-  tile.container.destroy({ children: true });
-  s.tiles.delete(key);
+function unloadTile(s: GameState, key: string): void {
+  s.tiles.get(key)?.container.destroy({ children: true }); s.tiles.delete(key);
 }
 
-function syncTiles(s: ColonyState): void {
-  const cx = s.cameraX + s.viewportW / 2;
-  const cy = s.cameraY + s.viewportH / 2;
+function syncTiles(s: GameState): void {
+  const cx = s.cameraX + s.viewportW / 2, cy = s.cameraY + s.viewportH / 2;
   const { tx, ty } = worldToTile(cx, cy);
+  const ck = tileKey(tx, ty);
+  if (ck === s._lastCenterKey) { s.worldContainer.x = -s.cameraX; s.worldContainer.y = -s.cameraY; return; }
+  s._lastCenterKey = ck;
+  const hCount = Math.ceil(s.viewportW / TILE_SIZE / 2) + PRELOAD_MARGIN;
+  const vCount = Math.ceil(s.viewportH / TILE_SIZE / 2) + PRELOAD_MARGIN;
   const needed = new Set<string>();
-  const half = Math.floor(VISIBLE_TILES / 2);
-  for (let dy = -half; dy <= half; dy++) {
-    for (let dx = -half; dx <= half; dx++) {
-      needed.add(tileKey(tx + dx, ty + dy));
-    }
-  }
-  for (const key of s.tiles.keys()) {
-    if (!needed.has(key)) unloadTile(s, key);
-  }
-  for (const key of needed) {
-    if (!s.tiles.has(key)) {
-      const [a, b] = key.split(',').map(Number);
-      loadTile(s, a, b);
-    }
-  }
-  s.worldContainer.x = -s.cameraX;
-  s.worldContainer.y = -s.cameraY;
-  if (s.coordsText) {
-    const c = worldToTile(cx, cy);
-    s.coordsText.text = `tile: ${c.tx},${c.ty}  \u00B7  camera: ${Math.floor(s.cameraX)},${Math.floor(s.cameraY)}`;
+  for (let dy = -vCount; dy <= vCount; dy++) for (let dx = -hCount; dx <= hCount; dx++) needed.add(tileKey(tx + dx, ty + dy));
+  for (const k of s.tiles.keys()) if (!needed.has(k)) unloadTile(s, k);
+  for (const k of needed) if (!s.tiles.has(k)) { const [a, b] = k.split(',').map(Number); loadTile(s, a, b); }
+  s.worldContainer.x = -s.cameraX; s.worldContainer.y = -s.cameraY;
+}
+
+function syncCoinUI(s: GameState): void {
+  if (s.backend?.status !== 'connected') return;
+  s.backend.send('set-title', { id: 'colony-panel', title: `\u2E19 ${s.coins}  Colony Bloom` });
+}
+
+function highlightTool(s: GameState, activeIdx: number): void {
+  for (let i = 0; i < s.toolButtons.length; i++) {
+    const btn = s.toolButtons[i];
+    const g = btn.children[0] as PIXI.Graphics; g.clear();
+    const c = i === activeIdx ? 0x4a6a8a : ([0x4a2a4a, 0x2a4a2a, 0x3a4a3a, 0x3a3a3a, 0x4a2a2a][i] ?? 0x3a3a3a);
+    g.roundRect(0, 0, 170, 26, 4).fill({ color: c, alpha: 0.85 });
   }
 }
 
-function placeFlora(s: ColonyState, screenX: number, screenY: number): void {
-  if (!s.selectedTool) return;
-  const wx = screenX + s.cameraX;
-  const wy = screenY + s.cameraY;
+function popCoin(s: GameState, wx: number, wy: number, text: string, color: number): void {
+  const t = new PIXI.Text({ text, style: { fontSize: 14, fill: color, fontFamily: 'monospace', fontWeight: 'bold' } });
+  t.x = wx - s.cameraX + 12; t.y = wy - s.cameraY - 8; t.alpha = 1;
+  s.worldContainer.parent.addChild(t);
+  const start = performance.now();
+  const anim = () => { const dt = performance.now() - start; if (dt > 800) { t.destroy(); return; } t.y -= 0.4; t.alpha = 1 - dt / 800; requestAnimationFrame(anim); };
+  requestAnimationFrame(anim);
+}
+
+function interactCell(s: GameState, screenX: number, screenY: number): void {
+  const wx = screenX + s.cameraX, wy = screenY + s.cameraY;
   const { tx, ty } = worldToTile(wx, wy);
-  const key = tileKey(tx, ty);
-  const tile = s.tiles.get(key);
-  if (!tile) return;
+  const tile = s.tiles.get(tileKey(tx, ty)); if (!tile) return;
   const { cx, cy } = cellLocal(wx, wy, tx, ty);
   if (cx < 0 || cx >= CELLS_PER_TILE || cy < 0 || cy >= CELLS_PER_TILE) return;
+  const ei = tile.flora.findIndex((f) => f.lx === cx && f.ly === cy);
+  const ex = ei >= 0 ? tile.flora[ei] : null;
 
-  if (s.selectedTool === 'erase') {
-    tile.flora = tile.flora.filter((f) => !(f.lx === cx && f.ly === cy));
-  } else {
-    const existing = tile.flora.find((f) => f.lx === cx && f.ly === cy);
-    if (existing) {
-      existing.ci = (existing.ci + 1) % FLORA_COLOR_SETS[s.selectedTool].length;
-    } else {
-      tile.flora.push({ type: s.selectedTool, ci: 0, lx: cx, ly: cy });
+  const isErase = s.selectedTool === 'erase';
+
+  if (ex && ex.type !== 'rock' && ex.growth >= GROWTH_TIME && !isErase) {
+    s.coins += HARVEST_REWARD[ex.type] ?? 1;
+    tile.flora.splice(ei, 1); drawTileFlora(tile); syncCoinUI(s);
+    popCoin(s, wx, wy, `+${HARVEST_REWARD[ex.type] ?? 1}`, 0xffcc44);
+    return;
+  }
+  if (isErase && ex) { tile.flora.splice(ei, 1); drawTileFlora(tile); return; }
+  if (s.selectedTool && ex?.type === 'rock') {
+    if (s.coins >= 2) { s.coins -= 2; tile.flora.splice(ei, 1); drawTileFlora(tile); syncCoinUI(s); popCoin(s, wx, wy, '-2', 0xff6644); }
+    return;
+  }
+  if (!s.selectedTool || ex) return;
+  const ft = s.selectedTool as FloraType;
+  const cost = PLANT_COST[ft] ?? 1;
+  if (s.coins < cost) { popCoin(s, wx, wy, 'need coin!', 0xff4444); return; }
+  s.coins -= cost;
+  tile.flora.push({ type: ft, ci: Math.floor(Math.random() * FLORA_COLOR_SETS[ft].length), lx: cx, ly: cy, growth: 0 });
+  drawTileFlora(tile); syncCoinUI(s);
+  popCoin(s, wx, wy, `-${cost}`, 0xff6644);
+}
+
+function setupTicker(s: GameState, ticker: PIXI.Ticker): () => void {
+  const fn = () => {
+    for (const tile of s.tiles.values()) {
+      let dirty = false;
+      for (const f of tile.flora) {
+        if (f.type !== 'rock' && f.growth < GROWTH_TIME) { f.growth += ticker.deltaMS; if (f.growth >= GROWTH_TIME) dirty = true; }
+      }
+      if (dirty) drawTileFlora(tile);
     }
-  }
-  drawTileFlora(tile);
-}
-
-function makeSimpleBtn(label: string, w: number, h: number, onClick: () => void, bg = UI_COLOR): PIXI.Container {
-  const btn = new PIXI.Container();
-  const g = new PIXI.Graphics().roundRect(0, 0, w, h, 6).fill({ color: bg, alpha: 0.9 });
-  g.stroke({ width: 1, color: 0x445, alpha: 0.7 });
-  btn.addChild(g);
-  const t = new PIXI.Text({ text: label, style: { fontSize: 11, fill: 0xccccee, fontFamily: 'monospace', fontWeight: 'bold' } });
-  t.anchor.set(0.5);
-  t.x = w / 2;
-  t.y = h / 2;
-  btn.addChild(t);
-  btn.eventMode = 'static';
-  btn.cursor = 'pointer';
-  btn.hitArea = new PIXI.Rectangle(0, 0, w, h);
-  btn.on('pointerdown', (e) => { e.stopPropagation(); onClick(); });
-  return btn;
-}
-
-function buildUI(s: ColonyState, panelParent: PIXI.Container): void {
-  const panel = new PIXI.Container();
-  s.uiToolBtns = new Map();
-  s.uiExpanded = false;
-
-  const BTN_W = 44;
-  const BTN_H = 28;
-  const PAD = 6;
-  const TOOLS: { type: FloraType | 'erase'; label: string; bg: number }[] = [
-    { type: 'flower', label: '\u273F', bg: 0x4a2a4a },
-    { type: 'bush', label: '\u2663', bg: 0x2a4a2a },
-    { type: 'tree', label: '\u2666', bg: 0x3a4a3a },
-    { type: 'rock', label: '\u25C8', bg: 0x3a3a3a },
-    { type: 'erase', label: '\u2717', bg: 0x4a2a2a },
-  ];
-
-  const toolContainer = new PIXI.Container();
-  toolContainer.visible = false;
-  panel.addChild(toolContainer);
-
-  const bg = new PIXI.Graphics();
-  const fullH = PAD + TOOLS.length * (BTN_H + PAD) + BTN_H + PAD;
-  bg.roundRect(0, 0, BTN_W + PAD * 2, fullH, 8).fill({ color: 0x0a0a14, alpha: 0.75 });
-  bg.stroke({ width: 1, color: 0x333355, alpha: 0.5 });
-  toolContainer.addChild(bg);
-
-  for (let i = 0; i < TOOLS.length; i++) {
-    const tool = TOOLS[i];
-    const btn = makeSimpleBtn(tool.label, BTN_W, BTN_H, () => {
-      s.selectedTool = s.selectedTool === tool.type ? null : tool.type;
-      updateUIVisuals(s);
-    }, tool.bg);
-    btn.x = PAD;
-    btn.y = PAD + i * (BTN_H + PAD);
-    toolContainer.addChild(btn);
-    s.uiToolBtns.set(tool.type, btn);
-  }
-
-  const expandBtn = makeSimpleBtn('\u2630', BTN_W, BTN_H, () => {
-    s.uiExpanded = !s.uiExpanded;
-    toolContainer.visible = s.uiExpanded;
-    if (s.uiExpanded) {
-      s.selectedTool = null;
-      updateUIVisuals(s);
-    }
-  });
-  expandBtn.x = PAD;
-  expandBtn.y = PAD + TOOLS.length * (BTN_H + PAD);
-  toolContainer.addChild(expandBtn);
-
-  const collapsedBtn = makeSimpleBtn('\u2630', BTN_W, BTN_H, () => {
-    s.uiExpanded = !s.uiExpanded;
-    toolContainer.visible = s.uiExpanded;
-  });
-  panel.addChild(collapsedBtn);
-
-  panel.x = 12;
-  panel.y = 12;
-  panel.eventMode = 'none';
-  panelParent.addChild(panel);
-  s.uiPanel = panel;
-}
-
-function updateUIVisuals(s: ColonyState): void {
-  for (const [type, btn] of s.uiToolBtns.entries()) {
-    const g = btn.children[0] as PIXI.Graphics;
-    const isActive = s.selectedTool === type;
-    g.clear();
-    const c = isActive ? UI_ACTIVE : (FLORA_COLOR_SETS[type as FloraType]?.[0] ?? UI_COLOR);
-    g.roundRect(0, 0, 44, 28, 6).fill({ color: c, alpha: 0.9 });
-    g.stroke({ width: 1, color: isActive ? 0x88ccff : 0x445, alpha: 0.7 });
-  }
+  };
+  ticker.add(fn); return () => ticker.remove(fn);
 }
 
 export function ComponentColonyDisplay() {
-  const [restartKey] = useState(0);
-  const stateRef = useRef<ColonyState | null>(null);
-
   useEffect(() => {
-    const W = window.innerWidth;
-    const H = window.innerHeight;
+    const W = window.innerWidth, H = window.innerHeight;
 
-    const st: ColonyState = {
-      cameraX: -W / 2,
-      cameraY: -H / 2,
-      tiles: new Map(),
-      worldContainer: new PIXI.Container(),
-      viewportW: W,
-      viewportH: H,
-      selectedTool: null,
-      selectedColor: 0,
-      uiPanel: null,
-      uiExpanded: false,
-      uiToolBtns: new Map(),
-      coordsText: null,
+    const gs: GameState = {
+      cameraX: -W / 2, cameraY: -H / 2,
+      tiles: new Map(), worldContainer: new PIXI.Container(),
+      viewportW: W, viewportH: H,
+      selectedTool: null, coins: 10,
+      tickerCleanup: null, backend: null, wm: null, wmAdapter: null,
+      toolButtons: [], _lastCenterKey: '',
     };
-    stateRef.current = st;
 
-    let dragStartCX = 0;
-    let dragStartCY = 0;
-    let dragStartCamX = 0;
-    let dragStartCamY = 0;
-    let dragging = false;
+    let dragging = false, dCX = 0, dCY = 0, dCamX = 0, dCamY = 0;
 
-    const destroyApp = startPixiApp((proxy) => {
+    const stop = startPixiApp((proxy) => {
       const region = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
-      st.worldContainer.eventMode = 'none';
-      region.stage.addChild(st.worldContainer);
+      gs.worldContainer.eventMode = 'none'; region.stage.addChild(gs.worldContainer);
 
-      const coords = new PIXI.Text({
-        text: '',
-        style: { fontSize: 11, fill: 0x8888aa, fontFamily: 'monospace' },
+      const backend = new MockBackend(); gs.backend = backend;
+      const wm = new WindowManager(backend); gs.wm = wm;
+      const wmAdapter = new WindowManagerAdapter(wm, region); gs.wmAdapter = wmAdapter;
+
+      const coords = new PIXI.Text({ text: '', style: { fontSize: 11, fill: 0x8888aa, fontFamily: 'monospace' } });
+      coords.x = 12; coords.y = H - 20; region.stage.addChild(coords);
+      syncTiles(gs);
+
+      backend.connect(100);
+
+      setTimeout(() => {
+        backend.send('open-window', {
+          id: 'colony-panel', title: `\u2E19 ${gs.coins}  Colony Bloom`, x: 12, y: 12, width: 210, height: 280,
+        });
+      }, 300);
+
+      wm.on('window-opened', ({ spec }) => {
+        if (spec.id !== 'colony-panel') return;
+        const content = wmAdapter.getContentStage('colony-panel');
+        if (!content) return;
+
+        const TOOLS = [
+          { type: 'flower' as const, label: '\u273F  Flower', cost: '\u2E191' },
+          { type: 'bush' as const, label: '\u2663  Bush', cost: '\u2E192' },
+          { type: 'tree' as const, label: '\u2666  Tree', cost: '\u2E193' },
+          { type: 'rock' as const, label: '\u25C8  Rock', cost: '' },
+          { type: 'erase' as const, label: '\u2717  Erase', cost: '' },
+        ];
+        const COLORS = [0x4a2a4a, 0x2a4a2a, 0x3a4a3a, 0x3a3a3a, 0x4a2a2a];
+
+        const help = new PIXI.Text({
+          text: 'select a tool\nthen tap the world\ndrag to pan',
+          style: { fontSize: 9, fill: 0x8888aa, fontFamily: 'monospace', lineHeight: 14 },
+        });
+        help.x = 8; help.y = 6; content.stage.addChild(help);
+
+        for (let i = 0; i < TOOLS.length; i++) {
+          const btn = new PIXI.Container();
+          const bg = new PIXI.Graphics().roundRect(0, 0, 170, 26, 4).fill({ color: COLORS[i], alpha: 0.85 });
+          btn.addChild(bg);
+          const lb = new PIXI.Text({ text: TOOLS[i].label, style: { fontSize: 11, fill: 0xeee, fontFamily: 'monospace' } });
+          lb.x = 8; lb.y = 5; btn.addChild(lb);
+          if (TOOLS[i].cost) {
+            const ct = new PIXI.Text({ text: TOOLS[i].cost, style: { fontSize: 9, fill: 0xffcc44, fontFamily: 'monospace' } });
+            ct.x = 150; ct.y = 6; btn.addChild(ct);
+          }
+          btn.eventMode = 'static'; btn.cursor = 'pointer';
+          btn.hitArea = new PIXI.Rectangle(0, 0, 170, 26);
+          const idx = i;
+          btn.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            e.stopPropagation();
+            gs.selectedTool = gs.selectedTool === TOOLS[idx].type as FloraType | 'erase' ? null : TOOLS[idx].type as FloraType | 'erase';
+            highlightTool(gs, gs.selectedTool ? idx : -1);
+          });
+          btn.x = 8; btn.y = 52 + i * 30;
+          content.stage.addChild(btn);
+          gs.toolButtons.push(btn);
+        }
       });
-      coords.x = 12;
-      coords.y = H - 20;
-      region.stage.addChild(coords);
-      st.coordsText = coords;
 
-      buildUI(st, region.stage);
-      syncTiles(st);
-      setWorldPos(st, W / 2, H / 2);
+      gs.tickerCleanup = setupTicker(gs, region.ticker);
 
-      const onPress = (e: SubPointerEvent) => {
-        dragging = true;
-        dragStartCX = e.globalX;
-        dragStartCY = e.globalY;
-        dragStartCamX = st.cameraX;
-        dragStartCamY = st.cameraY;
-      };
-
-      const onMove = (e: SubPointerEvent) => {
+      region.onPress((e: SubPointerEvent) => {
+        dragging = true; dCX = e.globalX; dCY = e.globalY;
+        dCamX = gs.cameraX; dCamY = gs.cameraY;
+      });
+      region.onMove((e: SubPointerEvent) => {
         if (!dragging) return;
-        st.cameraX = dragStartCamX - (e.globalX - dragStartCX);
-        st.cameraY = dragStartCamY - (e.globalY - dragStartCY);
-        syncTiles(st);
-      };
+        gs.cameraX = dCamX - (e.globalX - dCX); gs.cameraY = dCamY - (e.globalY - dCY);
+        syncTiles(gs);
+      });
+      region.onRelease(() => { dragging = false; });
+      region.onTap((e: SubPointerEvent) => { interactCell(gs, e.x, e.y); });
 
-      const onRelease = () => { dragging = false; };
-
-      const onTap = (e: SubPointerEvent) => {
-        placeFlora(st, e.x, e.y);
-      };
-
-      region.onPress(onPress);
-      region.onMove(onMove);
-      region.onRelease(onRelease);
-      region.onTap(onTap);
+      proxy.onWindowResize(() => region.setBounds({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }));
     });
 
     return () => {
-      if (st.worldContainer) st.worldContainer.destroy({ children: true });
-      destroyApp();
-      stateRef.current = null;
+      gs.tickerCleanup?.();
+      gs.wmAdapter?.destroy(); gs.wm?.destroy(); gs.backend?.destroy();
+      if (gs.worldContainer) gs.worldContainer.destroy({ children: true });
+      stop();
     };
-  }, [restartKey]);
+  }, []);
 
   return <></>;
-}
-
-function setWorldPos(s: ColonyState, centerX: number, centerY: number): void {
-  s.cameraX = centerX - s.viewportW / 2;
-  s.cameraY = centerY - s.viewportH / 2;
-  syncTiles(s);
 }
 
 ComponentColonyDisplay.head = {
   title: 'Component: Colony',
   description:
-    'Tile-based colony simulation. 3×3 dynamic tile loading/unloading, fixed tile size (256px, 16×16 cells). Mouse drag to pan, click to place flora (flowers, bushes, trees, rocks). Floating transparent expandable UI.',
+    'Colony Bloom — a planting & harvesting mini-game with adapter-driven control window. Select tools in the window, tap the world to plant/harvest.',
 };

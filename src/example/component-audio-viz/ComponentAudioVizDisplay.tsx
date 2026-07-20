@@ -1,3 +1,4 @@
+// Example: Real-time audio visualization on SubCanvas
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvasProxy } from '@framework';

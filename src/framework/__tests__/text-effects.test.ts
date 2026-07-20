@@ -123,14 +123,6 @@ describe('text-effects', () => {
     'typewriter', 'fadeInChars', 'fadeIn', 'slideIn', 'scaleBounce', 'charRain', 'scramble',
   ];
 
-  const run = (overrides: Record<string, unknown> = {}) => runTextEffect({
-    parent: parent as never,
-    text: 'Hello World',
-    textStyle: style,
-    type: 'fadeIn',
-    ...overrides,
-  });
-
   it.each(effectTypes)('runTextEffect with %s returns handle with expected shape', (type) => {
     const handle = runTextEffect({ parent: parent as never, text: 'Hello World', textStyle: style, type });
     expect(handle).toBeDefined();

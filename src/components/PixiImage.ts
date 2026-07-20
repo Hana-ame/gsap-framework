@@ -1,3 +1,4 @@
+/** Image display component with loading state and zoom, rendered in PixiJS. */
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from '@framework/SubCanvas';
 

@@ -1,7 +1,13 @@
+/** Loading spinner/indicator overlay for PixiJS. */
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '@framework/SubCanvas';
 import { gsap } from 'gsap';
-import type { ComponentHandle } from '@framework/component';
+
+export interface LoadingHandle {
+  readonly stage: PIXI.Container;
+  destroy(): void;
+  readonly destroyed: boolean;
+}
 
 export interface LoadingOptions {
   text?: string;
@@ -11,7 +17,7 @@ export interface LoadingOptions {
   overlayAlpha?: number;
 }
 
-export function createLoading(parent: SubCanvas, opts: LoadingOptions = {}): ComponentHandle {
+export function createLoading(parent: SubCanvas, opts: LoadingOptions = {}): LoadingHandle {
   const text = opts.text ?? 'Loading...';
   const showSpinner = opts.showSpinner !== false;
   const spinnerColor = opts.spinnerColor ?? 0xffffff;

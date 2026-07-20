@@ -28,7 +28,9 @@
     "noUncheckedSideEffectImports": false,
     "paths": {
       "@framework": ["./src/framework/index.ts"],
-      "@framework/*": ["./src/framework/*"]
+      "@framework/*": ["./src/framework/*"],
+      "@components": ["./src/components/index.ts"],
+      "@components/*": ["./src/components/*"]
     }
   },
   "include": ["src"]

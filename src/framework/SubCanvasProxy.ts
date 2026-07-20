@@ -1,3 +1,4 @@
+/** SubCanvasProxy — 虚拟坐标空间代理，将子画布的逻辑坐标映射到物理舞台。 */
 import * as PIXI from 'pixi.js';
 import type { Rect, SubPointerType } from './SubCanvasTypes';
 import { SubCanvas } from './SubCanvas';

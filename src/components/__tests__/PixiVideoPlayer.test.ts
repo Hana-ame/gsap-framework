@@ -265,7 +265,7 @@ describe('createVideoPlayer', () => {
 
   it('onError callback fires on video error event', async () => {
     const onError = vi.fn();
-    const handle = createVideoPlayer(parent, {
+    createVideoPlayer(parent, {
       url: 'bad.mp4', width: 400, height: 300, onError,
     });
     // Find the error callback registered via addEventListener
@@ -291,7 +291,7 @@ describe('createVideoPlayer', () => {
 
   it('onEnded callback fires on ended event', () => {
     const onEnded = vi.fn();
-    const handle = createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300, onEnded });
+    createVideoPlayer(parent, { url: 'test.mp4', width: 400, height: 300, onEnded });
     const endedCalls = mockVideo.addEventListener.mock.calls.filter((c: unknown[]) => c[0] === 'ended');
     expect(endedCalls.length).toBe(1);
     const endedCb = endedCalls[0][1] as () => void;

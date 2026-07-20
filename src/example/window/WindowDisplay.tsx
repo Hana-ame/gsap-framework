@@ -1,7 +1,9 @@
+// Example: Floating draggable window management
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '@framework';
 import { createWindow, showLoading } from '../../components';
+// NOTE: this example uses createWindow() directly as a component demo. Do NOT migrate to WindowManagerAdapter — standalone component showcases should keep using the direct API.
 
 export function WindowDisplay() {
   useEffect(() => {

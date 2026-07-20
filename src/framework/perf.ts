@@ -1,3 +1,4 @@
+/** perf — 性能监视器，在画布上叠加 FPS / 内存面板。 */
 import * as PIXI from 'pixi.js';
 
 export interface PerfDisplayOptions {

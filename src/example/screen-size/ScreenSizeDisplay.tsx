@@ -1,3 +1,4 @@
+// Example: Screen size responsiveness and resize handling
 import { useEffect } from 'react';
 import * as PIXI from 'pixi.js';
 import { startPixiApp } from '@framework';
