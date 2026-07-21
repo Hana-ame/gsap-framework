@@ -1219,6 +1219,37 @@ text(stage, 'Big red', 'scaleBounce', {                // 弹性缩放
 | `TextInput.test.ts` | mock 路径 `../../framework/ui-helpers` → `../../components/ui-helpers` |
 | `ui-helpers.test.ts` | 移至 `src/components/__tests__/` |
 
+### 演进记录：2026-07-20 DragController 修复 + 全框架 code smell 清理
+
+**目标**：修复 DragController 两个 bug，清理全框架发现的 10+ 处 code smell。
+
+**修改列表**：
+
+| 文件 | 变更 |
+|------|------|
+| `DragController.ts` | `ctx.parent?.().bounds` → `ctx.parent?.()?.bounds`（parent() 返回 null 时避免抛 TypeError） |
+| `DragController.ts` | title 拖拽：`onDown` / `onPixiMove` 统一用 `pixiEvent.clientX/clientY` 替代 `getLocalPosition(parent)`，消除坐标系混用（local vs screen） |
+| `DragController.ts` | `DRAG_HANDLE_LABEL` 改为 `export` |
+| `SubCanvas.ts` | 导入 `DRAG_HANDLE_LABEL`，删除本地声明；删除构造器中遍历 `stage.children` 找 drag handle 的死代码（此时只有 mask） |
+| `InfiniteCanvas.ts` | 删除 `shield.zIndex = -999`（父级未开 sortableChildren，无效）；shield pointerdown 改为沿 parent 链查找 target，若在 worldContainer 内则不 `stopPropagation` |
+| `SubCanvasProxy.ts` | 删除所有 getter 的 `console.warn` deprecation 警告（透传同一 app，警告无意义） |
+| `Layer.ts` | `bringToFront`/`sendToBack` 后调用 `_renormIfNeeded()`，zIndex ≥ 1e6 时归零；删除 `parent` getter（暴露内部容器，破坏封装） |
+| `ComponentEcosystemDisplay.tsx` | emoji `🌿 🐇 🦊` → `G: H: C:` 纯文本（PIXI.Text 不保证 emoji 渲染） |
+
+### 演进记录：2026-07-20 PixiApp 内存泄漏 + text-effects 死代码修复
+
+**目标**：修复 PixiApp 窗口级 pointer 监听器泄漏、window pointerup 捕获失效、text-effects 三处代码问题。
+
+**修改列表**：
+
+| 文件 | 变更 |
+|------|------|
+| `PixiApp.ts` | **pointer listener 泄漏修复** — `makePointerHandler` 每次调用创建新箭头函数，`removeEventListener` 永无法移除。改为 `Map<type, handler>` 存储引用 |
+| `PixiApp.ts` | **window pointerup 捕获修复** — 去掉 `e.target !== proxy.canvas` 过滤（与注释"不卡键"矛盾），canvas 外部 pointerup 也能路由 |
+| `PixiApp.ts` | 销毁时 `clearTimeout(resizeTimer)` 防泄漏；删除空 if 块 `if (maxFPS > 0) { // ok }` |
+| `text-effects.ts` | 删除死代码 `charToItem` 数组（分配后从未读取）；`chars` 移到 scramble 内部用 `fullChars` 替代（避免所有 effect 分支都计算） |
+| `text-effects.ts` | `finalDelay` 中 `3 * 0.03` → `4 * 0.03`（max scramble 步数），删除冗余的第二个 `timeline!.call(setCompleted)`（timeline 已有 `onComplete: setCompleted`） |
+
 ### 演进记录：2026-07-20 删除 Component Registry + 修复 anywhere drag 冲突
 
 **目标**：消除为「统一工厂」而引入的不必要适配器层，修复 `'anywhere'` dragMode 吞没子区域事件的根本问题。

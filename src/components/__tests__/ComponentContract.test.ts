@@ -61,6 +61,7 @@ function makeMockSubCanvas() {
     removeChildren: vi.fn(),
     setPosition: vi.fn(),
     setSize: vi.fn(),
+    setBounds: vi.fn(),
     destroy: vi.fn(() => { subDestroyed = true; }),
     addChild: vi.fn((c: unknown) => c),
     onPress: vi.fn(),
@@ -70,14 +71,6 @@ function makeMockSubCanvas() {
     setTitle: vi.fn(),
     getChildren: vi.fn(() => []),
     content: null as unknown,
-    get destroyed() { return subDestroyed; },
-  };
-  sc.content = {
-    stage: makeMockContainer(),
-    bounds: { x: 0, y: 22, width: 400, height: 278 },
-    removeChildren: vi.fn(),
-    createRegion: vi.fn(),
-    addChild: vi.fn(),
     get destroyed() { return subDestroyed; },
   };
   return sc;

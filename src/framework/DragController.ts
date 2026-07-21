@@ -2,7 +2,7 @@
 import * as PIXI from 'pixi.js';
 import type { Rect, SubPointerType } from './SubCanvasTypes';
 
-const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
+export const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
 
 export type DragMode = 'title' | 'anywhere' | 'none';
 
@@ -116,7 +116,7 @@ export class DragController {
     const applyDrag = (clientX: number, clientY: number) => {
       let nx = startBoundsX + (clientX - startLocalX);
       let ny = startBoundsY + (clientY - startLocalY);
-      const constraint = opts.dragBounds?.() ?? ctx.parent?.().bounds ?? null;
+      const constraint = opts.dragBounds?.() ?? ctx.parent?.()?.bounds ?? null;
       if (constraint) {
         nx = Math.max(0, Math.min(nx, constraint.width - ctx.getBounds().width));
         ny = Math.max(0, Math.min(ny, constraint.height - ctx.getBounds().height));
@@ -127,13 +127,10 @@ export class DragController {
 
     const onDown = (pixiEvent: PIXI.FederatedPointerEvent) => {
       pixiEvent.stopPropagation();
-      const parent = ctx.stage.parent;
-      if (!parent) return;
-      const local = pixiEvent.getLocalPosition(parent);
       localDragging = true;
       this._isDragging = true;
-      startLocalX = local.x;
-      startLocalY = local.y;
+      startLocalX = pixiEvent.clientX;
+      startLocalY = pixiEvent.clientY;
       startBoundsX = ctx.getBounds().x;
       startBoundsY = ctx.getBounds().y;
       if (opts.bringToFront !== false) ctx.bringToFront();
@@ -160,10 +157,7 @@ export class DragController {
 
     const onPixiMove = (pixiEvent: PIXI.FederatedPointerEvent) => {
       if (!localDragging) return;
-      const parent = ctx.stage.parent;
-      if (!parent) return;
-      const local = pixiEvent.getLocalPosition(parent);
-      applyDrag(local.x, local.y);
+      applyDrag(pixiEvent.clientX, pixiEvent.clientY);
     };
 
     const onPixiUp = () => {
@@ -176,7 +170,12 @@ export class DragController {
     root.on('pointerup', onPixiUp);
     root.on('pointerupoutside', onPixiUp);
 
+    // 手柄离开场景图时自动注销，无需手动调用 uninstallHandle
+    const onRemoved = () => this.uninstallHandle(handle);
+    handle.on('removed', onRemoved);
+
     return () => {
+      handle.off('removed', onRemoved);
       handle.off('pointerdown', onDown);
       root.off('pointermove', onPixiMove);
       root.off('pointerup', onPixiUp);
@@ -228,7 +227,7 @@ export class DragController {
 
     let nx = bounds.x + dx;
     let ny = bounds.y + dy;
-    const constraint = this._opts.dragBounds?.() ?? this._ctx.parent?.().bounds ?? null;
+    const constraint = this._opts.dragBounds?.() ?? this._ctx.parent?.()?.bounds ?? null;
     if (constraint) {
       nx = Math.max(0, Math.min(nx, constraint.width - bounds.width));
       ny = Math.max(0, Math.min(ny, constraint.height - bounds.height));

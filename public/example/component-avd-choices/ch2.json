@@ -1,0 +1,15 @@
+{
+  "lines": [
+    {
+      "speaker": "Narrator",
+      "text": "石门缓缓打开，透出耀眼的光芒……",
+      "choices": [
+        { "text": "踏入光芒之中", "targetSegment": "ending-a" },
+        { "text": "后退，仔细观察四周", "targetSegment": "detour" }
+      ]
+    },
+    { "segment": "ending-a", "speaker": "Narrator", "text": "你被传送到了一个巨大的宝库。" },
+    { "speaker": "Narrator", "text": "金币和宝石堆积如山，在魔法光芒下闪烁。" },
+    { "speaker": "Narrator", "text": "你获得了传说中的龙之宝藏！——  结局 A：龙之宝库", "end": true }
+  ]
+}

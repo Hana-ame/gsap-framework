@@ -343,8 +343,17 @@ export class SubCanvas {
     const gx = e.clientX;
     const gy = e.clientY;
 
-    if (gx < gb.x || gx > gb.x + gb.width) return false;
-    if (gy < gb.y || gy > gb.y + gb.height) return false;
+    const inBounds = gx >= gb.x && gx <= gb.x + gb.width && gy >= gb.y && gy <= gb.y + gb.height;
+
+    if (type === 'pointermove' || type === 'pointerup' || type === 'pointerleave') {
+      if (this._pressStart) {
+        // during an active drag, deliver move/up/leave regardless of bounds
+      } else if (!inBounds) {
+        return false;
+      }
+    } else if (!inBounds) {
+      return false;
+    }
 
     if (type === 'pointerdown' && this._drag?.mode === 'anywhere') {
       for (let i = this._subRegions.length - 1; i >= 0; i--) {
@@ -353,7 +362,24 @@ export class SubCanvas {
           return true;
         }
       }
-      this._drag.interceptPointer(type, e);
+      // 如果同一父级下有更前的 region 包含点击位置，则不拦截（防止穿透）
+      if (this.parent) {
+        const siblings = this.parent.subRegions;
+        let blocked = false;
+        for (let i = siblings.length - 1; i >= 0; i--) {
+          if (siblings[i] === this) break;
+          const cgb = siblings[i].globalBounds;
+          if (gx >= cgb.x && gx <= cgb.x + cgb.width && gy >= cgb.y && gy <= cgb.y + cgb.height) {
+            blocked = true;
+            break;
+          }
+        }
+        if (!blocked) {
+          this._drag.interceptPointer(type, e);
+        }
+      } else {
+        this._drag.interceptPointer(type, e);
+      }
     } else {
       if (this._drag) {
         if (this._drag.interceptPointer(type, e)) return true;

@@ -359,7 +359,7 @@ function rebuildCountText(t: PIXI.Text, entities: Entity[]): void {
     else if (e.type === 'herbivore' && e.alive) hc++;
     else if (e.type === 'carnivore' && e.alive) cc++;
   }
-  t.text = `🌿 ${gc}  🐇 ${hc}  🦊 ${cc}`;
+  t.text = `G:${gc}  H:${hc}  C:${cc}`;
 }
 
 export function ComponentEcosystemDisplay() {

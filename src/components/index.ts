@@ -17,10 +17,14 @@ export { createVideoPlayer } from './PixiVideoPlayer';
 export type { PixiVideoPlayerHandle, PixiVideoPlayerOptions } from './PixiVideoPlayer';
 export { VideoPlayer } from './VideoPlayer';
 export type { VideoPlayerHandle, VideoPlayerProps } from './VideoPlayer';
-export { Avd } from './Avd';
-export type { AvdLine, AvdOptions, AvdState, AvdText, AvdTextSegment, AvdPortraitPos, AvdRoster, AvdRosterEntry, AvdRosterMode } from './Avd';
-export { parseAvdScriptJSON } from './AvdScript';
-export type { AvdScriptJSON, AvdMetaJSON, AvdRosterEntryJSON, AvdLineJSON, AvdTextSegmentJSON, AvdAssetResolver, AvdParsedScript } from './AvdScript';
+export { AvdController, DialogueStateMachine, TypingEngine, RosterManager, DialogueBox, PortraitLayer, BackgroundLayer, AudioManager, ScreenEffects, Live2DManager, ParticleSystem, ParticleEmitter, NotificationSystem, parseScript } from '../avd';
+export type {
+  StateMachineCallbacks, ActivePortrait,
+  DialogueBoxOptions, PortraitLayerOptions, BackgroundLayerOptions,
+  AvdMetaJSON, AvdRosterEntryJSON, AvdTextSegmentJSON, AvdLineJSON, AvdScriptJSON, AvdAssetResolver, AvdParsedScript,
+  AvdState, AvdPortraitPos, AvdRosterMode, AvdText, AvdTextSegment, AvdLine, AvdChoice, AvdRosterEntry, AvdRoster, AvdOptions, ResolvedAvdOptions, AvdLayoutMode, BacklogEntry, AvdSettingsData, AVD_DEFAULT_SETTINGS, ParticlePreset, EmitterPosition, NotifType, TextEffect,
+} from '../avd';
+export { loadSettings, saveSettings } from '../avd/AvdSettings';
 export { createTextInput } from './TextInput';
 export type { TextInputHandle, TextInputOptions } from './TextInput';
 

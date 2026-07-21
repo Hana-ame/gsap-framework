@@ -1,6 +1,6 @@
 /** Parser and types for AVD script JSON (meta, lines, rosters). */
 import * as PIXI from 'pixi.js';
-import type { AvdLine, AvdRoster, AvdRosterMode, AvdPortraitPos, AvdTextSegment } from './types';
+import type { AvdChoice, AvdLine, AvdRoster, AvdRosterMode, AvdPortraitPos, AvdTextSegment } from './types';
 
 export interface AvdMetaJSON {
   width?: number;
@@ -24,17 +24,35 @@ export interface AvdMetaJSON {
 export interface AvdRosterEntryJSON {
   pos: AvdPortraitPos;
   textureKey: string;
+  expressions?: Record<string, string>;
 }
 
 export type AvdTextSegmentJSON =
   | { kind: 'text'; text: string }
   | { kind: 'image'; textureKey: string; width?: number; height?: number };
 
+export interface AvdChoiceJSON {
+  text: string;
+  targetLine?: number;
+  targetSegment?: string;
+  conditionFlag?: string;
+  conditionNotFlag?: string;
+}
+
 export interface AvdLineJSON {
   speaker?: string;
   text: string | AvdTextSegmentJSON[];
   portraitKey?: string;
   portraitPos?: AvdPortraitPos;
+  expression?: string;
+  bgKey?: string;
+  bgmKey?: string;
+  sfxKey?: string;
+  voiceKey?: string;
+  effect?: 'shake' | 'flash';
+  choices?: AvdChoiceJSON[];
+  segment?: string;
+  end?: boolean;
 }
 
 export interface AvdScriptJSON {
@@ -67,6 +85,7 @@ export async function parseScript(
   }
   for (const line of json.lines) {
     if (line.portraitKey) keys.add(line.portraitKey);
+    if (line.bgKey) keys.add(line.bgKey);
     if (Array.isArray(line.text)) {
       for (const seg of line.text) {
         if (seg.kind === 'image') keys.add(seg.textureKey);
@@ -84,9 +103,15 @@ export async function parseScript(
 
   const roster: AvdRoster = {};
   for (const [name, entry] of Object.entries(json.roster ?? {})) {
+    const expressions: Record<string, PIXI.Texture> | undefined = entry.expressions
+      ? Object.fromEntries(
+          Object.entries(entry.expressions).map(([k, v]) => [k, textureMap.get(v) ?? PIXI.Texture.EMPTY]),
+        )
+      : undefined;
     roster[name] = {
       pos: entry.pos,
       texture: textureMap.get(entry.textureKey) ?? null,
+      expressions,
     };
   }
 
@@ -105,11 +130,29 @@ export async function parseScript(
         };
       });
     }
+    const choices: AvdChoice[] | undefined = line.choices?.map((c) => {
+      const out: AvdChoice = { text: c.text };
+      if (c.targetSegment != null) out.targetSegment = c.targetSegment;
+      if (c.targetLine != null) out.targetLine = c.targetLine;
+      if (c.conditionFlag != null) out.conditionFlag = c.conditionFlag;
+      if (c.conditionNotFlag != null) out.conditionNotFlag = c.conditionNotFlag;
+      return out;
+    });
     return {
       speaker: line.speaker,
       text,
+      choices: choices?.length ? choices : undefined,
       portrait: line.portraitKey ? (textureMap.get(line.portraitKey) ?? null) : undefined,
       portraitPos: line.portraitPos,
+      expression: line.expression,
+      bg: line.bgKey ? (textureMap.get(line.bgKey) ?? null) : undefined,
+      bgKey: line.bgKey ?? null,
+      bgmKey: line.bgmKey,
+      sfxKey: line.sfxKey,
+      voiceKey: line.voiceKey,
+      effect: line.effect,
+      segment: line.segment,
+      end: line.end,
     };
   });
 
