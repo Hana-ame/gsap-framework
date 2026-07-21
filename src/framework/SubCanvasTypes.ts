@@ -35,6 +35,7 @@ export interface SubCanvasOptions {
   onDrag?: (e: { x: number; y: number }) => void;
   onDragEnd?: (e: { x: number; y: number }) => void;
   onDestroy?: () => void;
+  onReorder?: () => void;
 }
 
 export interface DragHandlers {

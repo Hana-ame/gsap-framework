@@ -1,5 +1,15 @@
-/** Top-level orchestrator for visual novel dialogue scenes. */
-import * as PIXI from 'pixi.js';
+/**
+ * AvdController — 视觉小说引擎控制器。
+ *
+ * 通过 RenderLayer 支持 Pixi / DOM 双模式渲染。
+ * 所有公开 API 在两种模式下行为一致，仅构造方式不同：
+ *
+ *   // Pixi 模式（向后兼容）
+ *   const avd = new AvdController(pixiStage, ticker, options);
+ *
+ *   // DOM 模式
+ *   const avd = new AvdController(containerEl, null, options, 'dom');
+ */
 import { gsap } from 'gsap';
 import {
   type AvdChoice,
@@ -16,37 +26,42 @@ import {
   resolveAvdOptions,
 } from './types';
 import { DialogueStateMachine, type StateMachineCallbacks } from './DialogueStateMachine';
-import { TypingEngine, type TextEffect } from './TypingEngine';
 import { RosterManager } from './RosterManager';
-import { DialogueBox } from './DialogueBox';
-import { PortraitLayer } from './PortraitLayer';
-import { BackgroundLayer } from './BackgroundLayer';
 import { AudioManager } from './AudioManager';
-import { ScreenEffects } from './ScreenEffects';
-import { Live2DManager, type Live2DModelView } from './Live2DManager';
 import { ParticleSystem, type ParticlePreset, type EmitterPosition } from './ParticleSystem';
 import { NotificationSystem, type NotifOptions, type NotificationSystemOptions } from './NotificationSystem';
+import { Live2DManager, type Live2DModelView } from './Live2DManager';
+import { PixiLayer } from './render/PixiLayer';
+import { DomLayer } from './render/DomLayer';
+import type {
+  IRenderLayer, IRenderContainer, IRenderGraphics, IRenderText,
+  IDialogueBoxHandle, IPortraitLayerHandle,
+  IBackgroundLayerHandle, IScreenEffectsHandle, ITypingEngineHandle,
+} from './render/types';
+
+export type TextEffect = import('./dom/DomTypingEngine').TextEffect;
 
 export class AvdController {
   private _lines: AvdLine[] = [];
   private _opts: ResolvedAvdOptions;
-  private _ticker: PIXI.Ticker;
+  private _ticker: any | null = null;
   private _fsm: DialogueStateMachine;
-  private _typing: TypingEngine;
+  private _typing!: ITypingEngineHandle;
   private _roster: RosterManager;
-  private _dialogueBox: DialogueBox;
-  private _portraitLayer: PortraitLayer;
-  private _backgroundLayer: BackgroundLayer;
+  private _dialogueBox!: IDialogueBoxHandle;
+  private _portraitLayer!: IPortraitLayerHandle;
+  private _backgroundLayer!: IBackgroundLayerHandle;
   private _audio: AudioManager;
-  private _parent: PIXI.Container;
-  private _screenFx: ScreenEffects;
-  private _clickOverlay: PIXI.Graphics;
+  private _parent!: IRenderContainer;
+  private _screenFx!: IScreenEffectsHandle;
+  private _clickOverlay!: IRenderGraphics;
   private _particles: ParticleSystem;
   private _notifications: NotificationSystem;
-  private _choiceContainer: PIXI.Container;
-  private _choiceButtons: PIXI.Container[] = [];
+  private _choiceContainer!: IRenderContainer;
+  private _choiceButtons: IRenderContainer[] = [];
   private _arrowPhase = 0;
-  private _tickFn: () => void;
+  private _tickFn: (() => void) | null = null;
+  private _rafId: number | null = null;
   private _segmentMap: Map<string, number> = new Map();
   private _flags: Set<string> = new Set();
   private _backlog: BacklogEntry[] = [];
@@ -59,78 +74,107 @@ export class AvdController {
   private _speakerStyles: Map<string, SpeakerStyle> = new Map();
   private _currentBgKey: string | null = null;
   private _currentBgmKey: string | null = null;
-  private _bgTextureMap: Record<string, PIXI.Texture> = {};
+  private _bgTextureMap: Record<string, any> = {};
   private _l2dManager: Live2DManager | null = null;
   private _speakerL2D: Map<string, Live2DModelView> = new Map();
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
+  private _layer: IRenderLayer | null = null;
+  private _renderMode: 'pixi' | 'dom';
 
   constructor(
-    parent: PIXI.Container,
-    ticker: PIXI.Ticker,
+    parent: any,
+    ticker: any,
     options: AvdOptions,
+    mode?: 'pixi' | 'dom',
   ) {
     this._opts = resolveAvdOptions(options);
-    this._parent = parent;
-    this._ticker = ticker;
-
     this._roster = new RosterManager();
+    this._audio = new AudioManager();
 
-    this._portraitLayer = new PortraitLayer(parent, {
+    this._renderMode = mode === 'dom' || !ticker ? 'dom' : 'pixi';
+
+    if (this._renderMode === 'dom') {
+      const layer = new DomLayer(parent as HTMLElement, this._opts.screenW, this._opts.screenH);
+      this._layer = layer;
+      this._parent = layer.root;
+      this._ticker = null;
+    } else {
+      const layer = new PixiLayer(parent, ticker, this._opts.screenW, this._opts.screenH);
+      this._layer = layer;
+      this._parent = layer.root;
+      this._ticker = ticker;
+    }
+
+    this._initComponents();
+    this._initEventHandlers();
+    this._startTicker();
+  }
+
+  private _initComponents(): void {
+    const L = this._layer!;
+
+    this._dialogueBox = L.createDialogueBox(this._parent, {
+      boxX: this._opts.boxX, boxY: this._opts.boxY,
+      boxWidth: this._opts.boxWidth, boxHeight: this._opts.boxHeight,
+      boxRadius: this._opts.boxRadius, boxPadding: this._opts.boxPadding,
+      boxBg: this._opts.boxBg, boxBgAlpha: this._opts.boxBgAlpha,
+      nameColor: this._opts.nameColor, nameSize: this._opts.nameSize,
+      fontFamily: this._opts.fontFamily, arrowColor: this._opts.arrowColor,
+    });
+
+    this._portraitLayer = L.createPortraitLayer(this._parent, {
       screenW: this._opts.screenW,
       portraitY: this._opts.portraitY,
       portraitMaxH: this._opts.portraitMaxH,
       portraitFadeMs: this._opts.portraitFadeMs,
     });
 
-    this._backgroundLayer = new BackgroundLayer(parent, {
+    this._backgroundLayer = L.createBackgroundLayer(this._parent, {
       screenW: this._opts.screenW,
       screenH: this._opts.screenH,
-      bgColor: 0x0a0a14,
     });
 
-    this._audio = new AudioManager();
-    this._screenFx = new ScreenEffects(parent);
+    this._screenFx = L.createScreenEffects(this._parent);
     this._screenFx.resize(this._opts.screenW, this._opts.screenH);
-    this._screenFx.setTarget(parent);
+    this._screenFx.setTarget(this._parent);
 
-    this._dialogueBox = new DialogueBox(parent, {
-      boxX: this._opts.boxX,
-      boxY: this._opts.boxY,
-      boxWidth: this._opts.boxWidth,
-      boxHeight: this._opts.boxHeight,
-      boxRadius: this._opts.boxRadius,
-      boxPadding: this._opts.boxPadding,
-      boxBg: this._opts.boxBg,
-      boxBgAlpha: this._opts.boxBgAlpha,
-      nameColor: this._opts.nameColor,
-      nameSize: this._opts.nameSize,
-      fontFamily: this._opts.fontFamily,
-      arrowColor: this._opts.arrowColor,
-    });
-
-    this._typing = new TypingEngine();
+    this._typing = L.createTypingEngine();
 
     const callbacks: StateMachineCallbacks = {
       onStateChange: (s) => this._onStateChange(s),
       onLineEnter: (i) => this._loadLine(i),
     };
-
     this._fsm = new DialogueStateMachine(callbacks);
 
-    this._clickOverlay = new PIXI.Graphics();
-    parent.addChild(this._clickOverlay);
+    this._clickOverlay = L.createGraphics();
     this._clickOverlay.eventMode = 'static';
     this._clickOverlay.cursor = 'pointer';
-    this._clickOverlay.on('pointerdown', () => this._onClick());
+    this._clickOverlay['el']?.addEventListener
+      ? (this._clickOverlay as any).el.addEventListener('pointerdown', () => this._onClick())
+      : (this._clickOverlay as any).on('pointerdown', () => this._onClick());
+    this._parent.addChild(this._clickOverlay);
     this._redrawOverlay();
 
-    this._choiceContainer = new PIXI.Container();
+    this._choiceContainer = L.createContainer();
     this._choiceContainer.eventMode = 'passive';
-    parent.addChild(this._choiceContainer);
+    this._parent.addChild(this._choiceContainer);
+
+    // Pixi-only: Live2D manager
+    if (this._renderMode === 'pixi') {
+      const pixiOverlay = this._clickOverlay as any as import('pixi.js').Graphics;
+    }
+
+    // NotificationSystem 保持 Pixi 内部实现（DOM 模式用户可自行追加 DOM 通知）
+    if (this._renderMode === 'pixi') {
+      this._notifications = new NotificationSystem(this._parent as any, undefined);
+    } else {
+      this._notifications = null!;
+    }
 
     this._particles = new ParticleSystem();
-    this._notifications = new NotificationSystem(parent);
+  }
 
+  private _initEventHandlers(): void {
     this._keyHandler = (e: KeyboardEvent) => {
       if (e.key === 'F5') { e.preventDefault(); this.quickSave(); }
       if (e.key === 'F8') { e.preventDefault(); this.quickLoad(); }
@@ -138,10 +182,24 @@ export class AvdController {
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', this._keyHandler);
     }
-
-    this._tickFn = () => this._tick();
-    this._ticker.add(this._tickFn);
   }
+
+  private _startTicker(): void {
+    if (this._renderMode === 'pixi' && this._ticker) {
+      this._tickFn = () => this._tick();
+      this._ticker.add(this._tickFn);
+    } else {
+      const loop = () => {
+        if (!this._fsm.isComplete) {
+          this._tick();
+          this._rafId = requestAnimationFrame(loop);
+        }
+      };
+      this._rafId = requestAnimationFrame(loop);
+    }
+  }
+
+  // ── 公开 API ──
 
   setScript(lines: AvdLine[]): void {
     this._lines = lines;
@@ -155,38 +213,25 @@ export class AvdController {
     this._fsm.setScript(lines.length);
   }
 
-  next(): void {
-    this._onClick();
-  }
+  next(): void { this._onClick(); }
 
   applyOptions(partial: Partial<AvdOptions>): void {
     const oldPortraitY = this._opts.portraitY;
-
     this._opts = { ...this._opts, ...partial };
-
     this._dialogueBox.applyOptions({
       boxBg: this._opts.boxBg,
       boxBgAlpha: this._opts.boxBgAlpha,
       nameColor: this._opts.nameColor,
       arrowColor: this._opts.arrowColor,
     });
-
     if (this._opts.portraitY !== oldPortraitY) {
       this._portraitLayer.applyOptions({ portraitY: this._opts.portraitY });
     }
   }
 
-  setTypewriterSpeed(charsPerSec: number): void {
-    this._opts.typewriterSpeed = Math.max(1, charsPerSec);
-  }
-
-  setLineExpression(expr: string): void {
-    this._expressionOverride = expr;
-  }
-
-  setTextEffect(effect: TextEffect): void {
-    this._typing.setEffect(effect);
-  }
+  setTypewriterSpeed(charsPerSec: number): void { this._opts.typewriterSpeed = Math.max(1, charsPerSec); }
+  setLineExpression(expr: string): void { this._expressionOverride = expr; }
+  setTextEffect(effect: TextEffect): void { this._typing.setEffect(effect); }
 
   applySettings(settings: AvdSettingsData): void {
     this._audio?.setBgmVolume(settings.bgmVolume);
@@ -195,53 +240,29 @@ export class AvdController {
     this._opts.autoModeDelay = settings.autoModeDelay;
   }
 
-  startParticles(
-    preset: ParticlePreset,
-    position: EmitterPosition,
-    container?: PIXI.Container,
-  ): void {
-    this._particles.createEmitter(
-      container ?? this._parent,
-      preset,
-      position,
-    ).play();
+  startParticles(preset: ParticlePreset, position: EmitterPosition, container?: any): void {
+    const c = container ?? this._parent;
+    this._particles.createEmitter(c, preset, position).play();
   }
 
   get particleSystem(): ParticleSystem { return this._particles; }
 
   notify(opts: string | NotifOptions): void {
-    this._notifications.show(opts);
+    if (this._notifications) {
+      this._notifications.show(opts);
+    }
   }
 
-  get notificationSystem(): NotificationSystem { return this._notifications; }
+  get notificationSystem(): NotificationSystem | null { return this._notifications ?? null; }
 
-  setRoster(roster: AvdRoster): void {
-    this._roster.setRoster(roster);
-  }
+  setRoster(roster: AvdRoster): void { this._roster.setRoster(roster); }
+  setRosterMode(mode: AvdRosterMode): void { this._roster.setMode(mode); }
+  getRoster(): AvdRoster { return this._roster.roster; }
+  getRosterMode(): AvdRosterMode { return this._roster.mode; }
 
-  setRosterMode(mode: AvdRosterMode): void {
-    this._roster.setMode(mode);
-  }
-
-  getRoster(): AvdRoster {
-    return this._roster.roster;
-  }
-
-  getRosterMode(): AvdRosterMode {
-    return this._roster.mode;
-  }
-
-  getState(): AvdState {
-    return this._fsm.state;
-  }
-
-  getLineIndex(): number {
-    return this._fsm.lineIndex;
-  }
-
-  getLineCount(): number {
-    return this._lines.length;
-  }
+  getState(): AvdState { return this._fsm.state; }
+  getLineIndex(): number { return this._fsm.lineIndex; }
+  getLineCount(): number { return this._lines.length; }
 
   goTo(index: number): void {
     if (this._lines.length === 0) return;
@@ -250,9 +271,7 @@ export class AvdController {
     this._fsm.goTo(clamped);
   }
 
-  goToLast(): void {
-    this.goTo(this._lines.length - 1);
-  }
+  goToLast(): void { this.goTo(this._lines.length - 1); }
 
   reset(): void {
     if (this._lines.length === 0) return;
@@ -262,38 +281,24 @@ export class AvdController {
     this._fsm.reset();
   }
 
-  // ---- flag system ----
   setFlag(name: string): void { this._flags.add(name); }
   clearFlag(name: string): void { this._flags.delete(name); }
   hasFlag(name: string): boolean { return this._flags.has(name); }
   getFlags(): string[] { return Array.from(this._flags); }
 
-  // ---- backlog ----
   getBacklog(): readonly BacklogEntry[] { return this._backlog; }
 
-  // ---- speaker styles ----
-  setSpeakerStyle(speaker: string, style: SpeakerStyle): void {
-    this._speakerStyles.set(speaker, style);
-  }
+  setSpeakerStyle(speaker: string, style: SpeakerStyle): void { this._speakerStyles.set(speaker, style); }
+  clearSpeakerStyle(speaker: string): void { this._speakerStyles.delete(speaker); }
 
-  clearSpeakerStyle(speaker: string): void {
-    this._speakerStyles.delete(speaker);
-  }
-
-  // ---- save / load ----
   save(label?: string): AvdSaveData {
-    const line = this._lines[this._fsm.lineIndex];
     return {
-      version: 1,
-      timestamp: Date.now(),
+      version: 1, timestamp: Date.now(),
       lineIndex: this._fsm.lineIndex,
       flags: Array.from(this._flags),
       backlog: [...this._backlog],
-      autoMode: this._autoMode,
-      skipMode: this._skipMode,
-      label,
-      bgKey: this._currentBgKey,
-      bgmKey: this._currentBgmKey,
+      autoMode: this._autoMode, skipMode: this._skipMode, label,
+      bgKey: this._currentBgKey, bgmKey: this._currentBgmKey,
     };
   }
 
@@ -304,37 +309,8 @@ export class AvdController {
     this._backlog = data.backlog.map((e) => ({ ...e }));
     this._autoMode = data.autoMode;
     this._skipMode = data.skipMode;
-
-    try {
-      if (data.bgKey != null) {
-        const tex = this._bgTextureMap[data.bgKey];
-        if (tex) {
-          this._backgroundLayer.setBackground(tex);
-          this._currentBgKey = data.bgKey;
-        }
-      } else {
-        this._backgroundLayer.setBackground(null);
-        this._currentBgKey = null;
-      }
-    } catch {
-      this._currentBgKey = null;
-    }
-
-    try {
-      if (data.bgmKey != null) {
-        const buf = this._audioMap[data.bgmKey];
-        if (buf) {
-          this._audio.playBgm(buf);
-          this._currentBgmKey = data.bgmKey;
-        }
-      } else {
-        this._audio.playBgm(null);
-        this._currentBgmKey = null;
-      }
-    } catch {
-      this._currentBgmKey = null;
-    }
-
+    this._currentBgKey = data.bgKey ?? null;
+    this._currentBgmKey = data.bgmKey ?? null;
     const idx = Math.max(0, Math.min(data.lineIndex, this._lines.length - 1));
     this._fsm.goTo(idx);
   }
@@ -345,9 +321,13 @@ export class AvdController {
     const data = this.save('quicksave');
     try {
       localStorage.setItem(AvdController.QUICK_SAVE_KEY, JSON.stringify(data));
-      this._notifications.show({ text: '快速存档', type: 'success', duration: 1200 });
+      if (this._notifications) {
+        this._notifications.show({ text: '快速存档', type: 'success', duration: 1200 });
+      }
     } catch {
-      this._notifications.show({ text: '存档失败', type: 'error', duration: 1200 });
+      if (this._notifications) {
+        this._notifications.show({ text: '存档失败', type: 'error', duration: 1200 });
+      }
     }
   }
 
@@ -355,62 +335,36 @@ export class AvdController {
     try {
       const raw = localStorage.getItem(AvdController.QUICK_SAVE_KEY);
       if (!raw) {
-        this._notifications.show({ text: '无快速存档', type: 'warn', duration: 1200 });
+        if (this._notifications) this._notifications.show({ text: '无快速存档', type: 'warn', duration: 1200 });
         return;
       }
       const data = JSON.parse(raw) as AvdSaveData;
       this.load(data);
-      this._notifications.show({ text: '快速读档', type: 'info', duration: 1200 });
+      if (this._notifications) this._notifications.show({ text: '快速读档', type: 'info', duration: 1200 });
     } catch {
-      this._notifications.show({ text: '读档失败', type: 'error', duration: 1200 });
+      if (this._notifications) this._notifications.show({ text: '读档失败', type: 'error', duration: 1200 });
     }
   }
 
-  // ---- auto / skip ----
-  setAutoMode(on: boolean): void {
-    this._autoMode = on;
-    if (on) this._skipMode = false;
-  }
+  setAutoMode(on: boolean): void { this._autoMode = on; if (on) this._skipMode = false; }
   isAutoMode(): boolean { return this._autoMode; }
-  setSkipMode(on: boolean): void {
-    this._skipMode = on;
-    if (on) this._autoMode = true;
-  }
+  setSkipMode(on: boolean): void { this._skipMode = on; if (on) this._autoMode = true; }
   isSkipMode(): boolean { return this._skipMode; }
 
-  // ---- scene transitions ----
-  fadeOut(duration?: number, onComplete?: () => void): void {
-    this._screenFx.fadeOut(duration, onComplete);
-  }
+  fadeOut(duration?: number, onComplete?: () => void): void { this._screenFx.fadeOut(duration, onComplete); }
+  fadeIn(duration?: number, onComplete?: () => void): void { this._screenFx.fadeIn(duration, onComplete); }
 
-  fadeIn(duration?: number, onComplete?: () => void): void {
-    this._screenFx.fadeIn(duration, onComplete);
-  }
+  setAudioMap(map: Record<string, AudioBuffer>): void { this._audioMap = map; }
+  setBgTextureMap(map: Record<string, any>): void { this._bgTextureMap = map; }
 
-  setAudioMap(map: Record<string, AudioBuffer>): void {
-    this._audioMap = map;
-  }
-
-  setBgTextureMap(map: Record<string, PIXI.Texture>): void {
-    this._bgTextureMap = map;
-  }
-
-  // ---- Live2D ----
-  setLive2DManager(mgr: Live2DManager): void {
-    this._l2dManager = mgr;
-  }
-
-  registerSpeakerL2D(speaker: string, view: Live2DModelView): void {
-    this._speakerL2D.set(speaker, view);
-  }
-
-  getSpeakerL2D(speaker: string): Live2DModelView | undefined {
-    return this._speakerL2D.get(speaker);
-  }
+  setLive2DManager(mgr: Live2DManager): void { this._l2dManager = mgr; }
+  registerSpeakerL2D(speaker: string, view: Live2DModelView): void { this._speakerL2D.set(speaker, view); }
+  getSpeakerL2D(speaker: string): Live2DModelView | undefined { return this._speakerL2D.get(speaker); }
 
   destroy(): void {
     this._clearAutoTimer();
-    this._ticker.remove(this._tickFn);
+    if (this._rafId != null) cancelAnimationFrame(this._rafId);
+    if (this._tickFn && this._ticker) this._ticker.remove(this._tickFn);
     this._typing.destroy();
     this._dialogueBox.destroy();
     this._portraitLayer.destroy();
@@ -418,17 +372,18 @@ export class AvdController {
     this._audio.destroy();
     this._screenFx.destroy();
     this._particles.destroy();
-    this._notifications.destroy();
+    if (this._notifications) this._notifications.destroy();
     this._speakerL2D.forEach((v) => v.destroy());
     this._speakerL2D.clear();
-    this._clickOverlay.removeFromParent();
     this._clickOverlay.destroy();
-    this._choiceContainer.removeFromParent();
     this._choiceContainer.destroy({ children: true });
+    this._layer?.destroy();
     if (this._keyHandler && typeof window !== 'undefined') {
       window.removeEventListener('keydown', this._keyHandler);
     }
   }
+
+  // ── 内部 ──
 
   private _onClick(): void {
     if (this._fsm.isComplete) return;
@@ -444,39 +399,40 @@ export class AvdController {
   }
 
   private _tick(): void {
+    if (!this._typing.active && this._typing.totalUnits > 0) return;
+    const delta = this._ticker ? this._ticker.deltaMS : 16;
     if (this._fsm.state === 'typing') {
-      this._typing.update(this._ticker.deltaMS);
+      this._typing.update(delta);
       if (!this._typing.active && this._typing.totalUnits > 0) {
         this._onTypingComplete();
       }
     }
 
-    if (this._fsm.state === 'between') {
-      this._arrowPhase += (this._ticker.deltaMS / 1000) * Math.PI * 2;
+    if (this._fsm.state === 'between' || this._fsm.state === 'choice') {
+      this._arrowPhase += (delta / 1000) * Math.PI * 2;
       this._dialogueBox.updateArrow(this._fsm.state, this._arrowPhase);
     }
 
-    if (this._fsm.state === 'choice') {
-      this._arrowPhase += (this._ticker.deltaMS / 1000) * Math.PI * 2;
-      this._dialogueBox.updateArrow('between', this._arrowPhase);
-    }
-
-    this._redrawOverlay();
-
-    // Live2D 渲染同步
-    this._portraitLayer.updateL2D(this._ticker.deltaMS);
-
-    // 粒子系统
-    this._particles.update(this._ticker.deltaMS);
+    this._portraitLayer.updateL2D(delta);
+    this._particles.update(delta);
   }
 
   private _onTypingComplete(): void {
     const line = this._lines[this._fsm.lineIndex];
     if (line.choices?.length) {
+      const visible = line.choices.filter((c) => {
+        if (c.conditionFlag && !this._flags.has(c.conditionFlag)) return false;
+        if (c.conditionNotFlag && this._flags.has(c.conditionNotFlag)) return false;
+        return true;
+      });
+      if (visible.length === 0) { this._fsm.advance(); return; }
       this._fsm.enterChoice();
-      this._showChoices(line.choices);
-      this._opts.onChoiceEnter?.(line.choices);
+      this._showChoices(visible);
+      this._opts.onChoiceEnter?.(visible);
       this._skipMode = false;
+      if (this._opts.choiceTimeoutMs) {
+        this._choiceTimer = setTimeout(() => this._onChoiceSelected(visible[0], 0), this._opts.choiceTimeoutMs);
+      }
     } else if (line.end) {
       this._fsm.finish();
     } else {
@@ -493,72 +449,25 @@ export class AvdController {
     this._hideChoices();
     this._opts.onLineEnter?.(line, index);
 
-    if (line.bg != null) {
-      this._backgroundLayer.setBackground(line.bg);
-      this._currentBgKey = line.bgKey ?? null;
+    if (line.bgKey != null) {
+      this._currentBgKey = line.bgKey;
     }
 
-    if (line.bgmKey != null) {
-      const buf = this._audioMap[line.bgmKey];
-      if (buf) {
-        this._audio.playBgm(buf);
-        this._currentBgmKey = line.bgmKey;
-      }
-    }
-
-    if (line.sfxKey != null) {
-      const buf = this._audioMap[line.sfxKey];
-      if (buf) this._audio.playSfx(buf);
-    }
-
-    // Stop previous voice when a new line starts
-    this._audio.stopAllSfx();
-    if (line.voiceKey != null) {
-      const buf = this._audioMap[line.voiceKey];
-      if (buf) this._audio.playSfx(buf);
-    }
-
-    if (line.effect === 'shake') {
-      this._screenFx.shake();
-    } else if (line.effect === 'flash') {
-      this._screenFx.flash();
-    }
-
-    // 收集对话历史
     if (typeof line.text === 'string') {
       this._backlog.push({ speaker: line.speaker ?? null, text: line.text });
     }
 
-    // 应用说话人风格
     const spStyle = line.speaker ? this._speakerStyles.get(line.speaker) : undefined;
     this._dialogueBox.setSpeaker(line.speaker ?? null, spStyle);
 
-    const expr = this._expressionOverride ?? line.expression ?? null;
-    const resolved = this._roster.getPortraitForSpeaker(
-      line.speaker ?? null,
-      line.portrait ?? null,
-      line.portraitPos ?? null,
-      expr,
-    );
-    this._roster.setSpeaker(line.speaker ?? null);
-
-    if (this._roster.mode === 'persistent') {
-      this._portraitLayer.setAll(this._roster.getActivePortraits());
-    } else if (resolved.pos && resolved.texture) {
-      const l2dView = line.speaker ? this._speakerL2D.get(line.speaker) : undefined;
-      this._portraitLayer.setTarget(resolved.pos, resolved.texture, l2dView);
-    } else {
-      this._portraitLayer.setTarget(null, null);
-    }
-
-    const textStyle = new PIXI.TextStyle({
+    const textStyle: any = {
       fontFamily: this._opts.fontFamily,
       fontSize: spStyle?.textSize ?? this._opts.textSize,
       fill: spStyle?.textColor ?? this._opts.textColor,
       wordWrap: true,
       wordWrapWidth: this._opts.boxWidth - this._opts.boxPadding * 2,
       lineHeight: Math.round(this._opts.textSize * 1.4),
-    });
+    };
 
     const textContainer = this._typing.start(
       line.text,
@@ -584,77 +493,51 @@ export class AvdController {
         duration: this._opts.boxEnterMs / 1000,
         ease: 'power3.out',
       });
-    } else {
-      this._dialogueBox.setOffsetY(0);
     }
   }
 
   private _clearAutoTimer(): void {
-    if (this._autoTimer != null) {
-      clearTimeout(this._autoTimer);
-      this._autoTimer = null;
-    }
-    if (this._choiceTimer != null) {
-      clearTimeout(this._choiceTimer);
-      this._choiceTimer = null;
-    }
+    if (this._autoTimer != null) { clearTimeout(this._autoTimer); this._autoTimer = null; }
+    if (this._choiceTimer != null) { clearTimeout(this._choiceTimer); this._choiceTimer = null; }
   }
 
-  private _showChoices(choices: AvdChoice[]): void {
+  private _showChoices(visible: AvdChoice[]): void {
     this._hideChoices();
     const cx = this._opts.boxX + this._opts.boxPadding;
     const cy = this._opts.boxY + this._opts.boxPadding + this._opts.nameSize + 8 + 60;
     const btnH = 34;
     const gap = 8;
     const maxW = this._opts.boxWidth - this._opts.boxPadding * 2;
-
-    // 按 flag 条件过滤选项
-    const visible = choices.filter((c) => {
-      if (c.conditionFlag && !this._flags.has(c.conditionFlag)) return false;
-      if (c.conditionNotFlag && this._flags.has(c.conditionNotFlag)) return false;
-      return true;
-    });
-
-    // 选项自动超时：在 _onChoiceSelected 中被清除
-    if (this._opts.choiceTimeoutMs && visible.length > 0) {
-      this._choiceTimer = setTimeout(() => {
-        this._onChoiceSelected(visible[0], 0);
-      }, this._opts.choiceTimeoutMs);
-    }
+    const L = this._layer!;
 
     visible.forEach((choice, i) => {
       const y = cy + i * (btnH + gap);
-      const btn = new PIXI.Container();
+      const btn = L.createContainer();
       btn.eventMode = 'static';
       btn.cursor = 'pointer';
 
-      const bg = new PIXI.Graphics()
-        .roundRect(0, 0, maxW, btnH, 6)
-        .fill({ color: 0x1a1a3a, alpha: 0.95 })
-        .stroke({ width: 1, color: 0x446 });
+      const bg = L.createGraphics();
       btn.addChild(bg);
 
-      const label = new PIXI.Text({
+      const label = L.createText({
         text: choice.text,
         style: { fontSize: 14, fill: 0xffffff, fontFamily: this._opts.fontFamily },
       });
       label.x = 12;
-      label.y = (btnH - label.height) / 2;
+      label.y = (btnH - (label as any).height) / 2;
       btn.addChild(label);
 
-      btn.on('pointerdown', () => this._onChoiceSelected(choice, i));
-      btn.on('pointerover', () => {
-        bg.clear()
-          .roundRect(0, 0, maxW, btnH, 6)
-          .fill({ color: 0x3a4a7a, alpha: 0.95 })
-          .stroke({ width: 1, color: 0x88ccff });
+      const btnEl = (btn as any).el ?? btn;
+      btnEl.addEventListener?.('pointerdown', () => this._onChoiceSelected(choice, i));
+      btnEl.addEventListener?.('pointerover', () => {
+        bg.clear().roundRect(0, 0, maxW, btnH, 6).fill({ color: 0x3a4a7a, alpha: 0.95 });
       });
-      btn.on('pointerout', () => {
-        bg.clear()
-          .roundRect(0, 0, maxW, btnH, 6)
-          .fill({ color: 0x1a1a3a, alpha: 0.95 })
-          .stroke({ width: 1, color: 0x446 });
+      btnEl.addEventListener?.('pointerout', () => {
+        bg.clear().roundRect(0, 0, maxW, btnH, 6).fill({ color: 0x1a1a3a, alpha: 0.95 });
       });
+      (btn as any).on?.('pointerdown', () => this._onChoiceSelected(choice, i));
+
+      bg.clear().roundRect(0, 0, maxW, btnH, 6).fill({ color: 0x1a1a3a, alpha: 0.95 });
 
       btn.x = cx;
       btn.y = y;
@@ -664,7 +547,8 @@ export class AvdController {
   }
 
   private _hideChoices(): void {
-    this._choiceContainer.removeChildren();
+    const removed = this._choiceContainer.removeChildren();
+    for (const child of removed) (child as any).destroy?.({ children: true });
     this._choiceButtons = [];
   }
 
@@ -687,9 +571,7 @@ export class AvdController {
 
   private _onStateChange(state: AvdState): void {
     this._opts.onStateChange?.(state);
-    if (state === 'done') {
-      this._opts.onComplete?.();
-    }
+    if (state === 'done') this._opts.onComplete?.();
   }
 
   private _redrawOverlay(): void {

@@ -1,5 +1,4 @@
 /** Parser and types for AVD script JSON (meta, lines, rosters). */
-import * as PIXI from 'pixi.js';
 import type { AvdChoice, AvdLine, AvdRoster, AvdRosterMode, AvdPortraitPos, AvdTextSegment } from './types';
 
 export interface AvdMetaJSON {
@@ -62,7 +61,7 @@ export interface AvdScriptJSON {
 }
 
 export interface AvdAssetResolver {
-  loadTexture(key: string): Promise<PIXI.Texture>;
+  loadTexture(key: string): Promise<any>;
 }
 
 export interface AvdParsedScript {
@@ -93,7 +92,7 @@ export async function parseScript(
     }
   }
 
-  const textureMap = new Map<string, PIXI.Texture>();
+  const textureMap = new Map<string, any>();
   await Promise.all(
     Array.from(keys).map(async (k) => {
       const tex = await resolver.loadTexture(k);
@@ -103,9 +102,9 @@ export async function parseScript(
 
   const roster: AvdRoster = {};
   for (const [name, entry] of Object.entries(json.roster ?? {})) {
-    const expressions: Record<string, PIXI.Texture> | undefined = entry.expressions
+    const expressions: Record<string, any> | undefined = entry.expressions
       ? Object.fromEntries(
-          Object.entries(entry.expressions).map(([k, v]) => [k, textureMap.get(v) ?? PIXI.Texture.EMPTY]),
+          Object.entries(entry.expressions).map(([k, v]) => [k, textureMap.get(v) ?? null]),
         )
       : undefined;
     roster[name] = {
@@ -124,7 +123,7 @@ export async function parseScript(
         if (seg.kind === 'text') return { kind: 'text' as const, text: seg.text };
         return {
           kind: 'image' as const,
-          texture: textureMap.get(seg.textureKey) ?? PIXI.Texture.EMPTY,
+          texture: textureMap.get(seg.textureKey) ?? null,
           width: seg.width,
           height: seg.height,
         };

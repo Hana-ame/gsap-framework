@@ -73,6 +73,8 @@ const APPS: AppEntry[] = [
   { route: 'component-avd-choices', label: 'Component: AVD Choices', hint: 'Visual Novel with branching: multi-choice → different endings (3 paths)', glyph: '\u2756', accent: '#1a4a2a' },
   { route: 'component-window-ref', label: 'WindowBorder + LayoutGroup', hint: '参考框架验证：窗口 resize 重绘、LayoutGroup 自动排列、gown.js 模式', glyph: '\u25A8', accent: '#4a7aff' },
   { route: 'component-rts', label: 'RTS (Broken Arrow)', hint: '2-player RTS: select units, right-click move, AI opponent', glyph: '\u2694', accent: '#6a3a2a' },
+  { route: 'component-avd-dom-minimal', label: 'AVD DOM 最小示例', hint: '纯 DOM 视觉小说：打字机、分支、GSAP 动画，无 PIXI canvas', glyph: '\u2756', accent: '#1a3a2a' },
+  { route: 'component-avd-vn', label: 'VN 中间格式 + InputRemapper', hint: 'KAG→中间JSON→Player + 键盘重映射。演示完整 VN 管线', glyph: '\u29C9', accent: '#2a3a5a' },
   // new example entries go here — append to end, do not insert in the middle
 ];
 

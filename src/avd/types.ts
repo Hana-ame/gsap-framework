@@ -1,5 +1,4 @@
 /** Shared types for the AVD system: lines, rosters, portraits, segments. */
-import type * as PIXI from 'pixi.js';
 
 export type AvdState = 'typing' | 'between' | 'choice' | 'done';
 
@@ -11,7 +10,7 @@ export type AvdText = string | AvdTextSegment[];
 
 export type AvdTextSegment =
   | { kind: 'text'; text: string }
-  | { kind: 'image'; texture: PIXI.Texture; width?: number; height?: number };
+  | { kind: 'image'; texture: any; width?: number; height?: number };
 
 export interface AvdChoice {
   text: string;
@@ -24,10 +23,10 @@ export interface AvdChoice {
 export interface AvdLine {
   speaker?: string;
   text: AvdText;
-  portrait?: PIXI.Texture | null;
+  portrait?: any;
   portraitPos?: AvdPortraitPos | null;
   expression?: string;
-  bg?: PIXI.Texture | null;
+  bg?: any;
   bgKey?: string | null;
   bgmKey?: string;
   sfxKey?: string;
@@ -40,8 +39,8 @@ export interface AvdLine {
 
 export interface AvdRosterEntry {
   pos: AvdPortraitPos;
-  texture: PIXI.Texture | null;
-  expressions?: Record<string, PIXI.Texture>;
+  texture: any;
+  expressions?: Record<string, any>;
 }
 
 export type AvdRoster = Record<string, AvdRosterEntry>;

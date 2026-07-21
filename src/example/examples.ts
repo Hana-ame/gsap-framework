@@ -64,6 +64,8 @@ import { ComponentEcosystemPyDisplay } from './component-ecosystem-py/ComponentE
 import { ComponentFrameworkTestDisplay } from './component-framework-test/ComponentFrameworkTestDisplay';
 import { ComponentWindowRefDisplay } from './component-window-ref/ComponentWindowRefDisplay';
 import { ComponentRtsDisplay } from './component-rts/ComponentRtsDisplay';
+import { ComponentAvdDomMinimalDisplay } from './component-avd-dom-minimal/ComponentAvdDomMinimalDisplay';
+import { ComponentAvdVnDisplay } from './component-avd-vn/ComponentAvdVnDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -129,6 +131,8 @@ export const EXAMPLES = [
   'component-framework-test',
   'component-window-ref',
   'component-rts',
+  'component-avd-dom-minimal',
+  'component-avd-vn',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -200,4 +204,6 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-framework-test': ComponentFrameworkTestDisplay,
   'component-window-ref': ComponentWindowRefDisplay,
   'component-rts': ComponentRtsDisplay,
+  'component-avd-dom-minimal': ComponentAvdDomMinimalDisplay,
+  'component-avd-vn': ComponentAvdVnDisplay,
 };

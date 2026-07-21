@@ -28,12 +28,21 @@ vi.mock('gsap', () => ({
 }));
 
 function makeContainer() {
-  return {
-    children: [],
-    addChild: vi.fn(function (c: unknown) { (this as unknown as { children: unknown[] }).children.push(c); return c; }),
-    addChildAt: vi.fn(),
-    removeChild: vi.fn(),
-    removeChildren: vi.fn(),
+  const children: unknown[] = [];
+  const ret = {
+    children,
+    addChild: vi.fn(function (c: unknown) { children.push(c); return c; }),
+    addChildAt: vi.fn(function (c: unknown, idx: number) { children.splice(idx, 0, c); return c; }),
+    removeChild: vi.fn(function (c: unknown) {
+      const idx = children.indexOf(c);
+      if (idx >= 0) children.splice(idx, 1);
+      return c;
+    }),
+    removeChildren: vi.fn(function () {
+      const all = [...children];
+      children.length = 0;
+      return all;
+    }),
     removeFromParent: vi.fn(),
     destroy: vi.fn(),
     eventMode: null as string | null,
@@ -42,16 +51,17 @@ function makeContainer() {
     cursor: 'default',
     alpha: 1, x: 0, y: 0, visible: true, width: 50, height: 20,
     scale: { x: 1, y: 1, set: vi.fn() },
-    clear: vi.fn(function () { return this; }),
-    rect: vi.fn(function () { return this; }),
-    fill: vi.fn(function () { return this; }),
-    roundRect: vi.fn(function () { return this; }),
-    moveTo: vi.fn(function () { return this; }),
-    lineTo: vi.fn(function () { return this; }),
-    stroke: vi.fn(function () { return this; }),
+    clear: vi.fn(function () { return ret; }),
+    rect: vi.fn(function () { return ret; }),
+    fill: vi.fn(function () { return ret; }),
+    roundRect: vi.fn(function () { return ret; }),
+    moveTo: vi.fn(function () { return ret; }),
+    lineTo: vi.fn(function () { return ret; }),
+    stroke: vi.fn(function () { return ret; }),
     getLocalBounds: vi.fn(() => ({ x: 0, y: 0, width: 50, height: 20 })),
     getBounds: vi.fn(() => ({ x: 0, y: 0, width: 50, height: 20 })),
   };
+  return ret;
 }
 
 vi.mock('pixi.js', async () => {

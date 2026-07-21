@@ -64,16 +64,24 @@ export class SubCanvasProxy {
         const idx = this.topCanvases.indexOf(sc);
         if (idx >= 0) this.topCanvases.splice(idx, 1);
       },
+      onReorder: () => {
+        const idx = this.topCanvases.indexOf(sc);
+        if (idx >= 0) {
+          this.topCanvases.splice(idx, 1);
+          this.topCanvases.push(sc);
+        }
+      },
     });
     this.topCanvases.push(sc);
     return sc;
   }
 
   // 将 window 级 pointer 事件分发给所有顶层 SubCanvas，
-  // 由各 region 的 hit-test 自行决定是否消费
+  // 由各 region 的 hit-test 自行决定是否消费；
+  // 如果某个 canvas 消费了事件（handlePointer 返回 true），后续 canvas 不再收到。
   routePointer(type: SubPointerType, e: PointerEvent): void {
     for (const sc of this.topCanvases) {
-      sc.handlePointer(type, e);
+      if (sc.handlePointer(type, e)) return;
     }
   }
 

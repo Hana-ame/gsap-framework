@@ -27,12 +27,14 @@ export class SubCanvas {
   private _pressStart: { x: number; y: number; clientX: number; clientY: number } | null = null;
   private _pressMoved = false;
   private onDestroy: () => void;
+  private onReorder: () => void;
 
   constructor(opts: SubCanvasOptions) {
     this.rootApp = opts.rootApp;
     this._bounds = opts.bounds;
     this.parent = opts.parent ?? null;
     this.onDestroy = opts.onDestroy ?? (() => {});
+    this.onReorder = opts.onReorder ?? (() => {});
     this._tapThreshold = opts.tapThreshold ?? 4;
 
     this.stage = new PIXI.Container();
@@ -54,6 +56,9 @@ export class SubCanvas {
     }
 
     if (opts.dragMode && opts.dragMode !== 'none') {
+      // hitArea 阻止 PixiJS 事件穿透到后层 SubCanvas
+      this.stage.hitArea = new PIXI.Rectangle(0, 0, opts.bounds.width, opts.bounds.height);
+
       this._drag = new DragController(
         {
           mode: opts.dragMode,
@@ -152,6 +157,9 @@ export class SubCanvas {
     this._bounds = bounds;
     this.stage.position.set(bounds.x, bounds.y);
     this._syncing = false;
+    if (this.stage.hitArea) {
+      this.stage.hitArea = new PIXI.Rectangle(0, 0, bounds.width, bounds.height);
+    }
     this.updateMask();
     this.resizeListeners.forEach((fn) => fn(bounds));
   }
@@ -167,6 +175,9 @@ export class SubCanvas {
   setSize(width: number, height: number): void {
     if (this._destroyed) return;
     this._bounds = { ...this._bounds, width, height };
+    if (this.stage.hitArea) {
+      this.stage.hitArea = new PIXI.Rectangle(0, 0, width, height);
+    }
     this.updateMask();
     this.resizeListeners.forEach((fn) => fn(this._bounds));
   }
@@ -179,6 +190,8 @@ export class SubCanvas {
       const idx = this.parent._subRegions.indexOf(this);
       if (idx >= 0) this.parent._subRegions.splice(idx, 1);
       this.parent._subRegions.push(this);
+    } else {
+      this.onReorder();
     }
   }
 
@@ -376,9 +389,11 @@ export class SubCanvas {
         }
         if (!blocked) {
           this._drag.interceptPointer(type, e);
+          return true;
         }
       } else {
         this._drag.interceptPointer(type, e);
+        return true;
       }
     } else {
       if (this._drag) {
@@ -430,7 +445,10 @@ export class SubCanvas {
     }
 
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
-    if (!hasListeners) return false;
+    if (!hasListeners) {
+      if (type === 'pointerdown' && this._drag) return true;
+      return false;
+    }
 
     const sub: SubPointerEvent = {
       type,
