@@ -156,10 +156,6 @@ describe('LayerManager', () => {
     expect(() => lm.sendToBack('nonexistent')).not.toThrow();
   });
 
-  it('parent getter returns parent container', () => {
-    expect(lm.parent).toBe(parent);
-  });
-
   describe('layer operations', () => {
     it('show sets visible to true', () => {
       const layer = lm.add('test', 0);

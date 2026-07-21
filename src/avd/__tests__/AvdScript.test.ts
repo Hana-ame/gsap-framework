@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import { parseAvdScriptJSON } from '../AvdScript';
+import { parseScript } from '../AvdScript';
 import * as PIXI from 'pixi.js';
 
 function mockResolver(textureMap: Record<string, PIXI.Texture>) {
@@ -9,7 +9,7 @@ function mockResolver(textureMap: Record<string, PIXI.Texture>) {
   };
 }
 
-describe('parseAvdScriptJSON', () => {
+describe('parseScript', () => {
   it('parses basic script with text lines', async () => {
     const json = {
       meta: { width: 800, height: 600 },
@@ -18,7 +18,7 @@ describe('parseAvdScriptJSON', () => {
         { speaker: 'Bob', text: 'Hi' },
       ],
     };
-    const res = await parseAvdScriptJSON(json, mockResolver({}));
+    const res = await parseScript(json, mockResolver({}));
     expect(res.lines.length).toBe(2);
     expect(res.lines[0].speaker).toBe('Alice');
     expect(res.lines[0].text).toBe('Hello');
@@ -31,7 +31,7 @@ describe('parseAvdScriptJSON', () => {
       roster: { Alice: { pos: 'left' as const, textureKey: 'alice' } },
       lines: [{ speaker: 'Alice', text: 'Hello' }],
     };
-    const res = await parseAvdScriptJSON(json, mockResolver({ alice: tex }));
+    const res = await parseScript(json, mockResolver({ alice: tex }));
     expect(res.roster.Alice).toBeDefined();
     expect(res.roster.Alice.pos).toBe('left');
     expect(res.roster.Alice.texture).toBe(tex);
@@ -42,7 +42,7 @@ describe('parseAvdScriptJSON', () => {
     const json = {
       lines: [{ speaker: 'Alice', text: 'Hi', portraitKey: 'alice', portraitPos: 'center' as const }],
     };
-    const res = await parseAvdScriptJSON(json, mockResolver({ alice: tex }));
+    const res = await parseScript(json, mockResolver({ alice: tex }));
     expect(res.lines[0].portrait).toBe(tex);
     expect(res.lines[0].portraitPos).toBe('center');
   });
@@ -58,7 +58,7 @@ describe('parseAvdScriptJSON', () => {
         ],
       }],
     };
-    const res = await parseAvdScriptJSON(json, mockResolver({ icon: tex }));
+    const res = await parseScript(json, mockResolver({ icon: tex }));
     expect(Array.isArray(res.lines[0].text)).toBe(true);
     const segments = res.lines[0].text as Array<{ kind: string }>;
     expect(segments.length).toBe(2);
@@ -68,13 +68,13 @@ describe('parseAvdScriptJSON', () => {
 
   it('defaults rosterMode to speaker-only', async () => {
     const json = { lines: [{ text: 'Hello' }] };
-    const res = await parseAvdScriptJSON(json, mockResolver({}));
+    const res = await parseScript(json, mockResolver({}));
     expect(res.rosterMode).toBe('speaker-only');
   });
 
   it('accepts persistent rosterMode', async () => {
     const json = { meta: { rosterMode: 'persistent' as const }, lines: [{ text: 'Hello' }] };
-    const res = await parseAvdScriptJSON(json, mockResolver({}));
+    const res = await parseScript(json, mockResolver({}));
     expect(res.rosterMode).toBe('persistent');
   });
 
@@ -84,19 +84,52 @@ describe('parseAvdScriptJSON', () => {
       roster: { X: { pos: 'left' as const, textureKey: 'a' } },
       lines: [{ text: 'Test' }],
     };
-    await parseAvdScriptJSON(json, resolver);
+    await parseScript(json, resolver);
     expect(resolver.loadTexture).toHaveBeenCalledWith('a');
   });
 
   it('handles empty lines', async () => {
     const json = { lines: [] };
-    const res = await parseAvdScriptJSON(json, mockResolver({}));
+    const res = await parseScript(json, mockResolver({}));
     expect(res.lines.length).toBe(0);
   });
 
   it('handles missing portraitKey gracefully', async () => {
     const json = { lines: [{ speaker: 'Alice', text: 'Hi' }] };
-    const res = await parseAvdScriptJSON(json, mockResolver({}));
+    const res = await parseScript(json, mockResolver({}));
     expect(res.lines[0].portrait).toBeUndefined();
+  });
+
+  it('preserves segment and end fields through parseScript', async () => {
+    const json = {
+      lines: [
+        { speaker: 'A', text: 'start' },
+        { segment: 'mid', speaker: 'B', text: 'middle', choices: [{ text: 'go', targetSegment: 'end' }] },
+        { segment: 'end', speaker: 'C', text: 'done', end: true },
+      ],
+    };
+    const res = await parseScript(json, mockResolver({}));
+    expect(res.lines[0].segment).toBeUndefined();
+    expect(res.lines[0].end).toBeUndefined();
+    expect(res.lines[1].segment).toBe('mid');
+    expect(res.lines[1].choices?.[0].targetSegment).toBe('end');
+    expect(res.lines[2].segment).toBe('end');
+    expect(res.lines[2].end).toBe(true);
+  });
+
+  it('preserves voiceKey, bgmKey, sfxKey through parseScript', async () => {
+    const json = {
+      lines: [
+        { speaker: 'A', text: 'hello', voiceKey: 'v_hello', bgmKey: 'bgm_cave', sfxKey: 'sfx_drip' },
+        { speaker: 'B', text: 'world' },
+      ],
+    };
+    const res = await parseScript(json, mockResolver({}));
+    expect(res.lines[0].voiceKey).toBe('v_hello');
+    expect(res.lines[0].bgmKey).toBe('bgm_cave');
+    expect(res.lines[0].sfxKey).toBe('sfx_drip');
+    expect(res.lines[1].voiceKey).toBeUndefined();
+    expect(res.lines[1].bgmKey).toBeUndefined();
+    expect(res.lines[1].sfxKey).toBeUndefined();
   });
 });

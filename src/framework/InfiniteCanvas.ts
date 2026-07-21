@@ -80,8 +80,14 @@ export class InfiniteCanvas {
     const shield = new PIXI.Container();
     shield.eventMode = 'static';
     shield.hitArea = new PIXI.Rectangle(0, 0, this._viewport.width, this._viewport.height);
-    shield.on('pointerdown', (e: PIXI.FederatedPointerEvent) => e.stopPropagation());
-    shield.zIndex = -999;
+    shield.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+      let target: PIXI.Container | null = e.target as PIXI.Container | null;
+      while (target) {
+        if (target === this.worldContainer) return;
+        target = target.parent as PIXI.Container | null;
+      }
+      e.stopPropagation();
+    });
     this.parent.stage.addChild(shield);
     this._eventShield = shield;
 

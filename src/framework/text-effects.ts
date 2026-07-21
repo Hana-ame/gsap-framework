@@ -69,8 +69,6 @@ export function runTextEffect(opts: {
   const isSegments = Array.isArray(text);
   let segments: TextSegment[] = isSegments ? text : [{ kind: 'text', text: text as string }];
 
-  const chars = Array.from(isSegments ? (text as TextSegment[]).map(s => s.kind === 'text' ? s.text : '').join('') : (text as string));
-
   let layout: LayoutResult | null = null;
   let singleText: PIXI.Text | null = null;
   const isFadeInChars = type === 'fadeInChars';
@@ -296,13 +294,6 @@ export function runTextEffect(opts: {
       const current: string[] = new Array(fullChars.length).fill('');
       let globalPos = 0;
 
-      const charToItem: { itemIdx: number; localIdx: number }[] = [];
-      for (const st of scrambleText) {
-        for (let ci = 0; ci < Array.from(st.text).length; ci++) {
-          charToItem.push({ itemIdx: scrambleText.indexOf(st), localIdx: ci });
-        }
-      }
-
       for (const st of scrambleText) st.obj.visible = true;
 
       timeline = gsap.timeline({
@@ -335,8 +326,7 @@ export function runTextEffect(opts: {
         }, undefined, i * 0.08 + scrambleCount * 0.03);
       }
 
-      const finalDelay = chars.length * 0.08 + 3 * 0.03;
-      timeline!.call(setCompleted, undefined, finalDelay);
+      const finalDelay = fullChars.length * 0.08 + 4 * 0.03;
 
       if (layout.items.some((it) => it.kind === 'image')) {
         for (const item of layout.items) {

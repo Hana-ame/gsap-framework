@@ -1,6 +1,6 @@
 /** PixiJS-based dialogue box with speaker label and text area. */
 import * as PIXI from 'pixi.js';
-import type { AvdState } from './types';
+import type { AvdState, SpeakerStyle } from './types';
 
 export interface DialogueBoxOptions {
   boxX: number;
@@ -29,6 +29,8 @@ export class DialogueBox {
     this._opts = opts;
 
     this.container = new PIXI.Container();
+    this.container.x = opts.boxX;
+    this.container.y = opts.boxY;
     parent.addChild(this.container);
 
     this._bg = new PIXI.Graphics();
@@ -44,18 +46,20 @@ export class DialogueBox {
     this.container.addChild(this._arrow);
   }
 
-  setSpeaker(name: string | null): void {
+  setSpeaker(name: string | null, style?: SpeakerStyle): void {
     if (this._nameText) {
       this._nameText.destroy();
       this._nameText = null;
     }
     if (name) {
+      const nameColor = style?.nameColor ?? this._opts.nameColor;
+      const nameSize = style?.nameSize ?? this._opts.nameSize;
       this._nameText = new PIXI.Text({
         text: name,
         style: new PIXI.TextStyle({
           fontFamily: this._opts.fontFamily,
-          fontSize: this._opts.nameSize,
-          fill: this._opts.nameColor,
+          fontSize: nameSize,
+          fill: nameColor,
           fontWeight: 'bold',
         }),
       });
@@ -75,14 +79,14 @@ export class DialogueBox {
   }
 
   setOffsetY(y: number): void {
-    this.container.y = y;
+    this.container.y = this._opts.boxY + y;
   }
 
   updateArrow(state: AvdState, phase: number): void {
     this._arrow.clear();
     if (state !== 'between') return;
-    const cx = this._opts.boxX + this._opts.boxWidth - 24;
-    const cy = this._opts.boxY + this._opts.boxHeight - 16;
+    const cx = this._opts.boxWidth - 24;
+    const cy = this._opts.boxHeight - 16;
     const pulse = 0.7 + 0.3 * Math.sin(phase);
     this._arrow
       .moveTo(cx - 8, cy - 4)
@@ -111,13 +115,7 @@ export class DialogueBox {
   private _redrawBg(): void {
     this._bg.clear();
     this._bg
-      .roundRect(
-        this._opts.boxX,
-        this._opts.boxY,
-        this._opts.boxWidth,
-        this._opts.boxHeight,
-        this._opts.boxRadius,
-      )
+      .roundRect(0, 0, this._opts.boxWidth, this._opts.boxHeight, this._opts.boxRadius)
       .fill({ color: this._opts.boxBg, alpha: this._opts.boxBgAlpha });
   }
 }

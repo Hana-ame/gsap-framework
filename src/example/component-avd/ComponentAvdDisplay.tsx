@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import * as PIXI from 'pixi.js';
 import { startPixiApp, type SubCanvas } from '@framework';
 import { makeInfoPanel } from '@components';
-import { Avd, type AvdLine, type AvdState, type AvdOptions, type AvdTextSegment } from '../../components';
+import { AvdController, type AvdLine, type AvdState, type AvdOptions, type AvdTextSegment } from '../../components';
 
 const CONTROL_H = 80;
 const STATUS_H = 28;
@@ -46,7 +46,7 @@ const THEMES: Record<Theme, { label: string; options: Partial<AvdOptions> }> = {
 };
 
 interface DemoRefs {
-  avd: Avd | null;
+  avd: AvdController | null;
   controlRegion: SubCanvas | null;
   statusRegion: SubCanvas | null;
   avdRegion: SubCanvas | null;
@@ -355,7 +355,7 @@ export function ComponentAvdDisplay() {
   const [avdState, setAvdState] = useState<AvdState>('typing');
 
   const refsRef = useRef<DemoRefs | null>(null);
-  const avdRef = useRef<Avd | null>(null);
+  const avdRef = useRef<AvdController | null>(null);
   const themeRef = useRef(theme);
   const speedRef = useRef(speed);
   const rosterModeRef = useRef(rosterMode);
@@ -424,7 +424,9 @@ export function ComponentAvdDisplay() {
       updateThemeButtonVisuals(refs, themeRef.current);
 
       if (refs.avdRegion) {
-        refs.avd = new Avd(refs.avdRegion.stage, W, avdH, refs.avdRegion.ticker, {
+        refs.avd = new AvdController(refs.avdRegion.stage, refs.avdRegion.ticker, {
+          screenW: W,
+          screenH: avdH,
           ...THEMES[themeRef.current].options,
           typewriterSpeed: speedRef.current,
           boxY: avdH - 200 - 40,

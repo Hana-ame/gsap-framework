@@ -766,6 +766,22 @@ text(canvas.stage, 'Hello World', 'typewriter');
 | SubCanvas `clipToBounds` mask | PixiJS v8 的 stencil mask 用 `getGlobalBounds(mask)` 定位，mask Graphics **必须**是 stage 的子对象（`stage.addChild(mask)`），否则无父级变换，`getGlobalBounds` 始终返回 `(0,0)`，导致裁剪区域偏移 `(bounds.x, bounds.y)` |
 | DragController handle/anywhere 冲突 | 重构提取 `DragController` 后，`SubCanvas.addChild` 在 `dragMode: 'anywhere'` 时也会为 `DRAG_HANDLE_LABEL` 子对象调用 `installHandle`。handle 的 `pointerdown` 立即设置共享的 `_isDragging=true`（而旧代码使用局部变量），导致 `handlePointer` 早早吞没后续 move/up 事件，内嵌 SubCanvas（如 InfiniteCanvas）收不到指针事件。修复：`addChild` 仅在 `mode === 'title'` 时安装 handle，且 `_applyAnywhereDrag` 改用 `getBounds()`（local）代替 `globalBounds()` 做位置基准，避免嵌套偏移误差。 |
 | `SubCanvas.handlePointer` children-first | `'anywhere'` 模式下 `pointerdown` 先遍历子节点尝试消费事件，子节点消费后跳过父级 drag 激活但仍触发 `bringToFront`，避免内嵌 InfiniteCanvas 被窗口拖拽吞没。 |
+| DragController title 坐标 | title 拖拽用 `getLocalPosition(parent)` 取鼠标坐标，parent 变换后坐标漂移；改为 `pixiEvent.clientX/clientY` 直接读屏幕坐标，避开所有本地变换 |
+| PixiApp pointer listener 泄漏 | `makePointerHandler` 每次调返回新箭头函数，`removeEventListener` 永不命中；改用 `Map<type, handler>` 缓存引用 |
+| Layer zIndex IEEE 754 溢出 | 频繁 `bringToFront` 使 zIndex 持续增长，超过 `2^24` (≈1.67e7) 后 float 精度不足，`sortChildren` 不再稳定。`_renormIfNeeded()` 在 ≥1e6 时统一归零 |
+| text-effects 死代码 | `charToItem` 数组分配后未使用；`chars`/`fullChars` 拆分后只应在 scramble 分支计算，避免所有 effect 都做无用功 |
+| PixiJS v8 removeEventListener | `removeEventListener` 要求传入**同一函数引用**；不能 inline lambda，不能包装工厂函数。必须保存引用到 Map 或类字段 |
+| DragController handle `removed` 事件 | `_installOnHandle` 后监听 `handle.on('removed', uninstallHandle)`。手柄被子节点 `removeChild` 时自动清理，`SubCanvas.removeChild` 不再需要手动 `this._drag.uninstallHandle(child)`。清理函数优先 `off('removed')` 防止 re‑entry 导致二次 cleanup |
+| PixiMixins 类型扩展 | PixiJS v8 通过 `declare global { namespace PixiMixins { interface ContainerOptions { ... } } }` 扩展 `Container` 构造函数选项。新增 `isDragHandle?: boolean` 并在 `SubCanvas.addChild` 中做 `child.isDragHandle` 检查。运行时通过 `Object.defineProperty(Container.prototype, 'isDragHandle', { get/set })` 映射到 `label` |
+| DirtyPropagator 脏传播 | `mark()` O(1) 设脏标志并向上传播到根；`clean()` 从根递归遍历脏子树，自顶向下调用 `onFlush`。替代每帧全量 O(n) 遍历。LayerManager 已集成：`bringToFront/sendToBack` 改为 `layer.propagator.mark()`，`manager.flush()` 执行实际 `_renormIfNeeded()` |
+| ZOrderManager 溢出保护 | 提取 `renormZIndices(parent)` 到 `ZOrderManager.ts`，`bringToFront`/`sendToBack` 末尾自动调用。此前 SubCanvas 的 zIndex 缺乏溢出防护 |
+| gown.js invalidation 模式 | UI 控件设 `invalidState = true`，下一帧 `updateTransform` 钩子统一 `redraw()`。避免 prop setter 做昂贵计算。适配到 `WindowBorder`：`resize()` 设 `_dirty`，`redraw()` 在 Graphics.clear + rect/fill 重绘前用值比较去重 |
+| gown.js layout 惰性求值 | `LayoutGroup` 组合 `_needUpdate` + `stage.onRender`。`addChild` 设脏，下一帧 `_arrange()` 自动排子元素位置。每帧最多一次，支持 vertical/horizontal、gap、padding、对齐方式。独立于容器，组合优于继承 |
+| gown.js 9-slice → `WindowBorder` | Graphics 版 9-slice，`stroke` 画边框轮廓 + `fill` 填充背景。支持 `cornerRadius`、`borderWidth`、`borderColor`。在 `PixiWindow`/`PixiConfirm` 中用 `onResize` + `relayout()` 联动重绘 bg/bar/title/closeBtn/content，彻底修复窗口 resize 时装饰不更新 bug |
+| pixi-tiledmap packed mesh | Tile 按纹理源+alpha 分组，每 batch 累计 quad pos/uv 后 finalize() 成一个 `Mesh`。同源同 alpha 编辑 O(1) buffer 原地 patch。可用策略：等 terrain 颜色固化后，将每个地形 chunk 的 `PIXI.Graphics` 替换为 packed Mesh，视口移动只需 chunk 可见性切换，无需任何 draw call 创建/销毁 |
+| pixi-tiledmap 三层管线 | Parser（解析 TMJ/TMX）→ Resolver（归一化 GID 为 ResolvedTile）→ Renderer（构造场景图）。IR 边界清晰：无论从文件加载还是 `createMap()` 程序创建，都走同一渲染路径。当前 `InfiniteCanvas` 的 chunk 创建+销毁回调可类比 Resolver→Renderer 的分离模式 |
+| antvis plugin 系统 | 功能分解为 `{ apply(context: PluginContext) => void }`，通过 Tapable hooks（init/beginFrame/endFrame/destroy/resize）组合。`InfiniteCanvas` 已预留 `InfiniteCanvasPlugin` 接口，后续 chunk loading、terrain、entity 可拆为独立插件 |
+| antvis camera 矩阵分离 | 正交 2D Camera 维护 `projectionMatrix` / `viewMatrix` / `viewProjectionMatrix` / `viewProjectionMatrixInv`。Zoom-to-pointer：前后 zoom 各自通过 `viewProjectionMatrixInv` 将鼠标投到世界坐标算 camera offset。hit-testing 同理逆矩阵转换。`InfiniteCanvas` 可借鉴统一矩阵管线和 dirty-flag 控制渲染资源重建 |
 
 ## Known Issues
 

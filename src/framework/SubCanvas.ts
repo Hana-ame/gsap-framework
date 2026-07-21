@@ -27,12 +27,14 @@ export class SubCanvas {
   private _pressStart: { x: number; y: number; clientX: number; clientY: number } | null = null;
   private _pressMoved = false;
   private onDestroy: () => void;
+  private onReorder: () => void;
 
   constructor(opts: SubCanvasOptions) {
     this.rootApp = opts.rootApp;
     this._bounds = opts.bounds;
     this.parent = opts.parent ?? null;
     this.onDestroy = opts.onDestroy ?? (() => {});
+    this.onReorder = opts.onReorder ?? (() => {});
     this._tapThreshold = opts.tapThreshold ?? 4;
 
     this.stage = new PIXI.Container();
@@ -54,6 +56,9 @@ export class SubCanvas {
     }
 
     if (opts.dragMode && opts.dragMode !== 'none') {
+      // hitArea 阻止 PixiJS 事件穿透到后层 SubCanvas
+      this.stage.hitArea = new PIXI.Rectangle(0, 0, opts.bounds.width, opts.bounds.height);
+
       this._drag = new DragController(
         {
           mode: opts.dragMode,
@@ -152,6 +157,9 @@ export class SubCanvas {
     this._bounds = bounds;
     this.stage.position.set(bounds.x, bounds.y);
     this._syncing = false;
+    if (this.stage.hitArea) {
+      this.stage.hitArea = new PIXI.Rectangle(0, 0, bounds.width, bounds.height);
+    }
     this.updateMask();
     this.resizeListeners.forEach((fn) => fn(bounds));
   }
@@ -167,6 +175,9 @@ export class SubCanvas {
   setSize(width: number, height: number): void {
     if (this._destroyed) return;
     this._bounds = { ...this._bounds, width, height };
+    if (this.stage.hitArea) {
+      this.stage.hitArea = new PIXI.Rectangle(0, 0, width, height);
+    }
     this.updateMask();
     this.resizeListeners.forEach((fn) => fn(this._bounds));
   }
@@ -179,6 +190,8 @@ export class SubCanvas {
       const idx = this.parent._subRegions.indexOf(this);
       if (idx >= 0) this.parent._subRegions.splice(idx, 1);
       this.parent._subRegions.push(this);
+    } else {
+      this.onReorder();
     }
   }
 
@@ -343,9 +356,19 @@ export class SubCanvas {
     const gx = e.clientX;
     const gy = e.clientY;
 
-    if (gx < gb.x || gx > gb.x + gb.width) return false;
-    if (gy < gb.y || gy > gb.y + gb.height) return false;
+    const inBounds = gx >= gb.x && gx <= gb.x + gb.width && gy >= gb.y && gy <= gb.y + gb.height;
 
+    if (type === 'pointermove' || type === 'pointerup' || type === 'pointerleave') {
+      if (this._pressStart) {
+        // during an active drag, deliver move/up/leave regardless of bounds
+      } else if (!inBounds) {
+        return false;
+      }
+    } else if (!inBounds) {
+      return false;
+    }
+
+    let blockedBySibling = false;
     if (type === 'pointerdown' && this._drag?.mode === 'anywhere') {
       for (let i = this._subRegions.length - 1; i >= 0; i--) {
         if (this._subRegions[i].handlePointer(type, e)) {
@@ -353,7 +376,27 @@ export class SubCanvas {
           return true;
         }
       }
-      this._drag.interceptPointer(type, e);
+      // 如果同一父级下有更前的 region 包含点击位置，则不拦截（防止穿透）
+      if (this.parent) {
+        const siblings = this.parent.subRegions;
+        for (let i = siblings.length - 1; i >= 0; i--) {
+          if (siblings[i] === this) break;
+          const cgb = siblings[i].globalBounds;
+          if (gx >= cgb.x && gx <= cgb.x + cgb.width && gy >= cgb.y && gy <= cgb.y + cgb.height) {
+            blockedBySibling = true;
+            break;
+          }
+        }
+        if (!blockedBySibling) {
+          this._drag.interceptPointer(type, e);
+          this.bringToFront();
+          return true;
+        }
+      } else {
+        this._drag.interceptPointer(type, e);
+        this.bringToFront();
+        return true;
+      }
     } else {
       if (this._drag) {
         if (this._drag.interceptPointer(type, e)) return true;
@@ -404,8 +447,15 @@ export class SubCanvas {
     }
 
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
-    if (!hasListeners) return false;
+    if (!hasListeners) {
+      if (type === 'pointerdown' && this._drag && !blockedBySibling) {
+        this.bringToFront();
+        return true;
+      }
+      return false;
+    }
 
+    if (type === 'pointerdown' && this._drag && !blockedBySibling) this.bringToFront();
     const sub: SubPointerEvent = {
       type,
       x: localX,

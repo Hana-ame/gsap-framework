@@ -1,7 +1,6 @@
 /** Shared types for the AVD system: lines, rosters, portraits, segments. */
-import type * as PIXI from 'pixi.js';
 
-export type AvdState = 'typing' | 'between' | 'done';
+export type AvdState = 'typing' | 'between' | 'choice' | 'done';
 
 export type AvdPortraitPos = 'left' | 'center' | 'right';
 
@@ -11,21 +10,79 @@ export type AvdText = string | AvdTextSegment[];
 
 export type AvdTextSegment =
   | { kind: 'text'; text: string }
-  | { kind: 'image'; texture: PIXI.Texture; width?: number; height?: number };
+  | { kind: 'image'; texture: any; width?: number; height?: number };
+
+export interface AvdChoice {
+  text: string;
+  targetLine?: number;
+  targetSegment?: string;
+  conditionFlag?: string;
+  conditionNotFlag?: string;
+}
 
 export interface AvdLine {
   speaker?: string;
   text: AvdText;
-  portrait?: PIXI.Texture | null;
+  portrait?: any;
   portraitPos?: AvdPortraitPos | null;
+  expression?: string;
+  bg?: any;
+  bgKey?: string | null;
+  bgmKey?: string;
+  sfxKey?: string;
+  voiceKey?: string;
+  effect?: 'shake' | 'flash';
+  choices?: AvdChoice[];
+  segment?: string;
+  end?: boolean;
 }
 
 export interface AvdRosterEntry {
   pos: AvdPortraitPos;
-  texture: PIXI.Texture | null;
+  texture: any;
+  expressions?: Record<string, any>;
 }
 
 export type AvdRoster = Record<string, AvdRosterEntry>;
+
+export interface BacklogEntry {
+  speaker: string | null;
+  text: string;
+}
+
+export interface SpeakerStyle {
+  nameColor?: number;
+  nameSize?: number;
+  textColor?: number;
+  textSize?: number;
+}
+
+export interface AvdSettingsData {
+  bgmVolume: number;
+  sfxVolume: number;
+  textSpeed: number;
+  autoModeDelay: number;
+}
+
+export const AVD_DEFAULT_SETTINGS: AvdSettingsData = {
+  bgmVolume: 0.5,
+  sfxVolume: 0.7,
+  textSpeed: 35,
+  autoModeDelay: 2000,
+};
+
+export interface AvdSaveData {
+  version: number;
+  timestamp: number;
+  lineIndex: number;
+  flags: string[];
+  backlog: BacklogEntry[];
+  autoMode: boolean;
+  skipMode: boolean;
+  label?: string;
+  bgKey?: string | null;
+  bgmKey?: string | null;
+}
 
 export interface AvdOptions {
   screenW: number;
@@ -55,6 +112,10 @@ export interface AvdOptions {
   onLineExit?: (line: AvdLine, index: number) => void;
   onComplete?: () => void;
   onStateChange?: (state: AvdState) => void;
+  onChoiceEnter?: (choices: AvdChoice[]) => void;
+  onChoiceSelect?: (choice: AvdChoice, index: number) => void;
+  autoModeDelay?: number;
+  choiceTimeoutMs?: number;
 }
 
 export interface ResolvedAvdOptions {
@@ -85,6 +146,10 @@ export interface ResolvedAvdOptions {
   onLineExit?: (line: AvdLine, index: number) => void;
   onComplete?: () => void;
   onStateChange?: (state: AvdState) => void;
+  onChoiceEnter?: (choices: AvdChoice[]) => void;
+  onChoiceSelect?: (choice: AvdChoice, index: number) => void;
+  autoModeDelay: number;
+  choiceTimeoutMs: number;
 }
 
 export type AvdLayoutMode = 'desktop' | 'phone-portrait' | 'phone-landscape';
@@ -164,5 +229,9 @@ export function resolveAvdOptions(opts: AvdOptions): ResolvedAvdOptions {
     onLineExit: opts.onLineExit,
     onComplete: opts.onComplete,
     onStateChange: opts.onStateChange,
+    onChoiceEnter: opts.onChoiceEnter,
+    onChoiceSelect: opts.onChoiceSelect,
+    autoModeDelay: opts.autoModeDelay ?? 2000,
+    choiceTimeoutMs: opts.choiceTimeoutMs ?? 0,
   };
 }

@@ -1,6 +1,7 @@
 /** Modal confirmation dialog with customisable buttons, rendered in PixiJS. */
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '@framework/SubCanvas';
+import { WindowBorder } from '@framework/utils/WindowBorder';
 import { createLoadingImage, type PixiImageHandle } from './PixiImage';
 
 const TITLE_BAR_H = 22;
@@ -40,6 +41,9 @@ export interface PixiConfirmOptions {
   cancelText?: string;
   buttons?: PixiConfirmButton[];
   onResult?: (result: PixiConfirmResult, confirm: PixiConfirm) => void;
+  borderWidth?: number;
+  borderColor?: number;
+  cornerRadius?: number;
 }
 
 export interface PixiConfirm extends SubCanvas {
@@ -57,6 +61,8 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
   const closable = opts.closable !== false;
   const okText = opts.okText ?? 'OK';
   const cancelText = opts.cancelText ?? 'Cancel';
+  const bw = opts.borderWidth ?? 1;
+  const tbh = TITLE_BAR_H;
 
   const buttons: PixiConfirmButton[] =
     opts.buttons ??
@@ -73,14 +79,18 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     },
   ) as PixiConfirm;
 
-  const bg = new PIXI.Graphics()
-    .rect(0, 0, opts.width, opts.height)
-    .fill({ color: 0x101018, alpha: 0.97 });
-  bg.eventMode = 'none';
-  win.stage.addChildAt(bg, 0);
+  const border = new WindowBorder({
+    width: opts.width,
+    height: opts.height,
+    borderWidth: bw,
+    borderColor: opts.borderColor,
+    cornerRadius: opts.cornerRadius,
+    fillAlpha: 0.97,
+  });
+  win.stage.addChildAt(border.bg, 0);
 
   const bar = new PIXI.Graphics()
-    .rect(0, 0, opts.width, TITLE_BAR_H)
+    .rect(bw, bw, opts.width - bw * 2, tbh)
     .fill({ color: 0x222a3a, alpha: 1 });
   bar.eventMode = 'static';
   bar.label = DRAG_HANDLE_LABEL;
@@ -91,14 +101,14 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     text: opts.title,
     style: { fontSize: 11, fill: 0xffffff, fontFamily: 'monospace' },
   });
-  titleText.x = 8;
-  titleText.y = (TITLE_BAR_H - titleText.height) / 2;
+  titleText.x = 8 + bw;
+  titleText.y = bw + (tbh - titleText.height) / 2;
   titleText.eventMode = 'none';
   win.stage.addChild(titleText);
 
   if (closable) {
-    const cx = opts.width - 12;
-    const cy = TITLE_BAR_H / 2;
+    const cx = opts.width - 12 - bw;
+    const cy = bw + tbh / 2;
     const closeBtn = new PIXI.Container();
     closeBtn.x = cx;
     closeBtn.y = cy;
@@ -114,10 +124,8 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     closeCircle.eventMode = 'none';
     closeBtn.addChild(closeCircle);
     const xMark = new PIXI.Graphics()
-      .moveTo(-2, -2)
-      .lineTo(2, 2)
-      .moveTo(2, -2)
-      .lineTo(-2, 2)
+      .moveTo(-2, -2).lineTo(2, 2)
+      .moveTo(2, -2).lineTo(-2, 2)
       .stroke({ width: 1.2, color: 0xffffff });
     xMark.eventMode = 'none';
     closeBtn.addChild(xMark);
@@ -144,11 +152,11 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     style: messageStyle,
   });
   messageText.x = PADDING;
-  messageText.y = TITLE_BAR_H + PADDING;
+  messageText.y = tbh + PADDING;
   messageText.eventMode = 'none';
   win.stage.addChild(messageText);
 
-  const bodyTop = TITLE_BAR_H + PADDING;
+  const bodyTop = tbh + PADDING;
   const bodyBottom = opts.height - PADDING - BTN_H;
   const bodyW = opts.width - PADDING * 2;
   const bodyH = bodyBottom - bodyTop;
@@ -188,7 +196,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     }
   };
 
-  let cursorX = opts.width - PADDING;
+  let cursorX = opts.width - PADDING - bw;
   for (let i = buttons.length - 1; i >= 0; i--) {
     const b = buttons[i];
     const isPrimary = b.primary ?? false;
@@ -196,19 +204,20 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
       text: b.label,
       style: { fontSize: 12, fontFamily: 'sans-serif' },
     }).width;
-    const w = Math.max(BTN_MIN_W, labelWidth + 24);
-    const h = BTN_H;
-    cursorX -= w;
+    const btnW = Math.max(BTN_MIN_W, labelWidth + 24);
+    const btnH = BTN_H;
+    cursorX -= btnW;
     if (i < buttons.length - 1) cursorX -= BTN_GAP;
 
+    const idx = i;
     const btnContainer = new PIXI.Container();
     btnContainer.x = cursorX;
-    btnContainer.y = opts.height - PADDING - h;
+    btnContainer.y = opts.height - PADDING - btnH - bw;
     btnContainer.eventMode = 'static';
     btnContainer.cursor = 'pointer';
-    btnContainer.hitArea = new PIXI.Rectangle(0, 0, w, h);
+    btnContainer.hitArea = new PIXI.Rectangle(0, 0, btnW, btnH);
     const btnBg = new PIXI.Graphics()
-      .roundRect(0, 0, w, h, 3)
+      .roundRect(0, 0, btnW, btnH, 3)
       .fill({ color: isPrimary ? 0x3a4a6a : 0x2a2a3a })
       .stroke({ width: 1, color: 0x4a4a66 });
     btnBg.eventMode = 'none';
@@ -216,25 +225,47 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
       text: b.label,
       style: { fontSize: 12, fill: 0xffffff, fontFamily: 'sans-serif' },
     });
-    btnLabel.x = (w - btnLabel.width) / 2;
-    btnLabel.y = (h - btnLabel.height) / 2;
+    btnLabel.x = (btnW - btnLabel.width) / 2;
+    btnLabel.y = (btnH - btnLabel.height) / 2;
     btnLabel.eventMode = 'none';
     btnContainer.addChild(btnBg);
     btnContainer.addChild(btnLabel);
     btnContainer.on('pointerdown', (e) => {
       e.stopPropagation();
-      fireButton(i);
+      fireButton(idx);
     });
     win.stage.addChild(btnContainer);
   }
 
   const content = win.createRegion({
     x: 0,
-    y: TITLE_BAR_H,
+    y: tbh,
     width: opts.width,
-    height: Math.max(0, opts.height - TITLE_BAR_H),
+    height: Math.max(0, opts.height - tbh),
   });
   win.content = content;
+
+  const relayout = () => {
+    if (win.destroyed) return;
+    const w = win.bounds.width;
+    const h = win.bounds.height;
+    border.resize(w, h);
+
+    bar.clear();
+    bar.rect(bw, bw, w - bw * 2, tbh).fill({ color: 0x222a3a, alpha: 1 });
+
+    titleText.x = 8 + bw;
+    titleText.y = bw + (tbh - titleText.height) / 2;
+
+    messageStyle.wordWrapWidth = w - PADDING * 2;
+    messageText.style = messageStyle;
+
+    const cr = win.content as SubCanvas;
+    cr.setBounds({ x: 0, y: tbh, width: w, height: Math.max(0, h - tbh) });
+  };
+
+  relayout();
+  win.onResize(relayout);
 
   win.setTitle = (t: string) => {
     if (win.destroyed) return;

@@ -22,6 +22,7 @@ import { ComponentCutsceneMinimalDisplay } from './component-cutscene-minimal/Co
 import { Component2048Display } from './component-2048/Component2048Display';
 import { ComponentConwayDisplay } from './component-conway/ComponentConwayDisplay';
 import { ComponentAvdDisplay } from './component-avd/ComponentAvdDisplay';
+import { ComponentAvdChoicesDisplay } from './component-avd-choices/ComponentAvdChoicesDisplay';
 import { ComponentLifeMapDisplay } from './component-life-map/ComponentLifeMapDisplay';
 import { ComponentColonyDisplay } from './component-colony/ComponentColonyDisplay';
 import { ComponentGsapDisplay } from './component-gsap/ComponentGsapDisplay';
@@ -60,6 +61,11 @@ import { WmMultiDisplay } from './component-wm-multi/WmMultiDisplay';
 import { WmCanvasDisplay } from './component-wm-canvas/WmCanvasDisplay';
 import { ComponentEcosystemDisplay } from './component-ecosystem/ComponentEcosystemDisplay';
 import { ComponentEcosystemPyDisplay } from './component-ecosystem-py/ComponentEcosystemPyDisplay';
+import { ComponentFrameworkTestDisplay } from './component-framework-test/ComponentFrameworkTestDisplay';
+import { ComponentWindowRefDisplay } from './component-window-ref/ComponentWindowRefDisplay';
+import { ComponentRtsDisplay } from './component-rts/ComponentRtsDisplay';
+import { ComponentAvdDomMinimalDisplay } from './component-avd-dom-minimal/ComponentAvdDomMinimalDisplay';
+import { ComponentAvdVnDisplay } from './component-avd-vn/ComponentAvdVnDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -90,6 +96,7 @@ export const EXAMPLES = [
   'component-life-map',
   'component-audio-viz',
   'component-avd',
+  'component-avd-choices',
   'component-breakout',
   'component-clock',
   'component-colony',
@@ -121,6 +128,11 @@ export const EXAMPLES = [
   'component-wm-canvas',
   'component-ecosystem',
   'component-ecosystem-py',
+  'component-framework-test',
+  'component-window-ref',
+  'component-rts',
+  'component-avd-dom-minimal',
+  'component-avd-vn',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -157,6 +169,7 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-life-map': ComponentLifeMapDisplay,
   'component-audio-viz': ComponentAudioVizDisplay,
   'component-avd': ComponentAvdDisplay,
+  'component-avd-choices': ComponentAvdChoicesDisplay,
   'component-breakout': ComponentBreakoutDisplay,
   'component-clock': ComponentClockDisplay,
   'component-colony': ComponentColonyDisplay,
@@ -188,4 +201,9 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-wm-canvas': WmCanvasDisplay,
   'component-ecosystem': ComponentEcosystemDisplay,
   'component-ecosystem-py': ComponentEcosystemPyDisplay,
+  'component-framework-test': ComponentFrameworkTestDisplay,
+  'component-window-ref': ComponentWindowRefDisplay,
+  'component-rts': ComponentRtsDisplay,
+  'component-avd-dom-minimal': ComponentAvdDomMinimalDisplay,
+  'component-avd-vn': ComponentAvdVnDisplay,
 };

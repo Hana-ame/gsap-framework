@@ -24,11 +24,20 @@ function makeBtn(label: string, w: number, h: number, onClick: () => void): PIXI
   return c;
 }
 
+function wrapClosestTo(v: number, ref: number, b: number): number {
+  const ws = b * 2;
+  while (v - ref > b) v -= ws;
+  while (v - ref < -b) v += ws;
+  return v;
+}
+
 export function ComponentEcosystemPyDisplay() {
   useEffect(() => {
     const stop = startPixiApp((proxy: SubCanvasProxy) => {
       const root = proxy.createRegion({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight });
       const CHUNK = 400;
+      const worldBounds = 3000;
+      const worldSize = worldBounds * 2;
 
       const ic = new InfiniteCanvas({
         parent: root, viewport: root.bounds, chunkSize: CHUNK,
@@ -55,17 +64,39 @@ export function ComponentEcosystemPyDisplay() {
 
       let ws: WebSocket | null = null;
       let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-      const sprites = new Map<number, PIXI.Container>();
-      let worldB = 3000;
+      const sprites = new Map<number, { c: PIXI.Container; wx: number; wy: number }>();
+      let terrainCell = 200;
+      let terrainGrid: number[][] = [];
+      let gridN = 0;
       let lineageData: { i: number; p: number | null; t: string; g: number; s: number; v: number }[] = [];
       let evoWin: GameWindow | null = null;
 
-      function drawTerrain(data: { x: number; y: number; t: number }[], cell: number) {
+      // ── terrain drawing (viewport-based, wraps at world boundary) ──
+
+      let lastTerrainRange = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+
+      function updateTerrain() {
+        if (gridN === 0) return;
+        const tl = ic.screenToWorld(0, 0);
+        const br = ic.screenToWorld(root.bounds.width, root.bounds.height);
+        const cell = terrainCell;
+        const minX = Math.floor(tl.x / cell) - 1;
+        const maxX = Math.ceil(br.x / cell) + 1;
+        const minY = Math.floor(tl.y / cell) - 1;
+        const maxY = Math.ceil(br.y / cell) + 1;
+        const r = lastTerrainRange;
+        if (r.minX === minX && r.maxX === maxX && r.minY === minY && r.maxY === maxY) return;
+        lastTerrainRange = { minX, maxX, minY, maxY };
         terrainLayer.clear();
-        for (const c of data) {
-          const color = TERRAIN_COLORS[c.t] ?? 0x3a5a3a;
-          terrainLayer.rect(c.x - cell / 2, c.y - cell / 2, cell, cell)
-            .fill({ color, alpha: 0.3 });
+        const n = gridN;
+        for (let gx = minX; gx <= maxX; gx++) {
+          for (let gy = minY; gy <= maxY; gy++) {
+            const nx = ((gx % n) + n) % n;
+            const ny = ((gy % n) + n) % n;
+            const t = terrainGrid[ny][nx];
+            const color = TERRAIN_COLORS[t] ?? 0x3a5a3a;
+            terrainLayer.rect(gx * cell, gy * cell, cell, cell).fill({ color, alpha: 0.3 });
+          }
         }
       }
 
@@ -84,7 +115,6 @@ export function ComponentEcosystemPyDisplay() {
         const genH = (h - pad * 2) / Math.max(maxGen, 1);
 
         const speedR = entries.map(e => e.s); const minS = Math.min(...speedR), maxS = Math.max(...speedR);
-        const visionR = entries.map(e => e.v); const minV = Math.min(...visionR), maxV = Math.max(...visionR);
         const byParent = new Map<number | null, typeof entries>();
         for (const e of entries) {
           const list = byParent.get(e.p) ?? []; list.push(e); byParent.set(e.p, list);
@@ -121,38 +151,56 @@ export function ComponentEcosystemPyDisplay() {
         }
       }
 
+      // ── websocket ──
+
       function connect() {
         if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
         textStatus.text = 'Connecting...';
         ws = new WebSocket(WS_URL);
         ws.onopen = () => {
           textStatus.text = 'Connected';
+          lastTerrainRange = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
           ws!.send(JSON.stringify({ type: 'start' }));
         };
         ws.onmessage = (ev) => {
           try {
             const data = JSON.parse(ev.data);
 
-            // terrain message (sent once on connect)
+            // terrain message
             if (data.type === 'terrain' || data.terrain) {
-              drawTerrain(data.terrain, data.terrainCell ?? 200);
+              const cell = data.terrainCell ?? 200;
+              terrainCell = cell;
+              const flat: { x: number; y: number; t: number }[] = data.terrain;
+              const b = worldBounds;
+              const n = Math.ceil(worldSize / cell) + 2;
+              gridN = n;
+              terrainGrid = Array.from({ length: n }, () => Array(n).fill(0));
+              for (const t of flat) {
+                const cx = Math.round((t.x + b) / cell);
+                const cy = Math.round((t.y + b) / cell);
+                if (cx >= 0 && cx < n && cy >= 0 && cy < n) {
+                  terrainGrid[cy][cx] = t.t;
+                }
+              }
+              updateTerrain();
               return;
             }
-            // full lineage history (sent once on connect)
+
+            // full lineage history (once on connect)
             if (data.ty === 'l' && data.b) {
               lineageData = data.b;
               if (evoWin && !evoWin.destroyed) drawEvoTree();
               return;
             }
-            // state message (compact format)
+
+            // state message
             if (data.e === undefined) return;
 
-            worldB = 3000;
             if (data.c) {
               textCount.text = `🌿 ${data.c.g ?? 0}  🐇 ${data.c.h ?? 0}  🦊 ${data.c.c ?? 0}`;
             }
 
-            // handle new births for evolution tree
+            // new births
             if (data.b && data.b.length > 0) {
               for (const b of data.b) {
                 lineageData.push(b);
@@ -163,17 +211,21 @@ export function ComponentEcosystemPyDisplay() {
               if (evoWin && !evoWin.destroyed) drawEvoTree();
             }
 
+            // upsert living entities
             const currentIds = new Set<number>();
             for (const ed of data.e) {
               currentIds.add(ed.i);
-              let g = sprites.get(ed.i);
-              if (!g) {
-                g = new PIXI.Container();
-                g.addChild(new PIXI.Graphics());
-                entityLayer.addChild(g);
-                sprites.set(ed.i, g);
+              let entry = sprites.get(ed.i);
+              if (!entry) {
+                const c = new PIXI.Container();
+                c.addChild(new PIXI.Graphics());
+                entityLayer.addChild(c);
+                entry = { c, wx: ed.x, wy: ed.y };
+                sprites.set(ed.i, entry);
               }
-              const body = g.children[0] as PIXI.Graphics;
+              entry.wx = ed.x;
+              entry.wy = ed.y;
+              const body = entry.c.children[0] as PIXI.Graphics;
               const size = ed.t === 'grass' ? 4 : 7;
               const col = ENTITY_COLORS[ed.t] ?? 0xffffff;
               body.clear();
@@ -183,20 +235,23 @@ export function ComponentEcosystemPyDisplay() {
                 body.circle(0, 0, size).fill({ color: col, alpha: 0.9 });
                 body.circle(0, 0, size * 0.45).fill({ color: 0xffffff, alpha: 0.4 });
               }
-              g.x = ed.x; g.y = ed.y;
             }
-            // remove dead entities
+
+            // remove dead (explicit list)
             if (data.d) {
               for (const id of data.d) {
-                const g = sprites.get(id);
-                if (g) {
-                  entityLayer.removeChild(g); g.destroy({ children: true }); sprites.delete(id);
+                const entry = sprites.get(id);
+                if (entry) {
+                  entityLayer.removeChild(entry.c); entry.c.destroy({ children: true }); sprites.delete(id);
                 }
               }
             }
-            for (const [id, g] of sprites) {
-              if (!currentIds.has(id)) {
-                entityLayer.removeChild(g); g.destroy({ children: true }); sprites.delete(id);
+            // GC sweep: only on full state (f not set, or f:true)
+            if (data.f !== false) {
+              for (const [id, entry] of sprites) {
+                if (!currentIds.has(id)) {
+                  entityLayer.removeChild(entry.c); entry.c.destroy({ children: true }); sprites.delete(id);
+                }
               }
             }
           } catch (e) { console.error('[ws]', e); }
@@ -215,6 +270,8 @@ export function ComponentEcosystemPyDisplay() {
       }
 
       connect();
+
+      // ── buttons ──
 
       const mkZoomBtn = (label: string, x: number, onClick: () => void) => {
         const btn = makeBtn(label, 54, 24, onClick);
@@ -246,17 +303,17 @@ export function ComponentEcosystemPyDisplay() {
        makeBtn('Reset', 54, 24, () => send({ type: 'reset' }))]
         .forEach((b, i) => { b.x = 10 + i * 58; b.y = btnY; root.stage.addChild(b); });
 
+      // ── tick loop: wrap entities + redraw terrain ──
+
       root.ticker.add(() => {
+        updateTerrain();
+
         const vpCX = (root.bounds.width / 2 - ic.worldContainer.x) / ic.zoom;
         const vpCY = (root.bounds.height / 2 - ic.worldContainer.y) / ic.zoom;
-        const b = worldB;
-        for (const [, g] of sprites) {
-          let x = g.x, y = g.y;
-          while (x - vpCX > b) x -= b * 2;
-          while (x - vpCX < -b) x += b * 2;
-          while (y - vpCY > b) y -= b * 2;
-          while (y - vpCY < -b) y += b * 2;
-          g.x = x; g.y = y;
+
+        for (const [, entry] of sprites) {
+          entry.c.x = wrapClosestTo(entry.wx, vpCX, worldBounds);
+          entry.c.y = wrapClosestTo(entry.wy, vpCY, worldBounds);
         }
       });
 
@@ -264,7 +321,7 @@ export function ComponentEcosystemPyDisplay() {
         if (reconnectTimer) clearTimeout(reconnectTimer);
         if (ws) ws.close();
         if (evoWin && !evoWin.destroyed) evoWin.destroy();
-        for (const [, g] of sprites) g.destroy({ children: true });
+        for (const [, entry] of sprites) entry.c.destroy({ children: true });
         sprites.clear();
       };
     });

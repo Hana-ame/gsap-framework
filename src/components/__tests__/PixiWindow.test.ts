@@ -81,6 +81,8 @@ function makeSub(stage?: Record<string, unknown>) {
     offPointer: vi.fn(),
     setPosition: vi.fn(),
     setSize: vi.fn(),
+    setBounds: vi.fn(),
+    onResize: vi.fn(),
     get destroyed() { return sd; },
   };
 }

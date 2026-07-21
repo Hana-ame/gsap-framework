@@ -37,12 +37,18 @@ export class RosterManager {
     speaker: string | null,
     linePortrait: PIXI.Texture | null,
     linePortraitPos: AvdPortraitPos | null,
+    expression?: string | null,
   ): { pos: AvdPortraitPos | null; texture: PIXI.Texture | null } {
     if (linePortrait && linePortraitPos) {
       return { pos: linePortraitPos, texture: linePortrait };
     }
     if (speaker && this._roster[speaker]) {
-      return { pos: this._roster[speaker].pos, texture: this._roster[speaker].texture };
+      const entry = this._roster[speaker];
+      let tex = entry.texture;
+      if (expression && entry.expressions?.[expression]) {
+        tex = entry.expressions[expression];
+      }
+      return { pos: entry.pos, texture: tex };
     }
     if (linePortrait) {
       return { pos: linePortraitPos ?? null, texture: linePortrait };

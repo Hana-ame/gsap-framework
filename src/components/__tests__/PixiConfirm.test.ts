@@ -84,6 +84,8 @@ function makeSub(stage?: Record<string, unknown>) {
     offPointer: vi.fn(),
     setPosition: vi.fn(),
     setSize: vi.fn(),
+    setBounds: vi.fn(),
+    onResize: vi.fn(),
     setMessage: vi.fn(),
     setImage: vi.fn(),
     content: null as Record<string, unknown> | null,

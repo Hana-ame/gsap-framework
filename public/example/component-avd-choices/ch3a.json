@@ -1,0 +1,17 @@
+{
+  "lines": [
+    { "segment": "detour", "speaker": "Narrator", "text": "你退后半步，注意到门框上刻着细小的符文。" },
+    { "speaker": "Narrator", "text": "符文闪烁着淡蓝色的光，似乎是一种古老的机关。" },
+    {
+      "speaker": "Narrator",
+      "text": "你伸手触碰符文……",
+      "choices": [
+        { "text": "用指尖轻触符文", "targetSegment": "ending-b" },
+        { "text": "用剑柄敲击符文", "targetSegment": "ending-c" }
+      ]
+    },
+    { "segment": "ending-b", "speaker": "Narrator", "text": "符文发出耀眼的光芒，你感到一阵眩晕。" },
+    { "speaker": "Narrator", "text": "你获得了古代魔法传承！" },
+    { "speaker": "Narrator", "text": "现在你能理解所有古老的咒语了。——  结局 B：符文传承", "end": true }
+  ]
+}

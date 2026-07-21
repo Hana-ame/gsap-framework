@@ -1,6 +1,7 @@
 /** Draggable, resizable window with title bar and close button, rendered in PixiJS. */
 import * as PIXI from 'pixi.js';
 import { SubCanvas, type SubDragMode } from '@framework/SubCanvas';
+import { WindowBorder } from '@framework/utils/WindowBorder';
 
 const TITLE_BAR_H = 22;
 const CLOSE_BTN_R = 5;
@@ -19,6 +20,9 @@ export interface GameWindowOptions {
   dragMode?: PixiDragMode;
   closable?: boolean;
   onClose?: () => void;
+  borderWidth?: number;
+  borderColor?: number;
+  cornerRadius?: number;
 }
 
 export interface GameWindow extends SubCanvas {
@@ -32,6 +36,8 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   const draggable = opts.draggable !== false;
   const dragMode: PixiDragMode = draggable ? (opts.dragMode ?? 'anywhere') : 'none';
   const closable = opts.closable !== false;
+  const bw = opts.borderWidth ?? 1;
+  const tbh = TITLE_BAR_H;
 
   const win = opts.parent.createRegion(
     { x, y, width: opts.width, height: opts.height },
@@ -41,14 +47,17 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     },
   ) as GameWindow;
 
-  const bg = new PIXI.Graphics()
-    .rect(0, 0, opts.width, opts.height)
-    .fill({ color: 0x101018, alpha: 0.95 });
-  bg.eventMode = 'none';
-  win.stage.addChild(bg);
+  const border = new WindowBorder({
+    width: opts.width,
+    height: opts.height,
+    borderWidth: bw,
+    borderColor: opts.borderColor,
+    cornerRadius: opts.cornerRadius,
+  });
+  win.stage.addChild(border.bg);
 
   const bar = new PIXI.Graphics()
-    .rect(0, 0, opts.width, TITLE_BAR_H)
+    .rect(bw, bw, opts.width - bw * 2, tbh)
     .fill({ color: 0x222a3a, alpha: 1 });
   bar.eventMode = 'static';
   bar.label = DRAG_HANDLE_LABEL;
@@ -59,17 +68,12 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     text: opts.title,
     style: { fontSize: 11, fill: 0xffffff, fontFamily: 'monospace' },
   });
-  title.x = 8;
-  title.y = (TITLE_BAR_H - title.height) / 2;
   title.eventMode = 'none';
   win.stage.addChild(title);
 
+  let closeBtn: PIXI.Container | null = null;
   if (closable) {
-    const cx = opts.width - 12;
-    const cy = TITLE_BAR_H / 2;
-    const closeBtn = new PIXI.Container();
-    closeBtn.x = cx;
-    closeBtn.y = cy;
+    closeBtn = new PIXI.Container();
     closeBtn.eventMode = 'static';
     closeBtn.cursor = 'pointer';
     closeBtn.hitArea = new PIXI.Rectangle(-14, -14, 28, 28);
@@ -77,10 +81,8 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
     circle.eventMode = 'none';
     closeBtn.addChild(circle);
     const xMark = new PIXI.Graphics()
-      .moveTo(-2, -2)
-      .lineTo(2, 2)
-      .moveTo(2, -2)
-      .lineTo(-2, 2)
+      .moveTo(-2, -2).lineTo(2, 2)
+      .moveTo(2, -2).lineTo(-2, 2)
       .stroke({ width: 1.2, color: 0xffffff });
     xMark.eventMode = 'none';
     closeBtn.addChild(xMark);
@@ -95,13 +97,37 @@ export function createWindow(opts: GameWindowOptions): GameWindow {
   const content = win.createRegion(
     {
       x: 0,
-      y: TITLE_BAR_H,
+      y: tbh,
       width: opts.width,
-      height: Math.max(0, opts.height - TITLE_BAR_H),
+      height: Math.max(0, opts.height - tbh),
     },
     { clipToBounds: true },
   );
   win.content = content;
+
+  const relayout = () => {
+    if (win.destroyed) return;
+    const w = win.bounds.width;
+    const h = win.bounds.height;
+    border.resize(w, h);
+
+    bar.clear();
+    bar.rect(bw, bw, w - bw * 2, tbh).fill({ color: 0x222a3a, alpha: 1 });
+
+    title.x = 8 + bw;
+    title.y = bw + (tbh - title.height) / 2;
+
+    if (closeBtn) {
+      closeBtn.x = w - 12 - bw;
+      closeBtn.y = bw + tbh / 2;
+    }
+
+    const cr = win.content as SubCanvas;
+    cr.setBounds({ x: 0, y: tbh, width: w, height: Math.max(0, h - tbh) });
+  };
+
+  relayout();
+  win.onResize(relayout);
 
   win.onPress(() => { if (!win.destroyed) win.bringToFront(); });
 
