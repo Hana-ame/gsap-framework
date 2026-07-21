@@ -368,6 +368,7 @@ export class SubCanvas {
       return false;
     }
 
+    let blockedBySibling = false;
     if (type === 'pointerdown' && this._drag?.mode === 'anywhere') {
       for (let i = this._subRegions.length - 1; i >= 0; i--) {
         if (this._subRegions[i].handlePointer(type, e)) {
@@ -378,21 +379,22 @@ export class SubCanvas {
       // 如果同一父级下有更前的 region 包含点击位置，则不拦截（防止穿透）
       if (this.parent) {
         const siblings = this.parent.subRegions;
-        let blocked = false;
         for (let i = siblings.length - 1; i >= 0; i--) {
           if (siblings[i] === this) break;
           const cgb = siblings[i].globalBounds;
           if (gx >= cgb.x && gx <= cgb.x + cgb.width && gy >= cgb.y && gy <= cgb.y + cgb.height) {
-            blocked = true;
+            blockedBySibling = true;
             break;
           }
         }
-        if (!blocked) {
+        if (!blockedBySibling) {
           this._drag.interceptPointer(type, e);
+          this.bringToFront();
           return true;
         }
       } else {
         this._drag.interceptPointer(type, e);
+        this.bringToFront();
         return true;
       }
     } else {
@@ -446,10 +448,14 @@ export class SubCanvas {
 
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
     if (!hasListeners) {
-      if (type === 'pointerdown' && this._drag) return true;
+      if (type === 'pointerdown' && this._drag && !blockedBySibling) {
+        this.bringToFront();
+        return true;
+      }
       return false;
     }
 
+    if (type === 'pointerdown' && this._drag && !blockedBySibling) this.bringToFront();
     const sub: SubPointerEvent = {
       type,
       x: localX,

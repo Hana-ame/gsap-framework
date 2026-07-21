@@ -104,7 +104,7 @@ export class VnScriptPlayer {
 
   private _processOps(customOps?: VnOp[], startCursor?: number): void {
     const ops = customOps ?? this._ops;
-    let i = startCursor ?? 0;
+    let i = startCursor ?? (customOps ? 0 : this._cursor);
     const max = customOps ? ops.length : this._ops.length;
 
     const next = (): VnOp | null => {
