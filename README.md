@@ -791,6 +791,16 @@ text(canvas.stage, 'Hello World', 'typewriter');
 |-------|---------|
 | `backend/WindowManager.ts` imports from `components/` and `example/` | Backend layer (`src/backend/`) depends on `createWindow` from `components/` and `mountDisplays` from `example/`. Production code should not depend on demo code. |
 
+## Version bump
+
+每次升版本号时，需要改以下地方：
+
+| # | 位置 | 改什么 |
+|---|------|--------|
+| 1 | `package.json` | `"version": "x.y.z"` |
+| 2 | `git checkout main && git merge --no-ff sim -m "merge sim into main"` | 把 `sim` 合入 `main` |
+| 3 | `git tag vx.y.z` | 在 `main` 上打 tag |
+
 ## Deploy
 
 Push to `sim` → Cloudflare Pages → `https://react.moonchan.xyz/`

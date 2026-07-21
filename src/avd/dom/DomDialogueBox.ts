@@ -23,6 +23,8 @@ export class DomDialogueBox {
     this.container = new DomContainer();
     this.container.x = opts.boxX;
     this.container.y = opts.boxY;
+    this.container.width = opts.boxWidth;
+    this.container.height = opts.boxHeight;
     parent.addChild(this.container);
 
     this._bg = new DomGraphics();
@@ -32,6 +34,7 @@ export class DomDialogueBox {
     this._textContainer = new DomContainer();
     this._textContainer.x = opts.boxPadding;
     this._textContainer.y = opts.boxPadding + opts.nameSize + 8;
+    this._textContainer.width = opts.boxWidth - opts.boxPadding * 2;
     this.container.addChild(this._textContainer);
 
     this._arrow = new DomGraphics();

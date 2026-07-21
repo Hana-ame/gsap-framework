@@ -75,6 +75,11 @@ const APPS: AppEntry[] = [
   { route: 'component-rts', label: 'RTS (Broken Arrow)', hint: '2-player RTS: select units, right-click move, AI opponent', glyph: '\u2694', accent: '#6a3a2a' },
   { route: 'component-avd-dom-minimal', label: 'AVD DOM 最小示例', hint: '纯 DOM 视觉小说：打字机、分支、GSAP 动画，无 PIXI canvas', glyph: '\u2756', accent: '#1a3a2a' },
   { route: 'component-avd-vn', label: 'VN 中间格式 + InputRemapper', hint: 'KAG→中间JSON→Player + 键盘重映射。演示完整 VN 管线', glyph: '\u29C9', accent: '#2a3a5a' },
+  { route: 'step-01-dom-text', label: 'Step 01: DomText', hint: '纯 DomText 文字渲染 — 最基本测试', glyph: 'A', accent: '#3a5a6a' },
+  { route: 'step-02-dom-dialogue', label: 'Step 02: DomDialogueBox', hint: '对话框背景 + DomText 一次性显示', glyph: '\u2756', accent: '#3a6a5a' },
+  { route: 'step-03-dom-typing', label: 'Step 03: DomTypingEngine', hint: '打字机逐字显示', glyph: '\u270D', accent: '#4a6a4a' },
+  { route: 'step-04-dom-layer', label: 'Step 04: DomLayer', hint: 'DomLayer 工厂方法创建组件', glyph: '\u25A3', accent: '#4a5a6a' },
+  { route: 'step-05-dom-avd', label: 'Step 05: AvdController DOM', hint: 'AvdController 完整 DOM 模式 + 状态推进', glyph: '\u2756', accent: '#1a4a2a' },
   // new example entries go here — append to end, do not insert in the middle
 ];
 

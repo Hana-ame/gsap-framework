@@ -46,6 +46,9 @@ export class DomTypingEngine {
     this._onComplete = onComplete ?? null;
 
     const container = new DomContainer();
+    container.x = 0;
+    container.y = 0;
+    container.width = maxWidth;
     this._container = container;
 
     const segments = Array.isArray(text)
@@ -209,6 +212,7 @@ export class DomTypingEngine {
     }
 
     this._layout = flatItems;
+    this._totalUnits = unit;
   }
 
   private _syncLayout(): void {
