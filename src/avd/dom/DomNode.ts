@@ -317,7 +317,12 @@ function applyTextStyle(el: HTMLElement, style: DomTextStyle): void {
     el.style.whiteSpace = 'pre-wrap';
     el.style.wordBreak = 'break-word';
   }
-  if (style.wordWrapWidth != null) el.style.maxWidth = `${style.wordWrapWidth}px`;
+  if (style.wordWrapWidth != null) {
+    el.style.maxWidth = `${style.wordWrapWidth}px`;
+    el.style.width = `${style.wordWrapWidth}px`;
+  } else {
+    el.style.maxWidth = '';
+  }
   if (style.lineHeight != null) el.style.lineHeight = `${style.lineHeight}px`;
 }
 
@@ -354,7 +359,6 @@ export class DomText extends DomDisplayObject {
     this._initScale();
     this.el.style.whiteSpace = 'pre-wrap';
     this.el.style.wordBreak = 'break-word';
-    this.el.style.overflow = 'hidden';
     if (opts) {
       if (opts.style) { this._style = opts.style; applyTextStyle(this.el, opts.style); }
       if (opts.text != null) { this._text = opts.text; this.el.textContent = opts.text; this._remeasure(); }
@@ -370,17 +374,28 @@ export class DomText extends DomDisplayObject {
   get tint(): number { return this._tintColor; }
   set tint(v: number) {
     this._tintColor = v;
-    this.el.style.color = v === 0xffffff ? '' : colorToHex(v);
+    if (v === 0xffffff) {
+      if (this._style.fill != null) {
+        this.el.style.color = typeof this._style.fill === 'number' ? colorToHex(this._style.fill) : this._style.fill;
+      } else {
+        this.el.style.color = '';
+      }
+    } else {
+      this.el.style.color = colorToHex(v);
+    }
   }
 
-  get width(): number { return this._measuredWidth || this.el.offsetWidth || 0; }
-  get height(): number { return this._measuredHeight || this.el.offsetHeight || (this._style.fontSize ?? 16); }
+  get width(): number { return this.el.offsetWidth || this._measuredWidth || 0; }
+  get height(): number { return this.el.offsetHeight || this._measuredHeight || (this._style.fontSize ?? 16); }
 
   private _remeasure(): void {
     if (this._text) {
       const m = measureText(this._text, this._style);
       this._measuredWidth = m.width;
       this._measuredHeight = m.height;
+      if (this._style.wordWrapWidth == null) {
+        this.el.style.width = `${m.width}px`;
+      }
     } else {
       this._measuredWidth = 0;
       this._measuredHeight = 0;

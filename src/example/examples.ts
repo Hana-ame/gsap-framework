@@ -66,6 +66,11 @@ import { ComponentWindowRefDisplay } from './component-window-ref/ComponentWindo
 import { ComponentRtsDisplay } from './component-rts/ComponentRtsDisplay';
 import { ComponentAvdDomMinimalDisplay } from './component-avd-dom-minimal/ComponentAvdDomMinimalDisplay';
 import { ComponentAvdVnDisplay } from './component-avd-vn/ComponentAvdVnDisplay';
+import { Step01DomTextDisplay } from './step-01-dom-text/Step01DomTextDisplay';
+import { Step02DomDialogueDisplay } from './step-02-dom-dialogue/Step02DomDialogueDisplay';
+import { Step03DomTypingDisplay } from './step-03-dom-typing/Step03DomTypingDisplay';
+import { Step04DomLayerDisplay } from './step-04-dom-layer/Step04DomLayerDisplay';
+import { Step05DomAvdDisplay } from './step-05-dom-avd/Step05DomAvdDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -133,6 +138,11 @@ export const EXAMPLES = [
   'component-rts',
   'component-avd-dom-minimal',
   'component-avd-vn',
+  'step-01-dom-text',
+  'step-02-dom-dialogue',
+  'step-03-dom-typing',
+  'step-04-dom-layer',
+  'step-05-dom-avd',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -206,4 +216,9 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-rts': ComponentRtsDisplay,
   'component-avd-dom-minimal': ComponentAvdDomMinimalDisplay,
   'component-avd-vn': ComponentAvdVnDisplay,
+  'step-01-dom-text': Step01DomTextDisplay,
+  'step-02-dom-dialogue': Step02DomDialogueDisplay,
+  'step-03-dom-typing': Step03DomTypingDisplay,
+  'step-04-dom-layer': Step04DomLayerDisplay,
+  'step-05-dom-avd': Step05DomAvdDisplay,
 };

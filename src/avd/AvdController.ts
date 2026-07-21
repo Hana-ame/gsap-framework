@@ -65,6 +65,7 @@ export class AvdController {
   private _segmentMap: Map<string, number> = new Map();
   private _flags: Set<string> = new Set();
   private _backlog: BacklogEntry[] = [];
+  private _destroyed = false;
   private _autoMode = false;
   private _skipMode = false;
   private _autoTimer: ReturnType<typeof setTimeout> | null = null;
@@ -190,10 +191,8 @@ export class AvdController {
       this._ticker.add(this._tickFn);
     } else {
       const loop = () => {
-        if (!this._fsm.isComplete) {
-          this._tick();
-          this._rafId = requestAnimationFrame(loop);
-        }
+        this._tick();
+        if (!this._destroyed) this._rafId = requestAnimationFrame(loop);
       };
       this._rafId = requestAnimationFrame(loop);
     }
@@ -362,6 +361,7 @@ export class AvdController {
   getSpeakerL2D(speaker: string): Live2DModelView | undefined { return this._speakerL2D.get(speaker); }
 
   destroy(): void {
+    this._destroyed = true;
     this._clearAutoTimer();
     if (this._rafId != null) cancelAnimationFrame(this._rafId);
     if (this._tickFn && this._ticker) this._ticker.remove(this._tickFn);
@@ -399,7 +399,6 @@ export class AvdController {
   }
 
   private _tick(): void {
-    if (!this._typing.active && this._typing.totalUnits > 0) return;
     const delta = this._ticker ? this._ticker.deltaMS : 16;
     if (this._fsm.state === 'typing') {
       this._typing.update(delta);
@@ -459,6 +458,23 @@ export class AvdController {
 
     const spStyle = line.speaker ? this._speakerStyles.get(line.speaker) : undefined;
     this._dialogueBox.setSpeaker(line.speaker ?? null, spStyle);
+
+    const expr = this._expressionOverride ?? line.expression ?? null;
+    const resolved = this._roster.getPortraitForSpeaker(
+      line.speaker ?? null,
+      line.portrait ?? null,
+      line.portraitPos ?? null,
+      expr,
+    );
+    this._roster.setSpeaker(line.speaker ?? null);
+
+    if (this._roster.mode === 'persistent') {
+      this._portraitLayer.setAll(this._roster.getActivePortraits());
+    } else if (resolved.pos && resolved.texture) {
+      this._portraitLayer.setTarget(resolved.pos, resolved.texture);
+    } else {
+      this._portraitLayer.setTarget(null, null);
+    }
 
     const textStyle: any = {
       fontFamily: this._opts.fontFamily,
@@ -571,6 +587,7 @@ export class AvdController {
 
   private _onStateChange(state: AvdState): void {
     this._opts.onStateChange?.(state);
+    this._redrawOverlay();
     if (state === 'done') this._opts.onComplete?.();
   }
 
