@@ -141,6 +141,31 @@ import { Step02DomDialogueDisplay } from './step-02-dom-dialogue/Step02DomDialog
 import { Step03DomTypingDisplay } from './step-03-dom-typing/Step03DomTypingDisplay';
 import { Step04DomLayerDisplay } from './step-04-dom-layer/Step04DomLayerDisplay';
 import { Step05DomAvdDisplay } from './step-05-dom-avd/Step05DomAvdDisplay';
+import { ComponentExHA11DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha11-dom/ComponentExHA11DomDisplay';
+import { ComponentExHA12DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha12-dom/ComponentExHA12DomDisplay';
+import { ComponentExHB11DomDisplay } from './h-scenes/rj01222693/components/component-ex-hb11-dom/ComponentExHB11DomDisplay';
+import { ComponentExHB12DomDisplay } from './h-scenes/rj01222693/components/component-ex-hb12-dom/ComponentExHB12DomDisplay';
+import { ComponentExT1DomDisplay } from './h-scenes/rj01222693/components/component-ex-t1-dom/ComponentExT1DomDisplay';
+import { ComponentExT2DomDisplay } from './h-scenes/rj01222693/components/component-ex-t2-dom/ComponentExT2DomDisplay';
+import { ComponentExHA21DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha21-dom/ComponentExHA21DomDisplay';
+import { ComponentExHA22DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha22-dom/ComponentExHA22DomDisplay';
+import { ComponentExHA23DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha23-dom/ComponentExHA23DomDisplay';
+import { ComponentExHA24DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha24-dom/ComponentExHA24DomDisplay';
+import { ComponentExHA25DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha25-dom/ComponentExHA25DomDisplay';
+import { ComponentExHA26DomDisplay } from './h-scenes/rj01222693/components/component-ex-ha26-dom/ComponentExHA26DomDisplay';
+import { ComponentExHB21DomDisplay } from './h-scenes/rj01222693/components/component-ex-hb21-dom/ComponentExHB21DomDisplay';
+import { ComponentExHB22DomDisplay } from './h-scenes/rj01222693/components/component-ex-hb22-dom/ComponentExHB22DomDisplay';
+import { ComponentExHB23DomDisplay } from './h-scenes/rj01222693/components/component-ex-hb23-dom/ComponentExHB23DomDisplay';
+import { ComponentExHB24DomDisplay } from './h-scenes/rj01222693/components/component-ex-hb24-dom/ComponentExHB24DomDisplay';
+import { ComponentExT21DomDisplay } from './h-scenes/rj01222693/components/component-ex-t21-dom/ComponentExT21DomDisplay';
+import { ComponentExT22DomDisplay } from './h-scenes/rj01222693/components/component-ex-t22-dom/ComponentExT22DomDisplay';
+import { ComponentExHC1DomDisplay } from './h-scenes/rj01222693/components/component-ex-hc1-dom/ComponentExHC1DomDisplay';
+import { ComponentExHC2DomDisplay } from './h-scenes/rj01222693/components/component-ex-hc2-dom/ComponentExHC2DomDisplay';
+import { ComponentExT3DomDisplay } from './h-scenes/rj01222693/components/component-ex-t3-dom/ComponentExT3DomDisplay';
+import { ComponentExHD1DomDisplay } from './h-scenes/rj01222693/components/component-ex-hd1-dom/ComponentExHD1DomDisplay';
+import { ComponentExHD2DomDisplay } from './h-scenes/rj01222693/components/component-ex-hd2-dom/ComponentExHD2DomDisplay';
+import { ComponentExHD3DomDisplay } from './h-scenes/rj01222693/components/component-ex-hd3-dom/ComponentExHD3DomDisplay';
+import { ComponentExHE1DomDisplay } from './h-scenes/rj01222693/components/component-ex-he1-dom/ComponentExHE1DomDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -278,6 +303,31 @@ export const EXAMPLES = [
   'component-avd-hc3',
   'component-avd-hd1',
   'component-avd-hd3',
+  'component-ex-ha11-dom',
+  'component-ex-ha12-dom',
+  'component-ex-hb11-dom',
+  'component-ex-hb12-dom',
+  'component-ex-t1-dom',
+  'component-ex-t2-dom',
+  'component-ex-ha21-dom',
+  'component-ex-ha22-dom',
+  'component-ex-ha23-dom',
+  'component-ex-ha24-dom',
+  'component-ex-ha25-dom',
+  'component-ex-ha26-dom',
+  'component-ex-hb21-dom',
+  'component-ex-hb22-dom',
+  'component-ex-hb23-dom',
+  'component-ex-hb24-dom',
+  'component-ex-t21-dom',
+  'component-ex-t22-dom',
+  'component-ex-hc1-dom',
+  'component-ex-hc2-dom',
+  'component-ex-t3-dom',
+  'component-ex-hd1-dom',
+  'component-ex-hd2-dom',
+  'component-ex-hd3-dom',
+  'component-ex-he1-dom',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -421,5 +471,30 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-avd-hc3': ComponentAvdHc3Display,
   'component-avd-hd1': ComponentAvdHd1Display,
   'component-avd-hd3': ComponentAvdHd3Display,
+  'component-ex-ha11-dom': ComponentExHA11DomDisplay,
+  'component-ex-ha12-dom': ComponentExHA12DomDisplay,
+  'component-ex-hb11-dom': ComponentExHB11DomDisplay,
+  'component-ex-hb12-dom': ComponentExHB12DomDisplay,
+  'component-ex-t1-dom': ComponentExT1DomDisplay,
+  'component-ex-t2-dom': ComponentExT2DomDisplay,
+  'component-ex-ha21-dom': ComponentExHA21DomDisplay,
+  'component-ex-ha22-dom': ComponentExHA22DomDisplay,
+  'component-ex-ha23-dom': ComponentExHA23DomDisplay,
+  'component-ex-ha24-dom': ComponentExHA24DomDisplay,
+  'component-ex-ha25-dom': ComponentExHA25DomDisplay,
+  'component-ex-ha26-dom': ComponentExHA26DomDisplay,
+  'component-ex-hb21-dom': ComponentExHB21DomDisplay,
+  'component-ex-hb22-dom': ComponentExHB22DomDisplay,
+  'component-ex-hb23-dom': ComponentExHB23DomDisplay,
+  'component-ex-hb24-dom': ComponentExHB24DomDisplay,
+  'component-ex-t21-dom': ComponentExT21DomDisplay,
+  'component-ex-t22-dom': ComponentExT22DomDisplay,
+  'component-ex-hc1-dom': ComponentExHC1DomDisplay,
+  'component-ex-hc2-dom': ComponentExHC2DomDisplay,
+  'component-ex-t3-dom': ComponentExT3DomDisplay,
+  'component-ex-hd1-dom': ComponentExHD1DomDisplay,
+  'component-ex-hd2-dom': ComponentExHD2DomDisplay,
+  'component-ex-hd3-dom': ComponentExHD3DomDisplay,
+  'component-ex-he1-dom': ComponentExHE1DomDisplay,
 };
 // 需要同步添加到 launchdisplay
