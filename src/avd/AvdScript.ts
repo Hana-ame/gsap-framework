@@ -40,7 +40,7 @@ export interface AvdChoiceJSON {
 
 export interface AvdLineJSON {
   speaker?: string;
-  text: string | AvdTextSegmentJSON[];
+  text?: string | AvdTextSegmentJSON[];
   portraitKey?: string;
   portraitPos?: AvdPortraitPos;
   expression?: string;

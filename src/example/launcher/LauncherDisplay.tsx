@@ -171,6 +171,15 @@ const APPS: AppEntry[] = [
   { route: 'component-ex-hd2-dom', label: 'EX: HD2 ファタ堕ち', hint: 'RJ01222693 · ファタ堕ち · 纯 DOM', glyph: '\u2665', accent: '#5a5a8a' },
   { route: 'component-ex-hd3-dom', label: 'EX: HD3 洗脳ガウ', hint: 'RJ01222693 · 洗脳ガウも · 纯 DOM', glyph: '\u2665', accent: '#6a5a8a' },
   { route: 'component-ex-he1-dom', label: 'EX: HE1 忠誠ガウ', hint: 'RJ01222693 · 忠誠ガウも · 纯 DOM', glyph: '\u2665', accent: '#7a5a8a' },
+
+  // ── CG display series (from simple to complex) ──
+  { route: 'cg-01-html-img', label: 'CG 01: HTML img', hint: '直接 <img> 显示 CDN 图片', glyph: '\u25A3', accent: '#4a6a3a' },
+  { route: 'cg-02-pixi-sprite', label: 'CG 02: Pixi Sprite', hint: 'PIXI.Sprite + getTexture()', glyph: '\u25A3', accent: '#3a6a4a' },
+  { route: 'cg-03-pixi-cycle', label: 'CG 03: Cycle All', hint: '点击/空格切换 160+ CG', glyph: '\u21BB', accent: '#3a6a5a' },
+  { route: 'cg-04-bg-layer', label: 'CG 04: BgLayer', hint: 'BackgroundLayer 类直接使用', glyph: '\u25A3', accent: '#4a5a3a' },
+  { route: 'cg-05-bg-layer-multi', label: 'CG 05: BgLayer Multi', hint: '交叉淡入淡出 + 场景切换', glyph: '\u21C4', accent: '#3a5a6a' },
+  { route: 'cg-06-avd-noscript', label: 'CG 06: AVD bare', hint: 'AvdController 纯 CG 切换', glyph: '\u25B6', accent: '#4a3a6a' },
+  { route: 'cg-07-avd-script', label: 'CG 07: AVD script', hint: 'AvdController 完整对话 + CG', glyph: '\u25B6', accent: '#5a3a6a' },
 ];
 
 function accentToText(hex: string): string {

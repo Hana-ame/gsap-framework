@@ -1,38 +1,20 @@
 import type { AvdLine } from '../../avd/types';
 import { AvdController, parseScript } from '../../components';
 import { DomTexture } from '../../avd/dom/DomNode';
-import { IMAGE_MAP } from './imageMapEx';
 
 export interface DomSceneOptions {
   el: HTMLElement;
-  title: string;
+  title?: string;
   lines: any[];
-  getBgKeys: () => string[];
+  getBgKeys?: () => string[];
+  imageMap?: Record<string, string>;
 }
 
 export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> {
-  const { el, lines, getBgKeys } = opts;
+  const { el, lines, imageMap } = opts;
 
   const W = window.innerWidth;
   const H = window.innerHeight;
-
-  const bgKeys = getBgKeys();
-  const uniqueKeys = [...new Set(bgKeys)];
-
-  const textures: Record<string, DomTexture> = {};
-  for (const k of uniqueKeys) {
-    const url = IMAGE_MAP[k];
-    if (url) textures[k] = new DomTexture(url);
-  }
-
-  await Promise.allSettled(
-    uniqueKeys.map(k => new Promise<void>(resolve => {
-      const t = textures[k];
-      if (!t || t.loaded) { resolve(); return; }
-      const check = () => { if (t.loaded) resolve(); else requestAnimationFrame(check); };
-      check();
-    }))
-  );
 
   const parsed = await parseScript({ lines, roster: {} }, {
     loadTexture: async () => {},
@@ -55,7 +37,19 @@ export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> 
     onLineEnter: () => {},
   }, 'dom');
 
-  avd.setBgTextureMap(textures as any);
+  avd.setBgLazyLoad(async (key) => {
+    const url = imageMap ? imageMap[key] : `/game-cgs/${key}.png`;
+    if (!url) return null;
+    const tex = new DomTexture(url);
+    if (!tex.loaded) {
+      await new Promise<void>(resolve => {
+        const check = () => { if (tex.loaded) resolve(); else requestAnimationFrame(check); };
+        check();
+      });
+    }
+    return tex;
+  });
+  avd.setBgTextureMap({});
   avd.setScript(parsed.lines as AvdLine[]);
 
   return () => { avd.destroy(); };

@@ -166,6 +166,13 @@ import { ComponentExHD1DomDisplay } from './h-scenes/rj01222693/components/compo
 import { ComponentExHD2DomDisplay } from './h-scenes/rj01222693/components/component-ex-hd2-dom/ComponentExHD2DomDisplay';
 import { ComponentExHD3DomDisplay } from './h-scenes/rj01222693/components/component-ex-hd3-dom/ComponentExHD3DomDisplay';
 import { ComponentExHE1DomDisplay } from './h-scenes/rj01222693/components/component-ex-he1-dom/ComponentExHE1DomDisplay';
+import { Cg01HtmlImgDisplay } from './cg-01-html-img/Cg01HtmlImgDisplay';
+import { Cg02PixiSpriteDisplay } from './cg-02-pixi-sprite/Cg02PixiSpriteDisplay';
+import { Cg03PixiCycleDisplay } from './cg-03-pixi-cycle/Cg03PixiCycleDisplay';
+import { Cg04BgLayerDisplay } from './cg-04-bg-layer/Cg04BgLayerDisplay';
+import { Cg05BgLayerMultiDisplay } from './cg-05-bg-layer-multi/Cg05BgLayerMultiDisplay';
+import { Cg06AvdNoscriptDisplay } from './cg-06-avd-noscript/Cg06AvdNoscriptDisplay';
+import { Cg07AvdScriptDisplay } from './cg-07-avd-script/Cg07AvdScriptDisplay';
 
 export const EXAMPLES = [
   'screen-size',
@@ -328,6 +335,13 @@ export const EXAMPLES = [
   'component-ex-hd2-dom',
   'component-ex-hd3-dom',
   'component-ex-he1-dom',
+  'cg-01-html-img',
+  'cg-02-pixi-sprite',
+  'cg-03-pixi-cycle',
+  'cg-04-bg-layer',
+  'cg-05-bg-layer-multi',
+  'cg-06-avd-noscript',
+  'cg-07-avd-script',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -496,5 +510,12 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-ex-hd2-dom': ComponentExHD2DomDisplay,
   'component-ex-hd3-dom': ComponentExHD3DomDisplay,
   'component-ex-he1-dom': ComponentExHE1DomDisplay,
+  'cg-01-html-img': Cg01HtmlImgDisplay,
+  'cg-02-pixi-sprite': Cg02PixiSpriteDisplay,
+  'cg-03-pixi-cycle': Cg03PixiCycleDisplay,
+  'cg-04-bg-layer': Cg04BgLayerDisplay,
+  'cg-05-bg-layer-multi': Cg05BgLayerMultiDisplay,
+  'cg-06-avd-noscript': Cg06AvdNoscriptDisplay,
+  'cg-07-avd-script': Cg07AvdScriptDisplay,
 };
 // 需要同步添加到 launchdisplay

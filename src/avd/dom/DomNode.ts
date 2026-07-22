@@ -46,12 +46,16 @@ export class DomTexture {
   constructor(url: string) {
     this.url = url;
     const img = new Image();
+    let done = false;
+    const finish = () => { if (!done) { done = true; this.loaded = true; } };
     img.onload = () => {
       this.img = img;
       this.width = img.naturalWidth;
       this.height = img.naturalHeight;
-      this.loaded = true;
+      finish();
     };
+    img.onerror = finish;
+    setTimeout(finish, 10000);
     img.src = url;
   }
 

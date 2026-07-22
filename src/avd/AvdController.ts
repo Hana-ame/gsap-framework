@@ -1,15 +1,3 @@
-/**
- * AvdController — 视觉小说引擎控制器。
- *
- * 通过 RenderLayer 支持 Pixi / DOM 双模式渲染。
- * 所有公开 API 在两种模式下行为一致，仅构造方式不同：
- *
- *   // Pixi 模式（向后兼容）
- *   const avd = new AvdController(pixiStage, ticker, options);
- *
- *   // DOM 模式
- *   const avd = new AvdController(containerEl, null, options, 'dom');
- */
 import { gsap } from 'gsap';
 import {
   type AvdChoice,
@@ -29,7 +17,7 @@ import { DialogueStateMachine, type StateMachineCallbacks } from './DialogueStat
 import { RosterManager } from './RosterManager';
 import { AudioManager } from './AudioManager';
 import { ParticleSystem, type ParticlePreset, type EmitterPosition } from './ParticleSystem';
-import { NotificationSystem, type NotifOptions, type NotificationSystemOptions } from './NotificationSystem';
+import { NotificationSystem, type NotifOptions } from './NotificationSystem';
 import { Live2DManager, type Live2DModelView } from './Live2DManager';
 import { PixiLayer } from './render/PixiLayer';
 import { DomLayer } from './render/DomLayer';
@@ -76,10 +64,10 @@ export class AvdController {
   private _currentBgKey: string | null = null;
   private _currentBgmKey: string | null = null;
   private _bgTextureMap: Record<string, any> = {};
+  private _bgLazyLoad: ((key: string) => Promise<any>) | null = null;
+  setBgLazyLoad(fn: (key: string) => Promise<any>): void { this._bgLazyLoad = fn; }
   private _l2dManager: Live2DManager | null = null;
-  private _backlogVisible = false;
-  private _backlogOverlay: IRenderContainer | null = null;
-  private _backlogTexts: IRenderText[] = [];
+  private _hideUi = false;
   private _speakerL2D: Map<string, Live2DModelView> = new Map();
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
   private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
@@ -114,6 +102,13 @@ export class AvdController {
     this._initEventHandlers();
     this._startTicker();
   }
+
+  get layer(): IRenderLayer | null { return this._layer; }
+  get parent(): IRenderContainer { return this._parent; }
+  get dialogueBox(): IDialogueBoxHandle { return this._dialogueBox; }
+  get portraitLayer(): IPortraitLayerHandle { return this._portraitLayer; }
+  get backgroundLayer(): IBackgroundLayerHandle { return this._backgroundLayer; }
+  get choiceContainer(): IRenderContainer { return this._choiceContainer; }
 
   private _initComponents(): void {
     const L = this._layer!;
@@ -164,12 +159,6 @@ export class AvdController {
     this._choiceContainer.eventMode = 'passive';
     this._parent.addChild(this._choiceContainer);
 
-    // Pixi-only: Live2D manager
-    if (this._renderMode === 'pixi') {
-      const pixiOverlay = this._clickOverlay as any as import('pixi.js').Graphics;
-    }
-
-    // NotificationSystem 保持 Pixi 内部实现（DOM 模式用户可自行追加 DOM 通知）
     if (this._renderMode === 'pixi') {
       this._notifications = new NotificationSystem(this._parent as any, undefined);
     } else {
@@ -177,7 +166,6 @@ export class AvdController {
     }
 
     this._particles = new ParticleSystem();
-    this._buildBacklogOverlay();
   }
 
   private _initEventHandlers(): void {
@@ -185,28 +173,11 @@ export class AvdController {
       if (e.key === 'F5') { e.preventDefault(); this.quickSave(); }
       if (e.key === 'F8') { e.preventDefault(); this.quickLoad(); }
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-        if (!this._backlogVisible) { e.preventDefault(); this._onClick(); }
-      }
-      if (e.key === 'b' || e.key === 'B' || e.key === 'Backspace') {
-        e.preventDefault();
-        if (this._backlogVisible) this._hideBacklog();
-        else this._showBacklog();
-      }
-      if (e.key === 'Control' || e.key === 'Shift') {
-        this.setSkipMode(e.type === 'keydown');
-      }
-      if (e.key === 'a' || e.key === 'A') {
-        if (!e.repeat) this.setAutoMode(!this._autoMode);
+        e.preventDefault(); this._onClick();
       }
     };
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', this._keyHandler);
-      this._keyUpHandler = (e: KeyboardEvent) => {
-        if (e.key === 'Control' || e.key === 'Shift') {
-          this.setSkipMode(false);
-        }
-      };
-      window.addEventListener('keyup', this._keyUpHandler);
     }
   }
 
@@ -272,9 +243,7 @@ export class AvdController {
   get particleSystem(): ParticleSystem { return this._particles; }
 
   notify(opts: string | NotifOptions): void {
-    if (this._notifications) {
-      this._notifications.show(opts);
-    }
+    if (this._notifications) this._notifications.show(opts);
   }
 
   get notificationSystem(): NotificationSystem | null { return this._notifications ?? null; }
@@ -312,68 +281,19 @@ export class AvdController {
 
   getBacklog(): readonly BacklogEntry[] { return this._backlog; }
 
-  isBacklogVisible(): boolean { return this._backlogVisible; }
+  // ── Hide UI toggle (suppresses dialog box, portrait, choices) ──
 
-  private _buildBacklogOverlay(): void {
-    if (this._backlogOverlay) return;
-    const L = this._layer!;
-    const overlay = L.createContainer();
-    overlay.eventMode = 'static';
-    overlay.cursor = 'pointer';
-    overlay.visible = false;
+  isHideUi(): boolean { return this._hideUi; }
 
-    const bg = L.createGraphics();
-    bg.rect(0, 0, this._opts.screenW, this._opts.screenH)
-      .fill({ color: 0x000000, alpha: 0.85 });
-    overlay.addChild(bg);
-
-    this._backlogOverlay = overlay;
-    this._parent.addChild(overlay);
+  setHideUi(hide: boolean): void {
+    this._hideUi = hide;
+    this._dialogueBox.container.visible = !hide;
+    this._portraitLayer.container.visible = !hide;
+    this._choiceContainer.visible = !hide;
+    this._redrawOverlay();
   }
 
-  private _showBacklog(): void {
-    if (!this._backlogOverlay) this._buildBacklogOverlay();
-    const overlay = this._backlogOverlay!;
-    overlay.visible = true;
-    this._backlogVisible = true;
-
-    const L = this._layer!;
-    for (const t of this._backlogTexts) t.destroy();
-    this._backlogTexts = [];
-
-    const padding = 40;
-    let y = padding + 20;
-    const maxW = this._opts.screenW - padding * 2;
-    const lineH = this._opts.textSize + 8;
-
-    for (const entry of this._backlog) {
-      const speaker = entry.speaker ?? '';
-      const prefix = speaker ? `${speaker}: ` : '';
-      const text = L.createText({
-        text: prefix + entry.text,
-        style: {
-          fontFamily: this._opts.fontFamily, fontSize: Math.round(this._opts.textSize * 0.8),
-          fill: speaker ? 0x88ccff : 0xcccccc, wordWrap: true, wordWrapWidth: maxW,
-        },
-      });
-      text.x = padding;
-      text.y = y;
-      overlay.addChild(text);
-      this._backlogTexts.push(text);
-      y += lineH * 2;
-    }
-
-    const btnEl = (overlay as any).el ?? overlay;
-    const handler = () => this._hideBacklog();
-    btnEl.addEventListener?.('pointerdown', handler);
-    btnEl._backlogHandler = handler;
-  }
-
-  private _hideBacklog(): void {
-    if (!this._backlogOverlay) return;
-    this._backlogOverlay.visible = false;
-    this._backlogVisible = false;
-  }
+  toggleHideUi(): void { this.setHideUi(!this._hideUi); }
 
   setSpeakerStyle(speaker: string, style: SpeakerStyle): void { this._speakerStyles.set(speaker, style); }
   clearSpeakerStyle(speaker: string): void { this._speakerStyles.delete(speaker); }
@@ -408,13 +328,9 @@ export class AvdController {
     const data = this.save('quicksave');
     try {
       localStorage.setItem(AvdController.QUICK_SAVE_KEY, JSON.stringify(data));
-      if (this._notifications) {
-        this._notifications.show({ text: '快速存档', type: 'success', duration: 1200 });
-      }
+      if (this._notifications) this._notifications.show({ text: 'Quick Save', type: 'success', duration: 1200 });
     } catch {
-      if (this._notifications) {
-        this._notifications.show({ text: '存档失败', type: 'error', duration: 1200 });
-      }
+      if (this._notifications) this._notifications.show({ text: 'Save Failed', type: 'error', duration: 1200 });
     }
   }
 
@@ -422,14 +338,14 @@ export class AvdController {
     try {
       const raw = localStorage.getItem(AvdController.QUICK_SAVE_KEY);
       if (!raw) {
-        if (this._notifications) this._notifications.show({ text: '无快速存档', type: 'warn', duration: 1200 });
+        if (this._notifications) this._notifications.show({ text: 'No Save Data', type: 'warn', duration: 1200 });
         return;
       }
       const data = JSON.parse(raw) as AvdSaveData;
       this.load(data);
-      if (this._notifications) this._notifications.show({ text: '快速读档', type: 'info', duration: 1200 });
+      if (this._notifications) this._notifications.show({ text: 'Quick Load', type: 'info', duration: 1200 });
     } catch {
-      if (this._notifications) this._notifications.show({ text: '读档失败', type: 'error', duration: 1200 });
+      if (this._notifications) this._notifications.show({ text: 'Load Failed', type: 'error', duration: 1200 });
     }
   }
 
@@ -463,16 +379,11 @@ export class AvdController {
     if (this._notifications) this._notifications.destroy();
     this._speakerL2D.forEach((v) => v.destroy());
     this._speakerL2D.clear();
-    if (this._backlogOverlay) {
-      for (const t of this._backlogTexts) t.destroy();
-      this._backlogOverlay.destroy();
-    }
     this._clickOverlay.destroy();
     this._choiceContainer.destroy({ children: true });
     this._layer?.destroy();
     if (typeof window !== 'undefined') {
       if (this._keyHandler) window.removeEventListener('keydown', this._keyHandler);
-      if (this._keyUpHandler) window.removeEventListener('keyup', this._keyUpHandler);
     }
   }
 
@@ -480,6 +391,7 @@ export class AvdController {
 
   private _onClick(): void {
     if (this._fsm.isComplete) return;
+    if (this._hideUi) { this.setHideUi(false); return; }
     if (this._fsm.state === 'choice') return;
     this._clearAutoTimer();
 
@@ -550,29 +462,30 @@ export class AvdController {
       const bgTex = this._bgTextureMap[line.bgKey];
       if (bgTex) {
         this._backgroundLayer.setBackground(bgTex);
+      } else if (this._bgLazyLoad) {
+        this._bgLazyLoad(line.bgKey).then(tex => {
+          if (tex && this._currentBgKey === line.bgKey) {
+            this._bgTextureMap[line.bgKey] = tex;
+            this._backgroundLayer.setBackground(tex);
+          }
+        });
       }
     }
 
     if (line.bgmKey != null) {
       this._currentBgmKey = line.bgmKey;
       const bgmBuf = this._audioMap[line.bgmKey];
-      if (bgmBuf) {
-        this._audio.playBgm(bgmBuf);
-      }
+      if (bgmBuf) this._audio.playBgm(bgmBuf);
     }
 
     if (line.sfxKey != null) {
       const sfxBuf = this._audioMap[line.sfxKey];
-      if (sfxBuf) {
-        this._audio.playSfx(sfxBuf);
-      }
+      if (sfxBuf) this._audio.playSfx(sfxBuf);
     }
 
     if (line.voiceKey != null) {
       const voiceBuf = this._audioMap[line.voiceKey];
-      if (voiceBuf) {
-        this._audio.playVoice(voiceBuf);
-      }
+      if (voiceBuf) this._audio.playVoice(voiceBuf);
     }
 
     if (line.effect === 'shake') {
@@ -590,10 +503,7 @@ export class AvdController {
 
     const expr = this._expressionOverride ?? line.expression ?? null;
     const resolved = this._roster.getPortraitForSpeaker(
-      line.speaker ?? null,
-      line.portrait ?? null,
-      line.portraitPos ?? null,
-      expr,
+      line.speaker ?? null, line.portrait ?? null, line.portraitPos ?? null, expr,
     );
     this._roster.setSpeaker(line.speaker ?? null);
 
@@ -615,9 +525,7 @@ export class AvdController {
     };
 
     const textContainer = this._typing.start(
-      line.text,
-      this._opts.typewriterSpeed,
-      textStyle,
+      line.text, this._opts.typewriterSpeed, textStyle,
       this._opts.boxWidth - this._opts.boxPadding * 2,
       Math.round(this._opts.textSize * 1.4),
     );
@@ -627,15 +535,11 @@ export class AvdController {
       this._dialogueBox.setAlpha(0);
       gsap.killTweensOf(this._dialogueBox.container);
       gsap.to(this._dialogueBox.container, {
-        alpha: 1,
-        duration: this._opts.textFadeMs / 1000,
-        ease: 'power2.out',
+        alpha: 1, duration: this._opts.textFadeMs / 1000, ease: 'power2.out',
       });
       this._dialogueBox.setOffsetY(this._opts.boxEnterOffsetY);
       gsap.to(this._dialogueBox.container, {
-        y: this._opts.boxY,
-        duration: this._opts.boxEnterMs / 1000,
-        ease: 'power3.out',
+        y: this._opts.boxY, duration: this._opts.boxEnterMs / 1000, ease: 'power3.out',
       });
     }
   }
@@ -721,7 +625,7 @@ export class AvdController {
 
   private _redrawOverlay(): void {
     this._clickOverlay.clear();
-    if (this._fsm.isComplete) {
+    if (this._fsm.isComplete || this._hideUi) {
       this._clickOverlay.eventMode = 'none';
       return;
     }
