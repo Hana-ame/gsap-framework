@@ -35,7 +35,9 @@ export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> 
     }))
   );
 
-  const parsed = await parseScript({ lines, roster: {} }, {} as AvdAssetResolver);
+  const parsed = await parseScript({ lines, roster: {} }, {
+    loadTexture: async () => undefined,
+  } as AvdAssetResolver);
 
   const avd = new AvdController(el, null, {
     screenW: W, screenH: H,
