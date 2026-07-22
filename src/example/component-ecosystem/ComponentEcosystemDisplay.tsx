@@ -655,7 +655,7 @@ export function ComponentEcosystemDisplay() {
           if (e.type === 'grass') { updateGrass(e, dt, entities, entityLayer); grassCount++; }
         }
 
-        let toRemove: number[] = [];
+        const toRemove: number[] = [];
         for (let i = 0; i < entities.length; i++) {
           const e = entities[i];
           if (!e.alive) continue;

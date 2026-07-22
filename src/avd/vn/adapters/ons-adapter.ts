@@ -196,7 +196,7 @@ export function onsToVnScript(source: string): VnScriptJSON {
 
 function splitParams(cmd: string): string[] {
   const parts: string[] = [];
-  let i = cmd.indexOf(' ');
+  const i = cmd.indexOf(' ');
   if (i < 0) { parts.push(cmd); return parts; }
   parts.push(cmd.slice(0, i));
   const rest = cmd.slice(i + 1).trim();

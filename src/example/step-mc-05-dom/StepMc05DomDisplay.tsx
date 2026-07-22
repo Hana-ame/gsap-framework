@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { IMAGE_MAP } from '../h-scenes/imageMapEx';
 
 const KEYS = Object.keys(IMAGE_MAP);
@@ -20,15 +20,14 @@ const style: Record<string, React.CSSProperties> = {
 };
 
 export function StepMc05DomDisplay() {
-  const idxRef = useRef(0);
-  const [key, setKey] = useState(KEYS[0]);
+  const [idx, setIdx] = useState(0);
+  const key = KEYS[idx];
 
   return (
     <div style={style.root} onClick={() => {
-      idxRef.current = (idxRef.current + 1) % KEYS.length;
-      setKey(KEYS[idxRef.current]);
+      setIdx((idx + 1) % KEYS.length);
     }}>
-      <div style={style.label}>{idxRef.current + 1}/{KEYS.length} {key}</div>
+      <div style={style.label}>{idx + 1}/{KEYS.length} {key}</div>
       <img style={style.img} src={IMAGE_MAP[key]} alt={key} />
     </div>
   );
