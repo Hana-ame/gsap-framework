@@ -22,6 +22,7 @@ export class AudioManager {
   private _currentBgmBuffer: AudioBuffer | null = null;
   private _bgmStarted = 0;
   private _activeSfx: AudioBufferSourceNode[] = [];
+  private _activeVoice: AudioBufferSourceNode | null = null;
 
   constructor(opts?: AudioManagerOptions) {
     this._opts = { ...DEFAULTS, ...opts };
@@ -76,6 +77,24 @@ export class AudioManager {
     gain.gain.setTargetAtTime(1, ctx.currentTime, fadeMs / 2000);
     this._currentBgm = source;
     this._bgmStarted = ctx.currentTime;
+  }
+
+  /** Play a voice clip (one-shot, interrupts previous voice). */
+  playVoice(buffer: AudioBuffer): void {
+    const ctx = this._ensureCtx();
+    if (this._activeVoice) {
+      try { this._activeVoice.stop(); } catch { /* ignore */ }
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+    gain.gain.setValueAtTime(1, now);
+    gain.gain.setTargetAtTime(0, now + buffer.duration - 0.05, 0.02);
+    source.connect(gain);
+    gain.connect(this._sfxGain!);
+    source.start();
+    this._activeVoice = source;
   }
 
   /** Play a one-shot SFX. */
@@ -161,8 +180,10 @@ export class AudioManager {
 
   destroy(): void {
     try { this._currentBgm?.stop(); } catch { /* ignore */ }
+    try { this._activeVoice?.stop(); } catch { /* ignore */ }
     this._currentBgm = null;
     this._currentBgmBuffer = null;
+    this._activeVoice = null;
     this._ctx?.close();
     this._ctx = null;
   }

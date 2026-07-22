@@ -116,6 +116,10 @@ export class DomDisplayObject {
   // ── cursor ──
   set cursor(v: string) { this.el.style.cursor = v; }
 
+  // ── zIndex ──
+  get zIndex(): number { return parseInt(this.el.style.zIndex) || 0; }
+  set zIndex(v: number) { this.el.style.zIndex = String(v); }
+
   // ── width / height ──
   get width(): number { return this.el.offsetWidth || 0; }
   set width(v: number) { this.el.style.width = String(v) + 'px'; }
@@ -430,20 +434,20 @@ export class DomGraphics extends DomDisplayObject {
   }
 
   rect(x: number, y: number, w: number, h: number): this {
-    this._ctx.rect(x, y, w, h);
     this._ensureSize(w, h);
+    this._ctx.rect(x, y, w, h);
     return this;
   }
 
   roundRect(x: number, y: number, w: number, h: number, r: number): this {
-    this._ctx.roundRect(x, y, w, h, r);
     this._ensureSize(w, h);
+    this._ctx.roundRect(x, y, w, h, r);
     return this;
   }
 
   circle(x: number, y: number, r: number): this {
-    this._ctx.arc(x, y, r, 0, Math.PI * 2);
     this._ensureSize(x + r, y + r);
+    this._ctx.arc(x, y, r, 0, Math.PI * 2);
     return this;
   }
 

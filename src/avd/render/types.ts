@@ -18,7 +18,7 @@ import type { TextEffect } from '../dom/DomTypingEngine';
 export interface IRenderContainer {
   alpha: number; x: number; y: number; visible: boolean;
   eventMode: string; cursor: string;
-  width: number; height: number;
+  width: number; height: number; zIndex: number;
   addChild(child: any): void;
   removeChild(child: any): void;
   removeChildren(): any[];
@@ -118,6 +118,7 @@ export interface IRenderLayer {
   createGraphics(): IRenderGraphics;
   createText(opts?: { text?: string; style?: any }): IRenderText;
   createSprite(texture?: any): IRenderSprite;
+  createLayer(zIndex: number): IRenderContainer;
 
   createDialogueBox(parent: IRenderContainer, opts: any): IDialogueBoxHandle;
   createPortraitLayer(parent: IRenderContainer, opts: any): IPortraitLayerHandle;

@@ -77,8 +77,12 @@ export class AvdController {
   private _currentBgmKey: string | null = null;
   private _bgTextureMap: Record<string, any> = {};
   private _l2dManager: Live2DManager | null = null;
+  private _backlogVisible = false;
+  private _backlogOverlay: IRenderContainer | null = null;
+  private _backlogTexts: IRenderText[] = [];
   private _speakerL2D: Map<string, Live2DModelView> = new Map();
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
+  private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
   private _layer: IRenderLayer | null = null;
   private _renderMode: 'pixi' | 'dom';
 
@@ -114,6 +118,11 @@ export class AvdController {
   private _initComponents(): void {
     const L = this._layer!;
 
+    this._backgroundLayer = L.createBackgroundLayer(this._parent, {
+      screenW: this._opts.screenW,
+      screenH: this._opts.screenH,
+    });
+
     this._dialogueBox = L.createDialogueBox(this._parent, {
       boxX: this._opts.boxX, boxY: this._opts.boxY,
       boxWidth: this._opts.boxWidth, boxHeight: this._opts.boxHeight,
@@ -128,11 +137,6 @@ export class AvdController {
       portraitY: this._opts.portraitY,
       portraitMaxH: this._opts.portraitMaxH,
       portraitFadeMs: this._opts.portraitFadeMs,
-    });
-
-    this._backgroundLayer = L.createBackgroundLayer(this._parent, {
-      screenW: this._opts.screenW,
-      screenH: this._opts.screenH,
     });
 
     this._screenFx = L.createScreenEffects(this._parent);
@@ -173,15 +177,36 @@ export class AvdController {
     }
 
     this._particles = new ParticleSystem();
+    this._buildBacklogOverlay();
   }
 
   private _initEventHandlers(): void {
     this._keyHandler = (e: KeyboardEvent) => {
       if (e.key === 'F5') { e.preventDefault(); this.quickSave(); }
       if (e.key === 'F8') { e.preventDefault(); this.quickLoad(); }
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        if (!this._backlogVisible) { e.preventDefault(); this._onClick(); }
+      }
+      if (e.key === 'b' || e.key === 'B' || e.key === 'Backspace') {
+        e.preventDefault();
+        if (this._backlogVisible) this._hideBacklog();
+        else this._showBacklog();
+      }
+      if (e.key === 'Control' || e.key === 'Shift') {
+        this.setSkipMode(e.type === 'keydown');
+      }
+      if (e.key === 'a' || e.key === 'A') {
+        if (!e.repeat) this.setAutoMode(!this._autoMode);
+      }
     };
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', this._keyHandler);
+      this._keyUpHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Control' || e.key === 'Shift') {
+          this.setSkipMode(false);
+        }
+      };
+      window.addEventListener('keyup', this._keyUpHandler);
     }
   }
 
@@ -287,6 +312,69 @@ export class AvdController {
 
   getBacklog(): readonly BacklogEntry[] { return this._backlog; }
 
+  isBacklogVisible(): boolean { return this._backlogVisible; }
+
+  private _buildBacklogOverlay(): void {
+    if (this._backlogOverlay) return;
+    const L = this._layer!;
+    const overlay = L.createContainer();
+    overlay.eventMode = 'static';
+    overlay.cursor = 'pointer';
+    overlay.visible = false;
+
+    const bg = L.createGraphics();
+    bg.rect(0, 0, this._opts.screenW, this._opts.screenH)
+      .fill({ color: 0x000000, alpha: 0.85 });
+    overlay.addChild(bg);
+
+    this._backlogOverlay = overlay;
+    this._parent.addChild(overlay);
+  }
+
+  private _showBacklog(): void {
+    if (!this._backlogOverlay) this._buildBacklogOverlay();
+    const overlay = this._backlogOverlay!;
+    overlay.visible = true;
+    this._backlogVisible = true;
+
+    const L = this._layer!;
+    for (const t of this._backlogTexts) t.destroy();
+    this._backlogTexts = [];
+
+    const padding = 40;
+    let y = padding + 20;
+    const maxW = this._opts.screenW - padding * 2;
+    const lineH = this._opts.textSize + 8;
+
+    for (const entry of this._backlog) {
+      const speaker = entry.speaker ?? '';
+      const prefix = speaker ? `${speaker}: ` : '';
+      const text = L.createText({
+        text: prefix + entry.text,
+        style: {
+          fontFamily: this._opts.fontFamily, fontSize: Math.round(this._opts.textSize * 0.8),
+          fill: speaker ? 0x88ccff : 0xcccccc, wordWrap: true, wordWrapWidth: maxW,
+        },
+      });
+      text.x = padding;
+      text.y = y;
+      overlay.addChild(text);
+      this._backlogTexts.push(text);
+      y += lineH * 2;
+    }
+
+    const btnEl = (overlay as any).el ?? overlay;
+    const handler = () => this._hideBacklog();
+    btnEl.addEventListener?.('pointerdown', handler);
+    btnEl._backlogHandler = handler;
+  }
+
+  private _hideBacklog(): void {
+    if (!this._backlogOverlay) return;
+    this._backlogOverlay.visible = false;
+    this._backlogVisible = false;
+  }
+
   setSpeakerStyle(speaker: string, style: SpeakerStyle): void { this._speakerStyles.set(speaker, style); }
   clearSpeakerStyle(speaker: string): void { this._speakerStyles.delete(speaker); }
 
@@ -375,11 +463,16 @@ export class AvdController {
     if (this._notifications) this._notifications.destroy();
     this._speakerL2D.forEach((v) => v.destroy());
     this._speakerL2D.clear();
+    if (this._backlogOverlay) {
+      for (const t of this._backlogTexts) t.destroy();
+      this._backlogOverlay.destroy();
+    }
     this._clickOverlay.destroy();
     this._choiceContainer.destroy({ children: true });
     this._layer?.destroy();
-    if (this._keyHandler && typeof window !== 'undefined') {
-      window.removeEventListener('keydown', this._keyHandler);
+    if (typeof window !== 'undefined') {
+      if (this._keyHandler) window.removeEventListener('keydown', this._keyHandler);
+      if (this._keyUpHandler) window.removeEventListener('keyup', this._keyUpHandler);
     }
   }
 
@@ -401,7 +494,11 @@ export class AvdController {
   private _tick(): void {
     const delta = this._ticker ? this._ticker.deltaMS : 16;
     if (this._fsm.state === 'typing') {
-      this._typing.update(delta);
+      if (this._skipMode) {
+        this._typing.complete();
+      } else {
+        this._typing.update(delta);
+      }
       if (!this._typing.active && this._typing.totalUnits > 0) {
         this._onTypingComplete();
       }
@@ -450,6 +547,38 @@ export class AvdController {
 
     if (line.bgKey != null) {
       this._currentBgKey = line.bgKey;
+      const bgTex = this._bgTextureMap[line.bgKey];
+      if (bgTex) {
+        this._backgroundLayer.setBackground(bgTex);
+      }
+    }
+
+    if (line.bgmKey != null) {
+      this._currentBgmKey = line.bgmKey;
+      const bgmBuf = this._audioMap[line.bgmKey];
+      if (bgmBuf) {
+        this._audio.playBgm(bgmBuf);
+      }
+    }
+
+    if (line.sfxKey != null) {
+      const sfxBuf = this._audioMap[line.sfxKey];
+      if (sfxBuf) {
+        this._audio.playSfx(sfxBuf);
+      }
+    }
+
+    if (line.voiceKey != null) {
+      const voiceBuf = this._audioMap[line.voiceKey];
+      if (voiceBuf) {
+        this._audio.playVoice(voiceBuf);
+      }
+    }
+
+    if (line.effect === 'shake') {
+      this._screenFx.shake();
+    } else if (line.effect === 'flash') {
+      this._screenFx.flash();
     }
 
     if (typeof line.text === 'string') {
@@ -494,15 +623,14 @@ export class AvdController {
     );
     this._dialogueBox.setTextContainer(textContainer);
 
-    this._dialogueBox.setAlpha(0);
-    gsap.killTweensOf(this._dialogueBox.container);
-    gsap.to(this._dialogueBox.container, {
-      alpha: 1,
-      duration: this._opts.textFadeMs / 1000,
-      ease: 'power2.out',
-    });
-
     if (index === 0) {
+      this._dialogueBox.setAlpha(0);
+      gsap.killTweensOf(this._dialogueBox.container);
+      gsap.to(this._dialogueBox.container, {
+        alpha: 1,
+        duration: this._opts.textFadeMs / 1000,
+        ease: 'power2.out',
+      });
       this._dialogueBox.setOffsetY(this._opts.boxEnterOffsetY);
       gsap.to(this._dialogueBox.container, {
         y: this._opts.boxY,

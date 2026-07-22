@@ -33,6 +33,14 @@ export class PixiLayer implements IRenderLayer {
     return new PIXI.Container() as unknown as IRenderContainer;
   }
 
+  createLayer(zIndex: number): IRenderContainer {
+    const c = new PIXI.Container();
+    (this._rootPixi as any).sortableChildren = true;
+    c.zIndex = zIndex;
+    this._rootPixi.addChild(c);
+    return c as unknown as IRenderContainer;
+  }
+
   createGraphics(): IRenderGraphics {
     return new PIXI.Graphics() as unknown as IRenderGraphics;
   }

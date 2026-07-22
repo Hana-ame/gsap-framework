@@ -11,7 +11,7 @@ import {
   type WebGLReport,
 } from './PixiAppHelpers';
 
-export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) | void): () => void {
+export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) | void, renderer?: 'webgl' | 'canvas'): () => void {
   assertSingleBodyCanvas();
 
   const report = probeWebGL();
@@ -62,7 +62,7 @@ export function startPixiApp(onReady?: (proxy: SubCanvasProxy) => (() => void) |
     antialias: true,
     resolution: window.devicePixelRatio || 1,
     autoDensity: true,
-    preference: 'webgl',
+    preference: renderer ?? 'webgl',
     powerPreference: 'high-performance',
     hello: false,
   };

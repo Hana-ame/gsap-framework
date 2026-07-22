@@ -38,6 +38,13 @@ export class DomLayer implements IRenderLayer {
     return new DomContainer();
   }
 
+  createLayer(zIndex: number): IRenderContainer {
+    const c = new DomContainer();
+    c.zIndex = zIndex;
+    this._rootDom.addChild(c);
+    return c;
+  }
+
   createGraphics(): IRenderGraphics {
     return new DomGraphics();
   }

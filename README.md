@@ -1,16 +1,16 @@
 # GSAP Framework
 
-PIXI v8 game UI framework with GSAP-powered animation.
+基于 PIXI v8 的游戏 UI 框架，动画引擎使用 GSAP。
 
-`SubCanvas` is the core — a region of a shared `PIXI.Application` canvas with its own bounds, event routing, lifecycle, and drag behavior. Build complex UIs by nesting SubCanvases, each hosting any PIXI content.
+`SubCanvas` 是核心概念——共享 `PIXI.Application` 画布上的一个区域，拥有独立的边界、事件路由、生命周期和拖拽行为。通过嵌套 SubCanvas 构建复杂 UI，每个 SubCanvas 可容纳任意 PIXI 内容。
 
-## Install
+## 安装
 
 ```sh
 npm install pixi.js gsap
 ```
 
-## Quick start
+## 快速开始
 
 ```ts
 import { startPixiApp } from './framework';
@@ -26,50 +26,50 @@ const stop = startPixiApp((proxy) => {
     x: 40, y: 40,
   });
 
-  win.content.stage.addChild(/* any PIXI display object */);
+  win.content.stage.addChild(/* 任意 PIXI display object */);
 });
 ```
 
-## Features
+## 特性
 
 | | |
 |---|---|
-| **SubCanvas** | Region-based canvas subdivision, recursive event routing, drag (`title` / `anywhere` / `none`) |
-| **LayerManager** | Named z-ordered layers — zero-overhead abstraction over PIXI.Container + zIndex |
-| **InfiniteCanvas** | Plugin-based infinite pan/zoom canvas with chunked lazy loading, deceleration, zoom-to-pointer |
-| **Component factories** | `createWindow` / `createConfirm` / `createScrollable` — direct factory calls, no registry indirection |
-| **EventBus** | Pub-sub for cross-component communication — decoupled, typed, unsubscribe-safe |
-| **GSAP Integration** | PixiPlugin pre-registered, ready for `gsap.to(obj, { pixi: { ... } })` |
-| **textPresets** | Centralized `textPresets.btn`, `textPresets.label`, `textPresets.dim`, `textPresets.coord`, `textPresets.heading` |
-| **PerfDisplay** | On-screen FPS/frametime/object count HUD |
-| **Backend Control** | `MockBackend` + `WindowManager` + `ContentChannel` — backend-driven UI via command protocol |
-| **Components** | Window / Confirm / Scrollable / Loading / Image / ClickableImage / FullscreenManager / TextInput / VideoPlayer / AVD |
-| **AVD Framework** | `DialogueStateMachine` / `TypingEngine` / `RosterManager` / `DialogueBox` / `PortraitLayer` / `AvdController` |
+| **SubCanvas** | 基于区域的画布细分，递归事件路由，拖拽（`title` / `anywhere` / `none`） |
+| **LayerManager** | 命名 z-order 层——对 PIXI.Container + zIndex 的零开销封装 |
+| **InfiniteCanvas** | 基于插件的无限平移/缩放画布，支持分块懒加载、惯性减速、zoom-to-pointer |
+| **Component factories** | `createWindow` / `createConfirm` / `createScrollable`——直接工厂调用，无注册间接层 |
+| **EventBus** | 跨组件通信的发布-订阅——解耦、类型安全、可安全取消订阅 |
+| **GSAP 集成** | PixiPlugin 预注册，直接使用 `gsap.to(obj, { pixi: { ... } })` |
+| **textPresets** | 集中管理 `textPresets.btn`、`textPresets.label`、`textPresets.dim`、`textPresets.coord`、`textPresets.heading` |
+| **PerfDisplay** | 屏幕上的 FPS/帧时间/对象数 HUD |
+| **后端控制** | `MockBackend` + `WindowManager` + `ContentChannel`——通过命令协议实现后端驱动 UI |
+| **组件** | Window / Confirm / Scrollable / Loading / Image / ClickableImage / FullscreenManager / TextInput / VideoPlayer / AVD |
+| **AVD 框架** | `DialogueStateMachine` / `TypingEngine` / `RosterManager` / `DialogueBox` / `PortraitLayer` / `AvdController` |
 
-## Structure
+## 目录结构
 
 ```
 src/
   framework/    SubCanvas, InfiniteCanvas, EventBus, LayerManager, GSAP, PerfDisplay, UI helpers
   avd/          DialogueStateMachine, TypingEngine, RosterManager, DialogueBox, PortraitLayer, AvdController, AvdScript
   components/   Window, Confirm, Scrollable, Loading, Image, FullscreenManager, VideoPlayer, AVD, TextInput
-  backend/      MockBackend + WindowManager + ContentChannel (backend-driven UI control)
-  example/      50 routes demonstrating everything
+  backend/      MockBackend + WindowManager + ContentChannel (后端驱动 UI 控制)
+  example/      50 条路由展示所有功能
 ```
 
 ---
 
 ## SubCanvas
 
-The atomic unit of canvas subdivision. Every SubCanvas has its own PIXI.Container (`stage`) with independent bounds, event routing, and drag behavior.
+画布细分的原子单位。每个 SubCanvas 拥有独立的 PIXI.Container（`stage`），以及独立的边界、事件路由和拖拽行为。
 
-### Creating a SubCanvas
+### 创建 SubCanvas
 
 ```ts
-// Full-viewport root
+// 全视口根节点
 const root = proxy.createRegion({ x: 0, y: 0, width: 800, height: 600 });
 
-// Nested sub-region
+// 嵌套子区域
 const panel = root.createRegion({ x: 10, y: 10, width: 200, height: 300 }, {
   dragMode: 'title',      // 'title' | 'anywhere' | 'none'
   dragBounds: () => root.bounds,
@@ -78,83 +78,83 @@ const panel = root.createRegion({ x: 10, y: 10, width: 200, height: 300 }, {
 });
 ```
 
-### Pointer events
+### 指针事件
 
 ```ts
 region.onPress((e: SubPointerEvent) => { /* pointerdown */ });
 region.onMove((e: SubPointerEvent) => { /* pointermove */ });
 region.onRelease((e: SubPointerEvent) => { /* pointerup */ });
-region.onTap((e: SubPointerEvent) => { /* click (no drag) */ });
+region.onTap((e: SubPointerEvent) => { /* 点击（非拖动） */ });
 region.onLeave((e: SubPointerEvent) => { /* pointerleave */ });
 region.offPointer('pointermove', fn);
 ```
 
-`SubPointerEvent` fields: `type`, `x`, `y` (region-local), `globalX`, `globalY` (client), `originalEvent`.
+`SubPointerEvent` 字段：`type`、`x`、`y`（区域本地坐标）、`globalX`、`globalY`（客户端坐标）、`originalEvent`。
 
-### Lifecycle & transform
+### 生命周期 & 变换
 
 ```ts
-region.setBounds({ x, y, width, height });  // position + size
-region.setPosition(x, y);                    // position only
-region.setSize(width, height);               // size only
+region.setBounds({ x, y, width, height });  // 位置 + 大小
+region.setPosition(x, y);                    // 仅位置
+region.setSize(width, height);               // 仅大小
 region.bringToFront();
 region.sendToBack();
 region.destroy();
 region.destroyed;                            // boolean
 
-// PIXI-style shortcuts
+// PIXI 风格快捷属性
 region.x; region.y; region.scale; region.rotation;
 region.alpha; region.visible; region.tint;
 region.eventMode; region.label;
 ```
 
-### Drag modes
+### 拖拽模式
 
-| Mode | Behavior |
+| 模式 | 行为 |
 |---|---|
-| `'title'` | Only drag by children with `label === 'subcanvas-drag-handle'` |
-| `'anywhere'` | Drag by clicking anywhere in the region |
-| `'none'` | No drag |
+| `'title'` | 只能通过 `label === 'subcanvas-drag-handle'` 的子元素拖拽 |
+| `'anywhere'` | 点击区域内任意位置拖拽 |
+| `'none'` | 禁止拖拽 |
 
-Drag handlers are installed on **window-level** `pointermove`/`pointerup` for reliability (events fire even when pointer leaves the canvas). Bounds clamping and `bringToFront` on drag start are built in.
+拖拽处理器挂在**窗口级**的 `pointermove`/`pointerup` 上以确保可靠性（指针离开画布时事件仍能触发）。内置边界约束和拖拽开始时自动 `bringToFront`。
 
-During a drag, subsequent `pointermove`/`pointerup`/`pointerleave` are **consumed** by the dragging SubCanvas — sibling regions (e.g. an InfiniteCanvas behind a window) won't receive them. This prevents the "drag penetration" problem where dragging a window also pans the canvas beneath.
+拖拽期间，后续的 `pointermove`/`pointerup`/`pointerleave` 会被拖拽中的 SubCanvas **消费**掉——兄弟区域（例如窗口背后的 InfiniteCanvas）不会收到这些事件。这防止了"拖拽穿透"问题（拖动窗口时也平移了底层的画布）。
 
-### Drag callbacks
+### 拖拽回调
 
 ```ts
 root.createRegion(bounds, {
-  onDragStart: (e) => { /* drag began */ },
-  onDrag: (e) => { /* position changed */ },
-  onDragEnd: (e) => { /* drag ended */ },
+  onDragStart: (e) => { /* 拖拽开始 */ },
+  onDrag: (e) => { /* 位置改变 */ },
+  onDragEnd: (e) => { /* 拖拽结束 */ },
 });
 ```
 
-### Compositing
+### 层级组合
 
 ```ts
 const parent = root.createRegion({ x: 0, y: 0, width: 400, height: 300 });
 const child = parent.createRegion({ x: 20, y: 20, width: 100, height: 80 });
-// Events route hierarchically. parent.onPress and child.onPress both fire appropriately.
+// 事件按层级路由。parent.onPress 和 child.onPress 都能正确触发。
 ```
 
-### Resize observation
+### 尺寸变化监听
 
 ```ts
 region.onResize((bounds: Rect) => {
-  // Called whenever setBounds/setSize fires (debounced at 80ms for canvas resize)
+  // setBounds/setSize 触发时调用（画布 resize 有 80ms 防抖）
 });
 ```
 
 ---
 
-## Components
+## 组件
 
-All PIXI content lives in `src/components/`. Each component follows the `ComponentHandle` contract: `{ stage, destroy(), destroyed }`.
+所有 PIXI 内容位于 `src/components/`。每个组件遵循 `ComponentHandle` 契约：`{ stage, destroy(), destroyed }`。
 
-### Window — `createWindow`
+### 窗口——`createWindow`
 
-Draggable window with title bar, optional close button, and a content SubCanvas.
+带标题栏的可拖拽窗口，支持关闭按钮和内容 SubCanvas。
 
 ```ts
 import { createWindow } from '../components';
@@ -171,15 +171,15 @@ const win = createWindow({
 });
 
 win.setTitle('New Title');
-win.content.stage.addChild(sprite);  // add content to the inner region
+win.content.stage.addChild(sprite);  // 在内层区域添加内容
 win.destroy();
 ```
 
-**Return type**: `GameWindow` (extends `SubCanvas`). Inherits all SubCanvas methods + `setTitle()` and `.content` (inner SubCanvas).
+**返回类型**：`GameWindow`（继承 `SubCanvas`）。拥有 SubCanvas 全部方法 + `setTitle()` 和 `.content`（内层 SubCanvas）。
 
-### Confirm — `createConfirm`
+### 确认框——`createConfirm`
 
-Modal dialog with title, message, optional image, and configurable buttons.
+带标题、消息、可选图片和可配置按钮的模态对话框。
 
 ```ts
 import { createConfirm } from '../components';
@@ -191,8 +191,8 @@ const confirm = createConfirm({
   width: 300, height: 180,
   okText: 'Yes',
   cancelText: 'No',
-  onResult: (res) => console.log(res),  // 'ok' | 'cancel' | button label
-  // Custom buttons:
+  onResult: (res) => console.log(res),  // 'ok' | 'cancel' | 按钮标签
+  // 自定义按钮：
   buttons: [
     { label: 'Save', primary: true, onClick: (c) => c.destroy() },
     { label: 'Discard', onClick: (c) => c.destroy() },
@@ -204,9 +204,9 @@ confirm.setMessage('Updated message');
 confirm.setImage('https://example.com/pic.jpg');
 ```
 
-### Scrollable — `createScrollable`
+### 滚动容器——`createScrollable`
 
-Masked scrollable container with drag-to-scroll, mouse wheel, and optional scrollbar.
+带遮罩的滚动容器，支持拖拽滚动、鼠标滚轮和可选滚动条。
 
 ```ts
 import { createScrollable } from '../components';
@@ -218,42 +218,42 @@ const sc = createScrollable({
   scrollbar: true,
 });
 
-// Add content to the scrollable area (not stage directly)
+// 向滚动区域添加内容（不是直接操作 stage）
 sc.content.addChild(tallContent);
 
-// Programmatic control
+// 编程控制
 sc.scrollTo(0, 100);
 sc.scrollBy(0, -20);
-sc.recalc();     // recalculate content bounds
+sc.recalc();     // 重新计算内容边界
 ```
 
-### Loading — `showLoading` / `createLoading`
+### 加载动画——`showLoading` / `createLoading`
 
-Spinner overlay with configurable text and color.
+带可配置文字和颜色的旋转加载覆盖层。
 
 ```ts
 import { showLoading, createLoading } from '../components';
 
-// One-shot (auto-dismiss after timeout)
+// 一次性加载（超时后自动消失）
 const dismiss = showLoading(root);
 setTimeout(dismiss, 2000);
 
-// With custom options
+// 自定义选项
 showLoading(root, {
   text: 'Loading...',
   spinnerColor: 0x44ff88,
   overlayAlpha: 0.7,
 });
 
-// Persistent handle (ComponentHandle — stage / destroy / destroyed)
+// 持久化句柄（ComponentHandle — stage / destroy / destroyed）
 const loader = createLoading(root);
-// To update text, destroy and recreate with new opts
+// 要更新文字，销毁后重新创建
 loader.destroy();
 ```
 
-### Image — `createLoadingImage`
+### 图片——`createLoadingImage`
 
-Image loader with loading spinner, success state, and error placeholder.
+带加载旋转、成功状态和错误占位的图片加载器。
 
 ```ts
 import { createLoadingImage } from '../components';
@@ -265,14 +265,14 @@ const img = createLoadingImage({
   width: 200, height: 150,
 });
 
-// Replace URL later
+// 替换 URL
 img.load('https://other.com/pic.jpg');
 img.destroy();
 ```
 
-### ClickableImage — `createClickableImage`
+### ClickableImage——`createClickableImage`
 
-Thumbnail that opens FullscreenManager overlay on click.
+点击后在全屏查看器中打开的缩略图。
 
 ```ts
 import { createClickableImage, createFullscreenManager } from '../components';
@@ -289,11 +289,11 @@ createClickableImage(panel, proxy.bus, {
 });
 ```
 
-### VideoPlayer
+### VideoPlayer（视频播放器）
 
-Two variants:
+两种变体：
 
-**PIXI-rendered** (`PixiVideoPlayer`):
+**PIXI 渲染**（`PixiVideoPlayer`）：
 
 ```ts
 import { createVideoPlayer } from '../components';
@@ -315,7 +315,7 @@ player.stage;     // PIXI Container
 player.destroy();
 ```
 
-**React DOM** (`VideoPlayer` component):
+**React DOM**（`VideoPlayer` 组件）：
 
 ```tsx
 import { VideoPlayer } from '../components';
@@ -329,9 +329,9 @@ import { VideoPlayer } from '../components';
 />
 ```
 
-### TextInput
+### TextInput（文本输入）
 
-HTML `<input>` overlaid on canvas, positioned via `requestAnimationFrame` + `getBounds()`.
+HTML `<input>` 覆盖在画布上，通过 `requestAnimationFrame` + `getBounds()` 定位。
 
 ```ts
 import { createTextInput } from '../components';
@@ -339,11 +339,11 @@ import { createTextInput } from '../components';
 const input = createTextInput(parent.stage, {
   x: 40, y: 100,
   width: 300, height: 34,
-  placeholder: 'type something…',
+  placeholder: '输入内容…',
   password: false,
   maxLength: 20,
   onChange: (v) => console.log(v),
-  onSubmit: (v) => console.log('submitted:', v),
+  onSubmit: (v) => console.log('提交：', v),
 });
 
 input.focus();
@@ -354,18 +354,18 @@ input.setEnabled(false);
 input.destroy();
 ```
 
-Invisible overlay captures clicks; on focus GSAP fades in the native `<input>`. PIXI container needs `eventMode = 'static'` + `hitArea` + `cursor = 'text'`.
+不可见覆盖层捕获点击；聚焦时 GSAP 淡入原生 `<input>`。PIXI container 需要 `eventMode = 'static'` + `hitArea` + `cursor = 'text'`。
 
-### FullscreenManager
+### FullscreenManager（全屏查看器）
 
-Full-viewport image viewer launched via EventBus.
+通过 EventBus 触发的全视口图片查看器。
 
 ```ts
 import { createFullscreenManager } from '../components';
 
 const fm = createFullscreenManager(proxy);
 
-// Emit anywhere via EventBus
+// 通过 EventBus 随处触发
 proxy.bus.emit('fullscreen:show', {
   url: 'image.jpg',
   title: 'Photo',
@@ -375,11 +375,11 @@ proxy.bus.emit('fullscreen:show', {
 });
 ```
 
-Supports double-click zoom, drag-to-pan (when zoomed), drag-down-to-dismiss.
+支持双击缩放、拖拽平移（缩放后）、下滑关闭。
 
-### AVD — Visual Novel Engine
+### AVD——视觉小说引擎
 
-Script-driven dialogue system with typewriter text, character portraits, fade transitions.
+基于脚本的对话系统，支持打字机文字、角色立绘、淡入淡出过渡。
 
 ```ts
 import { Avd, parseAvdScriptJSON } from '../components';
@@ -387,39 +387,39 @@ import { Avd, parseAvdScriptJSON } from '../components';
 const avd = new Avd(stage, screenW, screenH, ticker);
 
 avd.setScript([
-  { speaker: 'Narrator', text: 'Once upon a time…' },
-  { speaker: 'Hero', text: 'Hello world!', portrait: heroTexture, portraitPos: 'left' },
+  { speaker: 'Narrator', text: '从前……' },
+  { speaker: 'Hero', text: '你好！', portrait: heroTexture, portraitPos: 'left' },
 ]);
 
-avd.next();               // advance to next line
-avd.goTo(0);              // jump to line index
-avd.setTypewriterSpeed(30); // chars/sec
+avd.next();               // 前进到下一行
+avd.goTo(0);              // 跳转到指定行
+avd.setTypewriterSpeed(30); // 字符/秒
 avd.getState();           // 'typing' | 'between' | 'done'
 avd.destroy();
 ```
 
-Options control box dimensions, colors, font, portrait layout, fade durations. See `AvdOptions` for the full list (all fields optional with smart defaults).
+选项控制对话框尺寸、颜色、字体、立绘布局、淡入时长。详见 `AvdOptions`（所有字段可选，智能默认值）。
 
-Parse from JSON:
+从 JSON 解析：
 
 ```ts
 const script = parseAvdScriptJSON(jsonString, (assetName) => textureMap[assetName]);
 avd.setScript(script);
 ```
 
-### AVD Framework — `src/avd/`
+### AVD 框架——`src/avd/`
 
-A dedicated framework layer for visual novel dialogue, built on top of `framework/`. Composed of independently testable modules replacing the monolithic `components/Avd`.
+独立的视觉小说对话框架层，构建在 `framework/` 之上。由可独立测试的模块组成，替代了原有的单体 `components/Avd`。
 
-| Module | Responsibility |
+| 模块 | 职责 |
 |--------|---------------|
-| `DialogueStateMachine` | typing → between → done FSM (zero PIXI dependency) |
-| `TypingEngine` | Per-frame character reveal using `framework/text-effects-layout` |
-| `RosterManager` | Roster data + highlight logic (zero PIXI dependency) |
-| `DialogueBox` | Background box + speaker name + arrow renderer |
-| `PortraitLayer` | Portrait renderer with fade / setAll bulk mode |
-| `AvdController` | Thin orchestrator tying all modules together |
-| `AvdScript` | JSON script parser with parallel texture loading |
+| `DialogueStateMachine` | typing → between → done 状态机（零 PIXI 依赖） |
+| `TypingEngine` | 逐帧字符揭示，使用 `framework/text-effects-layout` |
+| `RosterManager` | 角色表数据 + 高亮逻辑（零 PIXI 依赖） |
+| `DialogueBox` | 背景框 + 说话人名字 + 箭头渲染 |
+| `PortraitLayer` | 立绘渲染，支持 fade / setAll 批量模式 |
+| `AvdController` | 轻量编排器，连接所有模块 |
+| `AvdScript` | JSON 脚本解析器，支持并行纹理加载 |
 
 ```ts
 import { AvdController } from '../avd';
@@ -432,7 +432,7 @@ avd.setScript([
   { speaker: 'Narrator', text: '...' },
   { speaker: 'Hero', text: 'Hello!' },
 ]);
-avd.next();                    // advance/complete typewriter
+avd.next();                    // 推进/完成打字机
 avd.setTypewriterSpeed(60);
 avd.getState();                // 'typing' | 'between' | 'done'
 avd.setRoster({ Alice: { pos: 'left', texture: tex } });
@@ -440,11 +440,11 @@ avd.setRosterMode('persistent');
 avd.destroy();
 ```
 
-Compared to the legacy `components/Avd`:
-- **TypingEngine** reuses `text-effects-layout.buildLayout` (eliminates `AvdInlineLayout` duplication)
-- **DialogueStateMachine** is pure logic — testable without PIXI
-- **RosterManager** decouples roster data from rendering
-- **PortraitLayer.setAll()** handles persistent mode with one bulk call
+与旧版 `components/Avd` 相比：
+- **TypingEngine** 复用 `text-effects-layout.buildLayout`（消除了 `AvdInlineLayout` 重复）
+- **DialogueStateMachine** 纯逻辑——无需 PIXI 即可测试
+- **RosterManager** 将角色表数据与渲染解耦
+- **PortraitLayer.setAll()** 一次批量调用处理持久模式
 
 ---
 
@@ -452,9 +452,9 @@ Compared to the legacy `components/Avd`:
 
 ## InfiniteCanvas
 
-Plugin-based infinite pan/zoom canvas. World is divided into fixed-size chunks, loaded/unloaded on demand.
+基于插件的无限平移/缩放画布。世界被划分为固定大小的块（chunk），按需加载/卸载。
 
-### Basic usage
+### 基本用法
 
 ```ts
 import { InfiniteCanvas, type Chunk } from '../framework';
@@ -464,7 +464,7 @@ const ic = new InfiniteCanvas({
   viewport: { x: 0, y: 0, width: 600, height: 400 },
   chunkSize: 200,
   chunkCreate: ({ cx, cy, container }: Chunk) => {
-    // Draw content when chunk enters viewport
+    // 块进入视口时绘制内容
     const g = new PIXI.Graphics().rect(0, 0, 200, 200).fill({ color: 0x1a2a3a });
     container.addChild(g);
   },
@@ -480,53 +480,53 @@ const ic = new InfiniteCanvas({
 });
 ```
 
-### Methods
+### 方法
 
-| Method | Purpose |
+| 方法 | 用途 |
 |---|---|
-| `panBy(dx, dy)` | Pan by screen pixels |
-| `panTo(x, y)` | Jump to world coordinate (deprecated, prefer `centerOn`) |
-| `centerOn(wx, wy)` | Center viewport on world coordinate |
-| `setZoom(z, cx?, cy?)` | Zoom, optionally anchored at screen point (cx, cy) |
-| `screenToWorld(sx, sy)` | Convert screen → world coordinates |
-| `worldToScreen(wx, wy)` | Convert world → screen coordinates |
-| `setViewport(rect)` | Update viewport dimensions |
-| `getChunkAt(cx, cy)` | Get loaded chunk by grid index |
-| `eachChunk(fn)` | Iterate all loaded chunks |
+| `panBy(dx, dy)` | 按屏幕像素平移 |
+| `panTo(x, y)` | 跳转到世界坐标（已废弃，推荐用 `centerOn`） |
+| `centerOn(wx, wy)` | 将视口中心定位到世界坐标 |
+| `setZoom(z, cx?, cy?)` | 缩放，可选锚定到屏幕点 (cx, cy) |
+| `screenToWorld(sx, sy)` | 屏幕坐标 → 世界坐标转换 |
+| `worldToScreen(wx, wy)` | 世界坐标 → 屏幕坐标转换 |
+| `setViewport(rect)` | 更新视口尺寸 |
+| `getChunkAt(cx, cy)` | 按网格索引获取已加载的块 |
+| `eachChunk(fn)` | 遍历所有已加载的块 |
 
-### Properties
+### 属性
 
-| Property | Returns |
+| 属性 | 返回值 |
 |---|---|
-| `worldX`, `worldY` | Viewport center in world space (stable during zoom) |
-| `zoom` | Current zoom level |
-| `viewport` | Current viewport Rect |
-| `loadedChunkCount` | Number of loaded chunks |
-| `destroyed` | Boolean |
+| `worldX`, `worldY` | 视口中心在世界空间中的坐标（缩放期间稳定） |
+| `zoom` | 当前缩放级别 |
+| `viewport` | 当前视口 Rect |
+| `loadedChunkCount` | 已加载的块数量 |
+| `destroyed` | 布尔值 |
 
-### Plugins
+### 插件
 
-Extend behavior via `InfiniteCanvasPlugin`:
+通过 `InfiniteCanvasPlugin` 扩展行为：
 
 ```ts
 const myPlugin: InfiniteCanvasPlugin = {
   name: 'grid-overlay',
   priority: 10,
   onTap(worldX, worldY) { console.log('tapped', worldX, worldY); },
-  onUpdate(elapsed) { /* per-frame logic */ },
-  onDestroy() { /* cleanup */ },
+  onUpdate(elapsed) { /* 每帧逻辑 */ },
+  onDestroy() { /* 清理 */ },
 };
 
 ic.addPlugin(myPlugin);
 ic.removePlugin('grid-overlay');
 ```
 
-Built-in plugins: `DeceleratePlugin` (inertia), enabled by default (`decelerate: true`).
+内置插件：`DeceleratePlugin`（惯性滑动），默认启用（`decelerate: true`）。
 
-### Performance
+### 性能
 
-- Chunks are synced only when the visible chunk range changes (`_lastChunkRange` cache avoids O(n) traversal on every pixel of drag)
-- Deceleration velocity computed over a 50ms time window (avoids phantom fling when mouse stationary before release)
+- 块仅在可见块范围变化时同步（`_lastChunkRange` 缓存避免每次拖拽像素遍历 O(n)）
+- 减速速度基于 50ms 时间窗口计算（避免鼠标松开前静止时产生幻影甩动）
 
 ---
 
@@ -534,7 +534,7 @@ Built-in plugins: `DeceleratePlugin` (inertia), enabled by default (`decelerate:
 
 ## EventBus
 
-Typed pub-sub.
+类型安全的发布-订阅。
 
 ```ts
 import { EventBus } from '../framework';
@@ -546,18 +546,16 @@ const unsub = bus.on('item:click', (payload: { id: string }) => {
 });
 
 bus.emit('item:click', { id: 'sword' });
-unsub();  // remove listener
-bus.clear();  // remove all
-bus.listenerCount('item:click');  // number of handlers
+unsub();  // 移除监听器
+bus.clear();  // 移除全部
+bus.listenerCount('item:click');  // 处理器数量
 ```
 
-Convention: events are namespaced (`component:action`). Handlers are called in registration order. Errors in handlers are caught and logged (one bad handler won't break others).
-
----
+约定：事件带命名空间（`component:action`）。处理器按注册顺序调用。处理器中的错误会被捕获并记录（单个处理器异常不会影响其他处理器）。
 
 ## LayerManager
 
-Named z-ordered layers — zero-overhead abstraction over PIXI.Container + zIndex.
+命名 z-order 层——对 PIXI.Container + zIndex 的零开销封装。
 
 ```ts
 import { LayerManager } from '../framework';
@@ -580,11 +578,9 @@ layers.remove('ui');
 layers.destroy();
 ```
 
----
+## GSAP 集成
 
-## GSAP Integration
-
-PixiPlugin pre-registered on import. Rotation in **degrees**.
+PixiPlugin 在 import 时自动注册。旋转使用**度**。
 
 ```ts
 import { gsap } from '../framework';
@@ -600,16 +596,14 @@ tl.to(sprite, { pixi: { x: 100 }, duration: 0.3 })
   .to(sprite, { pixi: { alpha: 0 }, duration: 0.2 });
 ```
 
----
+## textPresets——样式常量
 
-## textPresets — Style Constants
-
-Centralized text style presets in `ui-helpers.ts`.
+`ui-helpers.ts` 中的集中文本样式预设。
 
 ```ts
 import { textPresets } from '../components';
 
-// Available presets:
+// 可用的预设：
 textPresets.btn      // { fontSize: 12, fill: 0xccccee, fontFamily: 'monospace', fontWeight: 'bold' }
 textPresets.label    // { fontSize: 11, fill: 0x8888aa, fontFamily: 'monospace' }
 textPresets.dim      // { fontSize: 10, fill: 0x556688, fontFamily: 'monospace' }
@@ -619,31 +613,27 @@ textPresets.heading  // { fontSize: 14, fill: 0x8888cc, fontFamily: 'monospace',
 new PIXI.Text({ text: 'Hello', style: textPresets.label });
 ```
 
----
-
 ## PerfDisplay
 
-On-screen FPS/frametime/object count overlay. The root PerfDisplay is created automatically by `startPixiApp`.
+屏幕上的 FPS/帧时间/对象数 HUD。根 PerfDisplay 由 `startPixiApp` 自动创建。
 
 ```ts
 import { startPixiApp } from '../framework';
 
 const stop = startPixiApp((proxy) => {
-  proxy.showPerfMeasure(true);  // show HUD
-  proxy.showPerfMeasure(false); // hide
+  proxy.showPerfMeasure(true);  // 显示 HUD
+  proxy.showPerfMeasure(false); // 隐藏
 });
 
-// Toggle from anywhere:
+// 从任意位置切换：
 import { enablePerfMeasure, disablePerfMeasure } from '../framework';
 enablePerfMeasure();
 disablePerfMeasure();
 ```
 
----
-
 ## makeInfoPanel
 
-Compact info panel used in all example routes.
+所有示例路由中使用的高亮信息面板。
 
 ```ts
 import { makeInfoPanel } from '../components';
@@ -656,21 +646,19 @@ makeInfoPanel(root, {
 });
 ```
 
----
+## 后端驱动 UI
 
-## Backend-driven UI
-
-MockBackend + WindowManager + ContentChannel — control the display programmatically.
+MockBackend + WindowManager + ContentChannel——通过编程控制界面。
 
 ```
-MockBackend (JS commands)
+MockBackend (JS 命令)
     ↓
-WindowManager (buffer layer — window lifecycle)
-    ├── create/close/move/resize windows
-    └── route content to windows
-ContentChannel (WS-streamed content)
+WindowManager (缓冲层 — 窗口生命周期)
+    ├── 创建/关闭/移动/调整窗口
+    └── 将内容路由到窗口
+ContentChannel (WS 流式内容)
     ↓
-Framework API → PIXI rendering
+Framework API → PIXI 渲染
 ```
 
 ```ts
@@ -686,23 +674,19 @@ backend.send('open-window', { id: 'w1', title: 'Demo', x: 100, y: 100, width: 40
 cc.simulateStream('w1', ['chunk 1', 'chunk 2', 'chunk 3'], 300);
 ```
 
-Commands: `open-window`, `close-window`, `move-window`, `resize-window`, `set-window-content`, `focus-window`.
+命令：`open-window`、`close-window`、`move-window`、`resize-window`、`set-window-content`、`focus-window`。
 
----
+## 通信模式
 
-## Communication patterns
-
-| Method | When to use |
+| 方式 | 适用场景 |
 |---|---|
-| **EventBus** | Loose coupling, cross-component, multi-window |
-| **Direct calls** | Tight coupling, parent-child within one component |
-| **GSAP timeline** | Animation sequencing between related elements |
+| **EventBus** | 松散耦合、跨组件、多窗口 |
+| **直接调用** | 紧密耦合、单组件内父子关系 |
+| **GSAP 时间线** | 相关元素之间的动画序列 |
 
----
+## 二次开发指南
 
-## Secondary Development Guide
-
-### Adding a new component
+### 添加新组件
 
 ```ts
 // src/components/MyPanel.ts
@@ -729,17 +713,15 @@ export function createMyPanel(opts: MyPanelOptions) {
 }
 ```
 
-Export from `src/components/index.ts`.
+从 `src/components/index.ts` 导出。
 
-### Coding conventions
+### 编码规范
 
-- **Imports**: external code imports only from `framework/index.ts` and `components/index.ts` — no deep imports
-- **Ticker**: use GSAP for animations; PIXI.Ticker only for physics simulations
-- **Performance**: separate expensive bounds recalculation from cheap view sync
-- **Drag**: always pair PIXI pointer events with `window.addEventListener('pointermove', ...)` fallback
-- **Destroy**: always check `destroyed` guard in async callbacks
-
----
+- **导入**：外部代码只从 `framework/index.ts` 和 `components/index.ts` 导入——不做深层导入
+- **Ticker**：动画使用 GSAP；PIXI.Ticker 仅用于物理模拟
+- **性能**：将昂贵的边界重算与轻量级视图同步分离
+- **拖拽**：始终将 PIXI 指针事件与 `window.addEventListener('pointermove', ...)` 后备方案配对使用
+- **销毁**：始终在异步回调中检查 `destroyed` 守卫
 
 ## 经验教训与收获
 
@@ -783,15 +765,19 @@ text(canvas.stage, 'Hello World', 'typewriter');
 | antvis plugin 系统 | 功能分解为 `{ apply(context: PluginContext) => void }`，通过 Tapable hooks（init/beginFrame/endFrame/destroy/resize）组合。`InfiniteCanvas` 已预留 `InfiniteCanvasPlugin` 接口，后续 chunk loading、terrain、entity 可拆为独立插件 |
 | antvis camera 矩阵分离 | 正交 2D Camera 维护 `projectionMatrix` / `viewMatrix` / `viewProjectionMatrix` / `viewProjectionMatrixInv`。Zoom-to-pointer：前后 zoom 各自通过 `viewProjectionMatrixInv` 将鼠标投到世界坐标算 camera offset。hit-testing 同理逆矩阵转换。`InfiniteCanvas` 可借鉴统一矩阵管线和 dirty-flag 控制渲染资源重建 |
 
-## Known Issues
+## 已知问题
 
-### Layer violations
+### 层违规
 
-| Issue | Details |
+| 问题 | 详情 |
 |-------|---------|
-| `backend/WindowManager.ts` imports from `components/` and `example/` | Backend layer (`src/backend/`) depends on `createWindow` from `components/` and `mountDisplays` from `example/`. Production code should not depend on demo code. |
+| `backend/WindowManager.ts` 从 `components/` 和 `example/` 导入 | 后端层 (`src/backend/`) 依赖了来自 `components/` 的 `createWindow` 和来自 `example/` 的 `mountDisplays`。生产代码不应依赖演示代码。 |
 
-## Version bump
+## 参考文档
+
+- `docs/exmoonchan-migration.md` — ExMoonchan H-scene 纯 DOM 迁移范式
+
+## 版本升级
 
 每次升版本号时，需要改以下地方：
 
@@ -801,8 +787,8 @@ text(canvas.stage, 'Hello World', 'typewriter');
 | 2 | `git checkout main && git merge --no-ff sim -m "merge sim into main"` | 把 `sim` 合入 `main` |
 | 3 | `git tag vx.y.z` | 在 `main` 上打 tag |
 
-## Deploy
+## 部署
 
-Push to `sim` → Cloudflare Pages → `https://react.moonchan.xyz/`
+Push 到 `sim` → Cloudflare Pages → `https://react.moonchan.xyz/`
 
 CI: `.github/workflows/ci.yml` — lint → tsc → test → build
