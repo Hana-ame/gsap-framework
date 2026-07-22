@@ -1,0 +1,26 @@
+import type { AvdLineJSON } from '../../components';
+
+export const HC3_LINES: AvdLineJSON[] = [
+  { speaker: '', bgKey: 'HC3-1', text: '展示着勃起的阴茎等待着的男人。' },
+  { speaker: '伊露', bgKey: 'HC3-1', text: '那我开始了哦' },
+  { speaker: '', bgKey: 'HC3-2', text: '说着用胸部夹住阴茎。' },
+  { speaker: '男人', bgKey: 'HC3-2', text: '哦哦不错！果然就是要这样！\n一边感受胸部一边被弄舒服太棒了' },
+  { speaker: '伊露', bgKey: 'HC3-2', text: '那就好' },
+  { speaker: '', bgKey: 'HC3-2^', text: '上下移动刺激阴茎。' },
+  { speaker: '男人', bgKey: 'HC3-2^', text: '啊啊不错～就这样含进去让我舒服' },
+  { speaker: '伊露', bgKey: 'HC3-3', text: '哈、为什么我得做到这个地步啊！？' },
+  { speaker: '男人', bgKey: 'HC3-3', text: '求你了、报酬会给足的' },
+  { speaker: '伊露', bgKey: 'HC3-4', text: '你可一定要付钱哦' },
+  { speaker: '男人', bgKey: 'HC3-4', text: '当然' },
+  { speaker: '', bgKey: 'HC3-5', text: '然后含住男人的阴茎。' },
+  { speaker: '男人', bgKey: 'HC3-5', text: '哦哦不错！就这样继续拜托了' },
+  { speaker: '', bgKey: 'HC3-6', text: '伊露移动头部刺激阴茎。' },
+  { speaker: '男人', bgKey: 'HC3-6', text: '啊啊糟了要射了…' },
+  { speaker: '男人', bgKey: 'HC3-6', text: '啊啊射了…' },
+  { speaker: '', bgKey: 'HC3-7', text: '噗噗咻——' },
+  { speaker: '伊露', bgKey: 'HC3-8', text: '嗯咕' },
+  { speaker: '', bgKey: 'HC3-8', text: '伊露不小心咽下了一点射出的精液。' },
+  { speaker: '伊露', bgKey: 'HC3-9', text: '呕…好难吃' },
+  { speaker: '男人', bgKey: 'HC3-9', text: '哈啊…哈啊…真是太爽了' },
+  { speaker: '', text: '— HC3 终 —', end: true },
+];

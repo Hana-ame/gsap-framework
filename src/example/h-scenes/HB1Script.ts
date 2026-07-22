@@ -1,0 +1,25 @@
+import type { AvdLineJSON } from '../../components';
+
+export const HB1_LINES: AvdLineJSON[] = [
+  { speaker: '', text: '伊露匆忙地脱掉衣服。' },
+  { speaker: '伊露', bgKey: 'HB1-1', text: '啊啊欧派斯基大人欧派斯基大人' },
+  { speaker: '', bgKey: 'HB1-2', text: '伊露开始玩弄乳头。' },
+  { speaker: '伊露', bgKey: 'HB1-2', text: '啊啊一想到欧派斯基大人就啊啊' },
+  { speaker: '', bgKey: 'HB1-3', text: '一颤一颤\n伊露达到高潮。' },
+  { speaker: '伊露', bgKey: 'HB1-4', text: '哈啊…哈啊…还不够…' },
+  { speaker: '', bgKey: 'HB1-5', text: '伊露脱掉内裤，手向下半身伸去。' },
+  { speaker: '伊露', bgKey: 'HB1-5', text: '必须更加提高对欧派斯基大人的忠诚心' },
+  { speaker: '', bgKey: 'HB1-6', text: '伊露就这样移动手指刺激敏感之处。' },
+  { speaker: '伊露', bgKey: 'HB1-6', text: '嗯啊啊好舒服…' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '啊啊欧派斯基大人…欧派斯基大人！' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '我向欧派斯基大人宣誓忠诚！！' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '这对胸部是欧派斯基大人的东西！' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '请对这对为欧派斯基大人而没有发育的胸部…' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '请务必抚摸它们吧' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '我期待着被欧派斯基大人抚摸的那一天' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '欧派斯基大人请也给我一次爱的揉捏啊啊啊' },
+  { speaker: '伊露', bgKey: 'HB1-7', text: '哦哦…嗯啊啊啊啊\n欧派斯基大人！！！' },
+  { speaker: '', bgKey: 'HB1-8', text: '噗咻——一颤一颤' },
+  { speaker: '伊露', bgKey: 'HB1-9', text: '哈啊…哈啊…好想…好想早点见到真正的欧派斯基大人…' },
+  { speaker: '', text: '— HB1 终 —', end: true },
+];

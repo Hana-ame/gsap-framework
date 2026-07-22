@@ -1,0 +1,28 @@
+import type { AvdLineJSON } from '../../components';
+
+export const HB2_LINES: AvdLineJSON[] = [
+  { speaker: '', text: '手自然地伸向胸部。' },
+  { speaker: '伊露', bgKey: 'HB2-1', text: '啊啊欧派斯基大人\n创建了这个国家的伟大之人…' },
+  { speaker: '伊露', bgKey: 'HB2-1', text: '这个国家的支配者…这个国家的绝对之王…' },
+  { speaker: '伊露', bgKey: 'HB2-1', text: '啊啊…真是了不起的人…欧派斯基大人' },
+  { speaker: '伊露', bgKey: 'HB2-1', text: '嗯啊啊想让欧派斯基大人摸胸…' },
+  { speaker: '伊露', bgKey: 'HB2-1', text: '啊嗯想被欧派斯基大人支配…' },
+  { speaker: '伊露', bgKey: 'HB2-1', text: '想被欧派斯基大人命令…\n想向欧派斯基大人献出身与心…' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '啊啊欧派斯基大人伟大的欧派斯基大人！' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '我是欧派斯基大人的东西' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '这副身躯和心灵全是欧派斯基大人的东西！' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '我的一切都献给欧派斯基大人！' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '所以欧派斯基大人、请…\n请支配我吧' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '请抚摸我的胸部！！' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '请让我留在您身边' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '只要是欧派斯基大人的命令无论什么都听从！' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '所以求求您欧派斯基大人…' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '请让我成为欧派斯基大人忠实的奴隶' },
+  { speaker: '伊露', bgKey: 'HB2-2', text: '嗯啊啊啊啊啊' },
+  { speaker: '', bgKey: 'HB2-3', text: '噗咻——一颤一颤' },
+  { speaker: '伊露', bgKey: 'HB2-4', text: '哈啊…哈啊…\n真是太舒服了…' },
+  { speaker: '伊露', bgKey: 'HB2-4', text: '一边向欧派斯基大人宣誓忠诚一边自慰\n没有比这更舒服的事了呢…' },
+  { speaker: '伊露', bgKey: 'HB2-4', text: '不过、如果是被真正的欧派斯基大人触碰的话\n一定会舒服得无法比拟吧…' },
+  { speaker: '伊露', bgKey: 'HB2-4', text: '啊啊…好想被欧派斯基大人触碰啊' },
+  { speaker: '', text: '— HB2 终 —', end: true },
+];

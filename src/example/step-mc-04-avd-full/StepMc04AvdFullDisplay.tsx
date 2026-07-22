@@ -1,0 +1,65 @@
+import { useEffect, useRef } from 'react';
+import * as PIXI from 'pixi.js';
+import { startPixiApp, type SubCanvasProxy } from '@framework';
+import { AvdController, parseScript } from '../../components';
+import { IMAGE_MAP, getTexture, preloadPromise } from '../h-scenes/imageMapEx';
+
+export function StepMc04AvdFullDisplay() {
+  const avdRef = useRef<AvdController | null>(null);
+
+  useEffect(() => {
+    const stop = startPixiApp((proxy: SubCanvasProxy) => {
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const region = proxy.createRegion({ x: 0, y: 0, width: W, height: H });
+
+      const bgGradient = new PIXI.Graphics();
+      const steps = 64;
+      for (let i = 0; i < steps; i++) {
+        const t = i / (steps - 1);
+        const r = Math.round(0x1a * (1 - t) + 0x08 * t);
+        const g = Math.round(0x12 * (1 - t) + 0x08 * t);
+        const b = Math.round(0x3a * (1 - t) + 0x18 * t);
+        bgGradient
+          .rect(0, (H / steps) * i, W, Math.ceil(H / steps) + 1)
+          .fill({ color: (r << 16) | (g << 8) | b });
+      }
+      region.stage.addChild(bgGradient);
+
+      preloadPromise.then(() => {
+        const keys = Object.keys(IMAGE_MAP);
+        const lines = keys.map(k => ({
+          speaker: '',
+          bgKey: k,
+          text: `CG: ${k}`,
+        }));
+
+        parseScript({ lines, roster: {} }, {
+          loadTexture: async (key: string) => getTexture(key),
+        }).then((parsed) => {
+          const avd = new AvdController(region.stage, region.ticker, {
+            screenW: W, screenH: H,
+            boxY: H - 200 - 40,
+            portraitY: H - 560 - 20,
+            typewriterSpeed: 35,
+            onComplete: () => {},
+            onLineEnter: () => {},
+          });
+
+          avd.setBgTextureMap(Object.fromEntries(keys.map(k => [k, getTexture(k)])));
+          avd.setScript(parsed.lines);
+          avdRef.current = avd;
+        });
+      });
+    });
+
+    return () => { avdRef.current?.destroy(); stop(); };
+  }, []);
+
+  return null;
+}
+
+StepMc04AvdFullDisplay.head = {
+  title: 'MC Step 04: AVD Full',
+  description: 'ex.moonchan.xyz + 渐层背景 + AVD + 全部CG',
+};
