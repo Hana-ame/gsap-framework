@@ -1,12 +1,13 @@
 import type { AvdLine } from '../../../avd/types';
 import { AvdController, parseScript } from '../../../components';
+import type { AvdLineJSON, AvdAssetResolver } from '../../../components';
 import { DomTexture } from '../../../avd/dom/DomNode';
 import { IMAGE_MAP } from './imageMapEx';
 
 export interface DomSceneOptions {
   el: HTMLElement;
   title: string;
-  lines: any[];
+  lines: AvdLineJSON[];
   getBgKeys: () => string[];
 }
 
@@ -34,9 +35,7 @@ export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> 
     }))
   );
 
-  const parsed = await parseScript({ lines, roster: {} }, {
-    loadTexture: async () => {},
-  } as any);
+  const parsed = await parseScript({ lines, roster: {} }, {} as AvdAssetResolver);
 
   const avd = new AvdController(el, null, {
     screenW: W, screenH: H,
@@ -55,7 +54,7 @@ export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> 
     onLineEnter: () => {},
   }, 'dom');
 
-  avd.setBgTextureMap(textures as any);
+  avd.setBgTextureMap(textures);
   avd.setScript(parsed.lines as AvdLine[]);
 
   return () => { avd.destroy(); };
