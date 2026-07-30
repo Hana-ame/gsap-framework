@@ -1,4 +1,4 @@
-import type { AvdLineJSON } from '../../components';
+import type { AvdLineJSON } from '../../avd';
 
 export const T1_LINES: AvdLineJSON[] = [
   { speaker: '旁白', bgKey: 'T1-1', text: '（独自在房间里，伊露躺在床上）' },

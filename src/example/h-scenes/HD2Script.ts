@@ -1,4 +1,4 @@
-import type { AvdLineJSON, AvdScriptJSON } from '../../components';
+import type { AvdLineJSON, AvdScriptJSON } from '../../avd';
 
 // Converted from CommonEvents.json event 56 (HD2正常位)
 // Each line = one Show Text (code 101 + 401 block) in the original

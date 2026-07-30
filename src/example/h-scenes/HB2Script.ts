@@ -1,4 +1,4 @@
-import type { AvdLineJSON } from '../../components';
+import type { AvdLineJSON } from '../../avd';
 
 export const HB2_LINES: AvdLineJSON[] = [
   { speaker: '', text: '手自然地伸向胸部。' },

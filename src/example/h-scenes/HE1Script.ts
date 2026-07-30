@@ -1,4 +1,4 @@
-import type { AvdLineJSON, AvdScriptJSON } from '../../components';
+import type { AvdLineJSON, AvdScriptJSON } from '../../avd';
 
 // Converted from CommonEvents.json event 60 (HE1洗脳)
 // speaker="" lines are narration (no name shown)

@@ -1,6 +1,6 @@
 import type { AvdLine } from '../../../avd/types';
-import { AvdController, parseScript } from '../../../components';
-import type { AvdLineJSON, AvdAssetResolver } from '../../../components';
+import { AvdController, parseScript } from '../../../avd';
+import type { AvdLineJSON, AvdAssetResolver } from '../../../avd';
 import { DomTexture } from '../../../avd/dom/DomNode';
 import { IMAGE_MAP } from './imageMapEx';
 

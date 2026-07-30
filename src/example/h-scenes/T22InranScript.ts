@@ -1,4 +1,4 @@
-import type { AvdLineJSON, AvdScriptJSON } from '../../components';
+import type { AvdLineJSON, AvdScriptJSON } from '../../avd';
 
 export const T22_INRAN_LINES: AvdLineJSON[] = [
   { speaker: '伊露', bgKey: 'T22-0^', text: '来，随时都可以哦' },

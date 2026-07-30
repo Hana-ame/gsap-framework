@@ -11,7 +11,7 @@
  *   new AvdController(containerEl, null, options, 'dom')
  */
 import { useEffect, useRef, useState } from 'react';
-import { AvdController } from '../../components';
+import { AvdController } from '../../avd';
 import type { AvdLine } from '../../avd/types';
 
 // ── 内嵌剧本 ──

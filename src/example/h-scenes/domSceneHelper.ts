@@ -1,5 +1,5 @@
 import type { AvdLine } from '../../avd/types';
-import { AvdController, parseScript } from '../../components';
+import { AvdController, parseScript } from '../../avd';
 import { DomTexture } from '../../avd/dom/DomNode';
 
 export interface DomSceneOptions {

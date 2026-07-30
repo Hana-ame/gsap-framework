@@ -1,4 +1,4 @@
-import type { AvdLineJSON } from '../../components';
+import type { AvdLineJSON } from '../../avd';
 
 export const HD1_LINES: AvdLineJSON[] = [
   { speaker: '', text: '说着掏出勃起阴茎的欧派斯基。' },

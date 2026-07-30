@@ -1,4 +1,4 @@
-import type { AvdLineJSON } from '../../components';
+import type { AvdLineJSON } from '../../avd';
 
 export const HD3_LINES: AvdLineJSON[] = [
   { speaker: '', bgKey: 'HD3-1', text: '啪嗒啪嗒啪嗒啪嗒' },

@@ -1,4 +1,4 @@
-import type { AvdLineJSON } from '../../components';
+import type { AvdLineJSON } from '../../avd';
 
 export const HA3_LINES: AvdLineJSON[] = [
   { speaker: '伊露', bgKey: 'HA3-1', text: '嗯啊…欧派斯基大人…' },

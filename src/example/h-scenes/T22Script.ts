@@ -1,4 +1,4 @@
-import type { AvdLineJSON, AvdScriptJSON } from '../../components';
+import type { AvdLineJSON, AvdScriptJSON } from '../../avd';
 
 // Converted from CommonEvents.json event 40 (T22胸もまれ)
 export const T22_LINES: AvdLineJSON[] = [

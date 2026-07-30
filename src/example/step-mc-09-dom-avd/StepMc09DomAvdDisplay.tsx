@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { AvdController } from '../../components';
+import { AvdController } from '../../avd';
 import type { AvdLine } from '../../avd/types';
 import { DomTexture } from '../../avd/dom/DomNode';
 import { IMAGE_MAP } from '../h-scenes/imageMapEx';

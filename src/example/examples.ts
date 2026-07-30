@@ -22,8 +22,6 @@ import { ComponentCutsceneDisplay } from './component-cutscene/ComponentCutscene
 import { ComponentCutsceneMinimalDisplay } from './component-cutscene-minimal/ComponentCutsceneMinimalDisplay';
 import { Component2048Display } from './component-2048/Component2048Display';
 import { ComponentConwayDisplay } from './component-conway/ComponentConwayDisplay';
-import { ComponentAvdDisplay } from './component-avd/ComponentAvdDisplay';
-import { ComponentAvdChoicesDisplay } from './component-avd-choices/ComponentAvdChoicesDisplay';
 import { ComponentLifeMapDisplay } from './component-life-map/ComponentLifeMapDisplay';
 import { ComponentColonyDisplay } from './component-colony/ComponentColonyDisplay';
 import { ComponentGsapDisplay } from './component-gsap/ComponentGsapDisplay';
@@ -69,12 +67,8 @@ import { ComponentAvdDomMinimalDisplay } from './component-avd-dom-minimal/Compo
 import { ComponentAvdVnDisplay } from './component-avd-vn/ComponentAvdVnDisplay';
 import { StepHd201SpriteDisplay } from './step-hd2-01-sprite/StepHd201SpriteDisplay';
 import { StepHd202SubcanvasDisplay } from './step-hd2-02-subcanvas/StepHd202SubcanvasDisplay';
-import { StepHd203AvdBareDisplay } from './step-hd2-03-avd-bare/StepHd203AvdBareDisplay';
-import { StepHd204AvdFullDisplay } from './step-hd2-04-avd-full/StepHd204AvdFullDisplay';
 import { StepMc01SpriteDisplay } from './step-mc-01-sprite/StepMc01SpriteDisplay';
 import { StepMc02SubcanvasDisplay } from './step-mc-02-subcanvas/StepMc02SubcanvasDisplay';
-import { StepMc03AvdBareDisplay } from './step-mc-03-avd-bare/StepMc03AvdBareDisplay';
-import { StepMc04AvdFullDisplay } from './step-mc-04-avd-full/StepMc04AvdFullDisplay';
 import { StepMc05DomDisplay } from './step-mc-05-dom/StepMc05DomDisplay';
 import { StepMc06Canvas2dDisplay } from './step-mc-06-canvas2d/StepMc06Canvas2dDisplay';
 import { StepMc07FetchBlobDisplay } from './step-mc-07-fetch-blob/StepMc07FetchBlobDisplay';
@@ -102,6 +96,7 @@ import { ComponentAvdHe2DomDisplay } from './component-avd-he2-dom/ComponentAvdH
 import { ComponentAvdHf1DomDisplay } from './component-avd-hf1-dom/ComponentAvdHf1DomDisplay';
 import { ComponentAvdHg1DomDisplay } from './component-avd-hg1-dom/ComponentAvdHg1DomDisplay';
 import { ComponentAvdT1DomDisplay } from './component-avd-t1-dom/ComponentAvdT1DomDisplay';
+import { ComponentAvdSceneDomDisplay } from './component-avd-scene-dom/ComponentAvdSceneDomDisplay';
 import { ComponentAvdHd2Display } from './component-avd-hd2/ComponentAvdHd2Display';
 import { ComponentAvdHe1Display } from './component-avd-he1/ComponentAvdHe1Display';
 import { ComponentAvdHe2Display } from './component-avd-he2/ComponentAvdHe2Display';
@@ -202,8 +197,6 @@ export const EXAMPLES = [
   'component-conway',
   'component-life-map',
   'component-audio-viz',
-  'component-avd',
-  'component-avd-choices',
   'component-breakout',
   'component-clock',
   'component-colony',
@@ -252,12 +245,8 @@ export const EXAMPLES = [
   'component-avd-vn',
   'step-hd2-01-sprite',
   'step-hd2-02-subcanvas',
-  'step-hd2-03-avd-bare',
-  'step-hd2-04-avd-full',
   'step-mc-01-sprite',
   'step-mc-02-subcanvas',
-  'step-mc-03-avd-bare',
-  'step-mc-04-avd-full',
   'step-mc-05-dom',
   'step-mc-06-canvas2d',
   'step-mc-07-fetch-blob',
@@ -342,6 +331,7 @@ export const EXAMPLES = [
   'cg-05-bg-layer-multi',
   'cg-06-avd-noscript',
   'cg-07-avd-script',
+  'avd-scene-dom',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
 export const DEFAULT_EXAMPLE: Example = 'screen-size';
@@ -377,8 +367,6 @@ export const exampleMap: Record<Example, ComponentType> = {
   'component-conway': ComponentConwayDisplay,
   'component-life-map': ComponentLifeMapDisplay,
   'component-audio-viz': ComponentAudioVizDisplay,
-  'component-avd': ComponentAvdDisplay,
-  'component-avd-choices': ComponentAvdChoicesDisplay,
   'component-breakout': ComponentBreakoutDisplay,
   'component-clock': ComponentClockDisplay,
   'component-colony': ComponentColonyDisplay,
@@ -427,12 +415,8 @@ export const exampleMap: Record<Example, ComponentType> = {
   'img-09-assets-preload': Img09AssetsPreloadDisplay,
   'step-hd2-01-sprite': StepHd201SpriteDisplay,
   'step-hd2-02-subcanvas': StepHd202SubcanvasDisplay,
-  'step-hd2-03-avd-bare': StepHd203AvdBareDisplay,
-  'step-hd2-04-avd-full': StepHd204AvdFullDisplay,
   'step-mc-01-sprite': StepMc01SpriteDisplay,
   'step-mc-02-subcanvas': StepMc02SubcanvasDisplay,
-  'step-mc-03-avd-bare': StepMc03AvdBareDisplay,
-  'step-mc-04-avd-full': StepMc04AvdFullDisplay,
   'step-mc-05-dom': StepMc05DomDisplay,
   'step-mc-06-canvas2d': StepMc06Canvas2dDisplay,
   'step-mc-07-fetch-blob': StepMc07FetchBlobDisplay,
@@ -517,5 +501,6 @@ export const exampleMap: Record<Example, ComponentType> = {
   'cg-05-bg-layer-multi': Cg05BgLayerMultiDisplay,
   'cg-06-avd-noscript': Cg06AvdNoscriptDisplay,
   'cg-07-avd-script': Cg07AvdScriptDisplay,
+  'avd-scene-dom': ComponentAvdSceneDomDisplay,
 };
 // 需要同步添加到 launchdisplay

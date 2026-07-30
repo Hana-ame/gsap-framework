@@ -1,4 +1,4 @@
-import type { AvdLineJSON, AvdScriptJSON } from '../../components';
+import type { AvdLineJSON, AvdScriptJSON } from '../../avd';
 
 // Converted from CommonEvents.json event 65 (HG1乱交)
 // Game uses 男１/男２/男３ as speaker names

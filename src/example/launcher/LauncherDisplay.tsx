@@ -146,6 +146,7 @@ const APPS: AppEntry[] = [
   { route: 'component-avd-hf1-dom', label: 'AVD DOM: HF1 正常位', hint: '欧派斯基的奴隶结局 · 纯 DOM', glyph: '\u2606', accent: '#5a3a7a' },
   { route: 'component-avd-hg1-dom', label: 'AVD DOM: HG1 乱交', hint: '居民结局 · 纯 DOM', glyph: '\u2735', accent: '#6a4a5a' },
   { route: 'component-avd-t1-dom', label: 'AVD DOM: T1 自慰', hint: '伊露的自慰场景 · 纯 DOM', glyph: '\u2665', accent: '#7a3a6a' },
+  { route: 'avd-scene-dom', label: 'AVD Scene (通用)', hint: '注册表驱动，一个组件加载任意剧本', glyph: '\u2699', accent: '#3a7a9a' },
   { route: 'component-ex-ha11-dom', label: 'EX: HA11 茶羅井敗北', hint: 'RJ01222693 · 勇者敗北 · 纯 DOM', glyph: '\u2665', accent: '#3a7a5a' },
   { route: 'component-ex-ha12-dom', label: 'EX: HA12 詩保洗脳失敗', hint: 'RJ01222693 · 洗脳失敗オナニー · 纯 DOM', glyph: '\u2665', accent: '#3a7a6a' },
   { route: 'component-ex-hb11-dom', label: 'EX: HB11 洗脳', hint: 'RJ01222693 · 洗脳 · 纯 DOM', glyph: '\u2665', accent: '#3a7a7a' },

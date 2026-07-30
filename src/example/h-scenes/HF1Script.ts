@@ -1,4 +1,4 @@
-import type { AvdLineJSON, AvdScriptJSON } from '../../components';
+import type { AvdLineJSON, AvdScriptJSON } from '../../avd';
 
 // Converted from CommonEvents.json event 63 (HF1正常位)
 export const HF1_LINES: AvdLineJSON[] = [

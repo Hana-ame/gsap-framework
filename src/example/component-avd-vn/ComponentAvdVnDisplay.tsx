@@ -10,8 +10,8 @@
  * 即可切换剧本源格式，中间流程不变。
  */
 import { useEffect, useRef, useState } from 'react';
-import { AvdController, InputRemapper, VnScriptPlayer, kagToVnScript } from '../../components';
-import type { VnPlayerHost } from '../../components';
+import { AvdController, InputRemapper, VnScriptPlayer, kagToVnScript } from '../../avd';
+import type { VnPlayerHost } from '../../avd';
 
 // ── KAG 剧本（直接内嵌，也可以是 .ks 文件内容） ──
 const KAG_SOURCE = `

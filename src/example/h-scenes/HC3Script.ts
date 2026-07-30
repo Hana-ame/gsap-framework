@@ -1,4 +1,4 @@
-import type { AvdLineJSON } from '../../components';
+import type { AvdLineJSON } from '../../avd';
 
 export const HC3_LINES: AvdLineJSON[] = [
   { speaker: '', bgKey: 'HC3-1', text: '展示着勃起的阴茎等待着的男人。' },

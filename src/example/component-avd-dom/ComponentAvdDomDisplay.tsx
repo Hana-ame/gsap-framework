@@ -10,7 +10,7 @@
  *   - 控制栏使用原生 HTML button
  */
 import { useEffect, useRef, useState } from 'react';
-import { AvdController, AudioManager, type AvdSettingsData, type TextEffect } from '../../components';
+import { AvdController, AudioManager, type AvdSettingsData, type TextEffect } from '../../avd';
 import { DomTexture } from '../../avd/dom/DomNode';
 import { CH1 } from '../component-avd-choices/ch1';
 import { CH2 } from '../component-avd-choices/ch2';
