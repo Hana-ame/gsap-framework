@@ -1,9 +1,24 @@
-import { AvdController } from './AvdController';
 import { loadSettings, saveSettings } from './AvdSettings';
-import type { AvdSettingsData } from './types';
+import type { AvdSettingsData, BacklogEntry } from './types';
 import type { IRenderContainer, IRenderText } from './render/types';
+import type { IAvdRenderLayer } from './render/types';
 
-export function buildAvdToolbar(avd: AvdController): void {
+export interface AvdUIHost {
+  readonly layer: IAvdRenderLayer | null;
+  readonly parent: IRenderContainer;
+  readonly screenW: number;
+  readonly screenH: number;
+  readonly fontFamily: string;
+  readonly textSize: number;
+  setAutoMode(v: boolean): void;
+  isAutoMode(): boolean;
+  setSkipMode(v: boolean): void;
+  toggleHideUi(): void;
+  getBacklog(): readonly BacklogEntry[];
+  applySettings(settings: AvdSettingsData): void;
+}
+
+export function buildAvdToolbar(avd: AvdUIHost): void {
   const L = avd.layer;
   if (!L) return;
 
@@ -14,9 +29,9 @@ export function buildAvdToolbar(avd: AvdController): void {
   const gap = 4;
   const btnW = 52;
   const btnH = 26;
-  const startX = avd['_opts']?.screenW ?? 800;
+  const startX = avd.screenW;
   const startY = 8;
-  const fontFamily = avd['_opts']?.fontFamily ?? 'sans-serif';
+  const fontFamily = avd.fontFamily;
 
   const buttons: Array<{ label: string; action: () => void }> = [
     { label: 'Auto', action: () => avd.setAutoMode(!avd.isAutoMode()) },
@@ -66,7 +81,7 @@ export function buildAvdToolbar(avd: AvdController): void {
 let _backlogOverlay: IRenderContainer | null = null;
 let _backlogTexts: IRenderText[] = [];
 
-export function buildAvdBacklog(avd: AvdController): void {
+export function buildAvdBacklog(avd: AvdUIHost): void {
   if (_backlogOverlay) {
     _backlogOverlay.visible = !_backlogOverlay.visible;
     return;
@@ -81,16 +96,16 @@ export function buildAvdBacklog(avd: AvdController): void {
   _backlogOverlay = overlay;
 
   const bg = L.createGraphics();
-  bg.rect(0, 0, avd['_opts']?.screenW ?? 800, avd['_opts']?.screenH ?? 600)
+  bg.rect(0, 0, avd.screenW, avd.screenH)
     .fill({ color: 0x000000, alpha: 0.85 });
   overlay.addChild(bg);
 
   const padding = 40;
   let y = padding + 20;
-  const maxW = (avd['_opts']?.screenW ?? 800) - padding * 2;
-  const textSize = avd['_opts']?.textSize ?? 24;
+  const maxW = avd.screenW - padding * 2;
+  const textSize = avd.textSize;
   const lineH = textSize + 8;
-  const fontFamily = avd['_opts']?.fontFamily ?? 'sans-serif';
+  const fontFamily = avd.fontFamily;
 
   const entries = avd.getBacklog();
   for (const entry of entries) {
@@ -125,7 +140,7 @@ export function hideAvdBacklog(): void {
 
 let _settingsOverlay: IRenderContainer | null = null;
 
-export function buildAvdSettings(avd: AvdController): void {
+export function buildAvdSettings(avd: AvdUIHost): void {
   if (_settingsOverlay) {
     _settingsOverlay.visible = !_settingsOverlay.visible;
     return;
@@ -134,9 +149,9 @@ export function buildAvdSettings(avd: AvdController): void {
   const L = avd.layer;
   if (!L) return;
 
-  const screenW = avd['_opts']?.screenW ?? 800;
-  const screenH = avd['_opts']?.screenH ?? 600;
-  const fontFamily = avd['_opts']?.fontFamily ?? 'sans-serif';
+  const screenW = avd.screenW;
+  const screenH = avd.screenH;
+  const fontFamily = avd.fontFamily;
   const overlay = L.createContainer();
   overlay.eventMode = 'static';
   _settingsOverlay = overlay;

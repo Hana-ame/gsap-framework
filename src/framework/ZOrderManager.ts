@@ -1,12 +1,12 @@
 /** ZOrderManager — 在父容器中调整 DisplayObject 的堆叠顺序（置顶/置底）。 */
-import * as PIXI from 'pixi.js';
+import type { IRenderContainer } from '@framework/render/types';
 
 const Z_RENORM_THRESHOLD = 1_000_000;
 
-export function bringToFront(stage: PIXI.Container): void {
+export function bringToFront(stage: IRenderContainer): void {
   const parent = stage.parent;
   if (!parent) return;
-  parent.sortableChildren = true;
+  (parent as any).sortableChildren = true;
   let max = stage.zIndex;
   for (const child of parent.children) {
     if (child === stage) continue;
@@ -16,10 +16,9 @@ export function bringToFront(stage: PIXI.Container): void {
   renormZIndices(parent);
 }
 
-export function sendToBack(stage: PIXI.Container): void {
+export function sendToBack(stage: IRenderContainer): void {
   const parent = stage.parent;
   if (!parent) return;
-  parent.sortableChildren = true;
   let min = stage.zIndex;
   for (const child of parent.children) {
     if (child === stage) continue;
@@ -31,7 +30,7 @@ export function sendToBack(stage: PIXI.Container): void {
 
 /** 对父容器的所有子对象做 zIndex 重归一化，防止 IEEE 754 精度溢出。
  *  当任意 zIndex ≥ 1_000_000 时，全部按顺序重置为 0,1,2,... */
-export function renormZIndices(parent: PIXI.Container): void {
+export function renormZIndices(parent: IRenderContainer): void {
   if (parent.children.length < 2) return;
   const maxZ = Math.max(...parent.children.map(c => c.zIndex));
   if (maxZ < Z_RENORM_THRESHOLD) return;

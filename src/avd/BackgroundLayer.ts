@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 
 export interface BackgroundLayerOptions {
   screenW: number;
@@ -14,8 +15,10 @@ export class BackgroundLayer {
   private _activeIndex = 0;
   private _opts: BackgroundLayerOptions;
   private _current: PIXI.Texture | null = null;
+  private _driver: AnimationDriver;
 
-  constructor(parent: PIXI.Container, opts: BackgroundLayerOptions) {
+  constructor(parent: PIXI.Container, opts: BackgroundLayerOptions, driver?: AnimationDriver) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this._opts = opts;
     this.container = new PIXI.Container();
     parent.addChildAt(this.container, 0);
@@ -47,10 +50,10 @@ export class BackgroundLayer {
     this._current = texture;
 
     const old = this._sprites[this._activeIndex];
-    gsap.killTweensOf(old);
+    this._driver.killTweensOf(old);
 
     if (!texture || texture === PIXI.Texture.EMPTY) {
-      gsap.to(old, {
+      this._driver.to(old, {
         alpha: 0,
         duration: this._opts.bgFadeMs != null ? this._opts.bgFadeMs / 1000 : 0.5,
         ease: 'power2.out',
@@ -65,7 +68,7 @@ export class BackgroundLayer {
     const wasEmpty = old.texture === PIXI.Texture.EMPTY || old.texture.width <= 0;
     const newIdx = 1 - this._activeIndex;
     const next = this._sprites[newIdx];
-    gsap.killTweensOf(next);
+    this._driver.killTweensOf(next);
 
     next.texture = texture;
     next.visible = true;
@@ -73,7 +76,7 @@ export class BackgroundLayer {
 
     if (wasEmpty) {
       next.alpha = 0;
-      gsap.to(next, {
+      this._driver.to(next, {
         alpha: 1,
         duration: this._opts.bgFadeMs != null ? this._opts.bgFadeMs / 1000 : 0.5,
         ease: 'power2.out',
@@ -81,7 +84,7 @@ export class BackgroundLayer {
     } else {
       next.alpha = 0;
       old.alpha = 1;
-      gsap.to(old, {
+      this._driver.to(old, {
         alpha: 0,
         duration: this._opts.bgFadeMs != null ? this._opts.bgFadeMs / 1000 : 0.5,
         ease: 'power2.out',
@@ -90,7 +93,7 @@ export class BackgroundLayer {
           old.visible = false;
         },
       });
-      gsap.to(next, {
+      this._driver.to(next, {
         alpha: 1,
         duration: this._opts.bgFadeMs != null ? this._opts.bgFadeMs / 1000 : 0.5,
         ease: 'power2.out',
@@ -101,7 +104,7 @@ export class BackgroundLayer {
   }
 
   destroy(): void {
-    for (const s of this._sprites) gsap.killTweensOf(s);
+    for (const s of this._sprites) this._driver.killTweensOf(s);
     this.container.destroy({ children: true });
   }
 

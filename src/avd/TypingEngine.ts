@@ -2,8 +2,7 @@ import * as PIXI from 'pixi.js';
 import { buildLayout, type LayoutResult, type LayoutItem } from '@framework/text-effects-layout';
 import type { AvdText, AvdTextSegment } from './types';
 import type { TextSegment } from '@framework/text-effects';
-
-export type TextEffect = 'none' | 'wave' | 'shake' | 'rainbow';
+import type { TextEffect } from '@framework/render/types';
 
 interface ItemState {
   origX: number;

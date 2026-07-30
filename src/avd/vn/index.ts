@@ -6,6 +6,7 @@ export { kagToVnScript } from './adapters/kag-adapter';
 export { onsToVnScript } from './adapters/ons-adapter';
 export { renpyToVnScript } from './adapters/renpy-adapter';
 export { rmmzToVnScript } from './adapters/rmmz-adapter';
+export { vnScriptToAvdLines, VnScriptRunner } from './VnAdapter';
 export type {
   VnScriptJSON, VnMeta, VnResources, VnOp, VnCharacterDef,
   VnOpDialog, VnOpBg, VnOpChar, VnOpChoice, VnOpIf,

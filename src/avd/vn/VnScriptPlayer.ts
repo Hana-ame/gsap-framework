@@ -10,11 +10,12 @@
  *
  * 这是一个高层调度器，位于 AvdController + KagLayerManager 之上。
  */
-import { gsap } from 'gsap';
 import type { VnScriptJSON, VnOp, VnOpDialog, VnOpChoice, VnOpIf, VnOpBgm, VnOpSfx, VnOpVoice, VnOpBg } from './VnTypes';
 import { KagLayerManager } from './KagLayerManager';
-import type { IRenderLayer, IRenderContainer } from '../render/types';
+import type { IRenderLayer, IRenderContainer } from '@framework/render/types';
 import type { AvdLine } from '../types';
+import type { AnimationDriver } from '@framework/animation/types';
+import { getDefaultDriver } from '@framework/animation';
 
 export interface VnPlayerHost {
   setScript(lines: AvdLine[]): void;
@@ -44,10 +45,12 @@ export class VnScriptPlayer {
   private _pendingAudio: VnOpBgm | VnOpSfx | VnOpVoice | null = null;
   private _pendingBg: VnOpBg | null = null;
   private _paused = false;
+  private _driver: AnimationDriver;
 
-  constructor(host: VnPlayerHost, layer: IRenderLayer, parent: IRenderContainer) {
+  constructor(host: VnPlayerHost, layer: IRenderLayer, parent: IRenderContainer, driver?: AnimationDriver) {
+    this._driver = driver ?? getDefaultDriver();
     this._host = host;
-    this._layerMgr = new KagLayerManager(parent, layer);
+    this._layerMgr = new KagLayerManager(parent, layer, 10, this._driver);
   }
 
   get layerManager(): KagLayerManager { return this._layerMgr; }
@@ -157,7 +160,7 @@ export class VnScriptPlayer {
         case 'wait':
           if (op.duration > 0) {
             this._paused = true;
-            gsap.delayedCall(op.duration / 1000, () => { this._paused = false; });
+            this._driver.delayedCall(op.duration / 1000, () => { this._paused = false; });
           }
           break;
 

@@ -1,51 +1,8 @@
-/**
- * RenderLayer — 抽象渲染层，让 AvdController 在不同渲染后端（Pixi / DOM）间复用。
- *
- * 分层设计：
- *   IRenderLayer    → 渲染层接口（工厂方法 + 动画 + 纹理）
- *   IRender*        → 显示对象接口（Container / Graphics / Text / Sprite）
- *   I*Handle        → 子组件接口（DialogueBox / PortraitLayer / 等）
- *
- * 层实现：
- *   PixiLayer  → 使用 PIXI 组件
- *   DomLayer   → 使用 Dom* 组件
- */
+export type {
+  IRenderContainer, IRenderGraphics, IRenderText, IRenderSprite, IRenderLayer,
+} from '@framework/render/types';
+
 import type { AvdChoice, AvdState, SpeakerStyle } from '../types';
-import type { TextEffect } from '../dom/DomTypingEngine';
-
-// ── 基础显示对象接口 ──
-
-export interface IRenderContainer {
-  alpha: number; x: number; y: number; visible: boolean;
-  eventMode: string; cursor: string;
-  width: number; height: number; zIndex: number;
-  addChild(child: any): void;
-  removeChild(child: any): void;
-  removeChildren(): any[];
-  destroy(opts?: { children?: boolean }): void;
-}
-
-export interface IRenderGraphics extends IRenderContainer {
-  clear(): this;
-  rect(x: number, y: number, w: number, h: number): this;
-  roundRect(x: number, y: number, w: number, h: number, r: number): this;
-  circle(x: number, y: number, r: number): this;
-  moveTo(x: number, y: number): this;
-  lineTo(x: number, y: number): this;
-  fill(opts: { color: number; alpha?: number }): this;
-  stroke(opts: { color: number; width?: number; alpha?: number }): this;
-}
-
-export interface IRenderText extends IRenderContainer {
-  text: string;
-  style: any;
-}
-
-export interface IRenderSprite extends IRenderContainer {
-  texture: any;
-  anchor: { x: number; y: number; set(x: number, y?: number): void };
-  tint: number;
-}
 
 // ── 子组件接口 ──
 
@@ -91,7 +48,7 @@ export interface ITypingEngineHandle {
   active: boolean;
   totalUnits: number;
   container: IRenderContainer | null;
-  effect: TextEffect;
+  effect: string;
   start(
     text: any,
     speed: number,
@@ -101,30 +58,17 @@ export interface ITypingEngineHandle {
     onComplete?: () => void,
   ): IRenderContainer;
   update(deltaMS: number): void;
-  setEffect(effect: TextEffect): void;
+  setEffect(effect: string): void;
   complete(): void;
   destroy(): void;
 }
 
-// ── 渲染层接口 ──
+// ── AVD 扩展渲染层接口 ──
 
-export interface IRenderLayer {
-  readonly screenW: number;
-  readonly screenH: number;
-  readonly root: IRenderContainer;
-  readonly emptyTexture: any;
-
-  createContainer(): IRenderContainer;
-  createGraphics(): IRenderGraphics;
-  createText(opts?: { text?: string; style?: any }): IRenderText;
-  createSprite(texture?: any): IRenderSprite;
-  createLayer(zIndex: number): IRenderContainer;
-
+export interface IAvdRenderLayer extends IRenderLayer {
   createDialogueBox(parent: IRenderContainer, opts: any): IDialogueBoxHandle;
   createPortraitLayer(parent: IRenderContainer, opts: any): IPortraitLayerHandle;
   createBackgroundLayer(parent: IRenderContainer, opts: any): IBackgroundLayerHandle;
   createScreenEffects(parent: IRenderContainer): IScreenEffectsHandle;
   createTypingEngine(): ITypingEngineHandle;
-
-  destroy(): void;
 }

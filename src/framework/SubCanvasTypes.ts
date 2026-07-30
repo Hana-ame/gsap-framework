@@ -1,6 +1,7 @@
 /** SubCanvasTypes — SubCanvas 体系共享的类型定义（Rect、事件、选项）。 */
 import * as PIXI from 'pixi.js';
 import type { SubCanvas } from './SubCanvas';
+import type { IRenderLayer } from '@framework/render/types';
 
 export interface Rect {
   x: number;
@@ -23,9 +24,10 @@ export interface SubPointerEvent {
 export type SubDragMode = 'title' | 'anywhere' | 'none';
 
 export interface SubCanvasOptions {
-  rootApp: PIXI.Application;
+  rootApp?: PIXI.Application;
   bounds: Rect;
   parent?: SubCanvas | null;
+  renderLayer?: IRenderLayer;
   clipToBounds?: boolean;
   dragMode?: SubDragMode;
   dragBounds?: () => Rect | null;

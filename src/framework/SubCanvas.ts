@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import type { Rect, SubPointerType, SubPointerEvent, SubCanvasOptions, SubDragMode } from './SubCanvasTypes';
 import { DragController, type DragOptions, type DragContext } from './DragController';
 import { bringToFront as zBringToFront, sendToBack as zSendToBack } from './ZOrderManager';
+import type { IRenderContainer, IRenderLayer, IRenderGraphics } from '@framework/render/types';
 
 export type { Rect, SubPointerType, SubPointerEvent, SubCanvasOptions, SubDragMode } from './SubCanvasTypes';
 
@@ -10,10 +11,15 @@ type Listener = (e: SubPointerEvent) => void;
 
 const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
 
+function isPixiRenderLayer(l: IRenderLayer): boolean {
+  return (l as any).constructor?.name === 'PixiLayer';
+}
+
 export class SubCanvas {
-  readonly stage: PIXI.Container;
+  readonly stage: IRenderContainer;
   readonly parent: SubCanvas | null;
-  readonly rootApp: PIXI.Application;
+  readonly rootApp: PIXI.Application | null;
+  readonly renderLayer: IRenderLayer | null;
 
   private _bounds: Rect;
   private _subRegions: SubCanvas[] = [];
@@ -21,7 +27,7 @@ export class SubCanvas {
   private resizeListeners: Set<(bounds: Rect) => void> = new Set();
   private _destroyed = false;
   private _syncing = false;
-  private _mask: PIXI.Graphics | null = null;
+  private _mask: IRenderGraphics | PIXI.Graphics | null = null;
   private _drag: DragController | null = null;
   private _tapThreshold: number;
   private _pressStart: { x: number; y: number; clientX: number; clientY: number } | null = null;
@@ -30,20 +36,34 @@ export class SubCanvas {
   private onReorder: () => void;
 
   constructor(opts: SubCanvasOptions) {
-    this.rootApp = opts.rootApp;
+    this.rootApp = opts.rootApp ?? null;
+    this.renderLayer = opts.renderLayer ?? null;
     this._bounds = opts.bounds;
     this.parent = opts.parent ?? null;
     this.onDestroy = opts.onDestroy ?? (() => {});
     this.onReorder = opts.onReorder ?? (() => {});
     this._tapThreshold = opts.tapThreshold ?? 4;
 
-    this.stage = new PIXI.Container();
-    this.stage.position.set(opts.bounds.x, opts.bounds.y);
+    if (this.renderLayer) {
+      this.stage = this.renderLayer.createContainer();
+    } else {
+      const c = new PIXI.Container();
+      c.sortableChildren = true;
+      this.stage = c as unknown as IRenderContainer;
+    }
+    this.stage.x = opts.bounds.x;
+    this.stage.y = opts.bounds.y;
 
     if (opts.clipToBounds) {
-      this._mask = new PIXI.Graphics();
+      if (this.renderLayer && !isPixiRenderLayer(this.renderLayer)) {
+        this._mask = this.renderLayer.createGraphics();
+      } else {
+        this._mask = new PIXI.Graphics();
+      }
       this.stage.addChild(this._mask);
-      this.stage.mask = this._mask;
+      if (!this.renderLayer || isPixiRenderLayer(this.renderLayer)) {
+        (this.stage as any).mask = this._mask;
+      }
       this.updateMask();
     }
 
@@ -51,13 +71,14 @@ export class SubCanvas {
 
     if (this.parent) {
       this.parent.stage.addChild(this.stage);
-    } else {
-      this.rootApp.stage.addChild(this.stage);
+    } else if (this.rootApp) {
+      this.rootApp.stage.addChild(this.stage as any);
     }
 
     if (opts.dragMode && opts.dragMode !== 'none') {
-      // hitArea 阻止 PixiJS 事件穿透到后层 SubCanvas
-      this.stage.hitArea = new PIXI.Rectangle(0, 0, opts.bounds.width, opts.bounds.height);
+      if (!this.renderLayer || isPixiRenderLayer(this.renderLayer)) {
+        (this.stage as any).hitArea = new PIXI.Rectangle(0, 0, opts.bounds.width, opts.bounds.height);
+      }
 
       this._drag = new DragController(
         {
@@ -98,15 +119,15 @@ export class SubCanvas {
   }
 
   get ticker(): PIXI.Ticker {
-    return this.rootApp.ticker;
+    return this.rootApp?.ticker as PIXI.Ticker;
   }
 
   get renderer(): PIXI.Renderer {
-    return this.rootApp.renderer;
+    return this.rootApp?.renderer as PIXI.Renderer;
   }
 
   get canvas(): HTMLCanvasElement {
-    return this.rootApp.canvas as HTMLCanvasElement;
+    return this.rootApp?.canvas as HTMLCanvasElement;
   }
 
   get destroyed(): boolean {
@@ -155,10 +176,11 @@ export class SubCanvas {
     if (this._destroyed) return;
     this._syncing = true;
     this._bounds = bounds;
-    this.stage.position.set(bounds.x, bounds.y);
+    this.stage.x = bounds.x;
+    this.stage.y = bounds.y;
     this._syncing = false;
-    if (this.stage.hitArea) {
-      this.stage.hitArea = new PIXI.Rectangle(0, 0, bounds.width, bounds.height);
+    if (!this.renderLayer || isPixiRenderLayer(this.renderLayer)) {
+      (this.stage as any).hitArea = new PIXI.Rectangle(0, 0, bounds.width, bounds.height);
     }
     this.updateMask();
     this.resizeListeners.forEach((fn) => fn(bounds));
@@ -168,15 +190,16 @@ export class SubCanvas {
     if (this._destroyed) return;
     this._syncing = true;
     this._bounds = { ...this._bounds, x, y };
-    this.stage.position.set(x, y);
+    this.stage.x = x;
+    this.stage.y = y;
     this._syncing = false;
   }
 
   setSize(width: number, height: number): void {
     if (this._destroyed) return;
     this._bounds = { ...this._bounds, width, height };
-    if (this.stage.hitArea) {
-      this.stage.hitArea = new PIXI.Rectangle(0, 0, width, height);
+    if (!this.renderLayer || isPixiRenderLayer(this.renderLayer)) {
+      (this.stage as any).hitArea = new PIXI.Rectangle(0, 0, width, height);
     }
     this.updateMask();
     this.resizeListeners.forEach((fn) => fn(this._bounds));
@@ -206,22 +229,22 @@ export class SubCanvas {
     }
   }
 
-  addChild<T extends PIXI.Container>(child: T): T {
-    const added = this.stage.addChild(child) as T;
+  addChild<T extends IRenderContainer>(child: T): T {
+    const added = this.stage.addChild(child);
     if (this._drag && this._drag.mode === 'title' && child.label === DRAG_HANDLE_LABEL && !this._drag.hasHandle(child)) {
       this._drag.installHandle(child);
     }
-    return added;
+    return added as T;
   }
 
-  removeChild<T extends PIXI.Container>(child: T): T {
+  removeChild<T extends IRenderContainer>(child: T): T {
     if (this._drag) this._drag.uninstallHandle(child);
     return this.stage.removeChild(child) as T;
   }
 
-  removeChildren(): PIXI.Container[] {
-    const internal = new Set<PIXI.Container>();
-    if (this._mask) internal.add(this._mask);
+  removeChildren(): IRenderContainer[] {
+    const internal = new Set<IRenderContainer>();
+    if (this._mask) internal.add(this._mask as IRenderContainer);
     const toRemove = this.stage.children.filter((c) => !internal.has(c));
     toRemove.forEach((c) => {
       if (this._drag) this._drag.uninstallHandle(c);
@@ -230,35 +253,35 @@ export class SubCanvas {
     return toRemove;
   }
 
-  getChildAt(index: number): PIXI.Container {
+  getChildAt(index: number): IRenderContainer | null {
     return this.stage.getChildAt(index);
   }
 
-  getChildByLabel(label: string): PIXI.Container | null {
+  getChildByLabel(label: string): IRenderContainer | null {
     return this.stage.getChildByLabel(label);
   }
 
-  get children(): readonly PIXI.Container[] {
+  get children(): readonly IRenderContainer[] {
     return this.stage.children;
   }
 
-  get position(): PIXI.ObservablePoint {
-    return this.stage.position;
+  get position(): any {
+    return (this.stage as any).position ?? { x: this.stage.x, y: this.stage.y };
   }
 
-  get scale(): PIXI.ObservablePoint {
-    return this.stage.scale;
+  get scale(): any {
+    return (this.stage as any).scale ?? { x: 1, y: 1 };
   }
 
-  get pivot(): PIXI.ObservablePoint {
-    return this.stage.pivot;
+  get pivot(): any {
+    return (this.stage as any).pivot ?? { x: 0, y: 0 };
   }
 
-  get rotation(): number { return this.stage.rotation; }
-  set rotation(v: number) { this.stage.rotation = v; }
+  get rotation(): number { return (this.stage as any).rotation ?? 0; }
+  set rotation(v: number) { if ((this.stage as any).rotation !== undefined) (this.stage as any).rotation = v; }
 
-  get angle(): number { return this.stage.angle; }
-  set angle(v: number) { this.stage.angle = v; }
+  get angle(): number { return (this.stage as any).angle ?? 0; }
+  set angle(v: number) { if ((this.stage as any).angle !== undefined) (this.stage as any).angle = v; }
 
   get alpha(): number { return this.stage.alpha; }
   set alpha(v: number) { this.stage.alpha = v; }
@@ -266,17 +289,17 @@ export class SubCanvas {
   get visible(): boolean { return this.stage.visible; }
   set visible(v: boolean) { this.stage.visible = v; }
 
-  get tint(): number { return this.stage.tint; }
-  set tint(v: number) { this.stage.tint = v; }
+  get tint(): number { return (this.stage as any).tint ?? 0xffffff; }
+  set tint(v: number) { if ((this.stage as any).tint !== undefined) (this.stage as any).tint = v; }
 
-  get x(): number { return this.stage.x; }
-  get y(): number { return this.stage.y; }
-
-  get eventMode(): PIXI.EventMode { return this.stage.eventMode; }
-  set eventMode(v: PIXI.EventMode) { this.stage.eventMode = v; }
+  get eventMode(): string { return this.stage.eventMode; }
+  set eventMode(v: string) { this.stage.eventMode = v; }
 
   get label(): string { return this.stage.label; }
   set label(v: string) { this.stage.label = v; }
+
+  get zIndex(): number { return this.stage.zIndex; }
+  set zIndex(v: number) { this.stage.zIndex = v; }
 
   private addListener(type: SubPointerType, fn: Listener): this {
     if (!this.listeners.has(type)) this.listeners.set(type, new Set());
@@ -286,19 +309,24 @@ export class SubCanvas {
 
   private updateMask(): void {
     if (!this._mask) return;
+    const w = this._bounds.width;
+    const h = this._bounds.height;
+    const mask = this._mask as any;
     try {
-      this._mask
-        .clear()
-        .rect(0, 0, this._bounds.width, this._bounds.height)
-        .fill({ color: 0xffffff });
+      mask.clear();
+      mask.rect(0, 0, w, h);
+      mask.fill({ color: 0xffffff });
     } catch {
-      if (this._mask.parent) this._mask.parent.removeChild(this._mask);
-      this._mask = new PIXI.Graphics();
-      this._mask
-        .rect(0, 0, this._bounds.width, this._bounds.height)
-        .fill({ color: 0xffffff });
-      this.stage.addChild(this._mask);
-      this.stage.mask = this._mask;
+      if (mask.parent) mask.parent.removeChild(mask);
+      this._mask = this.renderLayer
+        ? this.renderLayer.createGraphics()
+        : (new PIXI.Graphics() as any);
+      (this._mask as any).rect(0, 0, w, h);
+      (this._mask as any).fill({ color: 0xffffff });
+      this.stage.addChild(this._mask as any);
+      if (!this.renderLayer || isPixiRenderLayer(this.renderLayer)) {
+        (this.stage as any).mask = this._mask;
+      }
     }
   }
 
@@ -330,7 +358,8 @@ export class SubCanvas {
     },
   ): SubCanvas {
     const sub = new SubCanvas({
-      rootApp: this.rootApp,
+      rootApp: this.rootApp ?? undefined,
+      renderLayer: this.renderLayer ?? undefined,
       bounds,
       parent: this,
       clipToBounds: opts?.clipToBounds,
@@ -360,7 +389,6 @@ export class SubCanvas {
 
     if (type === 'pointermove' || type === 'pointerup' || type === 'pointerleave') {
       if (this._pressStart) {
-        // during an active drag, deliver move/up/leave regardless of bounds
       } else if (!inBounds) {
         return false;
       }
@@ -376,7 +404,6 @@ export class SubCanvas {
           return true;
         }
       }
-      // 如果同一父级下有更前的 region 包含点击位置，则不拦截（防止穿透）
       if (this.parent) {
         const siblings = this.parent.subRegions;
         for (let i = siblings.length - 1; i >= 0; i--) {
@@ -479,7 +506,7 @@ export class SubCanvas {
     this.resizeListeners.clear();
     if (this.stage.parent) this.stage.parent.removeChild(this.stage);
     try {
-      this.stage.destroy({ children: true, texture: false });
+      this.stage.destroy({ children: true });
     } catch { /* stage already destroyed by parent */ }
     this.onDestroy();
   }
@@ -491,7 +518,7 @@ export class SubCanvas {
       setPosition: (x: number, y: number) => this.setPosition(x, y),
       bringToFront: () => this.bringToFront(),
       parent: this.parent ? () => ({ bounds: this.parent!.bounds }) : undefined,
-      rootStage: this.rootApp.stage,
+      rootStage: this.stage,
       stage: this.stage,
     };
   }

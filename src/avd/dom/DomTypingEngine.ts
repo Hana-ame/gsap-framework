@@ -1,7 +1,8 @@
 import type { AvdText, AvdTextSegment } from '../types';
-import { DomContainer, DomText, DomSprite, DomTextStyle, measureText } from './DomNode';
-
-export type TextEffect = 'none' | 'wave' | 'shake' | 'rainbow';
+import type { TextEffect } from '@framework/render/types';
+import { DomContainer, DomText, DomSprite, measureText } from './DomNode';
+import type { DomTextStyle } from './DomNode';
+import { layoutItems } from '@framework/text-effects-layout';
 
 interface LayoutItem {
   kind: 'text' | 'image';
@@ -12,6 +13,8 @@ interface LayoutItem {
   endUnit: number;
   width: number;
   height: number;
+  x: number;
+  y: number;
 }
 
 interface ItemState {
@@ -183,32 +186,11 @@ export class DomTypingEngine {
       }
     }
 
-    const rows: LayoutItem[][] = [];
-    let currentRow: LayoutItem[] = [];
-    let currentRowWidth = 0;
+    layoutItems(flatItems, maxWidth, lineHeight);
 
     for (const item of flatItems) {
-      if (currentRowWidth + item.width > maxWidth && currentRow.length > 0) {
-        rows.push(currentRow);
-        currentRow = [];
-        currentRowWidth = 0;
-      }
-      currentRow.push(item);
-      currentRowWidth += item.width;
-    }
-    if (currentRow.length > 0) rows.push(currentRow);
-
-    for (let ri = 0; ri < rows.length; ri++) {
-      const row = rows[ri];
-      const rowMaxH = Math.max(...row.map((it) => it.height));
-      const rowY = ri * lineHeight;
-      let x = 0;
-      for (const item of row) {
-        const iy = rowY + (rowMaxH - item.height) / 2;
-        if (item.textObj) { item.textObj.x = x; item.textObj.y = iy; }
-        if (item.sprite) { item.sprite.x = x; item.sprite.y = iy; }
-        x += item.width;
-      }
+      if (item.textObj) { item.textObj.x = item.x; item.textObj.y = item.y; }
+      if (item.sprite) { item.sprite.x = item.x; item.sprite.y = item.y; }
     }
 
     this._layout = flatItems;

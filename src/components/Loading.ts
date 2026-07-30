@@ -1,7 +1,8 @@
 /** Loading spinner/indicator overlay for PixiJS. */
 import * as PIXI from 'pixi.js';
 import { SubCanvas } from '@framework/SubCanvas';
-import { gsap } from 'gsap';
+import type { AnimationDriver, TweenHandle } from '@framework/animation/types';
+import { getDefaultDriver } from '@framework/animation';
 
 export interface LoadingHandle {
   readonly stage: PIXI.Container;
@@ -15,9 +16,11 @@ export interface LoadingOptions {
   showSpinner?: boolean;
   overlayColor?: number;
   overlayAlpha?: number;
+  driver?: AnimationDriver;
 }
 
 export function createLoading(parent: SubCanvas, opts: LoadingOptions = {}): LoadingHandle {
+  const _driver = opts.driver ?? getDefaultDriver();
   const text = opts.text ?? 'Loading...';
   const showSpinner = opts.showSpinner !== false;
   const spinnerColor = opts.spinnerColor ?? 0xffffff;
@@ -56,9 +59,10 @@ export function createLoading(parent: SubCanvas, opts: LoadingOptions = {}): Loa
 
   const phase = { t: 0 };
   let destroyed = false;
+  let spinnerTween: TweenHandle | null = null;
 
   if (showSpinner) {
-    gsap.to(phase, {
+    spinnerTween = _driver.to(phase, {
       t: Math.PI * 2,
       duration: 1,
       repeat: -1,
@@ -81,7 +85,7 @@ export function createLoading(parent: SubCanvas, opts: LoadingOptions = {}): Loa
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      gsap.killTweensOf(phase);
+      if (spinnerTween) spinnerTween.kill();
       if (stage.parent) stage.parent.removeChild(stage);
       stage.destroy({ children: true });
     },

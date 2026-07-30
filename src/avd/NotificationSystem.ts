@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { gsap } from 'gsap';
+import type { AnimationDriver, TweenHandle } from '@framework/animation/types';
+import { getDefaultDriver } from '@framework/animation';
 
 export type NotifType = 'info' | 'success' | 'warn' | 'error';
 
@@ -15,7 +16,7 @@ interface NotifInstance {
   bg: PIXI.Graphics;
   text: PIXI.Text;
   duration: number;
-  timer: gsap.core.Tween | null;
+  timer: TweenHandle | null;
 }
 
 const TYPE_COLORS: Record<NotifType, { bar: number; bg: number; text: number }> = {
@@ -56,8 +57,10 @@ export class NotificationSystem {
   readonly container: PIXI.Container;
   private _opts: Required<NotificationSystemOptions>;
   private _active: NotifInstance[] = [];
+  private _driver: AnimationDriver;
 
-  constructor(parent: PIXI.Container, opts?: NotificationSystemOptions) {
+  constructor(parent: PIXI.Container, opts?: NotificationSystemOptions, driver?: AnimationDriver) {
+    this._driver = driver ?? getDefaultDriver();
     this._opts = { ...DEFAULTS, ...opts };
     this.container = new PIXI.Container();
     this.container.eventMode = 'none';
@@ -112,7 +115,7 @@ export class NotificationSystem {
     this._reflow();
 
     // Slide in
-    gsap.to(cont, {
+    this._driver.to(cont, {
       x: this._opts.margin,
       alpha: 1,
       duration: this._opts.slideInMs / 1000,
@@ -120,7 +123,7 @@ export class NotificationSystem {
     });
 
     // Auto dismiss
-    inst.timer = gsap.delayedCall(duration / 1000, () => {
+    inst.timer = this._driver.delayedCall(duration / 1000, () => {
       this._dismiss(inst);
     });
   }
@@ -144,7 +147,7 @@ export class NotificationSystem {
     const idx = this._active.indexOf(inst);
     if (idx >= 0) this._active.splice(idx, 1);
 
-    gsap.to(inst.container, {
+    this._driver.to(inst.container, {
       alpha: 0,
       x: inst.container.x - 30,
       duration: this._opts.fadeOutMs / 1000,
@@ -166,7 +169,7 @@ export class NotificationSystem {
   private _reflow(): void {
     let y = this._opts.yStart;
     for (const inst of this._active) {
-      gsap.to(inst.container, {
+      this._driver.to(inst.container, {
         y,
         duration: 0.25,
         ease: 'power2.out',

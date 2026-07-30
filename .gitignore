@@ -28,3 +28,4 @@ dist-ssr
 claudecode.sh
 .claude/
 .last_upload_url
+log.txt

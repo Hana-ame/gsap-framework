@@ -1,4 +1,5 @@
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 import { DomContainer, DomGraphics } from './DomNode';
 
 export class DomScreenEffects {
@@ -8,8 +9,10 @@ export class DomScreenEffects {
   private _target: DomContainer | null = null;
   private _originalX = 0;
   private _originalY = 0;
+  private _driver: AnimationDriver;
 
-  constructor(parent: DomContainer) {
+  constructor(parent: DomContainer, driver?: AnimationDriver) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this.container = new DomContainer();
     this.container.eventMode = 'none';
     parent.addChild(this.container);
@@ -33,8 +36,8 @@ export class DomScreenEffects {
 
   shake(intensity: number = 6, duration: number = 300): void {
     if (!this._target) return;
-    gsap.killTweensOf(this._target, 'x,y' as any);
-    gsap.to(this._target, {
+    this._driver.killTweensOf(this._target, 'x,y');
+    this._driver.to(this._target, {
       x: `+=${intensity}` as any,
       y: `+=${intensity}` as any,
       duration: duration / 1000 / 4,
@@ -51,9 +54,9 @@ export class DomScreenEffects {
   }
 
   flash(color: number = 0xffffff, duration: number = 200): void {
-    gsap.killTweensOf(this._flashOverlay);
+    this._driver.killTweensOf(this._flashOverlay);
     this._flashOverlay.alpha = 0.8;
-    gsap.to(this._flashOverlay, {
+    this._driver.to(this._flashOverlay, {
       alpha: 0,
       duration: duration / 1000,
       ease: 'power2.out',
@@ -61,9 +64,9 @@ export class DomScreenEffects {
   }
 
   fadeOut(duration: number = 500, onComplete?: () => void): void {
-    gsap.killTweensOf(this._fadeOverlay);
+    this._driver.killTweensOf(this._fadeOverlay);
     this._fadeOverlay.alpha = 0;
-    gsap.to(this._fadeOverlay, {
+    this._driver.to(this._fadeOverlay, {
       alpha: 1,
       duration: duration / 1000,
       ease: 'power2.in',
@@ -72,9 +75,9 @@ export class DomScreenEffects {
   }
 
   fadeIn(duration: number = 500, onComplete?: () => void): void {
-    gsap.killTweensOf(this._fadeOverlay);
+    this._driver.killTweensOf(this._fadeOverlay);
     this._fadeOverlay.alpha = 1;
-    gsap.to(this._fadeOverlay, {
+    this._driver.to(this._fadeOverlay, {
       alpha: 0,
       duration: duration / 1000,
       ease: 'power2.out',
@@ -92,9 +95,9 @@ export class DomScreenEffects {
   }
 
   destroy(): void {
-    if (this._target) gsap.killTweensOf(this._target);
-    gsap.killTweensOf(this._flashOverlay);
-    gsap.killTweensOf(this._fadeOverlay);
+    if (this._target) this._driver.killTweensOf(this._target);
+    this._driver.killTweensOf(this._flashOverlay);
+    this._driver.killTweensOf(this._fadeOverlay);
     this.container.destroy({ children: true });
   }
 }

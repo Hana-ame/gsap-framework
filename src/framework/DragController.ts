@@ -1,6 +1,7 @@
 /** DragController — 拖拽交互控制器，支持鼠标/触摸拖拽、拖拽手柄与边界约束。 */
-import * as PIXI from 'pixi.js';
+import type { IRenderContainer } from '@framework/render/types';
 import type { Rect, SubPointerType } from './SubCanvasTypes';
+import type { FederatedPointerEvent } from 'pixi.js';
 
 export const DRAG_HANDLE_LABEL = 'subcanvas-drag-handle';
 
@@ -22,8 +23,8 @@ export interface DragContext {
   setPosition(x: number, y: number): void;
   bringToFront(): void;
   parent?(): { bounds: Rect } | null;
-  rootStage: PIXI.Container;
-  stage: PIXI.Container;
+  rootStage: IRenderContainer;
+  stage: IRenderContainer;
 }
 
 export class DragController {
@@ -32,8 +33,8 @@ export class DragController {
   private _ctx: DragContext;
 
   private _isDragging = false;
-  private _perHandleCleanups = new Map<PIXI.Container, () => void>();
-  private _dragHandles = new WeakSet<PIXI.Container>();
+  private _perHandleCleanups = new Map<IRenderContainer, () => void>();
+  private _dragHandles = new WeakSet<IRenderContainer>();
 
   private _dragLocalStart: { x: number; y: number } | null = null;
   private _onWindowMove: ((e: PointerEvent) => void) | null = null;
@@ -49,14 +50,14 @@ export class DragController {
     return this._isDragging;
   }
 
-  installHandle(handle: PIXI.Container): void {
+  installHandle(handle: IRenderContainer): void {
     if (this.mode !== 'title') return;
     if (this._dragHandles.has(handle)) return;
     this._dragHandles.add(handle);
     this._perHandleCleanups.set(handle, this._installOnHandle(handle));
   }
 
-  uninstallHandle(handle: PIXI.Container): void {
+  uninstallHandle(handle: IRenderContainer): void {
     const cleanup = this._perHandleCleanups.get(handle);
     if (cleanup) {
       cleanup();
@@ -65,7 +66,7 @@ export class DragController {
     this._dragHandles.delete(handle);
   }
 
-  hasHandle(handle: PIXI.Container): boolean {
+  hasHandle(handle: IRenderContainer): boolean {
     return this._dragHandles.has(handle);
   }
 
@@ -102,7 +103,7 @@ export class DragController {
     this._isDragging = false;
   }
 
-  private _installOnHandle(handle: PIXI.Container): () => void {
+  private _installOnHandle(handle: IRenderContainer): () => void {
     const ctx = this._ctx;
     const opts = this._opts;
 
@@ -125,7 +126,7 @@ export class DragController {
       opts.onDrag?.({ x: nx, y: ny });
     };
 
-    const onDown = (pixiEvent: PIXI.FederatedPointerEvent) => {
+    const onDown = (pixiEvent: FederatedPointerEvent) => {
       pixiEvent.stopPropagation();
       localDragging = true;
       this._isDragging = true;
@@ -155,7 +156,7 @@ export class DragController {
       opts.onEnd?.({ x: ctx.getBounds().x, y: ctx.getBounds().y });
     };
 
-    const onPixiMove = (pixiEvent: PIXI.FederatedPointerEvent) => {
+    const onPixiMove = (pixiEvent: FederatedPointerEvent) => {
       if (!localDragging) return;
       applyDrag(pixiEvent.clientX, pixiEvent.clientY);
     };
@@ -165,21 +166,20 @@ export class DragController {
       onWindowUp();
     };
 
-    handle.on('pointerdown', onDown);
-    root.on('pointermove', onPixiMove);
-    root.on('pointerup', onPixiUp);
-    root.on('pointerupoutside', onPixiUp);
+    (handle as any).on('pointerdown', onDown);
+    (root as any).on('pointermove', onPixiMove);
+    (root as any).on('pointerup', onPixiUp);
+    (root as any).on('pointerupoutside', onPixiUp);
 
-    // 手柄离开场景图时自动注销，无需手动调用 uninstallHandle
     const onRemoved = () => this.uninstallHandle(handle);
-    handle.on('removed', onRemoved);
+    (handle as any).on('removed', onRemoved);
 
     return () => {
-      handle.off('removed', onRemoved);
-      handle.off('pointerdown', onDown);
-      root.off('pointermove', onPixiMove);
-      root.off('pointerup', onPixiUp);
-      root.off('pointerupoutside', onPixiUp);
+      (handle as any).off('removed', onRemoved);
+      (handle as any).off('pointerdown', onDown);
+      (root as any).off('pointermove', onPixiMove);
+      (root as any).off('pointerup', onPixiUp);
+      (root as any).off('pointerupoutside', onPixiUp);
       window.removeEventListener('pointermove', onWindowMove);
       window.removeEventListener('pointerup', onWindowUp);
       window.removeEventListener('pointercancel', onWindowUp);

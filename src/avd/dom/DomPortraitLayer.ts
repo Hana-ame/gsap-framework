@@ -1,4 +1,5 @@
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 import type { AvdPortraitPos } from '../types';
 import { DomContainer, DomSprite, DomTexture } from './DomNode';
 
@@ -19,8 +20,10 @@ export class DomPortraitLayer {
   readonly container: DomContainer;
   private _opts: DomPortraitLayerOptions;
   private _slots: Map<AvdPortraitPos, PortraitSlot> = new Map();
+  private _driver: AnimationDriver;
 
-  constructor(parent: DomContainer, opts: DomPortraitLayerOptions) {
+  constructor(parent: DomContainer, opts: DomPortraitLayerOptions, driver?: AnimationDriver) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this._opts = opts;
     this.container = new DomContainer();
     parent.addChild(this.container);
@@ -54,12 +57,11 @@ export class DomPortraitLayer {
   }
 
   updateL2D(_deltaMS: number): void {
-    // DOM 模式不支持 Live2D
   }
 
   destroy(): void {
     for (const slot of this._slots.values()) {
-      if (slot.sprite) gsap.killTweensOf(slot.sprite);
+      if (slot.sprite) this._driver.killTweensOf(slot.sprite);
     }
     this.container.destroy({ children: true });
   }
@@ -89,8 +91,8 @@ export class DomPortraitLayer {
       this._fitSprite(slot.sprite!);
     }
 
-    gsap.killTweensOf(slot.sprite!);
-    gsap.to(slot.sprite!, {
+    this._driver.killTweensOf(slot.sprite!);
+    this._driver.to(slot.sprite!, {
       alpha,
       duration: this._opts.portraitFadeMs / 1000,
       ease: 'power2.out',
@@ -110,7 +112,7 @@ export class DomPortraitLayer {
       this._fitSprite(sprite);
       this.container.addChild(sprite);
       this._slots.set(pos, { sprite, current: texture, container: new DomContainer() });
-      gsap.to(sprite, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
+      this._driver.to(sprite, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
       return;
     }
 
@@ -122,8 +124,8 @@ export class DomPortraitLayer {
       this._fitSprite(slot.sprite!);
       slot.sprite!.alpha = 0;
       slot.sprite!.visible = true;
-      gsap.killTweensOf(slot.sprite!);
-      gsap.to(slot.sprite!, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
+      this._driver.killTweensOf(slot.sprite!);
+      this._driver.to(slot.sprite!, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
     } else {
       this._fadeOut(slot);
     }
@@ -131,8 +133,8 @@ export class DomPortraitLayer {
 
   private _fadeOut(slot: PortraitSlot | undefined): void {
     if (!slot || !slot.sprite || !slot.current) return;
-    gsap.killTweensOf(slot.sprite);
-    gsap.to(slot.sprite, {
+    this._driver.killTweensOf(slot.sprite);
+    this._driver.to(slot.sprite, {
       alpha: 0,
       duration: this._opts.portraitFadeMs / 1000,
       ease: 'power2.out',

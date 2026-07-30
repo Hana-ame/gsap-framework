@@ -49,12 +49,8 @@ function computeBreakPoints(text: string): TextBreak[] {
     const prev = text[i - 1];
     const isSpace = c === ' ' || c === '\t';
     const prevIsSpace = prev === ' ' || prev === '\t';
-    if (isSpace && !prevIsSpace) {
-      // non-space → space: append trailing space to word, don't break
-      continue;
-    }
+    if (isSpace && !prevIsSpace) continue;
     if (!isSpace && prevIsSpace) {
-      // space → non-space: break here, trailing spaces belong to previous segment
       breaks.push({ start: bufStart, end: i });
       bufStart = i;
       continue;
@@ -66,6 +62,40 @@ function computeBreakPoints(text: string): TextBreak[] {
   }
   breaks.push({ start: bufStart, end: text.length });
   return breaks;
+}
+
+/** Shared row-wrapping and positioning for both PIXI and DOM engines. */
+export function layoutItems<T extends { width: number; height: number; x: number; y: number }>(
+  items: T[],
+  maxWidth: number,
+  lineHeight: number,
+): void {
+  const rows: T[][] = [];
+  let currentRow: T[] = [];
+  let currentRowWidth = 0;
+
+  for (const item of items) {
+    if (currentRowWidth + item.width > maxWidth && currentRow.length > 0) {
+      rows.push(currentRow);
+      currentRow = [];
+      currentRowWidth = 0;
+    }
+    currentRow.push(item);
+    currentRowWidth += item.width;
+  }
+  if (currentRow.length > 0) rows.push(currentRow);
+
+  for (let ri = 0; ri < rows.length; ri++) {
+    const row = rows[ri];
+    const rowMaxH = Math.max(...row.map((it) => it.height));
+    const rowY = ri * lineHeight;
+    let x = 0;
+    for (const item of row) {
+      item.x = x;
+      item.y = rowY + (rowMaxH - item.height) / 2;
+      x += item.width;
+    }
+  }
 }
 
 export function buildLayout(segments: TextSegment[], style: PIXI.TextStyle, maxWidth: number, lineHeight: number): LayoutResult {
@@ -108,44 +138,13 @@ export function buildLayout(segments: TextSegment[], style: PIXI.TextStyle, maxW
     }
   }
 
-  const rows: LayoutItem[][] = [];
-  let currentRow: LayoutItem[] = [];
-  let currentRowWidth = 0;
-
-  for (const item of flatItems) {
-    if (currentRowWidth + item.width > maxWidth && currentRow.length > 0) {
-      rows.push(currentRow);
-      currentRow = [];
-      currentRowWidth = 0;
-    }
-    currentRow.push(item);
-    currentRowWidth += item.width;
-  }
-  if (currentRow.length > 0) rows.push(currentRow);
+  layoutItems(flatItems, maxWidth, lineHeight);
 
   const container = new PIXI.Container();
-  for (let ri = 0; ri < rows.length; ri++) {
-    const row = rows[ri];
-    const rowMaxH = Math.max(...row.map((it) => it.height));
-    const rowY = ri * lineHeight;
-    let x = 0;
-    for (const item of row) {
-      const iy = rowY + (rowMaxH - item.height) / 2;
-      if (item.textObj) {
-        item.textObj.x = x;
-        item.textObj.y = iy;
-        container.addChild(item.textObj);
-      }
-      if (item.sprite) {
-        item.sprite.x = x;
-        item.sprite.y = iy;
-        container.addChild(item.sprite);
-      }
-      x += item.width;
-    }
+  for (const item of flatItems) {
+    if (item.textObj) container.addChild(item.textObj);
+    if (item.sprite) container.addChild(item.sprite);
   }
 
   return { container, items: flatItems, totalUnits: unit };
 }
-
-

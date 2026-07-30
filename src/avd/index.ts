@@ -12,6 +12,17 @@ export type { PortraitLayerOptions } from './PortraitLayer';
 export { BackgroundLayer } from './BackgroundLayer';
 export type { BackgroundLayerOptions } from './BackgroundLayer';
 export { AudioManager } from './AudioManager';
+export { AudioService } from './AudioService';
+export { FlagService } from './FlagService';
+export { BacklogService } from './BacklogService';
+export { AutoSkipService } from './AutoSkipService';
+export { InputService } from './InputService';
+export { BgState } from './BgState';
+export { SpeakerState } from './SpeakerState';
+export { Live2DState } from './Live2DState';
+export { SaveLoadService } from './SaveLoadService';
+export { EventBus } from './EventBus';
+export { ChoiceService } from './ChoiceService';
 export { ScreenEffects } from './ScreenEffects';
 export { Live2DManager } from './Live2DManager';
 export type { Live2DModelView, Live2DModelOptions } from './Live2DManager';
@@ -49,6 +60,9 @@ export {
 } from './types';
 export type { AvdSaveData, SpeakerStyle } from './types';
 
+// ── AVD UI（独立于 AvdController 的界面层） ──
+export type { AvdUIHost } from './AvdUI';
+
 // ── RenderLayer 体系（Pixi / DOM 双模式） ──
 export { PixiLayer } from './render/PixiLayer';
 export { DomLayer } from './render/DomLayer';
@@ -73,12 +87,12 @@ export { DomBackgroundLayer } from './dom/DomBackgroundLayer';
 export type { DomBackgroundLayerOptions } from './dom/DomBackgroundLayer';
 export { DomScreenEffects } from './dom/DomScreenEffects';
 export { DomTypingEngine } from './dom/DomTypingEngine';
-export type { TextEffect } from './dom/DomTypingEngine';
+export type { TextEffect } from '@framework/render/types';
 
 // ── InputRemapper（按键重映射中间层） ──
 export { InputRemapper } from './InputRemapper';
 export type { InputAction, InputBinding, KeyCombo } from './InputRemapper';
 
 // ── VN 中间格式体系（KAG / ONS / Ren'Py / RMMZ → 通用 JSON → Player） ──
-export { VnScriptPlayer, KagLayerManager, kagToVnScript, onsToVnScript, renpyToVnScript, rmmzToVnScript } from './vn';
+export { VnScriptPlayer, KagLayerManager, kagToVnScript, onsToVnScript, renpyToVnScript, rmmzToVnScript, vnScriptToAvdLines, VnScriptRunner } from './vn';
 export type { VnPlayerHost, KagLayer, VnScriptJSON, VnMeta, VnResources, VnOp, VnCharacterDef, VnOpDialog, VnOpBg, VnOpChar, VnOpChoice, VnOpIf, VnOpJump, VnOpCall, VnOpLabel, VnOpSetFlag, VnOpSetVar, VnTextSegment, VnCharPlacement, VnTransition } from './vn';

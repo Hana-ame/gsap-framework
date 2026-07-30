@@ -1,6 +1,7 @@
 /** Text input field rendered in PixiJS with keyboard support. */
 import * as PIXI from 'pixi.js';
-import { gsap } from 'gsap';
+import type { AnimationDriver, TweenHandle, TimelineHandle } from '@framework/animation/types';
+import { getDefaultDriver } from '@framework/animation';
 import { textPresets } from '@components';
 
 export interface TextInputOptions {
@@ -38,7 +39,7 @@ function toCssColor(c: number): string {
   return '#' + c.toString(16).padStart(6, '0');
 }
 
-export function createTextInput(parent: PIXI.Container, opts: TextInputOptions): TextInputHandle {
+export function createTextInput(parent: PIXI.Container, opts: TextInputOptions, driver?: AnimationDriver): TextInputHandle {
   const {
     x, y, width, height,
     placeholder = '',
@@ -157,16 +158,17 @@ export function createTextInput(parent: PIXI.Container, opts: TextInputOptions):
     label.visible = !v;
   };
 
-  let animTween: gsap.core.Timeline | null = null;
+  let animTween: TimelineHandle | null = null;
+  const _driver = driver ?? getDefaultDriver();
 
   const focus = () => {
     if (destroyed) return;
     focused = true;
     reposition();
     animTween?.kill();
-    animTween = gsap.timeline()
+    animTween = _driver.timeline()
       .to(overlay, { opacity: 1, duration: 0.15, ease: 'power2.out' })
-      .to(overlay, { borderColor: cssFocusBorder, duration: 0.2, ease: 'power1.out' }, 0);
+      .to(overlay, { borderColor: cssFocusBorder, duration: 0.2, ease: 'power1.out' });
     bg.clear()
       .roundRect(0, 0, width, height, 6)
       .fill({ color: bgColor })
@@ -178,9 +180,9 @@ export function createTextInput(parent: PIXI.Container, opts: TextInputOptions):
     if (!focused) return;
     focused = false;
     animTween?.kill();
-    animTween = gsap.timeline()
+    animTween = _driver.timeline()
       .to(overlay, { opacity: 0, duration: 0.12, ease: 'power2.in' })
-      .to(overlay, { borderColor: cssBorder, duration: 0.15 }, 0);
+      .to(overlay, { borderColor: cssBorder, duration: 0.15, ease: 'power1.in' });
     bg.clear()
       .roundRect(0, 0, width, height, 6)
       .fill({ color: bgColor })

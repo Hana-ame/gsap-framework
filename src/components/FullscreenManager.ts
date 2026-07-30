@@ -1,7 +1,8 @@
 /** Fullscreen image viewer with zoom, pan, and transition animations. */
 import * as PIXI from 'pixi.js';
 import type { SubCanvasProxy } from '@framework/SubCanvasProxy';
-import { gsap } from 'gsap';
+import type { AnimationDriver, TweenHandle } from '@framework/animation/types';
+import { getDefaultDriver } from '@framework/animation';
 
 export interface FullscreenShowEvent {
   texture: PIXI.Texture;
@@ -25,7 +26,8 @@ export interface FullscreenManager {
 const DRAG_THRESHOLD = 4;
 const CLOSE_DRAG_THRESHOLD = 80;
 
-export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManager {
+export function createFullscreenManager(proxy: SubCanvasProxy, driver?: AnimationDriver): FullscreenManager {
+  const _driver = driver ?? getDefaultDriver();
   const container = new PIXI.Container();
   container.eventMode = 'none';
   container.zIndex = 99999;
@@ -43,8 +45,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   let thumbW = 0;
   let thumbH = 0;
 
-  // GSAP animation
-  let currentTween: gsap.core.Tween | null = null;
+  let currentTween: TweenHandle | null = null;
   let hiding = false;
 
   const killTween = () => {
@@ -57,7 +58,7 @@ export function createFullscreenManager(proxy: SubCanvasProxy): FullscreenManage
   const animateTo = (x: number, y: number, scale: number, onComplete?: () => void) => {
     killTween();
     if (!sprite) return;
-    currentTween = gsap.to(sprite, {
+    currentTween = _driver.to(sprite, {
       pixi: { x, y, scale },
       duration: 0.3,
       ease: 'power2.out',

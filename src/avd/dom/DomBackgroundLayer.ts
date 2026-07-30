@@ -1,4 +1,5 @@
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 import { DomContainer, DomGraphics, DomSprite, DomTexture } from './DomNode';
 
 export interface DomBackgroundLayerOptions {
@@ -12,8 +13,10 @@ export class DomBackgroundLayer {
   private _activeIndex = 0;
   private _opts: DomBackgroundLayerOptions;
   private _current: DomTexture | null = null;
+  private _driver: AnimationDriver;
 
-  constructor(parent: DomContainer, opts: DomBackgroundLayerOptions) {
+  constructor(parent: DomContainer, opts: DomBackgroundLayerOptions, driver?: AnimationDriver) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this._opts = opts;
     this.container = new DomContainer();
     parent.addChild(this.container);
@@ -47,8 +50,8 @@ export class DomBackgroundLayer {
     if (texture === this._current) return;
     this._current = texture;
 
-    gsap.killTweensOf(this._sprites[0]);
-    gsap.killTweensOf(this._sprites[1]);
+    this._driver.killTweensOf(this._sprites[0]);
+    this._driver.killTweensOf(this._sprites[1]);
 
     if (!texture || texture === DomTexture.EMPTY) {
       const s = this._sprites[this._activeIndex];
@@ -73,7 +76,7 @@ export class DomBackgroundLayer {
   }
 
   destroy(): void {
-    for (const s of this._sprites) gsap.killTweensOf(s);
+    for (const s of this._sprites) this._driver.killTweensOf(s);
     this.container.destroy({ children: true });
   }
 

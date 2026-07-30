@@ -1,4 +1,5 @@
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 import {
   type AvdChoice,
   type AvdLine,
@@ -15,19 +16,32 @@ import {
 } from './types';
 import { DialogueStateMachine, type StateMachineCallbacks } from './DialogueStateMachine';
 import { RosterManager } from './RosterManager';
-import { AudioManager } from './AudioManager';
+import { AudioService } from './AudioService';
+import { SaveLoadService } from './SaveLoadService';
+import { EventBus } from './EventBus';
+import { ChoiceService } from './ChoiceService';
+import { FlagService } from './FlagService';
+import { BacklogService } from './BacklogService';
+import { BgState } from './BgState';
+import { SpeakerState } from './SpeakerState';
+import { Live2DState } from './Live2DState';
+import { AutoSkipService } from './AutoSkipService';
+import { InputService } from './InputService';
 import { ParticleSystem, type ParticlePreset, type EmitterPosition } from './ParticleSystem';
 import { NotificationSystem, type NotifOptions } from './NotificationSystem';
 import { Live2DManager, type Live2DModelView } from './Live2DManager';
 import { PixiLayer } from './render/PixiLayer';
 import { DomLayer } from './render/DomLayer';
+import type { IRenderContainer, IRenderGraphics, IRenderText } from '@framework/render/types';
 import type {
-  IRenderLayer, IRenderContainer, IRenderGraphics, IRenderText,
+  IAvdRenderLayer,
   IDialogueBoxHandle, IPortraitLayerHandle,
   IBackgroundLayerHandle, IScreenEffectsHandle, ITypingEngineHandle,
 } from './render/types';
 
-export type TextEffect = import('./dom/DomTypingEngine').TextEffect;
+import type { TextEffect } from '@framework/render/types';
+import type * as PIXI from 'pixi.js';
+import type { DomGraphics } from './dom/DomNode';
 
 export class AvdController {
   private _lines: AvdLine[] = [];
@@ -39,72 +53,95 @@ export class AvdController {
   private _dialogueBox!: IDialogueBoxHandle;
   private _portraitLayer!: IPortraitLayerHandle;
   private _backgroundLayer!: IBackgroundLayerHandle;
-  private _audio: AudioManager;
+  private _audioService: AudioService;
+  private _saveLoadService: SaveLoadService;
+  private _eventBus: EventBus;
   private _parent!: IRenderContainer;
   private _screenFx!: IScreenEffectsHandle;
   private _clickOverlay!: IRenderGraphics;
   private _particles: ParticleSystem;
   private _notifications: NotificationSystem;
   private _choiceContainer!: IRenderContainer;
-  private _choiceButtons: IRenderContainer[] = [];
+  private _choiceService!: ChoiceService;
   private _arrowPhase = 0;
   private _tickFn: (() => void) | null = null;
   private _rafId: number | null = null;
   private _segmentMap: Map<string, number> = new Map();
-  private _flags: Set<string> = new Set();
-  private _backlog: BacklogEntry[] = [];
+  private _flagService: FlagService;
+  private _backlogService: BacklogService;
+  private _autoSkipService: AutoSkipService;
+  private _inputService: InputService;
   private _destroyed = false;
-  private _autoMode = false;
-  private _skipMode = false;
-  private _autoTimer: ReturnType<typeof setTimeout> | null = null;
-  private _choiceTimer: ReturnType<typeof setTimeout> | null = null;
-  private _audioMap: Record<string, AudioBuffer> = {};
-  private _expressionOverride: string | null = null;
-  private _speakerStyles: Map<string, SpeakerStyle> = new Map();
-  private _currentBgKey: string | null = null;
-  private _currentBgmKey: string | null = null;
-  private _bgTextureMap: Record<string, any> = {};
-  private _bgLazyLoad: ((key: string) => Promise<any>) | null = null;
-  setBgLazyLoad(fn: (key: string) => Promise<any>): void { this._bgLazyLoad = fn; }
-  private _l2dManager: Live2DManager | null = null;
+  private _bgState: BgState;
+  private _speakerState: SpeakerState;
+  private _l2dState: Live2DState;
   private _hideUi = false;
-  private _speakerL2D: Map<string, Live2DModelView> = new Map();
-  private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
-  private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
-  private _layer: IRenderLayer | null = null;
+  private _layer: IAvdRenderLayer | null = null;
   private _renderMode: 'pixi' | 'dom';
+  private _driver: AnimationDriver;
 
   constructor(
     parent: any,
     ticker: any,
     options: AvdOptions,
     mode?: 'pixi' | 'dom',
+    driver?: AnimationDriver,
   ) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this._opts = resolveAvdOptions(options);
     this._roster = new RosterManager();
-    this._audio = new AudioManager();
+    this._audioService = new AudioService();
+    this._saveLoadService = new SaveLoadService();
+    this._eventBus = new EventBus();
+    this._flagService = new FlagService();
+    this._backlogService = new BacklogService();
+    this._autoSkipService = new AutoSkipService();
+    this._inputService = new InputService();
+    this._bgState = new BgState();
+    this._speakerState = new SpeakerState();
+    this._l2dState = new Live2DState();
 
-    this._renderMode = mode === 'dom' || !ticker ? 'dom' : 'pixi';
-
-    if (this._renderMode === 'dom') {
-      const layer = new DomLayer(parent as HTMLElement, this._opts.screenW, this._opts.screenH);
-      this._layer = layer;
-      this._parent = layer.root;
-      this._ticker = null;
-    } else {
-      const layer = new PixiLayer(parent, ticker, this._opts.screenW, this._opts.screenH);
-      this._layer = layer;
-      this._parent = layer.root;
+    if (this._opts.renderLayer) {
+      this._layer = this._opts.renderLayer;
+      this._parent = this._layer.root;
       this._ticker = ticker;
+      this._renderMode = 'pixi';
+    } else {
+      this._renderMode = mode === 'dom' || !ticker ? 'dom' : 'pixi';
+      if (this._renderMode === 'dom') {
+        const layer = new DomLayer(parent as HTMLElement, this._opts.screenW, this._opts.screenH);
+        this._layer = layer;
+        this._parent = layer.root;
+        this._ticker = null;
+      } else {
+        const layer = new PixiLayer(parent, ticker, this._opts.screenW, this._opts.screenH);
+        this._layer = layer;
+        this._parent = layer.root;
+        this._ticker = ticker;
+      }
     }
 
     this._initComponents();
-    this._initEventHandlers();
+    this._inputService.setCallbacks({
+      quickSave: () => this.quickSave(),
+      quickLoad: () => this.quickLoad(),
+      advance: () => this._onClick(),
+    });
+    this._inputService.init();
+    this._saveLoadService.setCallbacks({
+      notify: (text, type) => {
+        if (this._notifications) this._notifications.show({ text, type, duration: 1200 });
+      },
+    });
     this._startTicker();
   }
 
-  get layer(): IRenderLayer | null { return this._layer; }
+  get layer(): IAvdRenderLayer | null { return this._layer; }
   get parent(): IRenderContainer { return this._parent; }
+  get screenW(): number { return this._opts.screenW; }
+  get screenH(): number { return this._opts.screenH; }
+  get fontFamily(): string { return this._opts.fontFamily; }
+  get textSize(): number { return this._opts.textSize; }
   get dialogueBox(): IDialogueBoxHandle { return this._dialogueBox; }
   get portraitLayer(): IPortraitLayerHandle { return this._portraitLayer; }
   get backgroundLayer(): IBackgroundLayerHandle { return this._backgroundLayer; }
@@ -149,9 +186,11 @@ export class AvdController {
     this._clickOverlay = L.createGraphics();
     this._clickOverlay.eventMode = 'static';
     this._clickOverlay.cursor = 'pointer';
-    this._clickOverlay['el']?.addEventListener
-      ? (this._clickOverlay as any).el.addEventListener('pointerdown', () => this._onClick())
-      : (this._clickOverlay as any).on('pointerdown', () => this._onClick());
+    if (this._renderMode === 'dom') {
+      (this._clickOverlay as unknown as DomGraphics).el.addEventListener('pointerdown', () => this._onClick());
+    } else {
+      (this._clickOverlay as unknown as PIXI.Graphics).on('pointerdown', () => this._onClick());
+    }
     this._parent.addChild(this._clickOverlay);
     this._redrawOverlay();
 
@@ -159,26 +198,16 @@ export class AvdController {
     this._choiceContainer.eventMode = 'passive';
     this._parent.addChild(this._choiceContainer);
 
+    this._choiceService = new ChoiceService();
+    this._choiceService.init(L, this._opts, this._choiceContainer, (choice, index) => this._onChoiceSelected(choice, index));
+
     if (this._renderMode === 'pixi') {
-      this._notifications = new NotificationSystem(this._parent as any, undefined);
+      this._notifications = new NotificationSystem(this._parent as unknown as PIXI.Container, undefined, this._driver);
     } else {
       this._notifications = null!;
     }
 
     this._particles = new ParticleSystem();
-  }
-
-  private _initEventHandlers(): void {
-    this._keyHandler = (e: KeyboardEvent) => {
-      if (e.key === 'F5') { e.preventDefault(); this.quickSave(); }
-      if (e.key === 'F8') { e.preventDefault(); this.quickLoad(); }
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-        e.preventDefault(); this._onClick();
-      }
-    };
-    if (typeof window !== 'undefined') {
-      window.addEventListener('keydown', this._keyHandler);
-    }
   }
 
   private _startTicker(): void {
@@ -200,12 +229,14 @@ export class AvdController {
     this._lines = lines;
     this._arrowPhase = 0;
     this._segmentMap.clear();
-    this._flags.clear();
-    this._backlog = [];
+    this._flagService.clear();
+    this._backlogService.clear();
     lines.forEach((line, i) => {
       if (line.segment) this._segmentMap.set(line.segment, i);
     });
     this._fsm.setScript(lines.length);
+    this._choiceService.setFlags(this._flagService.getSnapshot());
+    this._choiceService.setSegmentMap(this._segmentMap);
   }
 
   next(): void { this._onClick(); }
@@ -225,12 +256,12 @@ export class AvdController {
   }
 
   setTypewriterSpeed(charsPerSec: number): void { this._opts.typewriterSpeed = Math.max(1, charsPerSec); }
-  setLineExpression(expr: string): void { this._expressionOverride = expr; }
+  setLineExpression(expr: string): void { this._speakerState.expressionOverride = expr; }
   setTextEffect(effect: TextEffect): void { this._typing.setEffect(effect); }
 
   applySettings(settings: AvdSettingsData): void {
-    this._audio?.setBgmVolume(settings.bgmVolume);
-    this._audio?.setSfxVolume(settings.sfxVolume);
+    this._audioService.setBgmVolume(settings.bgmVolume);
+    this._audioService.setSfxVolume(settings.sfxVolume);
     this.setTypewriterSpeed(settings.textSpeed);
     this._opts.autoModeDelay = settings.autoModeDelay;
   }
@@ -269,19 +300,19 @@ export class AvdController {
   reset(): void {
     if (this._lines.length === 0) return;
     if (this._typing.active) this._typing.complete();
-    this._flags.clear();
-    this._backlog = [];
+    this._flagService.clear();
+    this._backlogService.clear();
     this._fsm.reset();
   }
 
-  setFlag(name: string): void { this._flags.add(name); }
-  clearFlag(name: string): void { this._flags.delete(name); }
-  hasFlag(name: string): boolean { return this._flags.has(name); }
-  getFlags(): string[] { return Array.from(this._flags); }
+  setFlag(name: string): void { this._flagService.add(name); }
+  clearFlag(name: string): void { this._flagService.delete(name); }
+  hasFlag(name: string): boolean { return this._flagService.has(name); }
+  getFlags(): string[] { return this._flagService.toArray(); }
 
-  getBacklog(): readonly BacklogEntry[] { return this._backlog; }
+  getBacklog(): readonly BacklogEntry[] { return this._backlogService.entries; }
 
-  // ── Hide UI toggle (suppresses dialog box, portrait, choices) ──
+  // ── Hide UI toggle ──
 
   isHideUi(): boolean { return this._hideUi; }
 
@@ -295,74 +326,66 @@ export class AvdController {
 
   toggleHideUi(): void { this.setHideUi(!this._hideUi); }
 
-  setSpeakerStyle(speaker: string, style: SpeakerStyle): void { this._speakerStyles.set(speaker, style); }
-  clearSpeakerStyle(speaker: string): void { this._speakerStyles.delete(speaker); }
+  setSpeakerStyle(speaker: string, style: SpeakerStyle): void { this._speakerState.styles.set(speaker, style); }
+  clearSpeakerStyle(speaker: string): void { this._speakerState.styles.delete(speaker); }
 
   save(label?: string): AvdSaveData {
-    return {
-      version: 1, timestamp: Date.now(),
+    return this._saveLoadService.save({
       lineIndex: this._fsm.lineIndex,
-      flags: Array.from(this._flags),
-      backlog: [...this._backlog],
-      autoMode: this._autoMode, skipMode: this._skipMode, label,
-      bgKey: this._currentBgKey, bgmKey: this._currentBgmKey,
-    };
+      flags: this._flagService.getSnapshot(),
+      backlog: this._backlogService.getSnapshot(),
+      autoMode: this._autoSkipService.autoMode,
+      skipMode: this._autoSkipService.skipMode,
+      currentBgKey: this._bgState.currentKey,
+      currentBgmKey: this._bgState.currentBgmKey,
+    }, label);
   }
 
   load(data: AvdSaveData): void {
     if (this._lines.length === 0) return;
     if (this._typing.active) this._typing.complete();
-    this._flags = new Set(data.flags);
-    this._backlog = data.backlog.map((e) => ({ ...e }));
-    this._autoMode = data.autoMode;
-    this._skipMode = data.skipMode;
-    this._currentBgKey = data.bgKey ?? null;
-    this._currentBgmKey = data.bgmKey ?? null;
+    this._flagService.setFromArray(data.flags);
+    this._backlogService.setFromArray(data.backlog);
+    this._autoSkipService.restoreState(data.autoMode, data.skipMode);
+    this._bgState.currentKey = data.bgKey ?? null;
+    this._bgState.currentBgmKey = data.bgmKey ?? null;
     const idx = Math.max(0, Math.min(data.lineIndex, this._lines.length - 1));
     this._fsm.goTo(idx);
+    this._choiceService.setFlags(this._flagService.getSnapshot());
   }
 
-  private static readonly QUICK_SAVE_KEY = 'avd_quicksave';
-
   quickSave(): void {
-    const data = this.save('quicksave');
-    try {
-      localStorage.setItem(AvdController.QUICK_SAVE_KEY, JSON.stringify(data));
-      if (this._notifications) this._notifications.show({ text: 'Quick Save', type: 'success', duration: 1200 });
-    } catch {
-      if (this._notifications) this._notifications.show({ text: 'Save Failed', type: 'error', duration: 1200 });
-    }
+    this._saveLoadService.quickSave({
+      lineIndex: this._fsm.lineIndex,
+      flags: this._flagService.getSnapshot(),
+      backlog: this._backlogService.getSnapshot(),
+      autoMode: this._autoSkipService.autoMode,
+      skipMode: this._autoSkipService.skipMode,
+      currentBgKey: this._bgState.currentKey,
+      currentBgmKey: this._bgState.currentBgmKey,
+    });
   }
 
   quickLoad(): void {
-    try {
-      const raw = localStorage.getItem(AvdController.QUICK_SAVE_KEY);
-      if (!raw) {
-        if (this._notifications) this._notifications.show({ text: 'No Save Data', type: 'warn', duration: 1200 });
-        return;
-      }
-      const data = JSON.parse(raw) as AvdSaveData;
-      this.load(data);
-      if (this._notifications) this._notifications.show({ text: 'Quick Load', type: 'info', duration: 1200 });
-    } catch {
-      if (this._notifications) this._notifications.show({ text: 'Load Failed', type: 'error', duration: 1200 });
-    }
+    const data = this._saveLoadService.quickLoad();
+    if (data) this.load(data);
   }
 
-  setAutoMode(on: boolean): void { this._autoMode = on; if (on) this._skipMode = false; }
-  isAutoMode(): boolean { return this._autoMode; }
-  setSkipMode(on: boolean): void { this._skipMode = on; if (on) this._autoMode = true; }
-  isSkipMode(): boolean { return this._skipMode; }
+  setAutoMode(on: boolean): void { this._autoSkipService.setAutoMode(on); }
+  isAutoMode(): boolean { return this._autoSkipService.autoMode; }
+  setSkipMode(on: boolean): void { this._autoSkipService.setSkipMode(on); }
+  isSkipMode(): boolean { return this._autoSkipService.skipMode; }
 
   fadeOut(duration?: number, onComplete?: () => void): void { this._screenFx.fadeOut(duration, onComplete); }
   fadeIn(duration?: number, onComplete?: () => void): void { this._screenFx.fadeIn(duration, onComplete); }
 
-  setAudioMap(map: Record<string, AudioBuffer>): void { this._audioMap = map; }
-  setBgTextureMap(map: Record<string, any>): void { this._bgTextureMap = map; }
+  setAudioMap(map: Record<string, AudioBuffer>): void { this._audioService.setAudioMap(map); }
+  setBgTextureMap(map: Record<string, any>): void { this._bgState.textureMap = map; }
+  setBgLazyLoad(fn: (key: string) => Promise<any>): void { this._bgState.setLazyLoad(fn); }
 
-  setLive2DManager(mgr: Live2DManager): void { this._l2dManager = mgr; }
-  registerSpeakerL2D(speaker: string, view: Live2DModelView): void { this._speakerL2D.set(speaker, view); }
-  getSpeakerL2D(speaker: string): Live2DModelView | undefined { return this._speakerL2D.get(speaker); }
+  setLive2DManager(mgr: Live2DManager): void { this._l2dState.manager = mgr; }
+  registerSpeakerL2D(speaker: string, view: Live2DModelView): void { this._l2dState.views.set(speaker, view); }
+  getSpeakerL2D(speaker: string): Live2DModelView | undefined { return this._l2dState.views.get(speaker); }
 
   destroy(): void {
     this._destroyed = true;
@@ -373,18 +396,17 @@ export class AvdController {
     this._dialogueBox.destroy();
     this._portraitLayer.destroy();
     this._backgroundLayer.destroy();
-    this._audio.destroy();
+    this._audioService.destroy();
     this._screenFx.destroy();
     this._particles.destroy();
     if (this._notifications) this._notifications.destroy();
-    this._speakerL2D.forEach((v) => v.destroy());
-    this._speakerL2D.clear();
+    this._l2dState.views.forEach((v) => v.destroy());
+    this._l2dState.views.clear();
     this._clickOverlay.destroy();
+    this._choiceService.destroy();
     this._choiceContainer.destroy({ children: true });
+    this._inputService.destroy();
     this._layer?.destroy();
-    if (typeof window !== 'undefined') {
-      if (this._keyHandler) window.removeEventListener('keydown', this._keyHandler);
-    }
   }
 
   // ── 内部 ──
@@ -406,7 +428,7 @@ export class AvdController {
   private _tick(): void {
     const delta = this._ticker ? this._ticker.deltaMS : 16;
     if (this._fsm.state === 'typing') {
-      if (this._skipMode) {
+      if (this._autoSkipService.skipMode) {
         this._typing.complete();
       } else {
         this._typing.update(delta);
@@ -428,44 +450,42 @@ export class AvdController {
   private _onTypingComplete(): void {
     const line = this._lines[this._fsm.lineIndex];
     if (line.choices?.length) {
-      const visible = line.choices.filter((c) => {
-        if (c.conditionFlag && !this._flags.has(c.conditionFlag)) return false;
-        if (c.conditionNotFlag && this._flags.has(c.conditionNotFlag)) return false;
-        return true;
-      });
+      const visible = this._choiceService.filterChoices(line.choices);
       if (visible.length === 0) { this._fsm.advance(); return; }
       this._fsm.enterChoice();
-      this._showChoices(visible);
+      this._choiceService.show(visible);
       this._opts.onChoiceEnter?.(visible);
-      this._skipMode = false;
+      this._eventBus.emit('choice:enter', { choices: visible });
+      this._autoSkipService.onChoiceEnter();
       if (this._opts.choiceTimeoutMs) {
-        this._choiceTimer = setTimeout(() => this._onChoiceSelected(visible[0], 0), this._opts.choiceTimeoutMs);
+        this._choiceService.startTimer(this._opts.choiceTimeoutMs, visible[0], 0);
       }
     } else if (line.end) {
       this._fsm.finish();
     } else {
       this._fsm.advance();
-      if (this._autoMode && !this._skipMode) {
-        this._clearAutoTimer();
-        this._autoTimer = setTimeout(() => this._onClick(), this._opts.autoModeDelay);
+      if (this._autoSkipService.autoMode && !this._autoSkipService.skipMode) {
+        this._autoSkipService.startAutoTimer(this._opts.autoModeDelay, () => this._onClick());
       }
     }
+    this._eventBus.emit('typing:complete', {});
   }
 
   private _loadLine(index: number): void {
     const line = this._lines[index];
     this._hideChoices();
     this._opts.onLineEnter?.(line, index);
+    this._eventBus.emit('line:enter', { index, line });
 
     if (line.bgKey != null) {
-      this._currentBgKey = line.bgKey;
-      const bgTex = this._bgTextureMap[line.bgKey];
+      this._bgState.currentKey = line.bgKey;
+      const bgTex = this._bgState.textureMap[line.bgKey];
       if (bgTex) {
         this._backgroundLayer.setBackground(bgTex);
-      } else if (this._bgLazyLoad) {
-        this._bgLazyLoad(line.bgKey).then(tex => {
-          if (tex && this._currentBgKey === line.bgKey) {
-            this._bgTextureMap[line.bgKey] = tex;
+      } else if (this._bgState.lazyLoad) {
+        this._bgState.lazyLoad(line.bgKey).then(tex => {
+          if (tex && this._bgState.currentKey === line.bgKey) {
+            this._bgState.textureMap[line.bgKey] = tex;
             this._backgroundLayer.setBackground(tex);
           }
         });
@@ -473,19 +493,16 @@ export class AvdController {
     }
 
     if (line.bgmKey != null) {
-      this._currentBgmKey = line.bgmKey;
-      const bgmBuf = this._audioMap[line.bgmKey];
-      if (bgmBuf) this._audio.playBgm(bgmBuf);
+      this._bgState.currentBgmKey = line.bgmKey;
+      this._audioService.playBgm(line.bgmKey);
     }
 
     if (line.sfxKey != null) {
-      const sfxBuf = this._audioMap[line.sfxKey];
-      if (sfxBuf) this._audio.playSfx(sfxBuf);
+      this._audioService.playSfx(line.sfxKey);
     }
 
     if (line.voiceKey != null) {
-      const voiceBuf = this._audioMap[line.voiceKey];
-      if (voiceBuf) this._audio.playVoice(voiceBuf);
+      this._audioService.playVoice(line.voiceKey);
     }
 
     if (line.effect === 'shake') {
@@ -495,13 +512,13 @@ export class AvdController {
     }
 
     if (typeof line.text === 'string') {
-      this._backlog.push({ speaker: line.speaker ?? null, text: line.text });
+      this._backlogService.add(line.speaker, line.text);
     }
 
-    const spStyle = line.speaker ? this._speakerStyles.get(line.speaker) : undefined;
+    const spStyle = line.speaker ? this._speakerState.styles.get(line.speaker) : undefined;
     this._dialogueBox.setSpeaker(line.speaker ?? null, spStyle);
 
-    const expr = this._expressionOverride ?? line.expression ?? null;
+    const expr = this._speakerState.expressionOverride ?? line.expression ?? null;
     const resolved = this._roster.getPortraitForSpeaker(
       line.speaker ?? null, line.portrait ?? null, line.portraitPos ?? null, expr,
     );
@@ -533,94 +550,50 @@ export class AvdController {
 
     if (index === 0) {
       this._dialogueBox.setAlpha(0);
-      gsap.killTweensOf(this._dialogueBox.container);
-      gsap.to(this._dialogueBox.container, {
+      this._driver.killTweensOf(this._dialogueBox.container);
+      this._driver.to(this._dialogueBox.container, {
         alpha: 1, duration: this._opts.textFadeMs / 1000, ease: 'power2.out',
       });
       this._dialogueBox.setOffsetY(this._opts.boxEnterOffsetY);
-      gsap.to(this._dialogueBox.container, {
+      this._driver.to(this._dialogueBox.container, {
         y: this._opts.boxY, duration: this._opts.boxEnterMs / 1000, ease: 'power3.out',
       });
     }
+
+    this._eventBus.emit('line:enter', { index, line });
   }
 
   private _clearAutoTimer(): void {
-    if (this._autoTimer != null) { clearTimeout(this._autoTimer); this._autoTimer = null; }
-    if (this._choiceTimer != null) { clearTimeout(this._choiceTimer); this._choiceTimer = null; }
-  }
-
-  private _showChoices(visible: AvdChoice[]): void {
-    this._hideChoices();
-    const cx = this._opts.boxX + this._opts.boxPadding;
-    const cy = this._opts.boxY + this._opts.boxPadding + this._opts.nameSize + 8 + 60;
-    const btnH = 34;
-    const gap = 8;
-    const maxW = this._opts.boxWidth - this._opts.boxPadding * 2;
-    const L = this._layer!;
-
-    visible.forEach((choice, i) => {
-      const y = cy + i * (btnH + gap);
-      const btn = L.createContainer();
-      btn.eventMode = 'static';
-      btn.cursor = 'pointer';
-
-      const bg = L.createGraphics();
-      btn.addChild(bg);
-
-      const label = L.createText({
-        text: choice.text,
-        style: { fontSize: 14, fill: 0xffffff, fontFamily: this._opts.fontFamily },
-      });
-      label.x = 12;
-      label.y = (btnH - (label as any).height) / 2;
-      btn.addChild(label);
-
-      const btnEl = (btn as any).el ?? btn;
-      btnEl.addEventListener?.('pointerdown', () => this._onChoiceSelected(choice, i));
-      btnEl.addEventListener?.('pointerover', () => {
-        bg.clear().roundRect(0, 0, maxW, btnH, 6).fill({ color: 0x3a4a7a, alpha: 0.95 });
-      });
-      btnEl.addEventListener?.('pointerout', () => {
-        bg.clear().roundRect(0, 0, maxW, btnH, 6).fill({ color: 0x1a1a3a, alpha: 0.95 });
-      });
-      (btn as any).on?.('pointerdown', () => this._onChoiceSelected(choice, i));
-
-      bg.clear().roundRect(0, 0, maxW, btnH, 6).fill({ color: 0x1a1a3a, alpha: 0.95 });
-
-      btn.x = cx;
-      btn.y = y;
-      this._choiceContainer.addChild(btn);
-      this._choiceButtons.push(btn);
-    });
+    this._autoSkipService.clearAutoTimer();
+    this._choiceService.clearTimer();
   }
 
   private _hideChoices(): void {
-    const removed = this._choiceContainer.removeChildren();
-    for (const child of removed) (child as any).destroy?.({ children: true });
-    this._choiceButtons = [];
+    this._choiceService.hide();
   }
 
   private _resolveTarget(choice: AvdChoice): number {
-    if (choice.targetSegment != null) {
-      const idx = this._segmentMap.get(choice.targetSegment);
-      if (idx != null) return idx;
-    }
-    return choice.targetLine ?? this._fsm.lineIndex;
+    return this._choiceService.resolveTarget(choice);
   }
 
   private _onChoiceSelected(choice: AvdChoice, index: number): void {
     if (this._fsm.state !== 'choice') return;
     this._clearAutoTimer();
-    this._hideChoices();
+    this._choiceService.hide();
     this._opts.onChoiceSelect?.(choice, index);
-    if (choice.conditionFlag) this._flags.add(choice.conditionFlag);
+    if (choice.conditionFlag) this._flagService.add(choice.conditionFlag);
     this._fsm.choose(this._resolveTarget(choice));
+    this._eventBus.emit('choice:select', { choice, index });
   }
 
   private _onStateChange(state: AvdState): void {
     this._opts.onStateChange?.(state);
     this._redrawOverlay();
-    if (state === 'done') this._opts.onComplete?.();
+    if (state === 'done') {
+      this._opts.onComplete?.();
+      this._eventBus.emit('complete', {});
+    }
+    this._eventBus.emit('state:change', { state });
   }
 
   private _redrawOverlay(): void {

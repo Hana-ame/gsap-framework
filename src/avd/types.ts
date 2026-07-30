@@ -1,5 +1,7 @@
 /** Shared types for the AVD system: lines, rosters, portraits, segments. */
 
+import type { IAvdRenderLayer } from './render/types';
+
 export type AvdState = 'typing' | 'between' | 'choice' | 'done';
 
 export type AvdPortraitPos = 'left' | 'center' | 'right';
@@ -108,6 +110,8 @@ export interface AvdOptions {
   arrowColor?: number;
   boxEnterMs?: number;
   boxEnterOffsetY?: number;
+  /** 可选：传入已有的 renderLayer（SubCanvas 提供），跳过内部创建 */
+  renderLayer?: IAvdRenderLayer;
   onLineEnter?: (line: AvdLine, index: number) => void;
   onLineExit?: (line: AvdLine, index: number) => void;
   onComplete?: () => void;
@@ -150,6 +154,7 @@ export interface ResolvedAvdOptions {
   onChoiceSelect?: (choice: AvdChoice, index: number) => void;
   autoModeDelay: number;
   choiceTimeoutMs: number;
+  renderLayer?: IAvdRenderLayer;
 }
 
 export type AvdLayoutMode = 'desktop' | 'phone-portrait' | 'phone-landscape';
@@ -233,5 +238,6 @@ export function resolveAvdOptions(opts: AvdOptions): ResolvedAvdOptions {
     onChoiceSelect: opts.onChoiceSelect,
     autoModeDelay: opts.autoModeDelay ?? 2000,
     choiceTimeoutMs: opts.choiceTimeoutMs ?? 0,
+    renderLayer: opts.renderLayer,
   };
 }

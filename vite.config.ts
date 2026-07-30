@@ -3,12 +3,22 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+/**
+ * pixi.js v8 exports.import → ./lib/index.mjs (doesn't exist).
+ * This alias redirects to ./lib/index.js which does exist.
+ */
+const pixiJsAlias = {
+  find: 'pixi.js',
+  replacement: path.resolve(__dirname, 'node_modules/pixi.js/lib/index.js'),
+}
+
 export default defineConfig({
   resolve: {
-    alias: {
-      '@framework': path.resolve(__dirname, 'src/framework'),
-      '@components': path.resolve(__dirname, 'src/components'),
-    },
+    alias: [
+      { find: '@framework', replacement: path.resolve(__dirname, 'src/framework') },
+      { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
+      pixiJsAlias,
+    ],
   },
   plugins: [react()],
   server: {

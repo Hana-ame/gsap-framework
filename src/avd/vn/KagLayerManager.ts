@@ -16,8 +16,9 @@
  *   - 缩放
  *   - 过渡动画（GSAP）
  */
-import { gsap } from 'gsap';
-import type { IRenderLayer, IRenderContainer, IRenderSprite } from '../render/types';
+import type { IRenderLayer, IRenderContainer, IRenderSprite } from '@framework/render/types';
+import type { AnimationDriver } from '@framework/animation/types';
+import { getDefaultDriver } from '@framework/animation';
 
 export interface KagLayer {
   index: number;
@@ -35,8 +36,10 @@ export class KagLayerManager {
   readonly layers: KagLayer[] = [];
   private _layer: IRenderLayer;
   private _parent: IRenderContainer;
+  private _driver: AnimationDriver;
 
-  constructor(parent: IRenderContainer, layer: IRenderLayer, maxLayers: number = 10) {
+  constructor(parent: IRenderContainer, layer: IRenderLayer, maxLayers: number = 10, driver?: AnimationDriver) {
+    this._driver = driver ?? getDefaultDriver();
     this._parent = parent;
     this._layer = layer;
 
@@ -65,7 +68,7 @@ export class KagLayerManager {
       L.container.addChild(L.sprite);
     }
 
-    gsap.killTweensOf(L.sprite);
+    this._driver.killTweensOf(L.sprite);
 
     L.texture = texture;
     L.sprite.texture = texture;
@@ -85,7 +88,7 @@ export class KagLayerManager {
     L.sprite.alpha = opts?.opacity ?? 1;
     if (dur > 0) {
       L.sprite.alpha = 0;
-      gsap.to(L.sprite, { alpha: opts?.opacity ?? 1, duration: dur, ease: 'power2.out' });
+      this._driver.to(L.sprite, { alpha: opts?.opacity ?? 1, duration: dur, ease: 'power2.out' });
     }
   }
 
@@ -101,8 +104,8 @@ export class KagLayerManager {
     if (opts.opacity != null && L.sprite) vars['sprite.alpha'] = opts.opacity;
     if (opts.scale != null) vars.scale = opts.scale;
 
-    gsap.killTweensOf(L.container);
-    gsap.to(L.container, vars);
+    this._driver.killTweensOf(L.container);
+    this._driver.to(L.container, vars);
   }
 
   hide(layerIdx: number, time?: number): void {
@@ -111,9 +114,9 @@ export class KagLayerManager {
 
     const dur = (time ?? 300) / 1000;
     if (L.sprite) {
-      gsap.killTweensOf(L.sprite);
+      this._driver.killTweensOf(L.sprite);
       if (dur > 0) {
-        gsap.to(L.sprite, { alpha: 0, duration: dur, ease: 'power2.in', onComplete: () => { L.visible = false; } });
+        this._driver.to(L.sprite, { alpha: 0, duration: dur, ease: 'power2.in', onComplete: () => { L.visible = false; } });
       } else {
         L.sprite.alpha = 0;
         L.visible = false;
@@ -127,15 +130,15 @@ export class KagLayerManager {
     L.visible = true;
     const dur = (time ?? 300) / 1000;
     if (L.sprite) {
-      gsap.killTweensOf(L.sprite);
-      gsap.to(L.sprite, { alpha: L.alpha, duration: dur, ease: 'power2.out' });
+      this._driver.killTweensOf(L.sprite);
+      this._driver.to(L.sprite, { alpha: L.alpha, duration: dur, ease: 'power2.out' });
     }
   }
 
   clear(layerIdx: number): void {
     const L = this.layers[layerIdx];
     if (!L || !L.sprite) return;
-    gsap.killTweensOf(L.sprite);
+    this._driver.killTweensOf(L.sprite);
     L.container.removeChild(L.sprite);
     L.sprite.destroy();
     L.sprite = null;
@@ -163,9 +166,9 @@ export class KagLayerManager {
 
   destroy(): void {
     for (const L of this.layers) {
-      gsap.killTweensOf(L.container);
+      this._driver.killTweensOf(L.container);
       if (L.sprite) {
-        gsap.killTweensOf(L.sprite);
+        this._driver.killTweensOf(L.sprite);
         L.sprite.destroy();
       }
       L.container.destroy({ children: true });

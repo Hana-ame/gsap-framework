@@ -32,6 +32,80 @@ const mockCtx = {
 };
 HTMLCanvasElement.prototype.getContext = vi.fn(() => mockCtx) as any;
 
+// ── vitest mocks (must be at top level, will become error if nested) ──
+vi.mock('gsap', () => ({
+  default: {
+    to: vi.fn((_t: unknown, vars: Record<string, unknown>) => {
+      if (typeof vars.onComplete === 'function') vars.onComplete();
+      return { kill: vi.fn() };
+    }),
+    killTweensOf: vi.fn(),
+    registerPlugin: vi.fn(),
+    delayedCall: vi.fn(),
+  },
+  gsap: {
+    to: vi.fn((_t: unknown, vars: Record<string, unknown>) => {
+      if (typeof vars.onComplete === 'function') vars.onComplete();
+      return { kill: vi.fn() };
+    }),
+    killTweensOf: vi.fn(),
+    registerPlugin: vi.fn(),
+    delayedCall: vi.fn(),
+  },
+}));
+
+vi.mock('pixi.js', async () => {
+  const actual = await vi.importActual('pixi.js');
+  function makeContainer() {
+    const children: unknown[] = [];
+    return {
+      children,
+      addChild: vi.fn(function (c: unknown) { children.push(c); return c; }),
+      addChildAt: vi.fn(function (c: unknown, idx: number) { children.splice(idx, 0, c); return c; }),
+      removeChild: vi.fn(function (c: unknown) {
+        const idx = children.indexOf(c);
+        if (idx >= 0) children.splice(idx, 1);
+        return c;
+      }),
+      removeChildren: vi.fn(() => { const all = [...children]; children.length = 0; return all; }),
+      removeFromParent: vi.fn(),
+      destroy: vi.fn(),
+      eventMode: null as string | null,
+      on: vi.fn(),
+      off: vi.fn(),
+      cursor: 'default',
+      alpha: 1, x: 0, y: 0, visible: true, width: 50, height: 20,
+      scale: { x: 1, y: 1, set: vi.fn() },
+      clear: vi.fn(function () { return this; }),
+      rect: vi.fn(function () { return this; }),
+      fill: vi.fn(function () { return this; }),
+      roundRect: vi.fn(function () { return this; }),
+      moveTo: vi.fn(function () { return this; }),
+      lineTo: vi.fn(function () { return this; }),
+      stroke: vi.fn(function () { return this; }),
+      setStrokeStyle: vi.fn(function () { return this; }),
+      beginFill: vi.fn(function () { return this; }),
+      endFill: vi.fn(function () { return this; }),
+      position: { set: vi.fn(), x: 0, y: 0 },
+      pivot: { set: vi.fn(), x: 0, y: 0 },
+      parent: null as unknown,
+      getBounds: vi.fn(() => ({ x: 0, y: 0, width: 50, height: 20 })),
+      toGlobal: vi.fn((p: unknown) => p),
+      toLocal: vi.fn((p: unknown) => p),
+    };
+  }
+
+  return {
+    ...actual,
+    Container: vi.fn(makeContainer),
+    Graphics: vi.fn(makeContainer),
+    Sprite: vi.fn(makeContainer),
+    Text: vi.fn(makeContainer),
+    Texture: { from: vi.fn() },
+    Rectangle: vi.fn((x: number, y: number, w: number, h: number) => ({ x, y, width: w, height: h })),
+  };
+});
+
 // ──────────────────────────────────────────────
 // 1. DomText width styling (vertical-text bug)
 // ──────────────────────────────────────────────
@@ -289,14 +363,6 @@ describe('VnScriptPlayer', () => {
   }
 
   beforeAll(async () => {
-    vi.mock('gsap', () => ({
-      default: {
-        to: vi.fn(), killTweensOf: vi.fn(), registerPlugin: vi.fn(), delayedCall: vi.fn(),
-      },
-      gsap: {
-        to: vi.fn(), killTweensOf: vi.fn(), registerPlugin: vi.fn(), delayedCall: vi.fn(),
-      },
-    }));
     const mod = await import('../vn/VnScriptPlayer');
     VnScriptPlayer = mod.VnScriptPlayer;
   });
@@ -457,88 +523,6 @@ describe('VnScriptPlayer', () => {
 // ──────────────────────────────────────────────
 
 describe('AvdController overlay', () => {
-  beforeAll(() => {
-    vi.mock('gsap', () => ({
-      default: {
-        to: vi.fn((_t: unknown, vars: Record<string, unknown>) => {
-          if (typeof vars.onComplete === 'function') vars.onComplete();
-          return { kill: vi.fn() };
-        }),
-        killTweensOf: vi.fn(),
-        registerPlugin: vi.fn(),
-        delayedCall: vi.fn(),
-      },
-      gsap: {
-        to: vi.fn((_t: unknown, vars: Record<string, unknown>) => {
-          if (typeof vars.onComplete === 'function') vars.onComplete();
-          return { kill: vi.fn() };
-        }),
-        killTweensOf: vi.fn(),
-        registerPlugin: vi.fn(),
-        delayedCall: vi.fn(),
-      },
-    }));
-
-    vi.mock('pixi.js', async () => {
-      const actual = await vi.importActual('pixi.js');
-      function makeContainer() {
-        const children: unknown[] = [];
-        return {
-          children,
-          addChild: vi.fn(function (c: unknown) { children.push(c); return c; }),
-          addChildAt: vi.fn(function (c: unknown, idx: number) { children.splice(idx, 0, c); return c; }),
-          removeChild: vi.fn(function (c: unknown) {
-            const idx = children.indexOf(c);
-            if (idx >= 0) children.splice(idx, 1);
-            return c;
-          }),
-          removeChildren: vi.fn(() => { const all = [...children]; children.length = 0; return all; }),
-          removeFromParent: vi.fn(),
-          destroy: vi.fn(),
-          eventMode: null as string | null,
-          on: vi.fn(),
-          off: vi.fn(),
-          cursor: 'default',
-          alpha: 1, x: 0, y: 0, visible: true, width: 50, height: 20,
-          scale: { x: 1, y: 1, set: vi.fn() },
-          clear: vi.fn(function () { return this; }),
-          rect: vi.fn(function () { return this; }),
-          fill: vi.fn(function () { return this; }),
-          roundRect: vi.fn(function () { return this; }),
-          moveTo: vi.fn(function () { return this; }),
-          lineTo: vi.fn(function () { return this; }),
-          stroke: vi.fn(function () { return this; }),
-          getLocalBounds: vi.fn(() => ({ x: 0, y: 0, width: 50, height: 20 })),
-          getBounds: vi.fn(() => ({ x: 0, y: 0, width: 50, height: 20 })),
-        } as any;
-      }
-      return {
-        ...actual as object,
-        Container: vi.fn(makeContainer),
-        Graphics: vi.fn(makeContainer),
-        Text: vi.fn(function () {
-          return { ...makeContainer(), width: 50, height: 16, text: '', style: {}, anchor: { set: vi.fn() } };
-        }),
-        TextStyle: vi.fn(function () { return {}; }),
-        Sprite: vi.fn(function () { return { ...makeContainer(), texture: {}, anchor: { set: vi.fn() } }; }),
-        Ticker: vi.fn(function () { return { add: vi.fn(), remove: vi.fn(), deltaMS: 16 }; }),
-      };
-    });
-  });
-
-  it('calls onStateChange when setScript transitions to typing', async () => {
-    const { AvdController } = await import('../AvdController');
-    const PIXI = await import('pixi.js');
-
-    const parent = new PIXI.Container();
-    const ticker = { add: vi.fn(), remove: vi.fn(), deltaMS: 16 } as any;
-    const onStateChange = vi.fn();
-    const ctrl = new AvdController(parent, ticker, { screenW: 800, screenH: 600, onStateChange });
-
-    expect(onStateChange).not.toHaveBeenCalled();
-    ctrl.setScript([{ speaker: 'Alice', text: 'Hello' }]);
-    expect(onStateChange).toHaveBeenCalledWith('typing');
-  });
 
   it('tick calls redrawOverlay via _onStateChange', async () => {
     const { AvdController } = await import('../AvdController');

@@ -1,6 +1,6 @@
-/** Visual screen effects: shake, flash, fade, etc. */
 import * as PIXI from 'pixi.js';
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 
 export interface ScreenEffectOptions {
   shakeIntensity?: number;
@@ -15,8 +15,10 @@ export class ScreenEffects {
   private _target: PIXI.Container | null = null;
   private _originalX = 0;
   private _originalY = 0;
+  private _driver: AnimationDriver;
 
-  constructor(parent: PIXI.Container) {
+  constructor(parent: PIXI.Container, driver?: AnimationDriver) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this.container = new PIXI.Container();
     this.container.eventMode = 'none';
     parent.addChild(this.container);
@@ -32,18 +34,16 @@ export class ScreenEffects {
     this.container.addChild(this._fadeOverlay);
   }
 
-  /** Set the container that should be shaken (typically the scene root). */
   setTarget(target: PIXI.Container): void {
     this._target = target;
     this._originalX = target.x;
     this._originalY = target.y;
   }
 
-  /** Screen shake effect. */
   shake(intensity: number = 6, duration: number = 300): void {
     if (!this._target) return;
-    gsap.killTweensOf(this._target, 'x,y');
-    gsap.to(this._target, {
+    this._driver.killTweensOf(this._target, 'x,y');
+    this._driver.to(this._target, {
       x: `+=${intensity}`,
       y: `+=${intensity}`,
       duration: duration / 1000 / 4,
@@ -59,24 +59,22 @@ export class ScreenEffects {
     });
   }
 
-  /** White flash overlay. */
   flash(color: number = 0xffffff, duration: number = 200): void {
     if (this._flashOverlay.width <= 0 || this._flashOverlay.height <= 0) return;
-    gsap.killTweensOf(this._flashOverlay);
+    this._driver.killTweensOf(this._flashOverlay);
     this._flashOverlay.alpha = 0.8;
-    gsap.to(this._flashOverlay, {
+    this._driver.to(this._flashOverlay, {
       alpha: 0,
       duration: duration / 1000,
       ease: 'power2.out',
     });
   }
 
-  /** Fade to black and call onComplete. */
   fadeOut(duration: number = 500, onComplete?: () => void): void {
     if (this._fadeOverlay.width <= 0 || this._fadeOverlay.height <= 0) return;
-    gsap.killTweensOf(this._fadeOverlay);
+    this._driver.killTweensOf(this._fadeOverlay);
     this._fadeOverlay.alpha = 0;
-    gsap.to(this._fadeOverlay, {
+    this._driver.to(this._fadeOverlay, {
       alpha: 1,
       duration: duration / 1000,
       ease: 'power2.in',
@@ -84,12 +82,11 @@ export class ScreenEffects {
     });
   }
 
-  /** Fade from black back to visible. */
   fadeIn(duration: number = 500, onComplete?: () => void): void {
     if (this._fadeOverlay.width <= 0 || this._fadeOverlay.height <= 0) return;
-    gsap.killTweensOf(this._fadeOverlay);
+    this._driver.killTweensOf(this._fadeOverlay);
     this._fadeOverlay.alpha = 1;
-    gsap.to(this._fadeOverlay, {
+    this._driver.to(this._fadeOverlay, {
       alpha: 0,
       duration: duration / 1000,
       ease: 'power2.out',
@@ -107,9 +104,9 @@ export class ScreenEffects {
   }
 
   destroy(): void {
-    if (this._target) gsap.killTweensOf(this._target);
-    gsap.killTweensOf(this._flashOverlay);
-    gsap.killTweensOf(this._fadeOverlay);
+    if (this._target) this._driver.killTweensOf(this._target);
+    this._driver.killTweensOf(this._flashOverlay);
+    this._driver.killTweensOf(this._fadeOverlay);
     this.container.destroy({ children: true });
   }
 }

@@ -1,6 +1,6 @@
 import type { AvdState, SpeakerStyle } from '../types';
-import { gsap } from 'gsap';
-import { DomContainer, DomGraphics, DomText, DomTextStyle } from './DomNode';
+import { DomContainer, DomGraphics, DomText } from './DomNode';
+import type { DomTextStyle } from './DomNode';
 
 export interface DomDialogueBoxOptions {
   boxX: number; boxY: number; boxWidth: number; boxHeight: number;

@@ -1,6 +1,7 @@
 /** Manages portrait sprite display and transitions at three positions. */
 import * as PIXI from 'pixi.js';
-import { gsap } from 'gsap';
+import type { AnimationDriver } from '@framework/animation/types';
+import { GSAPDriver } from '@framework/animation/GSAPDriver';
 import type { AvdPortraitPos } from './types';
 import type { Live2DModelView } from './Live2DManager';
 
@@ -22,8 +23,10 @@ export class PortraitLayer {
   readonly container: PIXI.Container;
   private _opts: PortraitLayerOptions;
   private _slots: Map<AvdPortraitPos, PortraitSlot> = new Map();
+  private _driver: AnimationDriver;
 
-  constructor(parent: PIXI.Container, opts: PortraitLayerOptions) {
+  constructor(parent: PIXI.Container, opts: PortraitLayerOptions, driver?: AnimationDriver) {
+    this._driver = driver ?? GSAPDriver.INSTANCE;
     this._opts = opts;
     this.container = new PIXI.Container();
     parent.addChild(this.container);
@@ -65,7 +68,7 @@ export class PortraitLayer {
 
   destroy(): void {
     for (const slot of this._slots.values()) {
-      if (slot.sprite) gsap.killTweensOf(slot.sprite);
+      if (slot.sprite) this._driver.killTweensOf(slot.sprite);
     }
     this.container.destroy({ children: true });
   }
@@ -99,8 +102,8 @@ export class PortraitLayer {
       this._fitSprite(slot.sprite!);
     }
 
-    gsap.killTweensOf(slot.sprite!);
-    gsap.to(slot.sprite!, { alpha, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out', overwrite: 'auto' });
+    this._driver.killTweensOf(slot.sprite!);
+    this._driver.to(slot.sprite!, { alpha, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out', overwrite: 'auto' });
     slot.sprite!.visible = true;
   }
 
@@ -108,7 +111,7 @@ export class PortraitLayer {
     if (l2dView) {
       this._showL2D(pos, l2dView, 1);
       // 清理旧 sprite
-      if (slot?.sprite) { gsap.killTweensOf(slot.sprite); slot.sprite.visible = false; }
+      if (slot?.sprite) { this._driver.killTweensOf(slot.sprite); slot.sprite.visible = false; }
       return;
     }
     if (slot?.l2dView) {
@@ -126,7 +129,7 @@ export class PortraitLayer {
       this._fitSprite(sprite);
       this.container.addChild(sprite);
       this._slots.set(pos, { sprite, current: texture, container: new PIXI.Container() });
-      gsap.to(sprite, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
+      this._driver.to(sprite, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
       return;
     }
 
@@ -138,8 +141,8 @@ export class PortraitLayer {
       this._fitSprite(slot.sprite!);
       slot.sprite!.alpha = 0;
       slot.sprite!.visible = true;
-      gsap.killTweensOf(slot.sprite!);
-      gsap.to(slot.sprite!, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
+      this._driver.killTweensOf(slot.sprite!);
+      this._driver.to(slot.sprite!, { alpha: 1, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out' });
     } else {
       this._fadeOut(slot);
     }
@@ -155,7 +158,7 @@ export class PortraitLayer {
     if (slot.l2dView === view) return;
 
     // 隐藏旧 sprite
-    if (slot.sprite) { slot.sprite.visible = false; gsap.killTweensOf(slot.sprite); }
+    if (slot.sprite) { slot.sprite.visible = false; this._driver.killTweensOf(slot.sprite); }
 
     slot.l2dView = view;
     view.container.alpha = 0;
@@ -165,14 +168,14 @@ export class PortraitLayer {
     const scale = h / view.displayHeight;
     view.container.scale.set(Math.min(1, scale));
     this.container.addChild(view.container);
-    gsap.killTweensOf(view.container);
-    gsap.to(view.container, { alpha, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out', overwrite: 'auto' });
+    this._driver.killTweensOf(view.container);
+    this._driver.to(view.container, { alpha, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out', overwrite: 'auto' });
     view.container.visible = true;
   }
 
   private _removeL2D(slot: PortraitSlot | undefined): void {
     if (!slot?.l2dView) return;
-    gsap.killTweensOf(slot.l2dView.container);
+    this._driver.killTweensOf(slot.l2dView.container);
     slot.l2dView.container.visible = false;
     slot.l2dView = undefined;
   }
@@ -183,8 +186,8 @@ export class PortraitLayer {
       this._removeL2D(slot);
     }
     if (!slot.sprite || !slot.current) return;
-    gsap.killTweensOf(slot.sprite);
-    gsap.to(slot.sprite, { alpha: 0, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out', onComplete: () => { slot.sprite!.visible = false; } });
+    this._driver.killTweensOf(slot.sprite);
+    this._driver.to(slot.sprite, { alpha: 0, duration: this._opts.portraitFadeMs / 1000, ease: 'power2.out', onComplete: () => { slot.sprite!.visible = false; } });
     slot.current = null;
   }
 

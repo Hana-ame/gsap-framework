@@ -17,5 +17,12 @@ export { DragController, DRAG_HANDLE_LABEL } from './DragController';
 export type { DragMode, DragOptions, DragContext } from './DragController';
 export { DirtyPropagator } from './DirtyPropagator';
 export { bringToFront, sendToBack, renormZIndices } from './ZOrderManager';
+export { GSAPDriver } from './animation/GSAPDriver';
+export type { AnimationDriver, TweenHandle, TimelineHandle } from './animation/types';
+export { PixiLayer } from './render/PixiLayer';
+export { DomLayer } from './render/DomLayer';
+export type {
+  IRenderContainer, IRenderGraphics, IRenderText, IRenderSprite, IRenderLayer,
+} from './render/types';
 import './pixi-mixins';
 import './gsap-pixi';
