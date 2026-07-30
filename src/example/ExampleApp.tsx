@@ -1,7 +1,6 @@
 // Root example app component that renders the selected example
 import { useHashExample } from './useHashExample';
 import { exampleMap, DEFAULT_EXAMPLE } from './examples';
-import { LauncherDisplay } from './launcher/LauncherDisplay';
 
 function BackButton() {
   return (
@@ -35,7 +34,7 @@ function BackButton() {
 export function ExampleApp() {
   const example = useHashExample();
   if (!example) {
-    return <LauncherDisplay />;
+    return null;
   }
   const C = exampleMap[example];
   return (

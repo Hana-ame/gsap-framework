@@ -1,5 +1,5 @@
 // Example registry mapping example IDs to their display components
-// IMPORTANT: adding a new example? Also add a tile entry to LauncherDisplay.tsx APPS[]
+
 import type { ComponentType } from 'react';
 import { SingleDisplay } from './single/SingleDisplay';
 import { MultipleDisplay } from './multiple/MultipleDisplay';
@@ -518,4 +518,3 @@ export const exampleMap: Record<Example, ComponentType> = {
   'cg-06-avd-noscript': Cg06AvdNoscriptDisplay,
   'cg-07-avd-script': Cg07AvdScriptDisplay,
 };
-// 需要同步添加到 launchdisplay
