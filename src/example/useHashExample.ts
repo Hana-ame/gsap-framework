@@ -4,7 +4,8 @@ import { isExample, type Example } from './examples';
 
 export function useHashExample(): Example | null {
   const compute = useCallback((): Example | null => {
-    const h = window.location.hash.slice(1);
+    const full = window.location.hash.slice(1);
+    const h = full.split('/')[0];
     return isExample(h) ? h : null;
   }, []);
 
