@@ -135,7 +135,10 @@ export class NotificationSystem {
   }
 
   destroy(): void {
-    this.dismissAll();
+    for (const inst of [...this._active]) {
+      this._kill(inst);
+    }
+    this._driver.killTweensOf(this.container);
     this.container.removeFromParent();
   }
 
@@ -162,6 +165,7 @@ export class NotificationSystem {
 
   private _kill(inst: NotifInstance): void {
     if (inst.timer) { inst.timer.kill(); inst.timer = null; }
+    this._driver.killTweensOf(inst.container);
     inst.container.removeFromParent();
     inst.container.destroy({ children: true });
   }
