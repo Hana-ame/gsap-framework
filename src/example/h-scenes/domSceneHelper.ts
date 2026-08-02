@@ -1,5 +1,5 @@
 import type { AvdLine } from '../../avd/types';
-import { AvdController, parseScript } from '../../components';
+import { AvdController, parseScript, buildAvdToolbar } from '../../components';
 import { DomTexture } from '../../avd/dom/DomNode';
 
 export interface DomSceneOptions {
@@ -8,6 +8,7 @@ export interface DomSceneOptions {
   lines: any[];
   getBgKeys?: () => string[];
   imageMap?: Record<string, string>;
+  showToolbar?: boolean;
 }
 
 export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> {
@@ -51,6 +52,10 @@ export async function mountDomScene(opts: DomSceneOptions): Promise<() => void> 
   });
   avd.setBgTextureMap({});
   avd.setScript(parsed.lines as AvdLine[]);
+
+  if (opts.showToolbar !== false) {
+    buildAvdToolbar(avd);
+  }
 
   return () => { avd.destroy(); };
 }

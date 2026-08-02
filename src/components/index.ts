@@ -17,7 +17,7 @@ export { createVideoPlayer } from './PixiVideoPlayer';
 export type { PixiVideoPlayerHandle, PixiVideoPlayerOptions } from './PixiVideoPlayer';
 export { VideoPlayer } from './VideoPlayer';
 export type { VideoPlayerHandle, VideoPlayerProps } from './VideoPlayer';
-export { AvdController, DialogueStateMachine, TypingEngine, RosterManager, DialogueBox, PortraitLayer, BackgroundLayer, AudioManager, ScreenEffects, Live2DManager, ParticleSystem, ParticleEmitter, NotificationSystem, parseScript, InputRemapper, KagLayerManager, VnScriptPlayer, kagToVnScript, onsToVnScript, renpyToVnScript, rmmzToVnScript } from '../avd';
+export { AvdController, DialogueStateMachine, TypingEngine, RosterManager, DialogueBox, PortraitLayer, BackgroundLayer, AudioManager, ScreenEffects, Live2DManager, ParticleSystem, ParticleEmitter, NotificationSystem, parseScript, InputRemapper, KagLayerManager, VnScriptPlayer, kagToVnScript, onsToVnScript, renpyToVnScript, rmmzToVnScript, buildAvdToolbar, hideAvdBacklog } from '../avd';
 export type {
   StateMachineCallbacks, ActivePortrait,
   DialogueBoxOptions, PortraitLayerOptions, BackgroundLayerOptions,

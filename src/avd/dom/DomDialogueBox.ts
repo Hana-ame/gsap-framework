@@ -1,5 +1,5 @@
 import type { AvdState, SpeakerStyle } from '../types';
-import { DomContainer, DomGraphics, DomText } from './DomNode';
+import { DomContainer, DomGraphics, DomText, measureText } from './DomNode';
 import type { DomTextStyle } from './DomNode';
 
 export interface DomDialogueBoxOptions {
@@ -15,6 +15,7 @@ export class DomDialogueBox {
   private _opts: DomDialogueBoxOptions;
   private _bg: DomGraphics;
   private _nameText: DomText | null = null;
+  private _nameCap: DomGraphics | null = null;
   private _textContainer: DomContainer;
   private _arrow: DomGraphics;
 
@@ -46,9 +47,32 @@ export class DomDialogueBox {
       this._nameText.destroy();
       this._nameText = null;
     }
+    if (this._nameCap) {
+      this._nameCap.destroy();
+      this._nameCap = null;
+    }
     if (name) {
       const nameColor = style?.nameColor ?? this._opts.nameColor;
       const nameSize = style?.nameSize ?? this._opts.nameSize;
+      const namePaddingX = 14;
+      const padY = 5;
+
+      // 名字背景胶囊
+      const nameW = measureText(name, {
+        fontFamily: this._opts.fontFamily,
+        fontSize: nameSize,
+        fontWeight: 'bold',
+      }).width;
+      const capW = nameW + 28;
+      const cap = new DomGraphics();
+      cap.roundRect(0, 0, capW, nameSize + padY * 2 + 6, 6)
+        .fill({ color: this._opts.boxBg, alpha: 0.9 })
+        .stroke({ color: nameColor, width: 1, alpha: 0.4 });
+      cap.x = this._opts.boxPadding;
+      cap.y = this._opts.boxPadding - padY - 2;
+      this._nameCap = cap;
+      this.container.addChild(cap);
+
       this._nameText = new DomText({
         text: name,
         style: {
@@ -58,8 +82,8 @@ export class DomDialogueBox {
           fontWeight: 'bold',
         },
       });
-      this._nameText.x = this._opts.boxPadding;
-      this._nameText.y = this._opts.boxPadding;
+      this._nameText.x = this._opts.boxPadding + namePaddingX;
+      this._nameText.y = this._opts.boxPadding + 2;
       this.container.addChild(this._nameText);
     }
   }
@@ -100,8 +124,20 @@ export class DomDialogueBox {
 
   private _redrawBg(): void {
     this._bg.clear();
+    // 底部面板：垂直渐变（下深上浅）+ 顶部细高光描边
     this._bg
       .roundRect(0, 0, this._opts.boxWidth, this._opts.boxHeight, this._opts.boxRadius)
-      .fill({ color: this._opts.boxBg, alpha: this._opts.boxBgAlpha });
+      .fillGradient({
+        from: 0,
+        to: this._opts.boxHeight,
+        stops: [
+          { offset: 0, color: this._opts.boxBg, alpha: this._opts.boxBgAlpha * 0.6 },
+          { offset: 1, color: this._opts.boxBg, alpha: this._opts.boxBgAlpha },
+        ],
+      });
+    // 顶部细高光
+    this._bg
+      .roundRect(0, 0, this._opts.boxWidth, this._opts.boxHeight, this._opts.boxRadius)
+      .stroke({ color: 0xffffff, width: 1, alpha: 0.18 });
   }
 }

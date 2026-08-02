@@ -62,6 +62,9 @@ export type { AvdSaveData, SpeakerStyle } from './types';
 
 // ── AVD UI（独立于 AvdController 的界面层） ──
 export type { AvdUIHost } from './AvdUI';
+export { buildAvdToolbar } from './AvdUI';
+export { buildAvdBacklog, hideAvdBacklog } from './AvdUI';
+export { buildAvdSettings } from './AvdUI';
 
 // ── RenderLayer 体系（Pixi / DOM 双模式） ──
 export { PixiLayer } from './render/PixiLayer';

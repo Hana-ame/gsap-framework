@@ -278,9 +278,10 @@ describe('DomDialogueBox', () => {
     const parent = new DomContainer();
     const db = new DomDialogueBox(parent, BASE_OPTS);
     db.setSpeaker('Alice');
-    const countWithName = db.container.children.length;
+    expect(db.container.children.length).toBeGreaterThan(1);
     db.setSpeaker(null);
-    expect(db.container.children.length).toBe(countWithName - 1);
+    // fixed children only: bg, textContainer, arrow
+    expect(db.container.children.length).toBe(3);
   });
 });
 

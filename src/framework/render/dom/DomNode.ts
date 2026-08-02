@@ -443,6 +443,38 @@ export class DomGraphics extends DomDisplayObject {
     return this;
   }
 
+  /**
+   * 线性渐变填充。垂直方向渐变（从上到下），用于对话框/面板质感。
+   * 传入色彩断点数组，每个含 color/offset(0-1)/alpha。
+   */
+  fillGradient(opts: {
+    from: number; to: number;
+    stops: Array<{ offset: number; color: number; alpha?: number }>;
+    vertical?: boolean;
+  }): this {
+    const { from, to, stops, vertical = true } = opts;
+    // jsdom 等环境无 createLinearGradient → 退回纯色填充（取首停靠色）
+    if (!this._ctx.createLinearGradient) {
+      const first = stops[0];
+      this._ctx.fillStyle = colorToCSS(first.color, first.alpha ?? 1);
+      this._ctx.fill();
+      this._ctx.beginPath();
+      return this;
+    }
+    const w = this._bufferW;
+    const h = this._bufferH;
+    const grad = vertical
+      ? this._ctx.createLinearGradient(0, from, 0, to)
+      : this._ctx.createLinearGradient(from, 0, to, 0);
+    for (const s of stops) {
+      grad.addColorStop(s.offset, colorToCSS(s.color, s.alpha ?? 1));
+    }
+    this._ctx.fillStyle = grad;
+    this._ctx.fill();
+    this._ctx.beginPath();
+    return this;
+  }
+
   stroke(opts: { color: number; width?: number; alpha?: number }): this {
     this._ctx.strokeStyle = colorToCSS(opts.color, opts.alpha ?? 1);
     if (opts.width != null) this._ctx.lineWidth = opts.width;
