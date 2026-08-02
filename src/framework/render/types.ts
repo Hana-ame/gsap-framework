@@ -1,10 +1,10 @@
 export interface IRenderContainer {
   alpha: number; x: number; y: number; visible: boolean;
-  eventMode: string; cursor: string;
-  width: number; height: number; zIndex: number; label: string;
+  eventMode?: string; cursor?: string;
+  width: number; height: number; zIndex: number; label?: string;
   parent: IRenderContainer | null;
   readonly children: readonly IRenderContainer[];
-  addChild(child: any): any;
+  addChild(...children: any[]): any;
   removeChild(child: any): any;
   removeChildren(): any[];
   getChildAt(index: number): IRenderContainer | null;

@@ -784,11 +784,10 @@ text(canvas.stage, 'Hello World', 'typewriter');
 | # | 位置 | 改什么 |
 |---|------|--------|
 | 1 | `package.json` | `"version": "x.y.z"` |
-| 2 | `git checkout main && git merge --no-ff sim -m "merge sim into main"` | 把 `sim` 合入 `main` |
-| 3 | `git tag vx.y.z` | 在 `main` 上打 tag |
+| 2 | `git tag vx.y.z` | 在 `main` 上打 tag |
 
 ## 部署
 
-Push 到 `sim` → Cloudflare Pages → `https://react.moonchan.xyz/`
+Push 到 `main` → Cloudflare Pages → `https://react.moonchan.xyz/`（已实测：生产分支是 main，线上 bundle 含 ExMoonchan DOM 迁移）
 
 CI: `.github/workflows/ci.yml` — lint → tsc → test → build

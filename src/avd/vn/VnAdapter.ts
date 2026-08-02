@@ -26,6 +26,16 @@ function pickAudio(op: VnOp): { bgmKey?: string; sfxKey?: string; voiceKey?: str
   return {};
 }
 
+/** 将 Vn 文本段转换为 AVD 文本段（结构兼容，字段名不同） */
+function mapTextSegments(segments: import('./VnTypes').VnTextSegment[]): import('../types').AvdTextSegment[] {
+  return segments.map((s) => {
+    if (s.kind === 'image') {
+      return { kind: 'image', texture: s.textureKey ?? '', width: s.width, height: s.height };
+    }
+    return { kind: 'text', text: s.text ?? '' };
+  });
+}
+
 /** 将 VnScriptJSON 直接转换为 AvdLine[] */
 export function vnScriptToAvdLines(script: VnScriptJSON): AvdLine[] {
   const lines: AvdLine[] = [];
@@ -37,7 +47,9 @@ export function vnScriptToAvdLines(script: VnScriptJSON): AvdLine[] {
   function flush(): void {
     if (currentDialog || currentChoices.length > 0) {
       const line: AvdLine = {
-        text: currentDialog?.text ?? '',
+        text: typeof currentDialog?.text === 'string'
+          ? currentDialog.text
+          : mapTextSegments(currentDialog?.text ?? []),
         speaker: currentDialog?.speaker,
         bgKey: pendingBg ?? currentDialog?.bg,
         ...currentAudio,

@@ -45,7 +45,7 @@ export function StepHd202SubcanvasDisplay() {
 
       region.stage.eventMode = 'static';
       region.stage.cursor = 'pointer';
-      region.stage.on('pointerdown', () => {
+      (region.stage as PIXI.Container).on('pointerdown', () => {
         if (!loaded) return;
         idxRef.current = (idxRef.current + 1) % BG_KEYS.length;
         showImage(BG_KEYS[idxRef.current]);

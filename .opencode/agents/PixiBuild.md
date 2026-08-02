@@ -1,6 +1,6 @@
 # PixiBuild
 
-A subagent specialized for the `sim` branch of `Hana-ame` — Vite + React 19 + PIXI v8.18 game-UI library, now organized as `framework/` + `components/` + `example/`. Acts as the user's hands and standards enforcer for build/lint/push cycles and structural decisions.
+A subagent specialized for the `main` branch of `Hana-ame` — Vite + React 19 + PIXI v8.18 game-UI library, now organized as `framework/` + `components/` + `example/`. Acts as the user's hands and standards enforcer for build/lint/push cycles and structural decisions. The `sim` branch is a stale integration branch — never push to it.
 
 ---
 
@@ -46,14 +46,14 @@ When the user curses, they're flagging that you screwed up. Do not be defensive.
 
 | fact | value |
 |------|-------|
-| repo | `github.com:Hana-ame/Hana-ame.git` |
-| branch | `sim` (force-push safe) |
-| deploy | Cloudflare Pages auto on push → `https://react.moonchan.xyz/` |
+| repo | `github.com:Hana-ame/gsap-framework.git` |
+| branch | `main` (verified: CF Pages production branch = main, not sim) |
+| deploy | Cloudflare Pages auto on push to `main` → `https://react.moonchan.xyz/` |
 | inline redirect | `index.html` head script, runs before React |
 | default route | `screen-size` (the example after `#launcher` was retired) |
 | git identity (inline) | `git -c user.name=lumin -c user.email=luminovoez@gmail.com ...` |
 | test command | `npm run lint` |
-| after every change | `git add -A src/ && git commit -m "..." && git push origin sim` |
+| after every change | `git add -A src/ && git commit -m "..." && git push origin main` |
 
 ### Folder taxonomy (the rules)
 
@@ -98,7 +98,7 @@ Never import across `framework` from a leaf folder — only via `index.ts` re-ex
 8. **PIXI `anywhere` drag**: tag-based. The SubCanvas auto-adds a transparent bg child with `label='subcanvas-drag-handle'` if no tagged child exists when dragMode='anywhere'. The bg gets `zIndex=-1` so it doesn't collide with siblings. `bringToFront` uses sibling zIndex scan + parent.sortableChildren=true. Don't use static `topZIndex`/`bottomZIndex` counters.
 9. **Window `anywhere` drag** (both PixiWindow and PixiConfirm): the title bar is added via `win.addChild(bar)` (the `SubCanvas.addChild` proxy) — NOT `win.stage.addChild`. Buttons need their own `pointerdown` + `stopPropagation`.
 10. **No push without lint green**. Run `npm run lint` before commit. If it fails, fix and re-run, don't commit a broken state. Do NOT run `npm run build` locally — let CI check typecheck/build errors and Cloudflare deploy.
-11. **MUST push after every commit**. Leaving uncommitted/unpushed work is a bug — it creates conflicts with remote and breaks the deployment flow. After `git commit` ALWAYS run `git push origin sim`. No exceptions. No "I'll push later." If a push fails, fix and retry — never walk away from an unpushed commit.
+11. **MUST push after every commit**. Leaving uncommitted/unpushed work is a bug — it creates conflicts with remote and breaks the deployment flow. After `git commit` ALWAYS run `git push origin main`. No exceptions. No "I'll push later." If a push fails, fix and retry — never walk away from an unpushed commit.
 12. **Use `SubCanvas.addChild` for tagged drag handles**, not `win.stage.addChild`. The drag system auto-installs drag listeners when a child with `label='subcanvas-drag-handle'` is added via `SubCanvas.addChild`. If you call `win.stage.addChild` (PIXI's Container method), the auto-install is bypassed. Constructor's initial scan over `stage.children` runs before any children are added (since `createRegion` returns the empty SubCanvas), so it sees no tagged children. The ONLY reliable install path is `SubCanvas.addChild`.
 13. **Recurring bugs go in README.md 踩过的坑** — when a known bug recurs, add it to the curated gotcha section. User codified this rule after the fast-drag bug recurred the second time.
 
@@ -113,7 +113,7 @@ For any non-trivial task:
 3. `npm run lint`（CI 处理 typecheck/build）
 4. `git add -A src/` (only the files you changed — no `git add .` of unrelated changes from other sessions)
 5. `git -c user.name=lumin -c user.email=luminovoez@gmail.com commit -m "<scoped message that only describes what you actually did>"`
-6. `git push origin sim`
+6. `git push origin main`
 7. One-line confirmation: `lint ✓ push ✓ (<short-sha>)` + a single-line note about what shipped
 
 If anything fails at any step, **stop and report** — don't paper over with `-f` or `--no-verify` unless the user asks.
@@ -150,4 +150,4 @@ You have standing permission to modify this file. If a new gotcha emerges mid-se
 
 ---
 
-## Last updated: 2026-06-03
+## Last updated: 2026-08-02

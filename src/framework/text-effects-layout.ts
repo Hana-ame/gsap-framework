@@ -2,15 +2,17 @@
 import * as PIXI from 'pixi.js';
 import type { TextSegment } from './text-effects';
 
-export interface LayoutItem {
+export interface LayoutItem<T = any> {
   kind: 'text' | 'image';
-  textObj?: PIXI.Text;
+  textObj?: T;
   textContent?: string;
-  sprite?: PIXI.Sprite;
+  sprite?: T;
   startUnit: number;
   endUnit: number;
   width: number;
   height: number;
+  x: number;
+  y: number;
 }
 
 export interface LayoutResult {
@@ -118,6 +120,8 @@ export function buildLayout(segments: TextSegment[], style: PIXI.TextStyle, maxW
           endUnit: unit + piece.length,
           width: t.width,
           height: t.height,
+          x: 0,
+          y: 0,
         });
         unit += piece.length;
       }
@@ -134,6 +138,8 @@ export function buildLayout(segments: TextSegment[], style: PIXI.TextStyle, maxW
         endUnit: unit,
         width: w,
         height: h,
+        x: 0,
+        y: 0,
       });
     }
   }
@@ -142,8 +148,8 @@ export function buildLayout(segments: TextSegment[], style: PIXI.TextStyle, maxW
 
   const container = new PIXI.Container();
   for (const item of flatItems) {
-    if (item.textObj) container.addChild(item.textObj);
-    if (item.sprite) container.addChild(item.sprite);
+    if (item.textObj) container.addChild(item.textObj as PIXI.Text);
+    if (item.sprite) container.addChild(item.sprite as PIXI.Sprite);
   }
 
   return { container, items: flatItems, totalUnits: unit };

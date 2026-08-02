@@ -167,6 +167,8 @@ export class DomTypingEngine {
           endUnit: unit + seg.text.length,
           width: mw,
           height: lineHeight,
+          x: 0,
+          y: 0,
         });
         unit += seg.text.length;
       } else if (seg.kind === 'image') {
@@ -182,6 +184,8 @@ export class DomTypingEngine {
           endUnit: unit,
           width: w,
           height: h,
+          x: 0,
+          y: 0,
         });
       }
     }

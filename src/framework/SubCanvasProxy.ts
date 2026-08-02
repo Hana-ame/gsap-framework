@@ -79,10 +79,32 @@ export class SubCanvasProxy {
   // 将 window 级 pointer 事件分发给所有顶层 SubCanvas，
   // 由各 region 的 hit-test 自行决定是否消费；
   // 如果某个 canvas 消费了事件（handlePointer 返回 true），后续 canvas 不再收到。
+  //
+  // 顺序：前 → 后（topCanvases 末尾 = 最靠前，bringToFront 会 push 到末尾）。
+  // pointerdown 特殊处理：只投递给最靠前且包含点击点的顶层 canvas，
+  // 即使它是无监听器的壳也在此吸收 —— 被遮挡的 canvas 一律不得响应，
+  // 防止"靠后窗口被靠前窗口阻挡却响应 click"的穿透问题。
   routePointer(type: SubPointerType, e: PointerEvent): void {
-    for (const sc of this.topCanvases) {
-      if (sc.handlePointer(type, e)) return;
+    const top = this.topCanvases;
+
+    if (type === 'pointerdown') {
+      for (let i = top.length - 1; i >= 0; i--) {
+        const sc = top[i];
+        if (!this._containsPoint(sc, e.clientX, e.clientY)) continue;
+        sc.handlePointer(type, e);
+        return;
+      }
+      return;
     }
+
+    for (let i = top.length - 1; i >= 0; i--) {
+      if (top[i].handlePointer(type, e)) return;
+    }
+  }
+
+  private _containsPoint(sc: SubCanvas, gx: number, gy: number): boolean {
+    const gb = sc.globalBounds;
+    return gx >= gb.x && gx <= gb.x + gb.width && gy >= gb.y && gy <= gb.y + gb.height;
   }
 
   // 销毁所有 region + 清理事件总线，顺序敏感：先销毁 region 再清 bus

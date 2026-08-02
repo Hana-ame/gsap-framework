@@ -44,6 +44,7 @@ export class DomTexture {
 export class DomDisplayObject {
   readonly el: HTMLElement;
   parent: DomDisplayObject | null = null;
+  label = '';
   protected _transform: TransformState = { x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0 };
   protected _alpha = 1;
 
@@ -101,10 +102,20 @@ export class DomDisplayObject {
 
   get children(): DomDisplayObject[] { return []; }
 
-  addChild(child: DomDisplayObject): void {
-    child.removeFromParent();
-    child.parent = this instanceof DomContainer ? this : null;
-    this.el.appendChild(child.el);
+  getChildAt(index: number): DomDisplayObject | null {
+    return this.children[index] ?? null;
+  }
+
+  getChildByLabel(label: string): DomDisplayObject | null {
+    return this.children.find((c) => c.label === label) ?? null;
+  }
+
+  addChild(...children: DomDisplayObject[]): void {
+    for (const child of children) {
+      child.removeFromParent();
+      child.parent = this instanceof DomContainer ? this : null;
+      this.el.appendChild(child.el);
+    }
   }
 
   removeChild(child: DomDisplayObject): void {
@@ -163,11 +174,21 @@ export class DomContainer extends DomDisplayObject {
 
   get children(): DomDisplayObject[] { return this._children; }
 
-  addChild(child: DomDisplayObject): void {
-    child.removeFromParent();
-    child.parent = this;
-    this._children.push(child);
-    this.el.appendChild(child.el);
+  getChildAt(index: number): DomDisplayObject | null {
+    return this._children[index] ?? null;
+  }
+
+  getChildByLabel(label: string): DomDisplayObject | null {
+    return this._children.find((c) => c.label === label) ?? null;
+  }
+
+  addChild(...children: DomDisplayObject[]): void {
+    for (const child of children) {
+      child.removeFromParent();
+      child.parent = this;
+      this._children.push(child);
+      this.el.appendChild(child.el);
+    }
   }
 
   removeChild(child: DomDisplayObject): void {

@@ -267,9 +267,7 @@ export class SubCanvas {
 
   get position(): any {
     return (this.stage as any).position ?? { x: this.stage.x, y: this.stage.y };
-  }
-
-  get scale(): any {
+  }  get scale(): any {
     return (this.stage as any).scale ?? { x: 1, y: 1 };
   }
 
@@ -294,6 +292,12 @@ export class SubCanvas {
 
   get eventMode(): string { return this.stage.eventMode; }
   set eventMode(v: string) { this.stage.eventMode = v; }
+
+  get x(): number { return this.stage.x; }
+  set x(v: number) { this.stage.x = v; }
+
+  get y(): number { return this.stage.y; }
+  set y(v: number) { this.stage.y = v; }
 
   get label(): string { return this.stage.label; }
   set label(v: string) { this.stage.label = v; }
@@ -387,16 +391,24 @@ export class SubCanvas {
 
     const inBounds = gx >= gb.x && gx <= gb.x + gb.width && gy >= gb.y && gy <= gb.y + gb.height;
 
-    if (type === 'pointermove' || type === 'pointerup' || type === 'pointerleave') {
-      if (this._pressStart) {
-      } else if (!inBounds) {
-        return false;
-      }
-    } else if (!inBounds) {
+    const duringPress = (type === 'pointermove' || type === 'pointerup' || type === 'pointerleave') && this._pressStart !== null;
+    if (!duringPress && !inBounds) {
       return false;
     }
 
-    let blockedBySibling = false;
+    // 遮挡判定（几何）：同一父级下有更靠前的 region 包含点击位置 → 本 region 完全不响应
+    // 覆盖者是否为交互壳无关 —— 被覆盖的窗口不得响应 click / 记录 press / 触发 tap
+    if (type === 'pointerdown' && this.parent) {
+      const siblings = this.parent.subRegions;
+      for (let i = siblings.length - 1; i >= 0; i--) {
+        if (siblings[i] === this) break;
+        const cgb = siblings[i].globalBounds;
+        if (gx >= cgb.x && gx <= cgb.x + cgb.width && gy >= cgb.y && gy <= cgb.y + cgb.height) {
+          return false;
+        }
+      }
+    }
+
     if (type === 'pointerdown' && this._drag?.mode === 'anywhere') {
       for (let i = this._subRegions.length - 1; i >= 0; i--) {
         if (this._subRegions[i].handlePointer(type, e)) {
@@ -404,26 +416,21 @@ export class SubCanvas {
           return true;
         }
       }
-      if (this.parent) {
-        const siblings = this.parent.subRegions;
-        for (let i = siblings.length - 1; i >= 0; i--) {
-          if (siblings[i] === this) break;
-          const cgb = siblings[i].globalBounds;
-          if (gx >= cgb.x && gx <= cgb.x + cgb.width && gy >= cgb.y && gy <= cgb.y + cgb.height) {
-            blockedBySibling = true;
-            break;
-          }
-        }
-        if (!blockedBySibling) {
-          this._drag.interceptPointer(type, e);
-          this.bringToFront();
-          return true;
-        }
-      } else {
-        this._drag.interceptPointer(type, e);
-        this.bringToFront();
-        return true;
-      }
+this._drag.interceptPointer(type, e);
+      // 记录 press 状态，使 onTap 在可拖拽窗口上也能触发
+      this._pressStart = { x: gx - gb.x, y: gy - gb.y, clientX: gx, clientY: gy };
+      this._pressMoved = false;
+      this.bringToFront();
+      const sub: SubPointerEvent = {
+        type,
+        x: gx - gb.x,
+        y: gy - gb.y,
+        globalX: gx,
+        globalY: gy,
+        originalEvent: e,
+      };
+      this.listeners.get(type)?.forEach((fn) => fn(sub));
+      return true;
     } else {
       if (this._drag) {
         if (this._drag.interceptPointer(type, e)) return true;
@@ -475,14 +482,14 @@ export class SubCanvas {
 
     const hasListeners = (this.listeners.get(type)?.size ?? 0) > 0;
     if (!hasListeners) {
-      if (type === 'pointerdown' && this._drag && !blockedBySibling) {
+      if (type === 'pointerdown' && this._drag) {
         this.bringToFront();
         return true;
       }
       return false;
     }
 
-    if (type === 'pointerdown' && this._drag && !blockedBySibling) this.bringToFront();
+    if (type === 'pointerdown' && this._drag) this.bringToFront();
     const sub: SubPointerEvent = {
       type,
       x: localX,
@@ -522,4 +529,9 @@ export class SubCanvas {
       stage: this.stage,
     };
   }
+}
+
+/** PIXI 后端专属访问器：当 SubCanvas 以 PIXI 模式创建（无 renderLayer）时，返回底层 PIXI.Container */
+export function toPixiStage(sc: SubCanvas): PIXI.Container {
+  return sc.stage as unknown as PIXI.Container;
 }

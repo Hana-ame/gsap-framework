@@ -129,7 +129,7 @@ export function ComponentTypingEffectDisplay() {
         }
 
         const handle = runTextEffect({
-          parent: canvas.stage,
+          parent: canvas.stage as PIXI.Container,
           text: input,
           textStyle,
           type: type as TextEffectType,

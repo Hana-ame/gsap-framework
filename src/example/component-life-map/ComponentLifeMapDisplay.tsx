@@ -377,10 +377,11 @@ function buildControlPanel(refs: LifeMapRefs): void {
 function buildViewport(refs: LifeMapRefs): void {
   const region = refs.viewportRegion;
   if (!region) return;
+  const pstage = region.stage as PIXI.Container;
 
   const mask = new PIXI.Graphics().rect(0, 0, refs.viewportW, refs.viewportH).fill({ color: 0xffffff });
-  region.stage.addChild(mask);
-  region.stage.mask = mask;
+  pstage.addChild(mask);
+  pstage.mask = mask;
 
   const worldContainer = new PIXI.Container();
   worldContainer.eventMode = 'none';
@@ -542,10 +543,10 @@ function clearRegion(stage: PIXI.Container): void {
 }
 
 function rebuild(refs: LifeMapRefs): void {
-  if (refs.controlRegion) clearRegion(refs.controlRegion.stage);
+  if (refs.controlRegion) clearRegion(refs.controlRegion.stage as PIXI.Container);
   if (refs.viewportRegion) {
-    clearRegion(refs.viewportRegion.stage);
-    refs.viewportRegion.stage.mask = null;
+    clearRegion(refs.viewportRegion.stage as PIXI.Container);
+    (refs.viewportRegion.stage as PIXI.Container).mask = null;
   }
   for (const fn of refs.viewportCleanups) fn();
   refs.viewportCleanups = [];
@@ -622,7 +623,7 @@ export function ComponentLifeMapDisplay() {
       if (state) {
         unregisterTicker(state);
         if (state.viewportRegion) {
-          state.viewportRegion.stage.mask = null;
+          (state.viewportRegion.stage as PIXI.Container).mask = null;
         }
       }
       destroyApp();

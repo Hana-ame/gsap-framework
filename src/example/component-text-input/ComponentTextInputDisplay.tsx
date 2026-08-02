@@ -65,28 +65,28 @@ export function ComponentTextInputDisplay() {
       log.eventMode = 'none';
       sc.stage.addChild(log);
 
-      addRow('text', createTextInput(sc.stage, {
+      addRow('text', createTextInput(sc.stage as PIXI.Container, {
         x: 0, y: 0, width: 300, height: 34,
         placeholder: 'type something…',
         onChange: (v) => { log.text = `onChange: "${v}"`; },
         onSubmit: (v) => { log.text = `onSubmit: "${v}"`; },
       }));
 
-      addRow('password', createTextInput(sc.stage, {
+      addRow('password', createTextInput(sc.stage as PIXI.Container, {
         x: 0, y: 0, width: 300, height: 34,
         placeholder: 'password',
         password: true,
         onChange: (v) => { log.text = `password chars: ${v.length}`; },
       }));
 
-      addRow('maxLength(6)', createTextInput(sc.stage, {
+      addRow('maxLength(6)', createTextInput(sc.stage as PIXI.Container, {
         x: 0, y: 0, width: 300, height: 34,
         placeholder: 'max 6 chars',
         maxLength: 6,
         onChange: (v) => { log.text = `text: "${v}"`; },
       }));
 
-      addRow('pre-filled', createTextInput(sc.stage, {
+      addRow('pre-filled', createTextInput(sc.stage as PIXI.Container, {
         x: 0, y: 0, width: 300, height: 34,
         value: 'hello world',
         onChange: (v) => { log.text = `text: "${v}"`; },

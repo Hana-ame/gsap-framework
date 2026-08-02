@@ -1270,6 +1270,6 @@ text(stage, 'Big red', 'scaleBounce', {                // 弹性缩放
 
 ## 部署
 
-- push to `sim` → Cloudflare Pages 自动部署 → `https://react.moonchan.xyz/`
+- push to `main` → Cloudflare Pages 自动部署 → `https://react.moonchan.xyz/`
 - CI: `.github/workflows/ci.yml` — lint → tsc → test → build
 - 外部只 import `framework/index.ts` 和 `components/index.ts`，不做 deep import

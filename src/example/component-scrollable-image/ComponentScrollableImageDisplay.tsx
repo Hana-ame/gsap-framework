@@ -55,7 +55,7 @@ export function ComponentScrollableImageDisplay() {
         { clipToBounds: true },
       );
       panel.stage.eventMode = 'static';
-      panel.stage.hitArea = new PIXI.Rectangle(0, 0, PANEL_W, PANEL_H);
+      (panel.stage as PIXI.Container).hitArea = new PIXI.Rectangle(0, 0, PANEL_W, PANEL_H);
 
       // header
       const header = new PIXI.Text({
@@ -138,7 +138,7 @@ export function ComponentScrollableImageDisplay() {
       };
 
       // wheel
-      panel.stage.on('wheel', (e: PIXI.FederatedWheelEvent) => {
+      (panel.stage as PIXI.Container).on('wheel', (e: PIXI.FederatedWheelEvent) => {
         e.preventDefault();
         e.stopPropagation();
         scrollY = Math.max(0, Math.min(scrollY + e.deltaY, maxScroll));

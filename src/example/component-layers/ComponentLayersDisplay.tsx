@@ -30,7 +30,7 @@ export function ComponentLayersDisplay() {
         y: window.innerHeight - 150,
       });
 
-      const layers = new LayerManager(sc.stage);
+      const layers = new LayerManager(sc.stage as PIXI.Container);
       mgrRef.current = layers;
 
       const created: Layer[] = [];

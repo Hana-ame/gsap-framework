@@ -2,7 +2,7 @@
 // 外部通过 registerComponent 注册类型名到工厂函数，
 // createComponent 按名查找并实例化。类似 DI 容器的最小版本。
 
-import * as PIXI from 'pixi.js';
+import type { IRenderContainer } from './render/types';
 import type { SubCanvas } from './SubCanvas';
 
 export interface ComponentOptions {
@@ -15,13 +15,13 @@ export interface ComponentOptions {
 
 export interface Component<T extends ComponentOptions = ComponentOptions> {
   readonly type: string;
-  readonly stage: PIXI.Container;
+  readonly stage: IRenderContainer;
   destroy(): void;
   readonly destroyed: boolean;
 }
 
 export interface ComponentHandle {
-  readonly stage: PIXI.Container;
+  readonly stage: IRenderContainer;
   destroy(): void;
   readonly destroyed: boolean;
 }

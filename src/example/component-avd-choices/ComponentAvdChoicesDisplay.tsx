@@ -399,7 +399,7 @@ export function ComponentAvdChoicesDisplay() {
           particleIdx = (particleIdx + 1) % presets.length;
           const p = presets[particleIdx];
           activeEmitter = avd.particleSystem.createEmitter(
-            avdRegion.stage, p,
+            avdRegion.stage as PIXI.Container, p,
             { x: 0, y: 0, width: W, height: avdH },
           );
           activeEmitter.play();

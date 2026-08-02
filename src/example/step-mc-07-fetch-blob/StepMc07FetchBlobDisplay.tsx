@@ -64,7 +64,7 @@ export function StepMc07FetchBlobDisplay() {
 
       region.stage.eventMode = 'static';
       region.stage.cursor = 'pointer';
-      region.stage.on('pointerdown', () => {
+      (region.stage as PIXI.Container).on('pointerdown', () => {
         idxRef.current = (idxRef.current + 1) % KEYS.length;
         const k = KEYS[idxRef.current];
         const p = cache.has(k)

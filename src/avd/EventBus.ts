@@ -5,8 +5,8 @@ export interface AvdEventMap {
   'state:change': { state: AvdState };
   'choice:enter': { choices: AvdChoice[] };
   'choice:select': { choice: AvdChoice; index: number };
-  'complete': {};
-  'typing:complete': {};
+  'complete': object;
+  'typing:complete': object;
   'save': { data: AvdSaveData };
   'load': { data: AvdSaveData };
   'bgm': { key: string | null };

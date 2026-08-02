@@ -1,6 +1,10 @@
-export type {
+import type {
   IRenderContainer, IRenderGraphics, IRenderText, IRenderSprite, IRenderLayer,
 } from '@framework/render/types';
+
+export type {
+  IRenderContainer, IRenderGraphics, IRenderText, IRenderSprite, IRenderLayer,
+};
 
 import type { AvdChoice, AvdState, SpeakerStyle } from '../types';
 

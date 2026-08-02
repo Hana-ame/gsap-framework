@@ -41,7 +41,7 @@ export function Img09AssetsPreloadDisplay() {
           showImage(0);
           region.stage.eventMode = 'static';
           region.stage.cursor = 'pointer';
-          region.stage.on('pointerdown', () => {
+          (region.stage as PIXI.Container).on('pointerdown', () => {
             idxRef.current = (idxRef.current + 1) % IMG_URLS.length;
             showImage(idxRef.current);
           });

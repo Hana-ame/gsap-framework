@@ -45,7 +45,7 @@ export function StepMc06Canvas2dDisplay() {
 
       region.stage.eventMode = 'static';
       region.stage.cursor = 'pointer';
-      region.stage.on('pointerdown', () => {
+      (region.stage as PIXI.Container).on('pointerdown', () => {
         if (!loaded) return;
         idxRef.current = (idxRef.current + 1) % KEYS.length;
         showImage(KEYS[idxRef.current]);

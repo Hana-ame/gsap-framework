@@ -121,7 +121,7 @@ export interface InfoPanelOptions {
 }
 
 export function makeInfoPanel(parent: PIXI.Container | SubCanvas, opts: InfoPanelOptions): PIXI.Container {
-  const stage = parent instanceof PIXI.Container ? parent : parent.stage;
+  const stage: PIXI.Container = parent instanceof PIXI.Container ? parent : (parent.stage as unknown as PIXI.Container);
   const { title, lines, x = 14, y: py = 14, maxWidth = 360 } = opts;
   const panel = new PIXI.Container();
   panel.eventMode = 'none';

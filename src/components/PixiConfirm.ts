@@ -87,7 +87,7 @@ export function createConfirm(opts: PixiConfirmOptions): PixiConfirm {
     cornerRadius: opts.cornerRadius,
     fillAlpha: 0.97,
   });
-  win.stage.addChildAt(border.bg, 0);
+  (win.stage as PIXI.Container).addChildAt(border.bg, 0);
 
   const bar = new PIXI.Graphics()
     .rect(bw, bw, opts.width - bw * 2, tbh)

@@ -79,7 +79,7 @@ export function buildAvdToolbar(avd: AvdUIHost): void {
 }
 
 let _backlogOverlay: IRenderContainer | null = null;
-let _backlogTexts: IRenderText[] = [];
+const _backlogTexts: IRenderText[] = [];
 
 export function buildAvdBacklog(avd: AvdUIHost): void {
   if (_backlogOverlay) {

@@ -92,7 +92,7 @@ describe('SubCanvasProxy', () => {
     expect(proxy.getTopCanvases()).toHaveLength(1);
   });
 
-  it('routePointer delegates to all canvases', () => {
+  it('routePointer delivers pointerdown only to front-most containing canvas', () => {
     const proxy = new SubCanvasProxy({ app: createMockApp() });
     const sc1 = proxy.createRegion({ x: 0, y: 0, width: 100, height: 100 });
     const sc2 = proxy.createRegion({ x: 0, y: 0, width: 100, height: 100 });
@@ -100,8 +100,19 @@ describe('SubCanvasProxy', () => {
     const spy2 = vi.spyOn(sc2, 'handlePointer');
     const e = { clientX: 50, clientY: 50, button: 0 } as PointerEvent;
     proxy.routePointer('pointerdown', e);
-    expect(spy1).toHaveBeenCalledWith('pointerdown', e);
+    expect(spy1).not.toHaveBeenCalled();
     expect(spy2).toHaveBeenCalledWith('pointerdown', e);
+  });
+
+  it('a shell (no listeners) top canvas absorbs pointerdown — covered canvas never responds', () => {
+    const proxy = new SubCanvasProxy({ app: createMockApp() });
+    const back = proxy.createRegion({ x: 0, y: 0, width: 200, height: 200 });
+    proxy.createRegion({ x: 50, y: 50, width: 200, height: 200 });
+    const onPress = vi.fn();
+    back.onPress(onPress);
+    const e = { clientX: 100, clientY: 100, button: 0 } as PointerEvent;
+    proxy.routePointer('pointerdown', e);
+    expect(onPress).not.toHaveBeenCalled();
   });
 
   it('destroyAll destroys all canvases and clears bus', () => {
