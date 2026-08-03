@@ -120,303 +120,303 @@ export const isekai_HA41_19: VnScript = {
  {
   "type": "say",
   "speaker": "小茂田",
-  "text": "二人ともよく来たね"
- },
- {
-  "type": "cg",
-  "key": "HA41-2"
- },
- {
-  "type": "cg",
-  "key": "HA41-2"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆詩保",
-  "text": "小茂田様、今日も私たちといっぱいエッチなことしてください"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "一切の恥じらいもなく平然とスカートをたくし上げる二人。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "パンツを見せて小茂田への忠誠を現す行為は、\n二人にとって当たり前のこととなっていた。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "デュフフもちろん！いっぱいエッチしようね"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "(何度見ても最高の眺めだな)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "本来であれば一生関わることのできないであろう美少女二人が\n自分に忠誠を誓う姿は何度見ても興奮するものであった。"
- },
- {
-  "type": "cg",
-  "key": "HA41-3"
- },
- {
-  "type": "cg",
-  "key": "HA41-3"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "そうだ、今日はこれを着て欲しいな"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い小茂田が取り出してきたのはメイド服だった。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "わかりました、今からここで着替えますね"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "私も小茂田様に着替えを見てもらいたいです\n私のことも見てくださいね"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "もちろんだよ\n二人ともしっかり見てあげるからね"
- },
- {
-  "type": "cg",
-  "key": "HA41-4"
- },
- {
-  "type": "cg",
-  "key": "HA41-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "小茂田の前でも躊躇いなく服を脱ぐ二人。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "それどころか、小茂田に見られていることに嬉しさを感じている。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(小茂田様が私のこと見てる･･･\n 嬉しい･･･もっと私のこと見て欲しいな･･･)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(小茂田様･･･私のこともっと見て欲しいです\n できれば私のことだけ見て欲しいです･･･)"
- },
- {
-  "type": "cg",
-  "key": "HA41-5"
- },
- {
-  "type": "cg",
-  "key": "HA41-5"
- },
- {
-  "type": "cg",
-  "key": "HA41-6"
- },
- {
-  "type": "cg",
-  "key": "HA41-6"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "着替えました小茂田様"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "私も着替え終わりました、小茂田様"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "うんうん、二人ともよく似合ってるよ！"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "でもせっかくのメイド服なんだ"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "今日は僕のことを『ご主人様』って呼んでほしいな"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆詩保",
-  "text": "わかりましたご主人様"
- },
- {
-  "type": "cg",
-  "key": "HA41-7"
- },
- {
-  "type": "cg",
-  "key": "HA41-7"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "さあご主人様、早く私たちにエッチなことしてください"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "本当にエッチなメイドたちだなあ、ほらおいで"
- },
- {
-  "type": "cg",
-  "key": "HA41-8"
- },
- {
-  "type": "cg",
-  "key": "HA41-8"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いペニスを出す小茂田。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆詩保",
-  "text": "ご主人様のおチンポ！！"
- },
- {
-  "type": "cg",
-  "key": "HA42-1"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "飛びかかる勢いでペニスに食らいつこうとする二人。"
- },
- {
-  "type": "cg",
-  "key": "HA42-2"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "私が奉仕します！"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "待ってください、私がご奉仕します！！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ペニスの取り合いになる。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "こらこら喧嘩しないで、順番にね"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "まずは有理紗から"
- },
- {
-  "type": "cg",
-  "key": "HA42-3"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "やった！"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "そんなあ"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "がっかりしないで、ちゃんと詩保にもしゃぶらせてあげるから"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "それでは失礼いたします"
- },
- {
-  "type": "cg",
-  "key": "HA42-4"
- },
- {
-  "type": "cg",
-  "key": "HA42-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い小茂田のペニス咥える有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(ご主人様のおチンポ……美味しい……)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "小茂田のペニスに夢中になる有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ああ良いよぉ有理紗"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ありがとうございます"
- },
- {
-  "type": "cg",
-  "key": "HA42-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "さらに激しく動く有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ああ気持ち良いよ…"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ダメだ出ちゃいそうだからストップ！"
- },
+   "text": "你们俩都来了啊"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-2"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-2"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&诗保",
+   "text": "小茂田大人，今天也请和我们做很多色色的事吧"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人毫无羞耻地坦然掀起裙子。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "露出内裤以表达对中茂田忠诚的行为，\n对两人来说已经成为理所当然。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "嘿嘻嘻当然！一起做很多色色的事吧"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "（无论看多少次都是最美的景色）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "原本这辈子都不可能产生交集的两位美少女\n向自己宣誓忠诚的样子，无论看多少次都让人兴奋。"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-3"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-3"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "对了，今天想让你们穿这个"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，小茂田拿出来的是女仆装。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "明白了，我就在这里换衣服"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "我也想让小茂田大人看我换衣服\n也请看看我哦"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "当然\n你们俩我都会好好看的"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-4"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人在小茂田面前毫不迟疑地脱下了衣服。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "不仅如此，她们还为被小茂田看着而感到高兴。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（小茂田大人正看着我…\n 好高兴…好想让他再多看看我…）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（小茂田大人…好想让他再多看看我\n 最好只看着我一个人…）"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-5"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-5"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-6"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-6"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "换好了，小茂田大人"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "我也换好了，小茂田大人"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "嗯嗯，你们俩都很合身！"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "不过难得是女仆装"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "今天想让你们叫我「主人」"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&诗保",
+   "text": "明白了，主人"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-7"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-7"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "来吧主人，快对我们做色色的事吧"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "真是色情的女仆们啊，来，过来"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-8"
+  },
+  {
+   "type": "cg",
+   "key": "HA41-8"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，小茂田掏出了阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&诗保",
+   "text": "主人的肉棒！！"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-1"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人以扑上去的势头想要咬住阴茎。"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-2"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "我来侍奉！"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "请等一下，我来侍奉！！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人争夺起阴茎来。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "喂喂别吵架，一个一个来"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "先让有理纱来"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-3"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "太好了！"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "怎么会这样"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "别失望，也会让诗保吸的"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "那我就不客气了"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-4"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，有理纱含住了小茂田的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（主人的肉棒……好好吃……）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱完全沉醉于小茂田的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "啊啊，真棒啊，有理纱"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "谢谢您"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱的动作更加激烈。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "啊啊好舒服…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "不行了要射了，停！"
+  },
  {
   "type": "cg",
   "key": "HA42-6"
@@ -428,280 +428,280 @@ export const isekai_HA41_19: VnScript = {
  {
   "type": "say",
   "speaker": "有理紗",
-  "text": "そんなぁ…"
- },
+   "text": "怎么会…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "也得让诗保吸才行，来，诗保你可以吸了"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，主人"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-7"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-7"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "接下来轮到诗保含住小茂田的阴茎。"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-8"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "诗保发出咕啾咕啾的声音侍奉着小茂田的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "诗保也变得很色情了啊\n明明之前那么清纯"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "希胡哒胡梭？（不喜欢吗？）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "诗保一边吸一边问。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "怎么会\n色情的诗保我也最喜欢了"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "呼胡梭灰胡梭虎（好高兴，主人）"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-9"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "主人！也请对我说喜欢！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "因为小茂田对诗保说了喜欢，有理纱嫉妒了。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "当然也喜欢有理纱\n因为你们俩我都爱啊"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-10"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "主人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱如痴如醉。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "听到爱的话语，诗保的口交也更加激烈。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "啊啊，诗保，停！"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-11"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-11"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "主人，为什么要停下来？"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-12"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "因为最后想让你们俩一起舔"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-13"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "原来如此\n那就让有理纱小姐和我一起让主人射出来吧"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "知道了，诗保\n那么主人，我们俩一起侍奉您"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-14"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人开始舔小茂田的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "你们俩都进步了好多，快射了"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "主人，随时都可以射哦"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是啊，快在我们身上射很多吧"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "啊啊，要射了！"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-15"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗——！！噗——！！噗——！！\n大量的精液洒落在有理纱和诗保身上。"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-16"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-16"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（啊啊好烫……主人的精液……）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（主人的精液有这么多……）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人带着恍惚的表情沐浴在精液中。"
+  },
  {
   "type": "say",
   "speaker": "小茂田",
-  "text": "詩保にもしゃぶらせてあげないと、ほら詩保しゃぶって良いよ"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はいご主人様"
- },
- {
-  "type": "cg",
-  "key": "HA42-7"
- },
- {
-  "type": "cg",
-  "key": "HA42-7"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "次は詩保が小茂田のペニスを咥える。"
- },
- {
-  "type": "cg",
-  "key": "HA42-8"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ジュッポジュッポと音を立て小茂田のペニスに奉仕する詩保。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ずいぶんとエッチになったね詩保は\nあんなに清楚だったのに"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ふぃふぁでひゅか？(嫌ですか？)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "しゃぶりながら質問する詩保。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "そんなわけないよ\nエッチな詩保も大好きだよ"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "うれふぃいでひゅごひゅじんひゃま(嬉しいですご主人様)"
- },
- {
-  "type": "cg",
-  "key": "HA42-9"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ご主人様！私にも好きって言ってください！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "詩保に好きと言っていたことで嫉妬する有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "もちろん有理紗のことも好きだよ\n僕は君たち二人のことを愛してるからね"
- },
- {
-  "type": "cg",
-  "key": "HA42-10"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ご主人様♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "うっとりする有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "愛の言葉を聞いて詩保のフェラも激しくなる。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ああ、詩保ストップ！"
- },
- {
-  "type": "cg",
-  "key": "HA42-11"
- },
- {
-  "type": "cg",
-  "key": "HA42-11"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ご主人様、どうして止めないといけないのですか？"
- },
- {
-  "type": "cg",
-  "key": "HA42-12"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "最後は二人に舐めて欲しいからさ"
- },
- {
-  "type": "cg",
-  "key": "HA42-13"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "そうなのですね\nじゃあ有理紗さん二人でご主人様のことをイカせてあげましょう"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "わかったわ詩保\nそれじゃあご主人様、二人でご奉仕しますね"
- },
- {
-  "type": "cg",
-  "key": "HA42-14"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "二人で小茂田のペニスを舐め始める。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "二人とも本当に上手になったね、もう出ちゃいそうだよ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ご主人様、いつでも出して良いですからね"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "そうですよ、早く私たちにいっぱいかけてください"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ああ、出るよ！"
- },
- {
-  "type": "cg",
-  "key": "HA42-15"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュッ！！ドピュッ！！ドピュッ！！ \n大量の精液が有理紗と詩保に降りかかる。"
- },
- {
-  "type": "cg",
-  "key": "HA42-16"
- },
- {
-  "type": "cg",
-  "key": "HA42-16"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(ああ熱い……ご主人様の精液……)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(ご主人様の精液がこんなに……)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "恍惚とした表情で精液を浴びる二人。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "さて、じゃあ次はセックスだね。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "今日の相手はどっちにしようかな…"
- },
- {
-  "type": "choice",
-  "options": [
-   {
-    "text": "有理紗を選ぶ",
-    "to": "isekai_19_c0"
-   },
-   {
-    "text": "詩保を選ぶ",
-    "to": "isekai_19_c1"
-   }
-  ]
- },
- {
-  "type": "label",
-  "name": "isekai_19_c0"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "じゃあ、今日は有理紗！"
- },
- {
-  "type": "cg",
-  "key": "HA42-17a"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "やった！！"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "そんなあ…"
- },
- {
-  "type": "label",
-  "name": "isekai_19_c1"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "じゃあ、今日は詩保！"
- },
- {
-  "type": "cg",
-  "key": "HA42-17s"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい！"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "そんなぁ…"
- },
+   "text": "那么，接下来就是做爱了呢。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "今天的对象选谁好呢…"
+  },
+  {
+   "type": "choice",
+   "options": [
+    {
+     "text": "选择有理纱",
+     "to": "isekai_19_c0"
+    },
+    {
+     "text": "选择诗保",
+     "to": "isekai_19_c1"
+    }
+   ]
+  },
+  {
+   "type": "label",
+   "name": "isekai_19_c0"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "那么，今天是有理纱！"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-17a"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "太好了！！"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "怎么会这样…"
+  },
+  {
+   "type": "label",
+   "name": "isekai_19_c1"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "那么，今天是诗保！"
+  },
+  {
+   "type": "cg",
+   "key": "HA42-17s"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是！"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "怎么会这样…"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
