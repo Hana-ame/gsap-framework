@@ -135,6 +135,7 @@ If anything fails at any step, **stop and report** — don't paper over with `-f
 - **`PIXI.Assets.load` can resolve with width=0 or height=0 texture** — always check `texture.width === 0 || texture.height === 0` after load.
 - **LSP errors are stale**: when files move, the LSP server lags. Always trust `npm run lint` output, not LSP diagnostics. CI will catch typecheck/build errors.
 - **PIXI Graphics destroy + immediate recreate in same callstack crashes render batch**: `Graphics.destroy()` nullifies its GraphicsContext. If you `new Graphics()` and `.fill()` in the same event handler, PIXI's batch flush (which runs between frames) may reference the already-nulled context, throwing `TypeError: Cannot read properties of null (reading 'clear')` at `_callContextMethod`. **Fix**: reuse Graphics via `.clear().rect().fill()` instead of destroy+recreate. FullscreenManager show() had this bug.
+- **Don't verify with local run by default — verify against the deployed `react.moonchan.xyz`**: the user checks the *deployed* site for acceptance, not a local dev/preview server. Prefer push → wait for CF Pages → curl/check `https://react.moonchan.xyz/` (+ the per-deploy `*.pages.dev` URL). Only spin up local dev/preview when explicitly asked, and never claim resulting behavior as done before it's live on `react.moonchan.xyz`.
 
 ---
 

@@ -170,3 +170,42 @@ T21、T22、T22淫乱、T3 原先缺少 display 组件和 launcher 条目。已�
 ## 迁移文档
 
 `docs/exmoonchan-migration.md` — ExMoonchan H-scene 纯 DOM 迁移范式
+
+## 未来架构构想（idea 记录，2026-08-03）
+
+### 现状理解
+
+- **无限画布 = canvas + Pixi 的应用**（殖民地游戏本体），不是桌面壳
+- **winos-like 桌面目前跑在 canvas 上** → 无法宿主 DOM 应用（WebGAL 跑不进来）
+- AVD/WebGAL 是 DOM 渲染的 VN 引擎
+
+### 新 idea：DOM 无限画布桌面（壳层翻转）
+
+把桌面壳从 canvas 翻成 **DOM（div 窗口系统）**，壳天生可宿主混合应用：
+
+- 壳本身 = DOM（文件管理器、任务栏、窗口拖拽/焦点/zIndex）
+- 应用各用各的技术，靠薄接口适配：
+  - 殖民地游戏 = canvas+Pixi 应用（窗口内的 `<canvas>`）
+  - WebGAL / AVD = DOM 应用（窗口内的根节点）
+
+```
+App 接口：
+  mount(container: HTMLElement)   // 应用挂进一个窗口 div
+  unmount()
+
+窗口系统职责：
+  openWindow(id, {title, size, content})
+  closeWindow(id) / 焦点 / zIndex / 拖拽
+```
+
+### 性能结论（待 PoC 验证）
+
+- 桌面壳 / VN / 文字图片窗口 → **DOM 无压力**（Figma/VSCode 先例，transform 走合成器）
+- 无限画布大量实体 / 相机平移 / 图块地图 → **canvas/WebGL 才正确**（DOM 扛不住）
+- 结论：VN 和桌面壳用 DOM，殖民地游戏用 canvas，两者靠 DOM 壳共存，互不拖累
+
+### 待验证 / 后续
+
+- PoC：DOM 窗口系统 + 窗口内嵌 WebGAL + 另一个窗口嵌 canvas demo，实测帧率
+- 梳理当前代码耦合图（SubCanvas/AVD/infinityCanvas 哪些跨了层、能独立哪些）
+- WebGAL 迁入 DOM 壳的适配成本评估
