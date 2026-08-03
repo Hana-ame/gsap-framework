@@ -12,8 +12,9 @@ describe('examples registry', () => {
     for (const ex of EXAMPLES) {
       const comp = exampleMap[ex];
       expect(comp).toBeDefined();
-      expect(typeof comp).toBe('function');
-      expect((comp as ComponentType & { head?: unknown }).head).toBeDefined();
+      // 组件现已 React.lazy（LazyExoticComponent，对象形态，含 lazy 标记）
+      const lazy = comp as { $$typeof?: symbol };
+      expect(!!lazy.$$typeof).toBe(true);
     }
   });
 
