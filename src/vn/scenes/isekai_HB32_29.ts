@@ -44,228 +44,228 @@ export const isekai_HB32_29: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "有理紗と入れ替わる形で詩保が横になる。"
- },
- {
-  "type": "cg",
-  "key": "HB32-1"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "どうぞ私の初めてももらってください"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "詩保も処女なのか？"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい、シスターでもありましたし、\nそれに男の人と接する機会がほとんどなかったので"
- },
- {
-  "type": "cg",
-  "key": "HB32-2"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ですが今は茶羅井様に処女を捧げられるので\nこれで良かったと思っています"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "これからはシスターを辞めて\n茶羅井様に忠実な下僕となることを誓います"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "そんなに俺のものになりたいのか？"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい、なりたいです"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "もう今までの人生を全て捨ててでも\n茶羅井様のものになりたくて仕方がないのです"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "そうか、そんなに俺のことが好きか\nそれなら仕方ないな"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "処女はいただかせてもらうぜ"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい、お願いします"
- },
- {
-  "type": "cg",
-  "key": "HB32-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "挿入する茶羅井。"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ああっ、これが初めての痛み…"
- },
- {
-  "type": "cg",
-  "key": "HB32-4"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "思ったより痛くないのですね"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "俺のことが好きすぎて痛みとか感じないんじゃないか？"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "そうかもしれません"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "魅了により痛みより幸福が勝っている詩保。"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "じゃあ動くぞ"
- },
- {
-  "type": "cg",
-  "key": "HB32-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "茶羅井が腰を動かし始める。"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ああ、すごいです！こんなに気持ちが良いものなのですね！！"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(これがセックス……\n こんなに幸せな気持ちになれるものだったなんて･･･)"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "どうだ？俺の女になった気分は？"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい、幸せです\n幸せすぎておかしくなっちゃいそうです"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "じゃあもっと幸せな気持ちにしてやるよ！"
- },
- {
-  "type": "cg",
-  "key": "HB32-6"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "茶羅井の動きが激しくなる。"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ああっ、すごいです！こんなの気持ち良すぎます！！"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(ああ……もうダメ……おかしくなってしまいます)"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "出すぞ！"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい、出してください！！"
- },
- {
-  "type": "cg",
-  "key": "HB32-7"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュッビュルルルー"
- },
- {
-  "type": "cg",
-  "key": "HB32-8"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ああ、熱い……"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(これが中に出された感覚……とても心地よいものですね…)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(こんなの知ってしまったら、\n もう他のことなんてどうでも良くなってしまいます…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして有理紗に続き詩保も茶羅井のものとなるのだった･･･"
- },
+   "text": "与有理纱换位，诗保躺了下来。"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-1"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "请收下我的第一次"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "诗保也是处女吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，我曾是修女，\n而且几乎没有和男性接触的机会"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-2"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "不过现在能把处女奉献给茶罗井大人，\n我觉得这样正好"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "从今往后我要辞去修女之职，\n宣誓成为对茶罗井大人忠实的奴仆"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "就那么想成为我的东西吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，想成为"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "即使要抛弃至今为止的全部人生，\n我也想成为茶罗井大人的东西，想得不得了"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "是吗，就那么喜欢我吗\n那就没办法了"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "处女我就收下了"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，拜托您了"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "茶罗井插了进去。"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊啊，这就是第一次的疼痛…"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-4"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "比想象中不痛呢"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "是不是因为太喜欢我了，感觉不到痛了？"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "也许是这样"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "因为魅惑，诗保的幸福感压过了疼痛。"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "那我要动了"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "茶罗井开始扭动腰部。"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊啊，太厉害了！原来是这么舒服的事啊！！"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（这就是做爱……\n 原来是能让人这么幸福的事啊…）"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "怎么样？成为我的女人的感觉？"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，很幸福\n幸福得快要坏掉了"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "那就让我给你更多幸福吧！"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-6"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "茶罗井的动作变得激烈。"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊啊，太厉害了！舒服得过头了！！"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（啊啊……已经不行了……要坏掉了）"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "要射了！"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，请射吧！！"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-7"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗——哔噜噜噜——"
+  },
+  {
+   "type": "cg",
+   "key": "HB32-8"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊啊，好烫……"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（这就是被射在里面的感觉……非常舒服呢…）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（既然知道了这种事，\n 其他的一切都变得无所谓了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，继有理纱之后，诗保也成为了茶罗井的东西…"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
