@@ -87,6 +87,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 
 - `bg`/`cg`/`say` 的 `fadeMs`：切图淡入时长 ms（0=无动画，默认 0）。背景仍 cover、CG 仍 contain。
 - `say.effect` / `wait.effect`：`shake` 抖动画面、`flash` 白屏闪（瞬时，动画结束自动清除）。
+- **切图等待**：`bg`/`cg` 行不会立即推进——若目标图尚未加载完成，会停在当前画面，等 `onload` 后再继续（不显示 loading 遮罩；遮罩只在真实 preload 等待 `loaded < total` 时出现）。避免"切到一张未就绪的 CG 时短暂黑屏"。
 - 对话框 / 选项层自动淡入上浮（250ms）。
 - 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示）。
 
@@ -126,10 +127,10 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 ## 消费方
 
 - `src/example/hscene/*.tsx`：每个场景一个懒加载组件，渲染 `VnPlayer` + 对应 scenario。
-- `src/example/vn-menu/`：默认入口，HS 列表按游戏分组，点击切 `#hscenekey`。
+- `src/example/vn-menu/`：默认入口，HS 列表按游戏分组，卡片式展示。每张卡片 = **封面图（该场景第一个 preload 的 CG）+ 标题**，点击切 `#hscenekey`。封面元数据在 `scene-covers.ts`（被菜单懒加载 chunk 引用，不进主 bundle）。
 - `src/example/examples.ts`：全组件 React.lazy 分离，主 bundle 保持小体积。
 
 ## 维护提示
 
-- 场景由 `scripts/rmmz2vn.py` 从 3 个 RMMZ 游戏 CommonEvents 生成（脚本保留，可重跑）。
+- 场景由 `scripts/rmmz2vn.py` 从 3 个 RMMZ 游戏 CommonEvents 生成（脚本保留，可重跑）。**重跑会覆盖现有中文翻译**，非必要时不要执行。
 - 不要改动 `src/avd/`（遗留），新增剧情走 `src/vn/`。
