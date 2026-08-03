@@ -91,262 +91,262 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "私を捕まえてどうする気？！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "よくわからない椅子に拘束されている有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "うーんどうしようかなあ…"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "他の反乱分子と同じように\nこのまま感情のない忠実なマシナ兵に洗脳してあげてもいいけど…"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "有理紗ちゃん可愛いし特別に僕の女にしてあげるよ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "洗脳…？冗談でしょ！"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あなたのものになんか絶対にならないんだから！"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "まあ今の有理紗ちゃんじゃ受け入れてくれないよね"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "だから受け入れてくれるようにしっかり洗脳してあげるからね"
- },
- {
-  "type": "cg",
-  "key": "HC11-2"
- },
- {
-  "type": "cg",
-  "key": "HC11-2"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "なっ…これってまさか…！？"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "じゃあ始めるよー"
- },
- {
-  "type": "cg",
-  "key": "HC11-3"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あがががが、頭が痛いいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "有理紗の頭に装着されている機械から電流が流れ出す。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "最初は痛いかもしれないけど我慢してね"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "まずは洗脳を受け入れやすくするために\n刺激を与えて準備しないとだからね"
- },
- {
-  "type": "cg",
-  "key": "HC11-4"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "止めてーーーーー、今すぐこれを止めてええええええ"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "だーめ\n今のうちにⅠ型の再セットアップをしてこようかな"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "待ってーーーー止めてええええええ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "小茂田はミディを再セットアップするために部屋を後にする。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "その間有理紗は一人で洗脳装置の電撃を受けていた。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "それから少しして小茂田は戻って来る。"
- },
- {
-  "type": "cg",
-  "key": "HC11-5"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あひぃ…あひぃ…"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ちょっと長くやりすぎたかな、気分はどうだい？"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "お願い…止めて…"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "止めて欲しいならほら…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "小茂田様に忠誠を誓うこと"
- },
- {
-  "type": "cg",
-  "key": "HC11-6"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "えっ？"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "脳内に言葉が浮かんでくる。"
- },
- {
-  "type": "cg",
-  "key": "HC11-7"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "だめ…そんなこと…"
- },
- {
-  "type": "cg",
-  "key": "HC11-8"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ああああああああ"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ほら、止めて欲しいんでしょ？"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(止めてもらうために演技で言えば…演技…演技だったら…)"
- },
+   "speaker": "有理纱",
+   "text": "抓住我想干什么？！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱被束缚在了一张陌生的椅子上。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "唔——该怎么办呢…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "像其他叛乱分子一样，\n把你洗脑成没有感情、忠实的马希纳兵也行…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "不过有理纱酱很可爱，就特别让你做我的女人吧"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "洗脑…？开什么玩笑！"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "我绝不会成为你的东西！"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "嗯，现在的有理纱酱肯定接受不了吧"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "所以我会好好给你洗脑，让你接受的"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-2"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-2"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "什…这难道是…！？"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "那我要开始了哦——"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-3"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊嘎嘎嘎，头好痛啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱头上戴着的机器流出电流。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "一开始可能会痛，忍着点哦"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "首先得给予刺激做好准备工作，\n让你更容易接受洗脑才行"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-4"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "住手————现在立刻停下啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "不行\n趁现在去给Ⅰ型做重新设置吧"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "等等————住手啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "为了重新设置米迪，小茂田离开了房间。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "那段时间里，有理纱独自承受着洗脑装置的电击。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "过了一阵子，小茂田回来了。"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-5"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊嘻…啊嘻…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "是不是弄得太久了，感觉怎么样？"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "求求你…停下来…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "想让我停下来的话，就…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "向小茂田大人宣誓忠诚"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-6"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "咦？"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "话语浮现在脑海中。"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-7"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "不行…那种事…"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-8"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊啊啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "来，你不是想让我停下来吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（为了让他停下，只要演戏说出来…演戏…只要演戏的话…）"
+  },
  {
   "type": "cg",
   "key": "HC11-9"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "小茂田様に忠誠を誓います…"
- },
+   "speaker": "有理纱",
+   "text": "我向小茂田大人宣誓忠诚…"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-10"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊啊啊啊啊啊为什么啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "没有真心呢\n是演戏一眼就看穿了"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊啊啊啊啊小茂田大人————小茂田大人啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（什么都不想，总之只能说出来…为了撑过这一刻…）"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "我宣誓啊啊啊，向小茂田大人宣誓忠诚啊啊啊啊"
+  },
  {
   "type": "cg",
   "key": "HC11-10"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "ああああああああなんでえええええええ"
+   "speaker": "有理纱",
+   "text": "啊啊啊啊啊为什么啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "小茂田",
-  "text": "心がこもってないね\n演技って丸わかりだよ"
+   "speaker": "有理纱",
+   "text": "我向小茂田大人宣誓忠诚！所以请停下来啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "ああああああ小茂田様ーーーー小茂田様ああああああ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(もう何も考えずとにかく言うしか…ここをしのぐためにも…)"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "誓いますうううう、小茂田様に忠誠を誓いますうううううう"
- },
- {
-  "type": "cg",
-  "key": "HC11-10"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あああああどうしてえええええ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "小茂田様に忠誠を誓いますから！だから止めてくださいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(これ以上どうすれば良いっていうの？)"
+   "speaker": "有理纱",
+   "text": "（到底要我怎么做才好啊？）"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "心から忠誠を誓えばいい"
+   "text": "发自内心地宣誓忠诚就行了"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(心からなんて…そんな……)"
+   "speaker": "有理纱",
+   "text": "（发自内心什么的…那种事……）"
  },
  {
   "type": "cg",
@@ -354,13 +354,13 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(そんな簡単なことに気付けないなんて！！)"
+   "speaker": "有理纱",
+   "text": "（居然连这么简单的事都没想到！！）"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(どうして演技なんてしてたんだろう･･･\n 心から小茂田様に忠誠を誓えばこれを止めてもらえるのに)"
+   "speaker": "有理纱",
+   "text": "（我为什么要演戏呢…\n 只要发自内心向小茂田大人宣誓忠诚，就能让他停下来了）"
  },
  {
   "type": "cg",
@@ -368,18 +368,18 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "誓いますうううう！！小茂田様に心から忠誠を誓いますううう！！"
+   "speaker": "有理纱",
+   "text": "我宣誓啊啊！！发自内心向小茂田大人宣誓忠诚啊啊！！"
  },
  {
   "type": "say",
   "speaker": "小茂田",
-  "text": "へえ、心から…それって僕のどんな命令も従ってくれるの？"
+   "text": "哦，发自内心…那会服从我的任何命令吗？"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "もちろんですうううう！どんな命令でも従いますううう！"
+   "speaker": "有理纱",
+   "text": "当然了啊啊！任何命令我都会服从啊啊！"
  },
  {
   "type": "cg",
@@ -387,18 +387,18 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(気持ち良い･･･\n 小茂田様に忠誠を誓うとどうしてこんなに気持ち良いの･･･)"
+   "speaker": "有理纱",
+   "text": "（好舒服…\n 向小茂田大人宣誓忠诚，为什么这么舒服…）"
  },
  {
   "type": "say",
   "speaker": "小茂田",
-  "text": "それは本心かな？"
+   "text": "那是真心话吗？"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "はい、本心です！！\n身も心も小茂田様のものですうううう！！！"
+   "speaker": "有理纱",
+   "text": "是，是真心话！！\n我身心都属于小茂田大人啊啊啊！！！"
  },
  {
   "type": "cg",
@@ -406,33 +406,33 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(ああ･･･気持ち良い！)"
+   "speaker": "有理纱",
+   "text": "（啊啊…好舒服！）"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(小茂田様に忠誠を誓うの気持ち良すぎるううう)"
+   "speaker": "有理纱",
+   "text": "（向小茂田大人宣誓忠诚太舒服了啊啊）"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "洗脳装置から小茂田に忠誠を誓うたびに\n快楽信号が送られてきていた。"
+   "text": "每次向小茂田宣誓忠诚，\n洗脑装置就会传来快感信号。"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "有理紗はその快楽に完全に呑まれていた。"
+   "text": "有理纱完全被那份快感吞噬了。"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "小茂田様素敵です！！"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "小茂田様最高！！"
+   "speaker": "有理纱",
+   "text": "小茂田大人好帅！！"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "小茂田大人最棒！！"
  },
  {
   "type": "cg",
@@ -440,18 +440,18 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(気持ち良い！気持ち良い！気持ち良いいいい！)"
+   "speaker": "有理纱",
+   "text": "（好舒服！好舒服！好舒服啊啊啊！）"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(小茂田様に忠誠誓うだけでこんなに気持ち良いなんて\n こんなの一生忠誠誓うしかないじゃない！！)"
+   "speaker": "有理纱",
+   "text": "（只是向小茂田大人宣誓忠诚就这么舒服，\n 这样一辈子宣誓忠诚不就好了吗！！）"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "有理紗は小茂田様のものです！\n有理紗は小茂田様に永遠の忠誠を誓います！"
+   "speaker": "有理纱",
+   "text": "有理纱是小茂田大人的！\n有理纱向小茂田大人宣誓永远的忠诚！"
  },
  {
   "type": "cg",
@@ -459,33 +459,33 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "(ああこれぇ･･･小茂田様ぁ･･････)"
+   "speaker": "有理纱",
+   "text": "（啊啊这个…小茂田大人……）"
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "小茂田様ぁ有理紗になんでも命令してくださいいいいい！！"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "その言葉に嘘はない？"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "はいいいいい！心からの言葉ですうううう"
+   "speaker": "有理纱",
+   "text": "小茂田大人，请尽管命令有理纱吧！！"
  },
  {
   "type": "say",
   "speaker": "小茂田",
-  "text": "ふむ･･･洗脳は完了したようだね"
+   "text": "那句话没有谎言吗？"
+ },
+ {
+  "type": "say",
+   "speaker": "有理纱",
+   "text": "是！！！句句都是真心话啊啊"
  },
  {
   "type": "say",
   "speaker": "小茂田",
-  "text": "じゃあトドメに最高の快楽を与えてあげるよ"
+   "text": "嗯…洗脑看来已经完成了"
+ },
+ {
+  "type": "say",
+  "speaker": "小茂田",
+   "text": "那就最后给你最强的快感吧"
  },
  {
   "type": "cg",
@@ -493,29 +493,29 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "おひょおおおおおおおあああああああ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "小茂田様に洗脳されたことを感謝せよ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "はいぃいいいい感謝しますうううう"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "有理紗を洗脳してくれてありがとうございますうううう"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "有理紗は小茂田様に心から感謝しますうううううう"
- },
+   "speaker": "有理纱",
+   "text": "哦嗬啊啊啊啊啊啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "要感谢小茂田大人给你洗脑"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "是啊啊啊感谢您啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "谢谢您给有理纱洗脑啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "有理纱由衷感谢小茂田大人啊啊啊啊"
+  },
  {
   "type": "cg",
   "key": "HC11-15"
@@ -529,22 +529,22 @@ export const isekai_HC11_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "絶頂する有理紗。"
- },
- {
-  "type": "cg",
-  "key": "HC11-16"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "はあ…はあ…小茂田様…小茂田様ぁ…"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "これで完全に心に刻み込めたかな"
- },
+   "text": "有理纱到达了高潮。"
+  },
+  {
+   "type": "cg",
+   "key": "HC11-16"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "呼…呼…小茂田大人…小茂田大人…"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "这下应该完全刻进心里了吧"
+  },
  {
   "type": "cg",
   "key": "HC11-17"
@@ -556,7 +556,7 @@ export const isekai_HC11_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "装置が停止する。"
+   "text": "装置停止了。"
  },
  {
   "type": "cg",
@@ -569,7 +569,7 @@ export const isekai_HC11_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "装置が外される。"
+   "text": "装置被取了下来。"
  },
  {
   "type": "cg",
@@ -581,34 +581,34 @@ export const isekai_HC11_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "有理紗",
-  "text": "小茂田様…今すっごく幸せな気分です"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "洗脳していただきありがとうございます"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "そうか、それは良かったよ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "有理紗の目に光が戻る。\nだが洗脳された認識はそのままである。"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "じゃあさっそくエッチでもしてもらおうかな"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "はいっ！小茂田様♡"
- },
+   "speaker": "有理纱",
+   "text": "小茂田大人…现在我的心情非常幸福"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "谢谢您给我洗脑"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "是吗，那就好"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱的眼中重新亮起光芒。\n但被洗脑改写后的认知依然如故。"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "那就赶紧来做点色色的事吧"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "是！小茂田大人♡"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
