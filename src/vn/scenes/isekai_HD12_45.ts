@@ -68,351 +68,351 @@ export const isekai_HD12_45: VnScript = {
  {
   "type": "say",
   "speaker": "有理紗",
-  "text": "おクスリ…おクスリください･･･"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "私もおクスリください…あれが無いと私もう耐えられないんです…"
- },
- {
-  "type": "say",
-  "speaker": "山賊ボス",
-  "text": "すっかり薬の虜になってしまったな"
- },
- {
-  "type": "cg",
-  "key": "HD12-2"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "この女たち、もうダメじゃないですか？\n捨てちゃったらどうですか？"
- },
- {
-  "type": "say",
-  "speaker": "山賊ボス",
-  "text": "勇者は死なないんだ\n永遠に肉便器にできるんだから捨てるなんてもったいない"
- },
- {
-  "type": "say",
-  "speaker": "山賊ボス",
-  "text": "こうして心を壊して永遠に飼ってやるのが正解だろ"
- },
- {
-  "type": "cg",
-  "key": "HD12-3"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "そうなんですね！さすがご主人様！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ガウの態度も依然とは大違いだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "有理紗を倒した功績もあり、\nボスはガウにとても優しく接するようになった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "生まれてからずっと奴隷として育てられてきて\n愛情というものを知らなかったガウにとって、\nその優しさは十分すぎるものだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "今のガウは優しく飼ってもらえていることで幸せを感じている。"
- },
- {
-  "type": "say",
-  "speaker": "山賊ボス",
-  "text": "おい、薬を持ってきてやれ"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "はい"
- },
- {
-  "type": "cg",
-  "key": "HD12-4"
- },
- {
-  "type": "cg",
-  "key": "HD12-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "一気に飲み干す二人。"
- },
- {
-  "type": "cg",
-  "key": "HD12-5"
- },
- {
-  "type": "cg",
-  "key": "HD12-5"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あああああきたあああああこれえええええ\nこれしゅごいのおおおおお"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "あひいいいいい、しゅごいいいいいいい\n頭おかしくなりゅううううううう"
- },
- {
-  "type": "cg",
-  "key": "HD12-6"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "薬を飲んだだけで絶頂する有理紗と詩保。"
- },
- {
-  "type": "cg",
-  "key": "HD12-7"
- },
- {
-  "type": "say",
-  "speaker": "山賊ボス",
-  "text": "じゃあお前たち、こいつらのこと頼んだぞ"
- },
- {
-  "type": "say",
-  "speaker": "山賊たち",
-  "text": "はい、ボス！"
- },
- {
-  "type": "say",
-  "speaker": "山賊ボス",
-  "text": "じゃあガウ、俺たちは二人で愛し合おうな"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "はいご主人様♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いボスとガウは去っていく。"
- },
- {
-  "type": "cg",
-  "key": "HD12-9"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "じゃあ俺のチンポ咥えてくれよ"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "俺のもしごいてくれよ"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "俺はこっちを使わせてもらおうかな"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "山賊たちがペニスを取り出す。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あぁ･･･おチンポ･･･早くおチンポちょうだい･･･"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "私もおチンポ欲しいですぅ･･･"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "薬とペニス漬けの日々は有理紗と詩保の心を完全に壊し、\n今では薬とペニスのことしか頭になくなっていた。"
- },
- {
-  "type": "cg",
-  "key": "HD12-10"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(おチンポ･･･おチンポ･･･)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(ああこれぇ･･･これがないと私おかしくなってしまいますぅ)"
- },
- {
-  "type": "cg",
-  "key": "HD12-11"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "夢中で山賊のペニスをしごく有理紗と詩保。"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "ああ気持ちいい"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "俺もだ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(ああ、おチンポ美味しい…\n おクスリ飲んでおチンポもらうの最高…)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(おクスリ…おチンポ…おクスリ…おチンポ…)"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "永遠に使える肉便器とか最高だな"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "そうだな、勇者様様だな"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(勇者…？なんだっけそれ？聞いたことがあるような)"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "おらっ手が止まってるぞ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(勇者とかどうでもいいか\n 私にはおクスリとおチンポがあればそれでいいんだから･･･)"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "ああイキそう"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "俺も出そうだ"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "俺もイクっ"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "ああ出るっ"
- },
- {
-  "type": "cg",
-  "key": "HD12-12"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(精液きたぁああああ)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(ああきたぁ)"
- },
- {
-  "type": "cg",
-  "key": "HD12-13"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "精液を受けただけで絶頂する有理紗と詩保。"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "ふう、出した出した"
- },
- {
-  "type": "cg",
-  "key": "HD12-14"
- },
- {
-  "type": "cg",
-  "key": "HD12-14"
- },
- {
-  "type": "say",
-  "speaker": "山賊",
-  "text": "じゃあ次俺な"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(まだおチンポあるの？嬉しい♡)"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(おチンポ…おチンポ…おチンポ…♡)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして有理紗と詩保は山賊たちの肉便器になるのだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "山賊敗北エンド"
- },
+   "text": "药…请给我药…"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "也请给我药…没有那个的话，我已经受不了了…"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼头目",
+   "text": "已经完全成了药物的俘虏了啊"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-2"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "这些女人已经没救了吧？\n不如扔掉算了？"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼头目",
+   "text": "勇者是不会死的\n能永远当肉便器用，扔掉多可惜"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼头目",
+   "text": "就这样毁掉她们的心智，永远养着才是正解"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-3"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "原来如此！不愧是主人！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "伽乌的态度也和以往截然不同。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "因为击败有理纱的功劳，\n头目开始对伽乌非常温柔。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "从小作为奴隶长大、从未感受过爱的伽乌而言，\n那份温柔已经绰绰有余了。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "现在的伽乌，因为被温柔地饲养着而感到幸福。"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼头目",
+   "text": "喂，给她们拿药来"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "是"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-4"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "两人一口气喝干了。"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-5"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-5"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊啊啊啊来了啊啊啊啊就是这个啊啊啊\n这个好厉害啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊嘻啊啊啊啊，好厉害啊啊啊啊\n脑子都要坏掉了啊啊啊啊啊"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-6"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "只是喝了药，有理纱和诗保就到达了高潮。"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-7"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼头目",
+   "text": "那你们就照顾一下她们吧"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼们",
+   "text": "是，头目！"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼头目",
+   "text": "那伽乌，我们俩去亲热亲热吧"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "是，主人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，头目和伽乌离开了。"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-9"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "来，含住我的老二"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "也帮我的撸一撸"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "我就用这个吧"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "山贼们掏出了阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊啊…肉棒…快给我肉棒…"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "我也想要肉棒…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "药与阴茎相伴的日子彻底毁掉了有理纱和诗保的心智，\n如今她们的脑子里只剩下药和阴茎。"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-10"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（肉棒…肉棒…）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（啊啊这个…没有这个的话，我会坏掉的）"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-11"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱和诗保忘我地撸动着山贼的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "啊啊真舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "我也是"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（啊啊，肉棒真好吃…\n 喝药然后得到肉棒，太棒了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（药…肉棒…药…肉棒…）"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "能永远使用的肉便器，真是太棒了"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "是啊，多亏了勇者大人"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（勇者…？那是什么？好像在哪里听过）"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "喂，手停了"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（勇者什么的都无所谓了\n 对我来说只要有药和肉棒就够了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "啊啊要射了"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "我也要射了"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "我也要去了"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "啊啊要射了"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-12"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（精液来了啊啊啊啊）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（啊啊来了）"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-13"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "只是承受了精液，有理纱和诗保就到达了高潮。"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "呼，射了射了"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-14"
+  },
+  {
+   "type": "cg",
+   "key": "HD12-14"
+  },
+  {
+   "type": "say",
+   "speaker": "山贼",
+   "text": "那接下来是我"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（还有肉棒吗？好开心♡）"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（肉棒…肉棒…肉棒…♡）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，有理纱和诗保成了山贼们的肉便器。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "山贼败北结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
