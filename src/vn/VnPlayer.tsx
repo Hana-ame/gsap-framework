@@ -35,6 +35,8 @@ interface VnUiState {
   text: string;
   /** 已显示的字符数（打字机）。 */
   shown: number;
+  /** 本条台词的特效：flash 白屏闪、shake 抖动。 */
+  effect?: 'shake' | 'flash';
   /** 显示图层（bg cover 占满，cg contain 看全；按 index/zIndex 排序，同 index cg 前 bg 后）。 */
   layers: VnLayer[];
   /** 立绘层（半身像，底部对齐，可点击隐藏）。 */
@@ -56,6 +58,7 @@ const EMPTY_UI: VnUiState = {
   speaker: '',
   text: '',
   shown: 0,
+  effect: undefined,
   layers: [],
   stands: [],
   loadingProgress: { loaded: 0, total: 0 },
@@ -77,6 +80,14 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
   /** 立绘层是否隐藏（点击立绘切换）。 */
   const [standHidden, setStandHidden] = useState(false);
+
+  /** 画面抖动（say.effect='shake' 时触发，450ms 后自动复位）。 */
+  const [shaking, setShaking] = useState(false);
+  useEffect(() => {
+    if (!shaking) return;
+    const t = setTimeout(() => setShaking(false), 450);
+    return () => clearTimeout(t);
+  }, [shaking]);
 
   // 注入运行时关键帧样式
   useEffect(() => {
@@ -228,7 +239,9 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             speaker: line.speaker ?? '',
             text: line.text,
             shown: 0,
+            effect: line.effect,
           }));
+          if (line.effect === 'shake') setShaking(true);
           break;
         }
 
@@ -373,6 +386,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         userSelect: 'none',
         WebkitUserSelect: 'none',
         touchAction: 'manipulation',
+        animation: shaking ? 'vn-shake 450ms ease' : undefined,
       }}
       onClick={advance}
     >
@@ -610,6 +624,21 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
           </div>
         </div>
       ) : null}
+
+      {/* 台词特效：flash = 白屏闪一下（全屏覆盖，可穿透点击） */}
+      {ui.effect === 'flash' && (
+        <div
+          key={`flash-${ui.lineIndex}`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: '#fff',
+            zIndex: 100,
+            pointerEvents: 'none',
+            animation: 'vn-flash 260ms ease-out both',
+          }}
+        />
+      )}
     </div>
   );
 }

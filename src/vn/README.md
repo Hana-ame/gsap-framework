@@ -94,7 +94,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | 指令 | 作用 |
 |------|------|
 | `preload` | 声明资源 `{key,url}`。`wait:true` 等加载完再继续；`wait:false` 立即继续后台加载 |
-| `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`stand`/`standPos` 带立绘；`fadeMs` 淡入 |
+| `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`stand`/`standPos` 带立绘；`fadeMs` 淡入；`effect`（`flash` 白屏闪 / `shake` 画面抖动） |
 | `bg` | 背景层，cover 占满全屏。`fadeMs` 淡入 |
 | `cg` | CG 层，contain 看全（16:9 框内）。`fadeMs` 淡入 |
 | `choice` | 选项。`options[].to` 跳 label；`set` 写变量；`showWhen` 条件显示 |
