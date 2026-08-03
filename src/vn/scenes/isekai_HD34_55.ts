@@ -241,6 +241,10 @@ export const isekai_HD34_55: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "マシナ兵堕ちエンド２"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

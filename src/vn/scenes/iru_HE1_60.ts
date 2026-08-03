@@ -487,7 +487,8 @@ export const iru_HE1_60: VnScript = {
   "text": "はい、ご主人様"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

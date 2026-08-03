@@ -186,6 +186,10 @@ export const isekai_HA44_22: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "小茂田エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

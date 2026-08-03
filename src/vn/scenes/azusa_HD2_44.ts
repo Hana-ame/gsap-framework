@@ -223,6 +223,10 @@ export const azusa_HD2_44: VnScript = {
   "type": "say",
   "speaker": "アズサ",
   "text": "はあ…はあ…勝手に…すればいいわ…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

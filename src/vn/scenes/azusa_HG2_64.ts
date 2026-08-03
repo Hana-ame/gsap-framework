@@ -84,6 +84,10 @@ export const azusa_HG2_64: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "最悪の魔法少女エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

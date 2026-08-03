@@ -109,6 +109,10 @@ export const iru_T22_40: VnScript = {
   "type": "say",
   "speaker": "男性",
   "text": "あっイッちゃったのかい\nそんなに俺の触り方が良かったのかな\\FH[OFF]"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

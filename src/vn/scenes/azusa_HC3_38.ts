@@ -243,6 +243,10 @@ export const azusa_HC3_38: VnScript = {
   "type": "say",
   "speaker": "アズサ",
   "text": "ああ…川瀬様のおチンポ…私に幸せをくれる最高のおチンポ…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

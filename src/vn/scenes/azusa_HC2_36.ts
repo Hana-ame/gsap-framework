@@ -590,6 +590,10 @@ export const azusa_HC2_36: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは川瀬のペットとなり\n二度と魔法少女として戦うことは無くなった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

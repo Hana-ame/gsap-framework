@@ -367,6 +367,10 @@ export const isekai_HD11_44: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "山賊敗北エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

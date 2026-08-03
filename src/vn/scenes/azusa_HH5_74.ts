@@ -109,6 +109,10 @@ export const azusa_HH5_74: VnScript = {
  {
   "type": "cg",
   "key": "HH5s-5"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

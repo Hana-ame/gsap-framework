@@ -230,6 +230,10 @@ export const azusa_HE4_56: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "正野エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

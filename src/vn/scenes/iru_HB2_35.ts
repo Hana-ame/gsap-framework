@@ -163,7 +163,8 @@ export const iru_HB2_35: VnScript = {
   "text": "ああ…チパイスキー様に触られたいわ"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

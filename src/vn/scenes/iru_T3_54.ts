@@ -412,6 +412,10 @@ export const iru_T3_54: VnScript = {
   "type": "say",
   "speaker": "イル",
   "text": "これで私は一生チパイスキー様の物です\nこれからよろしくお願いしますね"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

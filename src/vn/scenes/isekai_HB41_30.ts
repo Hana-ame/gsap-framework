@@ -241,6 +241,10 @@ export const isekai_HB41_30: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "茶羅井エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

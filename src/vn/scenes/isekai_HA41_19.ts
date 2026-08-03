@@ -701,6 +701,10 @@ export const isekai_HA41_19: VnScript = {
   "type": "say",
   "speaker": "有理紗",
   "text": "そんなぁ…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

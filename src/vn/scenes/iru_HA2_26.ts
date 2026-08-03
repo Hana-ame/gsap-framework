@@ -103,12 +103,17 @@ export const iru_HA2_26: VnScript = {
   "text": "はあ…はあ…チパイスキー様…\nチパイスキー様に…忠誠を…"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  },
  {
   "type": "say",
   "speaker": "",
   "text": "そのまま眠ってしまうイルであった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

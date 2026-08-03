@@ -154,6 +154,10 @@ export const isekai_HB12_26: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "詩保敗北エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

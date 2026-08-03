@@ -608,6 +608,10 @@ export const isekai_HC11_34: VnScript = {
   "type": "say",
   "speaker": "有理紗",
   "text": "はいっ！小茂田様♡"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

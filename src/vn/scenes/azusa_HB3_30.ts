@@ -590,6 +590,10 @@ export const azusa_HB3_30: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは奥田に堕とされ\nエンパイアの一員となるのだった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

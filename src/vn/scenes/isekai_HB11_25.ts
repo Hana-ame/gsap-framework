@@ -297,6 +297,10 @@ export const isekai_HB11_25: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして有理紗も教皇のものになるのだった…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

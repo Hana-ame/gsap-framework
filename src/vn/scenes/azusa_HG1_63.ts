@@ -429,6 +429,10 @@ export const azusa_HG1_63: VnScript = {
   "type": "say",
   "speaker": "アズサ",
   "text": "ええ、任せて"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

@@ -316,6 +316,10 @@ export const isekai_HC32_39: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして世界はマルクスのものになる。\n歪んだ形ではあるが世界は平和になったのだった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

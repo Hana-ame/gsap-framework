@@ -234,7 +234,8 @@ export const iru_HE2_61: VnScript = {
   "text": "チパイスキー敗北エンド"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

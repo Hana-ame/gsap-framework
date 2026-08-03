@@ -41,6 +41,10 @@ export const azusa_HA4_24: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "悪の魔法少女エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

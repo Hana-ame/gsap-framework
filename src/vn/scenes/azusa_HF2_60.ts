@@ -187,6 +187,10 @@ export const azusa_HF2_60: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "クライシスエンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

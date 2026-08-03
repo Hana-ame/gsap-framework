@@ -88,9 +88,23 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     }
   }, [script.lines, loader]);
 
+  /** 跳转目标处理：#hash → 改 hash 路由；http(s) → 打开网页；否则 → 场景名（自动加载）。 */
+  const navigate = useCallback((target: string) => {
+    if (target.startsWith('#')) {
+      window.location.hash = target.slice(1);
+      return;
+    }
+    if (/^https?:\/\//i.test(target)) {
+      window.open(target, '_blank', 'noopener');
+      return;
+    }
+    // 场景名：切到对应 hash（由 examples 注册的 hscene-<name>）
+    const id = `hscene-${target}`;
+    window.location.hash = id;
+  }, []);
+
   /** 真正渲染一条行。 */
-  const runLine = useCallback(
-    (idx: number) => {
+  const runLine = useCallback((idx: number) => {
       const line = script.lines[idx];
       if (!line) {
         setEnded(true);
@@ -183,7 +197,12 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
         case 'jump': {
           const target = labelMap.get(line.to);
-          if (target != null) runLine(target);
+          if (target != null) {
+            runLine(target);
+          } else {
+            // 非 label：可能是 #hash / URL / 场景名
+            navigate(line.to);
+          }
           break;
         }
 
@@ -195,6 +214,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         case 'end': {
           setEnded(true);
           onEnd?.();
+          if (line.goto) navigate(line.goto);
           break;
         }
 
@@ -203,7 +223,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         }
       }
     },
-    [loader, labelMap, script.lines, strictLoad, onEnd],
+    [loader, labelMap, script.lines, strictLoad, onEnd, navigate],
   );
 
   // 启动

@@ -186,6 +186,10 @@ export const isekai_HA43_21: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "小茂田エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

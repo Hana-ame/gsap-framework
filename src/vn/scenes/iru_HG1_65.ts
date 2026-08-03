@@ -191,7 +191,8 @@ export const iru_HG1_65: VnScript = {
   "text": "住民エンド"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

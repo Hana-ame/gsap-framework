@@ -300,6 +300,10 @@ export const azusa_HH4_72: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは身も心も全て教祖のものになるのだった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

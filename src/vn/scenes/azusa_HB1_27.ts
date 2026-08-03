@@ -180,6 +180,10 @@ export const azusa_HB1_27: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "魔力が暴発する。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

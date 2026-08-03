@@ -200,7 +200,8 @@ export const iru_HD3_57: VnScript = {
   "text": "チパイスキーエンド"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

@@ -316,6 +316,10 @@ export const isekai_HB21_27: VnScript = {
   "type": "say",
   "speaker": "セイレア",
   "text": "はい、私もとても気持ちよかったです……"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

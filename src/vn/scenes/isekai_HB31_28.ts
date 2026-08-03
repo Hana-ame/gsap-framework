@@ -199,6 +199,10 @@ export const isekai_HB31_28: VnScript = {
   "type": "say",
   "speaker": "詩保",
   "text": "はい茶羅井様♡"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

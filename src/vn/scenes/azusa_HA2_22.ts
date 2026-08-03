@@ -51,6 +51,10 @@ export const azusa_HA2_22: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "戦闘員堕ちエンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

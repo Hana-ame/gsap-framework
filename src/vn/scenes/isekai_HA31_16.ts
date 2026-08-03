@@ -625,6 +625,10 @@ export const isekai_HA31_16: VnScript = {
   "type": "say",
   "speaker": "有理紗＆詩保",
   "text": "小茂田様に忠誠を誓います！"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

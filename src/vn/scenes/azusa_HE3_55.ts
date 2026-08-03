@@ -199,6 +199,10 @@ export const azusa_HE3_55: VnScript = {
   "type": "say",
   "speaker": "男子生徒",
   "text": "うん、また"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

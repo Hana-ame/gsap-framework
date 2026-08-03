@@ -668,6 +668,10 @@ export const azusa_HE2_53: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは魔法少女であることを忘れ、\n正野の都合の良い学園で過ごすこととなる。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

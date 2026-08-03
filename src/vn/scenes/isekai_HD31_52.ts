@@ -299,6 +299,10 @@ export const isekai_HD31_52: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして有理紗は、一般兵として前線へと送られるのだった･･･"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

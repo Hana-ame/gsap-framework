@@ -153,7 +153,7 @@ def convert_event(ev, cg_map, prefix):
             i += 1
         elif code == 117:
             if p[0] == 10:
-                out.append({'type': 'end'})
+                out.append({'type': 'end', 'goto': '#vn-menu'})
                 # 后面可能还有收尾对话，不 break，继续
             i += 1
         elif code in (121, 122, 250, 241, 245, 246, 221, 222, 357, 355, 108, 408, 233, 234, 205, 212, 301, 351):
@@ -225,6 +225,9 @@ def main():
                 if l.get('type') == 'say' and not l.get('text') and not l.get('effect'):
                     continue
                 clean.append(l)
+            # 保证以 end+goto 收尾（无则追加）
+            if not clean or clean[-1].get('type') != 'end':
+                clean.append({'type': 'end', 'goto': '#vn-menu'})
             all_lines = [{'type': 'preload', 'wait': True, 'assets': assets}] + clean
             base = sanitize_name(ev['name']) or f"ev{ev['id']}"
             fname = f"{game['prefix']}_{base}_{ev['id']}"

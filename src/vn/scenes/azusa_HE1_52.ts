@@ -394,6 +394,10 @@ export const azusa_HE1_52: VnScript = {
   "type": "say",
   "speaker": "アズサ",
   "text": "(怪人！？)"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

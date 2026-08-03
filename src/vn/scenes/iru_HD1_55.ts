@@ -229,7 +229,8 @@ export const iru_HD1_55: VnScript = {
   "text": "その表情はとても幸せそうだった…"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

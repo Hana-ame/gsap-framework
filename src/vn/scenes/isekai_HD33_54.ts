@@ -352,6 +352,10 @@ export const isekai_HD33_54: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして有理紗とガウは、\n一般兵として前線へと送られるのだった･･･"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

@@ -205,7 +205,8 @@ export const iru_HC3_44: VnScript = {
   "text": "はあ…はあ…良かったよ"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

@@ -475,6 +475,10 @@ export const azusa_HC1_35: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "そう言われ、近場に捨てられるアズサだった…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

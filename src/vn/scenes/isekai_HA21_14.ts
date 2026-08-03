@@ -464,6 +464,10 @@ export const isekai_HA21_14: VnScript = {
   "type": "say",
   "speaker": "詩保",
   "text": "(有理紗さん…助けて…)"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

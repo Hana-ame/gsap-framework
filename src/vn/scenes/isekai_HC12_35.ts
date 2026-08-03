@@ -237,6 +237,10 @@ export const isekai_HC12_35: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "小茂田敗北エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

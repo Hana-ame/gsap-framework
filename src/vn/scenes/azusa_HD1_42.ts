@@ -454,6 +454,10 @@ export const azusa_HD1_42: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして一時撤退するアズサだった…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

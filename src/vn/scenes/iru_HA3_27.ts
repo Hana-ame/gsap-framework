@@ -133,12 +133,17 @@ export const iru_HA3_27: VnScript = {
   "text": "早く本物のチパイスキー様に忠誠を誓いたいです…"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  },
  {
   "type": "say",
   "speaker": "",
   "text": "そのまま眠ってしまうイル。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

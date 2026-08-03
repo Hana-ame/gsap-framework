@@ -227,7 +227,8 @@ export const iru_HF1_63: VnScript = {
   "text": "チパイスキーの奴隷エンド"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

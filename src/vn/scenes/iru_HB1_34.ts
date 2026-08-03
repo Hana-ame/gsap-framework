@@ -198,7 +198,8 @@ export const iru_HB1_34: VnScript = {
   "text": "はあ…はあ…早く…早く本物のチパイスキー様に会いたい…"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

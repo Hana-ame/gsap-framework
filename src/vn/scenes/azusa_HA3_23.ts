@@ -107,6 +107,10 @@ export const azusa_HA3_23: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは人格を消され、\nエンパイアのために戦うだけの存在になってしまうのだった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

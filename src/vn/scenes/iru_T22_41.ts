@@ -95,6 +95,10 @@ export const iru_T22_41: VnScript = {
   "type": "say",
   "speaker": "イル",
   "text": "ええ、とても良かったわよ\\FH[OFF]"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

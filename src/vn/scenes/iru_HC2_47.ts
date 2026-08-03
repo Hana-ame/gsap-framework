@@ -37,7 +37,8 @@ export const iru_HC2_47: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

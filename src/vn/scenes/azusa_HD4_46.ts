@@ -494,6 +494,10 @@ export const azusa_HD4_46: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは剛島の手に堕ちてしまったのだった…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

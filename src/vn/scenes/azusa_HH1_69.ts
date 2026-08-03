@@ -649,6 +649,10 @@ export const azusa_HH1_69: VnScript = {
   "type": "say",
   "speaker": "アズサ",
   "text": "(違和感はあるけど…この気持ちは本物…だよね…)"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

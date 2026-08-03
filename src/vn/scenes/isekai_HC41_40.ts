@@ -224,6 +224,10 @@ export const isekai_HC41_40: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "マルクスエンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

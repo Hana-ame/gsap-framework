@@ -194,6 +194,10 @@ export const azusa_HB2_29: VnScript = {
   "type": "say",
   "speaker": "アズサ",
   "text": "(来た来た！これっ…ああ美味しい…)"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

@@ -433,6 +433,10 @@ export const isekai_HD21_48: VnScript = {
   "type": "say",
   "speaker": "有理紗",
   "text": "はい"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

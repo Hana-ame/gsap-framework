@@ -209,6 +209,10 @@ export const azusa_HB4_32: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "奥田エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

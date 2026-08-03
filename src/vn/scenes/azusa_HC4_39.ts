@@ -207,6 +207,10 @@ export const azusa_HC4_39: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "川瀬エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

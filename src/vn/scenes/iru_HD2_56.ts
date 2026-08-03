@@ -178,7 +178,8 @@ export const iru_HD2_56: VnScript = {
   "text": "もちろんですチパイスキー様♡"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

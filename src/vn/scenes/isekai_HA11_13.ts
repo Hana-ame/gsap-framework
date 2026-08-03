@@ -184,6 +184,10 @@ export const isekai_HA11_13: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "茶羅井敗北エンド"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

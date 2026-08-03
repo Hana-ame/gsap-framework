@@ -265,6 +265,10 @@ export const isekai_HB32_29: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして有理紗に続き詩保も茶羅井のものとなるのだった･･･"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

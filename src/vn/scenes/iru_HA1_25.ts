@@ -134,12 +134,17 @@ export const iru_HA1_25: VnScript = {
   "text": "薬の力って凄いのね…"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  },
  {
   "type": "say",
   "speaker": "",
   "text": "そしてそのまま疲れから眠ってしまうイルであった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

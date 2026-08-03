@@ -236,6 +236,10 @@ export const azusa_HH3_71: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサは教祖のものになったのだった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

@@ -539,6 +539,10 @@ export const azusa_HH2_70: VnScript = {
   "type": "say",
   "speaker": "教祖",
   "text": "(次に来るまでに私への想いを高めておくのですよ)"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

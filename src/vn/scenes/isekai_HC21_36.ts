@@ -230,6 +230,10 @@ export const isekai_HC21_36: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうして教皇と何度も交わる詩保だった…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

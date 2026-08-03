@@ -42,7 +42,8 @@ export const iru_HB_33: VnScript = {
   "text": "プシャアアア"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  },
  {
   "type": "say",
@@ -56,6 +57,10 @@ export const iru_HB_33: VnScript = {
  {
   "type": "label",
   "name": "終了"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

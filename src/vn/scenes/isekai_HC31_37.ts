@@ -347,6 +347,10 @@ export const isekai_HC31_37: VnScript = {
   "type": "say",
   "speaker": "有理紗",
   "text": "はい、教皇様"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

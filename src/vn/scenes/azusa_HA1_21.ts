@@ -419,6 +419,10 @@ export const azusa_HA1_21: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサという人格は消え去ってしまうのだった…"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

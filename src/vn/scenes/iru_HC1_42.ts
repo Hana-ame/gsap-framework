@@ -238,12 +238,17 @@ export const iru_HC1_42: VnScript = {
   "text": "はあ…はあ…本当にありがとうね"
  },
  {
-  "type": "end"
+  "type": "end",
+  "goto": "#vn-menu"
  },
  {
   "type": "say",
   "speaker": "",
   "text": "身なりを整えたイル。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

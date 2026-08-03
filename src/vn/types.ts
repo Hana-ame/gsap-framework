@@ -64,7 +64,7 @@ export interface VnChoice {
   options: Array<{ text: string; to: string; showWhen?: string }>;
 }
 
-/** 跳转指令：跳到 label。 */
+/** 跳转指令：跳到 label，或 'menu'（回菜单），或完整 URL（打开网页）。 */
 export interface VnJump {
   type: 'jump';
   to: string;
@@ -76,9 +76,10 @@ export interface VnLabel {
   name: string;
 }
 
-/** 结束指令。 */
+/** 结束指令。可选 goto：'menu' 回菜单，或完整 URL 打开网页。 */
 export interface VnEnd {
   type: 'end';
+  goto?: 'menu' | string;
 }
 
 export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnEnd;

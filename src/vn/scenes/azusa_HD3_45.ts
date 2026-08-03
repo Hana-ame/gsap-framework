@@ -124,6 +124,10 @@ export const azusa_HD3_45: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "オナニーしてはイケずに休むのを繰り返しているうちに\n夜が明けてしまう。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };

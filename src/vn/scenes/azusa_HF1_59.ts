@@ -683,6 +683,10 @@ export const azusa_HF1_59: VnScript = {
   "type": "say",
   "speaker": "",
   "text": "こうしてアズサはクライシスのものになるのだった。"
+ },
+ {
+  "type": "end",
+  "goto": "#vn-menu"
  }
 ],
 };
