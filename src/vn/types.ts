@@ -84,6 +84,27 @@ export interface VnEnd {
 
 export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnEnd;
 
+/** UI 布局/样式声明（可选）。缺省用框架默认。 */
+export interface VnUiStyle {
+  /** 对话框位置/样式。 */
+  dialog?: {
+    left?: string | number; right?: string | number; top?: string | number; bottom?: string | number;
+    align?: 'left' | 'center' | 'right';
+    bg?: string; color?: string; textSize?: number; radius?: number;
+    minHeight?: number; padding?: string;
+  };
+  /** 选项列表样式。 */
+  choice?: {
+    align?: 'center' | 'left' | 'right';
+    itemBg?: string; itemColor?: string; fontSize?: number; gap?: number;
+  };
+  /** CG 显示框（contain）。 */
+  cgBox?: {
+    aspect?: number;       // 宽高比，默认 16/9
+    maxWidth?: string;     // 如 'calc(100vh * 16 / 9)'，默认同
+  };
+}
+
 /** 剧本：meta（可选全局配置）+ lines。 */
 export interface VnScript {
   meta?: {
@@ -94,6 +115,8 @@ export interface VnScript {
     boxHeight?: number;
     /** 默认图片显示模式：cg=看全(contain)，bg=占满(cover)。 */
     bgMode?: 'cg' | 'bg';
+    /** UI 布局/样式声明。 */
+    ui?: VnUiStyle;
   };
   lines: VnLine[];
 }

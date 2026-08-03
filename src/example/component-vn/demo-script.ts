@@ -9,6 +9,11 @@ export const demoScript: VnScript = {
     strictLoad: true,
     fontFamily: '"Noto Serif SC", "STSong", serif',
     textSize: 22,
+    ui: {
+      dialog: { left: '6%', right: '6%', bottom: 28, bg: 'rgba(8,10,28,0.9)', color: '#f0f0ff', textSize: 24, radius: 14 },
+      choice: { align: 'center', itemBg: 'rgba(30,30,60,0.95)', itemColor: '#fff', fontSize: 18 },
+      cgBox: { aspect: 16 / 9, maxWidth: 'calc(100vh * 16 / 9)' },
+    },
   },
   lines: [
     {

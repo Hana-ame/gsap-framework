@@ -15,7 +15,14 @@
 import type { VnScript } from '../types';
 
 export const demo: VnScript = {
-  meta: { strictLoad: true, bgMode: 'cg', fontFamily: '"Noto Serif SC", serif', textSize: 22 },
+  meta: {
+    strictLoad: true, bgMode: 'cg', fontFamily: '"Noto Serif SC", serif', textSize: 22,
+    ui: {
+      dialog: { left: '4%', right: '4%', bottom: 24, bg: 'rgba(10,10,30,0.85)', color: '#fff', textSize: 22 },
+      choice: { align: 'center', itemBg: 'rgba(20,20,40,0.9)', fontSize: 18 },
+      cgBox: { aspect: 16 / 9, maxWidth: 'calc(100vh * 16 / 9)' },
+    },
+  },
   lines: [
     { type: 'preload', wait: true, assets: [{ key: 'cg1', url: 'https://...' }] },
     { type: 'bg', key: 'bg1' },          // 背景层（cover 占满）
@@ -28,6 +35,19 @@ export const demo: VnScript = {
   ],
 };
 ```
+
+## meta.ui（UI 布局/样式声明）
+
+scenario 可在 `meta.ui` 声明界面布局与样式，框架按声明渲染（缺省用框架默认）：
+
+```ts
+ui: {
+  dialog: { left, right, top, bottom, align, bg, color, textSize, radius, minHeight, padding },
+  choice: { align, itemBg, itemColor, fontSize, gap },
+  cgBox:  { aspect, maxWidth },
+}
+```
+
 
 ## 指令集
 

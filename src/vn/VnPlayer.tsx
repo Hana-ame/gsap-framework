@@ -291,6 +291,13 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
   if (ended) return null;
 
+  const uiStyle = script.meta?.ui;
+  const dialog = uiStyle?.dialog ?? {};
+  const choice = uiStyle?.choice ?? {};
+  const cgBox = uiStyle?.cgBox ?? {};
+  const cgAspect = cgBox.aspect ?? 16 / 9;
+  const cgMaxW = cgBox.maxWidth ?? 'calc(100vh * 16 / 9)';
+
   return (
     <div
       style={{
@@ -344,7 +351,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
                   zIndex: layer.index + 1,
                 }}
               >
-                <div style={{ position: 'relative', width: '100%', maxWidth: 'calc(100vh * 16 / 9)', aspectRatio: '16 / 9' }}>
+                <div style={{ position: 'relative', width: '100%', maxWidth: cgMaxW, aspectRatio: `${cgAspect}` }}>
                   <img
                     src={url}
                     alt=""
@@ -384,9 +391,9 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             inset: 0,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: choice.align === 'left' ? 'flex-start' : choice.align === 'right' ? 'flex-end' : 'center',
             justifyContent: 'center',
-            gap: 12,
+            gap: choice.gap ?? 12,
             zIndex: 20,
           }}
         >
@@ -399,9 +406,9 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
               }}
               style={{
                 padding: '12px 32px',
-                fontSize: 18,
-                background: 'rgba(20,20,40,0.9)',
-                color: '#fff',
+                fontSize: choice.fontSize ?? 18,
+                background: choice.itemBg ?? 'rgba(20,20,40,0.9)',
+                color: choice.itemColor ?? '#fff',
                 border: '1px solid #3a4a7a',
                 borderRadius: 8,
                 cursor: 'pointer',
@@ -418,14 +425,16 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         <div
           style={{
             position: 'absolute',
-            left: '4%',
-            right: '4%',
-            bottom: 24,
-            padding: '20px 28px',
-            background: 'rgba(10,10,30,0.85)',
-            borderRadius: 12,
+            left: dialog.left ?? '4%',
+            right: dialog.right ?? '4%',
+            top: dialog.top,
+            bottom: dialog.bottom ?? 24,
+            padding: dialog.padding ?? '20px 28px',
+            background: dialog.bg ?? 'rgba(10,10,30,0.85)',
+            borderRadius: dialog.radius ?? 12,
             border: '1px solid rgba(255,255,255,0.15)',
-            minHeight: 120,
+            minHeight: dialog.minHeight ?? 120,
+            textAlign: dialog.align ?? 'left',
             zIndex: 30,
           }}
         >
@@ -449,8 +458,8 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
           )}
           <div
             style={{
-              fontSize: script.meta?.textSize ?? 22,
-              color: '#fff',
+              fontSize: dialog.textSize ?? script.meta?.textSize ?? 22,
+              color: dialog.color ?? '#fff',
               lineHeight: 1.6,
               whiteSpace: 'pre-wrap',
               minHeight: 60,
