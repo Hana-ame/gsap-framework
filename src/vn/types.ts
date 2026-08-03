@@ -96,10 +96,10 @@ export interface VnLabel {
   name: string;
 }
 
-/** 结束指令。可选 goto：'menu' 回菜单，或完整 URL 打开网页。 */
+/** 结束指令。可选 goto：'#vn-menu' 回菜单、完整 URL 开网页、场景名加载。 */
 export interface VnEnd {
   type: 'end';
-  goto?: 'menu' | string;
+  goto?: string;
 }
 
 export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnEnd;
