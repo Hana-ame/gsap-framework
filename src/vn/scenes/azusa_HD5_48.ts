@@ -35,42 +35,42 @@ export const azusa_HD5_48: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "剛島",
-  "text": "なあ、エンペラパールよ"
- },
- {
-  "type": "cg",
-  "key": "HD5-2"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ふぁい"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "強くて丈夫で性処理相手としても優秀…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "本当に良い奴隷だよお前は"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ふぁりがとうございまふ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "頭をなでられているアズサの顔は本当に幸せそうであった。"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "さあ出すぞ、全部飲めよ"
+  "speaker": "刚岛",
+  "text": "喂，皇帝珍珠"
+  },
+  {
+   "type": "cg",
+   "key": "HD5-2"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "咩?"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "又强壮又耐用，作为泄欲对象也很优秀…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "你真是个不错的奴隶"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "谢谢主仁"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "被摸着头，梓脸上的表情真的十分幸福。"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "来吧，我要射了，全喝下去"
  },
  {
   "type": "cg",
@@ -85,45 +85,45 @@ export const azusa_HD5_48: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュッドピュッ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んぐっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "出された精液を飲み干すアズサ。"
- },
- {
-  "type": "cg",
-  "key": "HD5-4"
+  "text": "噗噗、噗噗"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "唔唔"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓将射出的精液一饮而尽。"
  },
  {
   "type": "cg",
   "key": "HD5-4"
  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ごちそうさまでした"
+  "type": "cg",
+  "key": "HD5-4"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "これからも私のことをたくさん使ってください♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして剛島の奴隷として働き続けるのだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "剛島エンド"
+  "speaker": "梓",
+  "text": "多谢款待"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "以后也要尽情地使用我哦♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，她作为刚岛的奴隶继续工作着。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "刚岛线结局"
  },
  {
   "type": "end",

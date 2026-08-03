@@ -108,7 +108,7 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "奥のベッドへ無理やり連れていかれるアズサ。"
+  "text": "梓被强行带到了里间的床上。"
  },
  {
   "type": "cg",
@@ -116,117 +116,117 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "きゃあ"
- },
+  "speaker": "梓",
+   "text": "呀"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么我反抗不了…）"
+  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(どうして抵抗できないの…)"
+  "type": "cg",
+  "key": "HF2-2"
  },
  {
   "type": "cg",
   "key": "HF2-2"
  },
  {
-  "type": "cg",
-  "key": "HF2-2"
- },
- {
   "type": "say",
-  "speaker": "クライシス",
-  "text": "さあ、これをお前の中に入れてやるからな"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い勃起したペンスを取り出すクライシス。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(クライシス様のおチンポ！！)"
- },
+  "speaker": "克赖西斯",
+   "text": "来吧，这就把它插进你的体内"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，克赖西斯取出了勃起的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（克赖西斯大人的阴茎！！）"
+  },
  {
   "type": "cg",
   "key": "HF2-3"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(って私何を考えて…)"
- },
+  "speaker": "梓",
+   "text": "（等等，我在想什么啊…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不行…会期待的…好想要，快忍不住了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "怎么样，想要吧"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（想要…但是不行…不能被牵着走…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "才…才不要…"
+  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ダメ…期待してしまう…欲しくてたまらない…)"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "どうだ欲しいだろ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(欲しい…けどダメ…流されちゃダメ…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "い…いらない…"
+  "type": "cg",
+  "key": "HF2-4"
  },
  {
   "type": "cg",
   "key": "HF2-4"
  },
  {
-  "type": "cg",
-  "key": "HF2-4"
- },
- {
   "type": "say",
-  "speaker": "クライシス",
-  "text": "口ではそう言っても顔は欲しくてたまらないという顔をしているぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなこと…ない…"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ほら欲しいんじゃないのか？"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いクライシスはペニスの先端をアズサの割れ目に触れる。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(クライシス様のおチンポが当たって…\n ああ、早く…早く入れて欲しい)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "アズサの思考がどんどんクライシスのペニスに染まっていく。"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ほら、どうなんだ？"
- },
+  "speaker": "克赖西斯",
+   "text": "嘴上这么说，脸上的表情却是想要得不得了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不是这样的…"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "来，你不是想要的吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，克赖西斯用阴茎的前端触碰了梓的缝隙。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（克赖西斯大人的阴茎碰到了…\n 啊啊，快点…好想快点让它进来）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓的思绪渐渐被克赖西斯的阴茎占据。"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "来，怎么样？"
+  },
  {
   "type": "cg",
   "key": "HF2-5"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "い…入れたければ入れればいいでしょ！"
+  "speaker": "梓",
+   "text": "想…想插就插进来好了！"
  },
  {
   "type": "cg",
@@ -234,81 +234,81 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "クライシス",
-  "text": "主人に向かってなんだその言い方は！\nそんな言い方じゃチンポはやらんぞ！"
- },
+  "speaker": "克赖西斯",
+   "text": "对主人那是怎样的说话态度！\n这种说法，我就不给你阴茎了！"
+  },
  {
   "type": "cg",
   "key": "HF2-7"
  },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(そんな！…ってそれでいいはずなのに…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(どうしてこんなに悲しい気持ちになるの…)"
- },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（怎么会！…明明这样才是对的啊…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么心里会这么难过呢…）"
+  },
  {
   "type": "cg",
   "key": "HF2-8"
  },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "このままだと私も萎えてしまうぞ、良いのか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ダメぇ…入れて欲しい…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(そうだ…１回だけ…１回入れてもらってイケば冷静になれるはず)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(だから…だからいいよね…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "入れてください…"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ん？よく聞こえなかったな"
- },
- {
-  "type": "cg",
-  "key": "HF2-9"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "お願いしますクライシス様！私の中に入れてください！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "最初から素直にそうお願いすればいいのに"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ほらお望み通り入れてやろう"
- },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "再这样下去，我这里也要软了，可以吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不行…好想让它进来…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（对了…只要一次…让他进来一次，去到了应该就能冷静下来）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（所以…所以没关系吧…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "请插进来…"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "嗯？我没听清"
+  },
+  {
+   "type": "cg",
+   "key": "HF2-9"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "拜托了，克赖西斯大人！请进到我的身体里来吧！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "一开始就老老实实这么求我就好了"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "那就如你所愿，插进去吧"
+  },
  {
   "type": "cg",
   "key": "HF2-10"
@@ -316,18 +316,18 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いクライシスのペニスがアズサの中に入ってくる。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んあああああああああああ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(入れられただけで…ああっイッちゃうううううう)"
- },
+   "text": "说着，克赖西斯的阴茎插入了梓的身体。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "嗯啊啊啊啊啊啊啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（只是被插进来…啊啊，就要去了啊啊啊啊啊）"
+  },
  {
   "type": "cg",
   "key": "HF2-11"
@@ -341,27 +341,27 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン"
- },
- {
-  "type": "cg",
-  "key": "HF2-12"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あひぃ…あひぃ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(なにこの感覚…入れられただけで\n 頭がおかしくなるぐらいの気持ち良さが全身を駆け巡って…)"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "入れられただけでイクとは\nだが私はまだ満足しておらんぞ"
- },
+   "text": "痉挛般颤抖"
+  },
+  {
+   "type": "cg",
+   "key": "HF2-12"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊嘻…啊嘻…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（这是什么感觉…只是被插进来，\n 舒服得脑袋都要坏掉的快感就在全身流窜…）"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "只是被插进来就去了，\n 不过我还没有满足呢"
+  },
  {
   "type": "cg",
   "key": "HF2-13"
@@ -369,18 +369,18 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いピストンを始めるクライシス。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっクライシス様、今イッたばかりだからやめてくださいぃ"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "お前は私の物だ、私の好きにさせてもらうぞ"
- },
+   "text": "说着，克赖西斯开始了抽插。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯，克赖西斯大人，我才刚高潮过，请停下来嘛"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "你是我的东西，我想怎么做就怎么做"
+  },
  {
   "type": "cg",
   "key": "HF2-14"
@@ -388,27 +388,27 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "アズサ",
-  "text": "違う…私はクライシス様のものじゃぁ…"
- },
- {
-  "type": "cg",
-  "key": "HF2-15"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んああっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "速度を上げるクライシス。"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "まだ口答えするとは…\nいい加減認めなさい！お前は私のものだ！！"
- },
+   "text": "不对…我不是克赖西斯大人的东西…"
+  },
+  {
+   "type": "cg",
+   "key": "HF2-15"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "嗯啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "克赖西斯加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "还敢顶嘴…\n 给我差不多该认了吧！你是我的东西！！"
+  },
  {
   "type": "cg",
   "key": "HF2-16"
@@ -416,33 +416,33 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "アズサ",
-  "text": "ああっ違うぅ…私はクライシス様のものじゃないですぅ…ああっ"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "いいや私のものだ！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "私以外ではこの快楽を得ることができないぞ！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "私だけがこの快楽を与えることができる存在だ！！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ、こんなに感じるのはクライシス様だからなのぉ？"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "そうだ！そして私のものにならないなら\n二度とこの快楽を得ることはできなくなるぞ"
- },
+   "text": "啊啊不对…我不是克赖西斯大人的东西…啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "不对，你就是我的东西！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "除了我以外，你得不到这种快感！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "只有我才能给你这种快感！！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，我会这么有感觉，是因为克赖西斯大人吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "没错！而且你如果不成为我的东西，\n 就再也得不到这种快感了"
+  },
  {
   "type": "cg",
   "key": "HF2-17"
@@ -450,53 +450,53 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "アズサ",
-  "text": "二度と…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(そんな…ここでクライシス様を拒絶したら、\n この気持ち良さを二度と味わえなく…)"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ほら、私に忠誠を誓いなさい！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっ…私は…私はぁ…"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ほらっ、早く言わないとやめてしまうぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやぁ…やめないで…"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "なら言うんだ！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっああっ…私は…私はぁ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "クライシス様に…忠誠を…誓います…"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "そうか、ついに認めたか"
- },
+   "text": "再也…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（那样的话…如果在这里拒绝了克赖西斯大人，\n 就再也尝不到这种舒服的感觉了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "来吧，向我宣誓忠诚！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯…我…我…"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "快说，不说的话我可要停下来了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要…不要停下来…"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "那就说出来！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯啊啊…我…我…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "向克赖西斯大人…宣誓…忠诚…"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "是吗，终于承认了啊"
+  },
  {
   "type": "cg",
   "key": "HF2-18"
@@ -504,28 +504,28 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "アズサ",
-  "text": "はい…認めますぅ…クライシス様のものになりますぅ！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああ…言っちゃった…でもすごい良い気持ち…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(どうして今まで拒絶してたかわからないぐらい良い気分…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "クライシス様クライシス様ぁ！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "さっきまでとは随分態度が違うな"
- },
+   "text": "是…我承认…我要成为克赖西斯大人的东西！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊…说出来了…但是感觉好舒服…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（舒服到不明白自己之前为什么要拒绝…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "克赖西斯大人，克赖西斯大人！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "和刚才相比，态度变了不少啊"
+  },
  {
   "type": "cg",
   "key": "HF2-19"
@@ -533,66 +533,66 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "アズサ",
-  "text": "先ほどまでは変な態度を取って申し訳ありませんでした"
- },
+   "text": "刚才那样奇怪的态度，真是对不起"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "居然会拒绝让我这么舒服的\n 克赖西斯大人，我真是脑子坏掉了！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "看来洗脑已经完全定下来了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "洗脑…？原来如此，我…被洗脑了呢…"
+  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "こんなにも気持ち良くしてくれる\nクライシス様を拒絶するなんてどうかしてました！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "洗脳が完全に定着したようだな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "洗脳…？そっか、私…洗脳されちゃったんですね…"
+  "type": "cg",
+  "key": "HF2-20"
  },
  {
   "type": "cg",
   "key": "HF2-20"
  },
  {
-  "type": "cg",
-  "key": "HF2-20"
- },
- {
   "type": "say",
   "speaker": "アズサ",
-  "text": "洗脳されるのってこんなに気持ち良かったんですね"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "こんなにも素晴らしいことだったのに…\nエンパイアの洗脳装置を壊してしまって申し訳ありませんでした"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "本当だぞ、もうエンパイアの戦力はお前しかいない\n私のために全力で働いてもらうからな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっ、何でもします！\nクライシス様のためならどんなことでもします！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "今までエンパイアの戦力を減らしてしまった分、\n私がクライシス様のお役に立ちますから！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "そうだ！それでいい！\nエンパイアの怪人を全て倒すほどの戦力、私のために使うのだぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっ！クライシス様に絶対の忠誠を誓います！！"
- },
+   "text": "被洗脑原来是这么舒服的事啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "明明是这么美妙的事…\n 我却把帝国的洗脑装置弄坏了，真是抱歉"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "真的啊，帝国的战力只剩你一个了\n 你要为了我全力工作才行"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是！我什么都愿意做！\n 为了克赖西斯大人，我什么都愿意做！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "之前给帝国减少的战力，\n 我会为克赖西斯大人补回来！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "没错！这样就好！\n 能打倒帝国所有怪人的战力，要为我所用哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是！我向克赖西斯大人宣誓绝对忠诚！！"
+  },
  {
   "type": "cg",
   "key": "HF2-21"
@@ -600,23 +600,23 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "クライシス",
-  "text": "それでいい！では私もそろそろイカせてもらうぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいぃ来てください！\nクライシス様の精液を私の中に出してください！！"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "ああ出るっ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私もイキます…イクぅうううううう"
- },
+   "text": "很好！那我差不多也要射了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是！请来吧！\n 请把克赖西斯大人的精液射进我的身体里！！"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "啊啊，要出来了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我也要去了…去了啊啊啊啊啊啊"
+  },
  {
   "type": "cg",
   "key": "HF2-22"
@@ -636,54 +636,54 @@ export const azusa_HF1_59: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーーー"
- },
+   "text": "噗噗噗噗噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HF2-23"
+  },
+  {
+   "type": "cg",
+   "key": "HF2-23"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呼…呼…"
+  },
+  {
+   "type": "say",
+   "speaker": "克赖西斯",
+   "text": "以后就拜托你了…闪耀珍珠"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不…我是帝国的魔法少女，帝国珍珠"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我会为了帝国全力战斗"
+  },
  {
   "type": "cg",
-  "key": "HF2-23"
- },
- {
-  "type": "cg",
-  "key": "HF2-23"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "say",
-  "speaker": "クライシス",
-  "text": "これからよろしく頼むぞ…シャイニーパール"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いいえ…私はエンパイアの魔法少女、エンペラパールです"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアのために全力で戦います"
+  "key": "HF2-24"
  },
  {
   "type": "cg",
   "key": "HF2-24"
  },
  {
-  "type": "cg",
-  "key": "HF2-24"
- },
- {
   "type": "say",
   "speaker": "アズサ",
-  "text": "全てはクライシス様のために…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサはクライシスのものになるのだった。"
- },
+   "text": "一切为了克赖西斯大人…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓成为了克赖西斯的东西。"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

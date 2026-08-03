@@ -63,398 +63,398 @@ export const azusa_HD1_42: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "離しなさい"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "敗北したアズサは剛島に捕まえられてしまう。"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "二度とエンパイアに逆らえなくなるようこいつで調教してやるよ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い勃起した巨大なペニスを見せつけ来る剛島。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ひっ…まさかそれを入れるつもり…\n無理無理そんな大きさ入らないって"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "意外と入るぞ\n何人もの戦闘員に入れてきてるからな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "本当に最低ね…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "だがあいつらは喜んでたぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "それはエンパイアに洗脳されてるからでしょ"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "確かにおとなしく俺のチンポを受け入れてたのは\nそうかもしれないし、最初は痛そうにしていたが\n最後にはみんな喜んでたぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "これを入れられて喜ぶなんて…そんなわけないでしょ…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ははは果たしてどうかな"
- },
- {
-  "type": "cg",
-  "key": "HD1-2"
- },
- {
-  "type": "cg",
-  "key": "HD1-2"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "じゃあ入れるぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "待って、やめて…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ズブリと巨大なペニスが挿入される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あああああ痛い痛い－－－－"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "魔法少女と言えど痛そうだな"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "そりゃそうかこんな大きい物を入れられてるんだからな"
- },
- {
-  "type": "cg",
-  "key": "HD1-3"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "うう…こんなことしても私はあんたに屈したりなんかしないわよ…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "その威勢がいつまで持つかな"
- },
- {
-  "type": "cg",
-  "key": "HD1-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いピストンを始める剛島。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "痛い…痛いって…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "俺は気持ち良いぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "なんて自分勝手…あんたのこと絶対許さないから…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ならこの状況を何とかしてみたらどうだ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "くっ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(今は耐えるのよ…耐えてなんとか隙を付いて抜け出さないと…)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ああ滑りが良くなってきたな、気持ち良いぞ"
- },
- {
-  "type": "cg",
-  "key": "HD1-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "巨大なペニスから出るカウパー液の量は多く、\nそのおかげか滑りが良くなる。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そしてこのカウパー液はそれだけでなく…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(どうして…さっきまであんなに痛かったのに…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(なんで気持ち良くなってきてるの…？)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "あっ…うっ…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "声が漏れてしまうアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "おっ、痛みが減ってきたか？"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "どうだすごいだろ\n俺の体液は痛みを緩和するだけじゃなくて気持ち良くなるらしい"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ほら、気持ち良いだろ？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あんっ…そんなこと…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(こんな無理やりされて気持ち良くなるなんて嫌…\n でも気持ち良くなっちゃう…)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "こいつで突かれた女どもは\n気が付いた時には俺にメロメロになるんだ"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "お前もそうなるのが楽しみだぜ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "誰があんたなんかに…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "まだ素直になれないか"
- },
- {
-  "type": "cg",
-  "key": "HD1-6"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そのまま速度を上げる剛島。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ激しく…くっ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ダメぇ気持ち良い…我慢…我慢しないと\n こんな奴で感じるなんて嫌…)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "オラオラ、気持ち良いだろ？"
- },
- {
-  "type": "cg",
-  "key": "HD1-7"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んーーー"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "口を閉じて必死に耐えようとする。"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "あくまで認めないんだな…\n俺の方が限界だ、そろそろ出すぞ！"
- },
- {
-  "type": "cg",
-  "key": "HD1-8"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "出すって…いやぁ出さないで！！"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ああ出るっ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやああああああああ"
- },
- {
-  "type": "cg",
-  "key": "HD1-9"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュドピューーーーー\n大量の精液がアズサの中に出される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(いやあああああいつの精液が私の中に…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああ何か来る…来ちゃう…ああイクううううう)"
- },
- {
-  "type": "cg",
-  "key": "HD1-10"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "絶頂してしまうアズサ。"
- },
- {
-  "type": "cg",
-  "key": "HD1-11"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(イっちゃった…あいつの精液を受けると耐えられなくなって…\n こいつは体液を受けると気持ち良くなるって言ってた…\n 精液はさらに効果が高いってこと…？)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "どうだったか？\nイッてたようだが気持ち良かったんじゃないか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなこと…ない…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(絶頂して力が抜けてる…？今のうちに)"
- },
- {
-  "type": "cg",
-  "key": "HD1-12"
- },
- {
-  "type": "cg",
-  "key": "HD1-12"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "一瞬の隙を付いて抜け出すアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "しまった…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "このまま戦うのは無謀ね…一度態勢を整えるしか…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして一時撤退するアズサだった…"
- },
+   "speaker": "梓",
+   "text": "放开我"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "战败的梓被刚岛抓住了。"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "用这个好好调教你，让你再也不敢反抗帝国"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "刚岛说着，亮出了勃起的巨大阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "嘶…你该不会是想把它放进来…\n不行不行，那么大的东西怎么可能进得来"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "意外地塞得进去哦\n我可是已经干过不少战斗员了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "你真是人渣…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "不过她们都干得很开心哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "那是因为她们被帝国洗脑了吧"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "要说乖乖接受我的肉棒，\n也许确实如此，一开始她们看着是挺疼的\n但到最后，所有人都干得很开心哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "被这种东西插进来还开心…怎么可能嘛…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "哈哈哈，那可说不准"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-2"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-2"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "那要进去了哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "等等，住手…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "巨大的阴茎扑哧一声插了进去。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊啊啊好痛好痛———"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "就算是魔法少女，看着也挺疼的啊"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "那当然，毕竟被这么大的家伙插进来"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-3"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呜…就算你这么做，我也不会向你屈服的…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "这股气势能撑多久呢"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "刚岛说着，开始抽插。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "好痛…我说好痛…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "我可舒服得很"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "真是自私…我绝对不会原谅你的…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "那你倒是想想办法摆脱这个处境啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "唔…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（现在要忍住…忍住，找机会逃出去…）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "啊啊，变得顺畅起来了，真舒服"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "巨大阴茎流出的前列腺液量很多，\n大概正因为如此，抽插变得顺畅起来。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "而且这份前列腺液还不止如此…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么…明明刚才还那么痛…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么开始变得舒服起来了…？）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "啊…呜…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓忍不住发出了声音。"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "哦，痛感减轻了？"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "厉害吧\n我的体液不仅能缓解疼痛，还会让人变得舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "怎么样，很舒服吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊嗯…才没有那回事…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（被这样强迫着还觉得舒服，真讨厌…\n 可身体确实变得舒服了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "被这家伙干过的女人们，\n回过神来的时候就已经对我神魂颠倒了"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "我真期待你也会变成那样啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "谁会对你这家伙…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "还不肯服软吗"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-6"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "刚岛就这样加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，好猛烈…唔…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不行，好舒服…要忍住…必须忍住\n 对这种人产生感觉，太讨厌了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "嘿呀嘿呀，很舒服吧？"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-7"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "唔———"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓紧闭双唇，拼命忍耐着。"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "死活不肯承认啊…\n我这边快到极限了，差不多要射了！"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-8"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "射出来…不要，别射出来！！"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "啊啊，射了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要啊啊啊啊啊啊啊啊"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-9"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗噗噗噗噗———\n大量的精液射入梓的体内。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不要啊啊啊啊，那个家伙的精液进到我身体里了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊，有什么要来了…要来了…啊啊，要去了呜呜呜呜）"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-10"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓到达了高潮。"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-11"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呼…呼…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（高潮了…一接受那个家伙的精液就再也忍不住…\n 他说接受体液会变得舒服…\n 也就是说精液的效果更强…？）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "感觉怎么样？\n看你高潮了，很舒服吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "才没有那回事…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（高潮之后浑身无力…？就是现在）"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-12"
+  },
+  {
+   "type": "cg",
+   "key": "HD1-12"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓抓住一瞬的空隙，脱身逃了出去。"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "糟糕…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "照这样硬拼太莽撞了…只能先重整态势…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓选择了暂时撤退…"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

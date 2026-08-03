@@ -71,411 +71,411 @@ export const azusa_HC1_35: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "",
-  "text": "身体の自由が効かないアズサは川瀬に抱きかかえられてしまう。"
- },
- {
-  "type": "cg",
-  "key": "HC1-2"
- },
- {
-  "type": "cg",
-  "key": "HC1-2"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "気持ち良くしてやるからな"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い胸を揉みながらパンツの中に手を入れて来る川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "離して…"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "そんなつれないこと言うなよ\n絶対気持ち良くしてやるからさ"
- },
- {
-  "type": "cg",
-  "key": "HC1-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い、優しく手を動かし出す川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "思わず声が出てしまうアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(どうして…触られただけでこんなに…)"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "どうだ、薬の影響でめちゃくちゃ感じやすくなっているだろう？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなことはない…"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "これでもか？"
- },
- {
-  "type": "cg",
-  "key": "HC1-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "クリトリスを刺激する川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっだめぇ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "さらに声を上げてしまうアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "しっかり感じてるじゃないか"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなわけ……ない……"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "強情だな、ならもっと強くするか"
- },
- {
-  "type": "cg",
-  "key": "HC1-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い指を激しく動かす川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ダメダメ、イッちゃう…\n こんな男にちょっと刺激されただけでイッちゃうううう)"
- },
- {
-  "type": "cg",
-  "key": "HC1-6"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ビクンビクン…"
- },
- {
-  "type": "cg",
-  "key": "HC1-7"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "もうイっちまったのか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "イッてなんか…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(こんな簡単にイカされてしまった…\n これが薬の力…なんて恐ろしいの…)"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "嘘言いやがって\nまあいい、次はこいつをぶち込んで気持ち良くしてやるからな"
- },
- {
-  "type": "cg",
-  "key": "HC1-8"
- },
- {
-  "type": "cg",
-  "key": "HC1-8"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い勃起したペニスを取り出す川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "嫌…これ以上は…"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "俺も薬の影響でやりたくてしかたねーんだよ！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "お前だけ気持ち良くなられるわけにはいかないんだよ！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんな勝手な…"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "おらっ"
- },
- {
-  "type": "cg",
-  "key": "HC1-9"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ズブリと川瀬のペニスが挿入される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやぁ抜いて…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(なにこれ…\n 入れられただけなのにどうしてイキそうなぐらい気持ち良いのぉ)"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "ああ魔法少女の中、気持ち良いぜ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "早く…抜いて"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(じゃないと私またイッちゃいそうに…)"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "抜くわけねーだろ、おらっ"
- },
- {
-  "type": "cg",
-  "key": "HC1-10"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いピストンを始める川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっ…もういやぁ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(イキたくない…イキたくない…)"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "ああいいぜぇ…お前も気持ち良いだろ？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやぁ…気持ち良くなんてなりたくない…なりたくない！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "そんなに嫌がらずに受け入れちまえよ\nどうせもうあの薬打たれた時点でお前も終わりなんだからよ"
- },
- {
-  "type": "cg",
-  "key": "HC1-11"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "終わりって…どういうことよ…"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "そのままの意味だよ\n俺もお前も…\nもう薬なしじゃ生きていけない身体になっちまったんだよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなわけない…薬なんてどうってことないわ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "速度を上げる川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "そりゃあお前はまだ経験してないからな、\nあの薬が抜けた後の最悪な気分を"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "薬が抜けるとな、すぐに欲しくなっちまうんだよ"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "薬キメてる時のこの気持ち良さが忘れられなくて、\n欲しくて欲しくてたまらなくなるんだよ！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私は…そんなことにはならない…"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "どうかな、お前と似たようなことを言ってた女も\n次の日には薬くださいって言ってきてたぜ！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "お前もそうなる絶対に！"
- },
- {
-  "type": "cg",
-  "key": "HC1-12"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "さらに速度を上げる川瀬。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あひぃいいい、私は絶対に薬なんかにいいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "さあ出すぞ！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやああああ…ああっイクッイッちゃうううううう"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "ああ出るっ！！"
- },
- {
-  "type": "cg",
-  "key": "HC1-13"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュドピューーー\nビクンビクン"
- },
- {
-  "type": "cg",
-  "key": "HC1-14"
- },
- {
-  "type": "cg",
-  "key": "HC1-14"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "say",
-  "speaker": "矢口",
-  "text": "これで脳に快楽が植え付けられたはずだ\nもう俺の薬から逃れることはできないだろう"
- },
- {
-  "type": "say",
-  "speaker": "矢口",
-  "text": "じゃあな、魔法少女！\n薬が欲しくなったらいつでも来るんだぞ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言われ、近場に捨てられるアズサだった…"
- },
+   "speaker": "",
+   "text": "身体无法自由活动的梓，被川濑抱了起来。"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-2"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-2"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "我会让你舒服的"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑说着，一边揉着胸，一边把手伸进内裤里。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "放开我…"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "别说那么绝情的话嘛\n我一定会让你舒服的"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑说着，温柔地动起手来。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓忍不住叫出了声。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么…只是被碰一下就这么…）"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "怎么样，被药效影响，身体变得超敏感了吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "才没有那种事…"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "这样呢？"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑刺激着梓的阴蒂。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯，不行"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓的声音愈发高涨。"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "不是很有感觉吗"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "才不是……那样……"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "真够嘴硬的，那就再用力点"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑说着，猛烈地动起手指。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不行不行，要去了…\n 被这种男人只是稍微刺激一下就快要去了啊啊啊啊）"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-6"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "痉挛般颤抖…"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-7"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "这就去了？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我才没有去…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（竟然这么简单就被弄到高潮了…\n 这就是药物的力量…多么可怕…）"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "胡说八道\n算了，接下来把这玩意儿塞进去，让你好好舒服舒服"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-8"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-8"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑说着，掏出勃起的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要…再这样下去…"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "老子也被药物影响，想干想得不得了啊！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "可不能只让你一个人舒服！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "你太自私了…"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "嘿！"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-9"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑的阴茎扑哧一声插了进去。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要，拔出去…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（这是什么…\n 只是被插进来而已，为什么舒服得快要高潮了啊啊啊）"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "啊啊，魔法少女的里面，真舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "快点…拔出去"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不然我又要去了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "怎么可能拔出去，嘿！"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-10"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑说着，开始抽插。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯…不要了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不想高潮…不想高潮…）"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "啊啊真爽…你也很舒服吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要…我不想变得舒服…不想！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "别那么抗拒，好好接受不就行了\n反正从你被打那针药的时候起，你就已经完蛋了"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-11"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "完蛋…是什么意思…"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "就是字面意思\n我和你已经…\n都变成了离开药就活不下去的身体了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不可能…药什么的根本没什么大不了的…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "那是你还没经历过，\n药劲过去之后那种难受得要死的感觉"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "药劲一过啊，立马就想要了"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "忘不了嗑药时的那种快感，\n想得抓心挠肝，忍都忍不住！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我…不会变成那样的…"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "那可说不准，之前有个女的说的话跟你一模一样，\n结果第二天就跑来说请给我药！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "你迟早也会那样的，肯定的！"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-12"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑进一步加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呀啊啊啊，我绝对不会依赖药的啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "要射了！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要啊啊啊啊…啊，要去了，要去了呜呜呜呜呜"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "啊啊，射了！！"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-13"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗噗噗噗噗——\n痉挛般颤抖"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-14"
+  },
+  {
+   "type": "cg",
+   "key": "HC1-14"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呼…呼…"
+  },
+  {
+   "type": "say",
+   "speaker": "矢口",
+   "text": "这样一来，快感应该已经深植进你的大脑了\n你已经逃不出我这药的手掌心了"
+  },
+  {
+   "type": "say",
+   "speaker": "矢口",
+   "text": "那就这样吧，魔法少女！\n想要药的时候，随时都可以来找我"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说完，梓被随意丢弃在附近…"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

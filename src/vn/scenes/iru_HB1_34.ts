@@ -48,7 +48,7 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "急いで服を脱ぐイル。"
+  "text": "伊露急急忙忙地脱掉衣服。"
  },
  {
   "type": "cg",
@@ -56,8 +56,8 @@ export const iru_HB1_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああチパイスキー様チパイスキー様ぁ"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人，奇派斯基大人啊"
  },
  {
   "type": "cg",
@@ -66,12 +66,12 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そのまま乳首を弄り出すイル。"
+  "text": "伊露就这样开始玩弄起乳头。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様のことを考えるとそれだけでああっ"
+  "speaker": "伊露",
+  "text": "啊啊，一想起奇派斯基大人，光是这样就…啊啊"
  },
  {
   "type": "cg",
@@ -86,7 +86,7 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン\n絶頂してしまうイル。"
+  "text": "痉挛般颤抖\n伊露到达了高潮。"
  },
  {
   "type": "cg",
@@ -94,8 +94,8 @@ export const iru_HB1_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ…はあ…足りない…"
+  "speaker": "伊露",
+  "text": "呼…呼…还不够…"
  },
  {
   "type": "cg",
@@ -108,12 +108,12 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "下着をずらし、下半身にも手を伸ばすイル。"
+  "text": "伊露移开内衣，手也伸向下半身。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "もっともっとチパイスキー様への忠誠心を高めないと"
+  "speaker": "伊露",
+  "text": "必须更加更加提升对奇派斯基大人的忠诚才行"
  },
  {
   "type": "cg",
@@ -122,12 +122,12 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そのまま手を動かし敏感なところを刺激するイル。"
+  "text": "伊露就这样动着手指，刺激着敏感的地方。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んああっ気持ち良い…"
+  "speaker": "伊露",
+  "text": "唔啊啊，好舒服…"
  },
  {
   "type": "cg",
@@ -135,43 +135,43 @@ export const iru_HB1_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様…チパイスキー様ぁ！"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人…奇派斯基大人！"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "私はチパイスキー様に忠誠を誓います！！"
+  "speaker": "伊露",
+  "text": "我向奇派斯基大人宣誓忠诚！！"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "この胸はチパイスキー様の物です！"
+  "speaker": "伊露",
+  "text": "这对胸是奇派斯基大人的东西！"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "チパイスキー様のために成長しなかったこの胸をどうか…"
+  "speaker": "伊露",
+  "text": "这对比为奇派斯基大人没能成长的胸，求您…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "どうか触ってくださいいいい"
+  "speaker": "伊露",
+  "text": "求您摸一摸啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "チパイスキー様に触られる日を心待ちにしていますぅ"
+  "speaker": "伊露",
+  "text": "我盼望着被奇派斯基大人触碰的那一天"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "チパイスキー様ぁどうか私にも愛の一揉みをおおおおお"
+  "speaker": "伊露",
+  "text": "奇派斯基大人，求您也给我爱的一揉啊啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "おお…んあああああっ\nチパイスキー様ぁ！！！"
+  "speaker": "伊露",
+  "text": "哦…唔啊啊啊啊\n奇派斯基大人！！！"
  },
  {
   "type": "cg",
@@ -186,7 +186,7 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "プシャアアアアアビクンビクン"
+  "text": "噗嗤——，痉挛般颤抖"
  },
  {
   "type": "cg",
@@ -194,8 +194,8 @@ export const iru_HB1_34: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ…はあ…早く…早く本物のチパイスキー様に会いたい…"
+  "speaker": "伊露",
+  "text": "呼…呼…好想…好想快点见到真正的奇派斯基大人…"
  },
  {
   "type": "end",

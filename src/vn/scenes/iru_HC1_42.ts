@@ -44,7 +44,7 @@ export const iru_HC1_42: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "建物の影へと移動する二人。"
+  "text": "两人移动到建筑物的阴影处。"
  },
  {
   "type": "cg",
@@ -80,23 +80,23 @@ export const iru_HC1_42: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ほら、これで良い？"
+  "speaker": "伊露",
+  "text": "喏，这样可以吗？"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言い服をはだけさせ胸を露出するイル。"
+  "text": "伊露这样说着，敞开衣服，露出了胸部。"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "おお、最高だよ！！"
+  "text": "哦哦，太棒了！！"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああ、もう我慢できない"
+  "text": "啊啊，已经忍不住了"
  },
  {
   "type": "cg",
@@ -105,27 +105,27 @@ export const iru_HC1_42: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言い勃起したペニスを取り出す男。"
+  "text": "男人这样说着，掏出了勃起的阴茎。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ちょっ何出してるのよ！！"
- },
- {
-  "type": "say",
-  "speaker": "男性",
-  "text": "触れたりはしないから、頼む、抜かせてくれ！"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "追加料金いただくけど良い？"
+  "speaker": "伊露",
+  "text": "喂，你掏什么出来啊！！"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "もちろん！"
+  "text": "我不会碰你的，求你了，让我打出来吧！"
+ },
+ {
+  "type": "say",
+  "speaker": "伊露",
+  "text": "要加钱的哦，可以吗？"
+ },
+ {
+  "type": "say",
+  "speaker": "男性",
+  "text": "当然！"
  },
  {
   "type": "cg",
@@ -133,18 +133,18 @@ export const iru_HC1_42: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "じゃあ好きなだけ見て行けばいいわ"
+  "speaker": "伊露",
+  "text": "那就随你看个够吧"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ありがとう！\nそれで…その…"
+  "text": "谢谢！\n那个…就是…"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "できればパンツも見せて欲しいんだけど…"
+  "text": "如果可以的话，能让我看看内裤吗…"
  },
  {
   "type": "cg",
@@ -152,28 +152,28 @@ export const iru_HC1_42: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ！？パンツ見たいって変態なの？！"
+  "speaker": "伊露",
+  "text": "哈！？想看内裤，你是变态吗？！"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "そんなに怒らないで！お金ならさらに出すから！"
+  "text": "别那么生气嘛！钱我可以再加！"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "パンツが見たいなんて本当に変態ね"
+  "speaker": "伊露",
+  "text": "想看内裤，真是个大变态呢"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "まあ、お金もらえるなら見せるぐらいはしてあげるわ"
+  "speaker": "伊露",
+  "text": "嘛，既然能收到钱，给你看一下也不是不行啦"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "胸を露出することに関しては思想が染まりかけていることで\nあまり抵抗がなくなっているイルだが、\nそれ以外の認識はそのままであるため、\nパンツを露出することに関しては抵抗感があった。"
+  "text": "对于露出胸部这件事，因为思想正被逐渐侵蚀，伊露已经没有太多抵触了，\n但她其他方面的认知还和原来一样，\n所以对露出内裤这件事，还是感到有些抗拒。"
  },
  {
   "type": "cg",
@@ -181,13 +181,13 @@ export const iru_HC1_42: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ほら、これで良い？"
+  "speaker": "伊露",
+  "text": "喏，这样可以吗？"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いスカートをたくし上げパンツを見せるイル。"
+  "text": "伊露这样说着，掀起裙子，露出了内裤。"
  },
  {
   "type": "cg",
@@ -196,17 +196,17 @@ export const iru_HC1_42: VnScript = {
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああ最高だよ！！"
+  "text": "啊啊，太棒了！！"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああっ凄い高まってきた…"
+  "text": "啊啊，越发兴奋了…"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "本当に最高だよ…ああっ出るっ"
+  "text": "真是太棒了…啊啊，要出来了"
  },
  {
   "type": "cg",
@@ -221,7 +221,7 @@ export const iru_HC1_42: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーー"
+  "text": "噗噗噗噗噗——"
  },
  {
   "type": "cg",
@@ -229,13 +229,13 @@ export const iru_HC1_42: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "うえぇ…これが精液…"
+  "speaker": "伊露",
+  "text": "呕…这就是精液…"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "はあ…はあ…本当にありがとうね"
+  "text": "呼…呼…真是谢谢你啊"
  },
  {
   "type": "end",
@@ -244,7 +244,7 @@ export const iru_HC1_42: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "身なりを整えたイル。"
+  "text": "伊露整理好了衣着。"
  },
  {
   "type": "end",

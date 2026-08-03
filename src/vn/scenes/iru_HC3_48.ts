@@ -20,7 +20,7 @@ export const iru_HC3_48: VnScript = {
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ホテルへ行く二人。"
+  "text": "两人前往旅馆。"
  },
  {
   "type": "cg",

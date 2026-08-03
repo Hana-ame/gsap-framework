@@ -104,42 +104,42 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "押し倒されるアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "また私にエッチなことをする気？\nそんなことされても私は洗脳なんてされないわ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "それはどうかな\n快楽の中で受ける洗脳ってのは普段より効きやすいんだ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "特に絶頂の瞬間ってのは一番深く洗脳ができるんだぞ\nこれから快楽でお前のことを洗脳してやるぜ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私が素直にイクと思っているの？"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "さっきはあれほど素直にイッてたじゃないか"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あれは…洗脳されてたからで\n洗脳されるとわかっててイクわけないでしょ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "果たしてどうかな"
+  "text": "梓被按倒在地。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "你又想对我做那种事？\n就算你这么做，我也不会被洗脑的"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "那可不好说\n在快感中进行的洗脑，比平时更容易生效"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "尤其是绝顶的瞬间，是洗脑最深的时刻\n接下来就用快感把你洗脑掉"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "你觉得我会乖乖高潮吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "刚才你不是乖乖地去得很干脆吗"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "那是因为…被洗脑了才会那样\n既然知道会被洗脑，我怎么可能高潮"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "那就走着瞧吧"
  },
  {
   "type": "cg",
@@ -148,22 +148,22 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ズブリと正野のペニスが挿入される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "くっああっ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(危ない…入れられただけでイキそうに…)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "どうだ気持ち良いだろ？"
+"text": "正野的阴茎噗嗤一声插了进来。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呃…啊啊…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不妙…光是插进来就要去了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "怎么样，很舒服吧？"
  },
  {
   "type": "cg",
@@ -171,33 +171,33 @@ export const azusa_HE2_53: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなこと…ない…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(なんで入れられただけでこんなに気持ち良く…)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "身体の方は洗脳の影響が残っているようだな"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "これなら簡単にイカせることもできそうだな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私は…イッたりなんかしない…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そうか、せいぜい耐えることだな"
+  "speaker": "梓",
+   "text": "没有那种事…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么只是被插进来就这么舒服…）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "看来洗脑的影响还残留在身体里"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "这样的话，要让你高潮也很容易了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我才…不会高潮…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "是吗，那你可要拼命忍耐了"
  },
  {
   "type": "cg",
@@ -206,56 +206,56 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いピストンを始める正野。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ動かないでぇ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(やばい…気持ち良すぎる…このままじゃイッちゃう…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(反撃する魔力が回復するまで何とか耐えないと…)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "おらおら、どうだ？気持ち良いだろ？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "やめてぇ…動かないで"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ほらっ早くイっちまえよ"
- },
- {
-  "type": "cg",
-  "key": "HE2-5"
+  "text": "说着，正野开始了抽送。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，别动啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（糟了…太舒服了…这样下去会去的…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（必须撑到反击用的魔力恢复为止…）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "喂喂，怎么样？舒服吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "住手啊…别动了"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "来，快点去了吧"
  },
  {
   "type": "cg",
   "key": "HE2-5"
  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやぁ…絶対にイかない！！…ああんっ"
+  "type": "cg",
+  "key": "HE2-5"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ今洗脳は止めてぇ"
- },
+  "speaker": "梓",
+   "text": "不要啊…我绝对不会高潮！！…啊啊嗯"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，现在快住手，别洗脑"
+  },
  {
   "type": "cg",
   "key": "HE2-6"
@@ -267,37 +267,37 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "正野",
-  "text": "油断したな\nイク瞬間じゃなくてもいつでも俺は洗脳できるんだぞ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "今の状態じゃ精神は操れなさそうだが、\n感度を上げるぐらいはできるぜ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ほら、さっきより感じるようになったんじゃないか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやあああああだめぇ止めて…もう動かないでええええええ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(やばい…さっきまででもギリギリだったのに、\n これ以上気持ち良くされたら私…私イッちゃう)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ダメダメダメええええ来ちゃう来ちゃううううう"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああああああああああ"
+   "text": "你大意了\n就算不是高潮的瞬间，我随时都能给你洗脑"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "现在的状态下虽然控制不了你的精神，\n但提高一下你的敏感度还是做得到的"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "看，是不是比刚才更有感觉了？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊啊啊啊，不行，住手…别再动了啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（糟了…刚才明明都已经到极限了，\n 再被弄得更舒服的话我…我会去的）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不行不行不行啊啊啊，要来了，要来了来了来了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊啊啊啊啊啊啊"
  },
  {
   "type": "cg",
@@ -312,12 +312,12 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン"
- },
- {
-  "type": "cg",
-  "key": "HE2-8"
- },
+  "text": "痉挛般颤抖"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-8"
+  },
  {
   "type": "cg",
   "key": "HE2-8"
@@ -325,60 +325,60 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "正野",
-  "text": "今だ"
- },
+   "text": "就是现在"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊…不行…"
+  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああ…だめぇ…"
+  "type": "cg",
+  "key": "HE2-9"
  },
  {
   "type": "cg",
   "key": "HE2-9"
  },
  {
-  "type": "cg",
-  "key": "HE2-9"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(ダメ…逆らえない…\n 洗脳…気持ち良い…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(正野様…絶対服従…正野様…言うこと聞く…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(でも正野様…怪人…怪人は敵…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "正野…様…に服従…"
- },
+  "speaker": "梓",
+   "text": "（不行…无法反抗…\n 洗脑…好舒服…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（正野大人…绝对服从…正野大人…听他的话…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（可是正野大人…怪人…怪人是敌人…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "服从…正野…大人…"
+  },
  {
   "type": "cg",
   "key": "HE2-10"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "でも正野様は…敵…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "まだ魔法少女としての意思が残っているのか…\n大した精神力だ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ならば何度も洗脳を重ねるだけだ！\n二度と敵対できないよう徹底的に洗脳してやるからな！"
- },
+  "speaker": "梓",
+   "text": "可是正野大人是…敌人…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "魔法少女的意识还在吗…\n真是了不起的精神力"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "那就只要反复洗脑就行了！\n我会彻底地洗脑你，让你再也没法与我为敌！"
+  },
  {
   "type": "cg",
   "key": "HE2-11"
@@ -386,47 +386,47 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いピストンを再開する正野。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ…正野様…ダメ…これ以上は止めてください…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "何を言っている、魔法少女としての意思など残してはならん"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "もっと洗脳してその意思を消し去らないと！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやあ…これ以上は…本当に私が消えてしまいます…\nお願いします正野様…もうやめてください…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ダメだ！二度と逆らわないようにしないと\nたとえ二度と魔法少女として戦えないようになったとしてもだ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ダメぇ…やめて…やめてくださいぃ…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "パンパンパンパン"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ、ダメっ、またイク…イッちゃう…イッちゃうううううう"
+  "text": "说着，正野重新开始了抽送。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊…正野大人…不行…请别再继续了…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "说什么呢，魔法少女的意识绝不能留下"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "必须多洗脑几次，把那意识消掉才行！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要啊…再这样下去…我真的会消失的…\n求求您，正野大人…请住手吧…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "不行！不确保你永远不会反抗可不行\n哪怕你从此再也无法作为魔法少女战斗"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不要…住手…请住手啊…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "啪啪啪啪"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，不行，又要去了…要去了…要去去了去了了"
  },
  {
   "type": "cg",
@@ -441,31 +441,31 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン"
- },
+  "text": "痉挛般颤抖"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊哈…正野大人…正野大人啊…"
+  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あひゃあ…正野様…正野様ぁ…"
+  "type": "cg",
+  "key": "HE2-13"
  },
  {
   "type": "cg",
   "key": "HE2-13"
  },
  {
-  "type": "cg",
-  "key": "HE2-13"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(正野様は…私のご主人様…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(私は正野様に絶対服従…正野様の言うことだけ聞くだけの存在…)"
- },
+  "speaker": "梓",
+   "text": "（正野大人是…我的主人…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（我对正野大人绝对服从…是只听从正野大人话的存在…）"
+  },
  {
   "type": "cg",
   "key": "HE2-14"
@@ -476,8 +476,8 @@ export const azusa_HE2_53: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(だから正野様は敵じゃない…？)"
+  "speaker": "梓",
+   "text": "（所以正野大人不是敌人…？）"
  },
  {
   "type": "cg",
@@ -485,68 +485,68 @@ export const azusa_HE2_53: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "正野様…\n正野様のことを敵と思ってしまう自分がいるんです…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私はどうすればいいんですか？"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そんな自分消してしまえばい"
- },
- {
+  "speaker": "梓",
+   "text": "正野大人…\n有个把正野大人当作敌人的自己在…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我该怎么办才好？"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "把那样的自己消掉不就行了"
+  },
+  {
   "type": "cg",
   "key": "HE2-16"
  },
  {
   "type": "say",
   "speaker": "正野",
-  "text": "安心しろ！すぐに消してやる"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいぃ正野様…消してください！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "正野様に敵対しようとする私のことなんか消してくださいいいい"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "いいぞお前は俺に従っていればいいんだ！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいぃ私は正野様に従うだけの存在です！\n正野様が私の全てです！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "早く私の中にある邪魔な感情を消してくださいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "良いんだな？\nその意思が消えてしまったら\n二度と魔法少女として戦えなくなるのだぞ？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "構いません！正野様に逆らおうとする意思なんていりません！\n一刻も早く消し去ってくださいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そこまで言われた仕方ないな、\nじゃあ消してやるからな"
- },
+  "text": "放心吧！马上替你消掉"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，正野大人…请消掉吧！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "请把那个想与正野大人为敌的我消掉吧啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "好啊，你只要服从我就行了！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，我是只服从正野大人的存在！\n正野大人就是我的全部！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "快把我心中那些碍事的感情消掉吧啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "你确定吗？\n要是那份意识被消掉了\n就再也无法作为魔法少女战斗了哦？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "没关系！与正野大人为敌的意识我不要！\n请尽快把它消掉吧啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "都说到这个份上了，那没办法\n我就替你消掉吧"
+  },
  {
   "type": "cg",
   "key": "HE2-17"
@@ -554,38 +554,38 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言い速度を上げる正野。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ激しい！気持ち良いっ！イッちゃいますぅ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "少し待て！俺も一緒にイカせてもらうからな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "わかりましたぁ\n我慢します…正野様と一緒に行くまで我慢しますううう"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ああっそろそろイキそうだぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっ、私もう…耐えられません\nイクっ…イッちゃいますうううう"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "俺も出るっ…"
- },
+  "text": "说着，正野加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，好激烈！好舒服！要去了"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "等等！我也要跟你一起高潮"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "知道了\n我会忍住的…忍到和正野大人一起去的"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "啊啊，差不多要去了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯，我已经…忍不住了\n要去…要去去了了了了"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "我也要射了…"
+  },
  {
   "type": "cg",
   "key": "HE2-18"
@@ -605,31 +605,31 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーーー"
- },
- {
-  "type": "cg",
-  "key": "HE2-19"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああ…消える…\n 私の中から何か大事なものが消えてく感じがする…)"
- },
+  "text": "噗噗噗噗噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-19"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呼…呼…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊…要消失了…\n 感觉有什么重要的东西正从我体内消失…）"
+  },
  {
   "type": "cg",
   "key": "HE2-20"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(でもそれで良い…これでやっと正野様のものになれるのだから…)"
- },
+  "speaker": "梓",
+   "text": "（不过这样就够了…这样我终于能成为正野大人的东西了…）"
+  },
  {
   "type": "cg",
   "key": "HE2-21"
@@ -643,31 +643,31 @@ export const azusa_HE2_53: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "光と共にアズサの変身が解ける。"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "戦う意思を完全に失ったな\nこれでお前もこの学園の立派な生徒だ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "俺の理想の学園の一員として過ごしてもらうぞ"
- },
+  "text": "随着光芒，梓的变身解除了。"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "完全失去了战斗的意志\n这样你也算这所学园的优秀学生了"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "你就作为我理想学园的一员生活吧"
+  },
  {
   "type": "cg",
   "key": "HE2-22"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "はい…正野様…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサは魔法少女であることを忘れ、\n正野の都合の良い学園で過ごすこととなる。"
+  "speaker": "梓",
+   "text": "是…正野大人…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓忘了自己曾是魔法少女，\n在正野随心所欲的学园里生活着。"
  },
  {
   "type": "end",

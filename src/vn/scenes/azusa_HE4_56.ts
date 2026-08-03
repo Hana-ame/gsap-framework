@@ -47,51 +47,51 @@ export const azusa_HE4_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっ正野様のおチンポを感じて気持ち良いですぅ"
- },
+  "speaker": "梓",
+   "text": "啊啊嗯，感觉到正野大人的阴茎，好舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "变得相当淫乱了\n真不像是前魔法少女"
+  },
  {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ずいぶん淫乱になったな\n元魔法少女とは思えない"
+  "type": "cg",
+  "key": "HE4-2"
  },
  {
   "type": "cg",
   "key": "HE4-2"
  },
  {
-  "type": "cg",
-  "key": "HE4-2"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "魔法少女…？なんですかそれは？"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "はははもう覚えていないか"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "よくわからないですけど、私は正野様のものでしかありません"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "それ以外の何かがあったとしてももう忘れてしまいました"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そうか"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "(魔法少女として洗脳して戦力とすることには失敗したが、\n 脅威である魔法少女を無力化できたから良しとするか…)"
+  "speaker": "梓",
+   "text": "魔法少女…？那是什么？"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "哈哈哈，已经不记得了吗"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "虽然不太明白，但我只是正野大人的东西"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "就算曾经有过别的什么，我也已经全忘了"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "是吗"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "（虽然把她洗脑成魔法少女战力是失败了，\n 但能让威胁的魔法少女无力化，也算可以了吧…）"
  },
  {
   "type": "cg",
@@ -103,42 +103,42 @@ export const azusa_HE4_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなことより正野様…\n今日は何回エッチしてくれますか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "この前抱いてもらった時は\n１回しか出してもらえなくて物足りなかったんですよ"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "俺も相手が多くて忙しいからな\nだが今日はそうだな…\nこの後の予定も無いし気が済む前相手してやろう"
- },
+  "speaker": "梓",
+   "text": "比起那个，正野大人…\n今天要和我做几次？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "上次被您抱住的时候\n只射了一次，我觉得不太够呢"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "我这边要应付的人也多，很忙的\n不过今天嘛…\n接下来也没别的安排，就陪你到你满意为止"
+  },
+  {
+   "type": "cg",
+   "key": "HE4-4"
+  },
  {
   "type": "cg",
   "key": "HE4-4"
  },
  {
-  "type": "cg",
-  "key": "HE4-4"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "やったぁありがとうございます！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "正野様と長時間エッチできるなんて\n今日はなんて幸せな日なのでしょう"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "早く…早く正野様の精液が欲しいです"
- },
+  "speaker": "梓",
+   "text": "太好了，谢谢您！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "能和正野大人做这么久\n今天是多么幸福的一天啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "快点…好想要正野大人的精液"
+  },
  {
   "type": "cg",
   "key": "HE4-5"
@@ -146,23 +146,23 @@ export const azusa_HE4_56: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言い動きが激しくなるアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "おお、そんなに刺激されたらもう出てしまいそうだ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっ出してください！\n正野様の精液を私の中にたくさん出してください！"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ああ出るっ！"
- },
+  "text": "说着，梓的动作变得激烈起来。"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "哦哦，被这么刺激，我马上要射了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，请射出来！\n请把正野大人的精液尽情射进我的身体里！"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "啊啊，要射了！"
+  },
  {
   "type": "cg",
   "key": "HE4-7"
@@ -176,13 +176,13 @@ export const azusa_HE4_56: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーーー\n正野の精液がアズサの中に出される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああ…正野様の精液…ああっ"
- },
+  "text": "噗噗噗噗噗——\n正野的精液射进了梓的体内。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊…正野大人的精液…啊啊"
+  },
  {
   "type": "cg",
   "key": "HE4-8"
@@ -196,8 +196,8 @@ export const azusa_HE4_56: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン"
- },
+  "text": "痉挛般颤抖"
+  },
  {
   "type": "cg",
   "key": "HE4-9"
@@ -208,29 +208,29 @@ export const azusa_HE4_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "正野様の精液を感じてイッてしまいました…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そうか、じゃあ次はどうする？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "じゃあ次は…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサは\n正野に都合の良い存在になってしまったのだった…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "正野エンド"
- },
+  "speaker": "梓",
+   "text": "感觉到正野大人的精液，我高潮了…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "是吗，那接下来怎么办？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "那么接下来…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓\n成了对正野来说最方便的存在…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "正野线结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

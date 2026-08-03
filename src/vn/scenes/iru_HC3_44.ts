@@ -52,12 +52,12 @@ export const iru_HC3_44: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "勃起したペニスを見せ付け待ち構える男。"
+  "text": "男人把勃起的阴茎亮出来，等着她。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "じゃあ行くわよ"
+  "speaker": "伊露",
+  "text": "那我就来了哦"
  },
  {
   "type": "cg",
@@ -70,27 +70,27 @@ export const iru_HC3_44: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言い胸を寄せてペニスを挟む。"
+  "text": "伊露这样说着，把胸凑上去夹住阴茎。"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "おおっ良いね！やっぱりこれだよこれ！\nおっぱいを感じながら気持ち良くしてもらえるのは最高だ"
+  "text": "哦哦，不错嘛！果然还是这个！\n一边感受着奶子一边被弄舒服，简直太棒了"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "それなら良かったわ"
+  "speaker": "伊露",
+  "text": "那就好"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "上下に動かしペニスを刺激する。"
+  "text": "上下移动着刺激阴茎。"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああ良いよ～そのまま咥えて気持ち良くして"
+  "text": "啊啊，好棒～就这样含进去让我舒服吧"
  },
  {
   "type": "cg",
@@ -98,13 +98,13 @@ export const iru_HC3_44: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ、なんでそこまでしなきゃいけないのよ！？"
+  "speaker": "伊露",
+  "text": "哈，为什么非得做到这一步啊！？"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "お願いだよ、報酬は弾むから"
+  "text": "求你了，报酬我会给足的"
  },
  {
   "type": "cg",
@@ -112,13 +112,13 @@ export const iru_HC3_44: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "絶対に払ってもらうわよ"
+  "speaker": "伊露",
+  "text": "你可一定要付钱啊"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "もちろん"
+  "text": "当然"
  },
  {
   "type": "cg",
@@ -131,12 +131,12 @@ export const iru_HC3_44: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そして男のペニスを咥える。"
+  "text": "伊露将男人的阴茎含入口中。"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "おおっ良いっ！良いよその調子でお願い"
+  "text": "哦哦，好棒！就这样，拜托了"
  },
  {
   "type": "cg",
@@ -145,17 +145,17 @@ export const iru_HC3_44: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "顔を動かしペニスを刺激するイル。"
+  "text": "伊露动着脑袋，刺激着阴茎。"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああやばっ出そうだ…"
+  "text": "啊啊，糟糕，要射了…"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああ出るっ…"
+  "text": "啊啊，要出来了…"
  },
  {
   "type": "cg",
@@ -170,7 +170,7 @@ export const iru_HC3_44: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピューーー"
+  "text": "噗噗——"
  },
  {
   "type": "cg",
@@ -178,13 +178,13 @@ export const iru_HC3_44: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んぐぅ"
+  "speaker": "伊露",
+  "text": "唔唔"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "出された精液を少し飲んでしまうイル。"
+  "text": "伊露不小心咽下了一些射出来的精液。"
  },
  {
   "type": "cg",
@@ -196,13 +196,13 @@ export const iru_HC3_44: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "うげぇ…まずっ"
+  "speaker": "伊露",
+  "text": "呕…好难喝"
  },
  {
   "type": "say",
   "speaker": "男性",
-  "text": "はあ…はあ…良かったよ"
+  "text": "呼…呼…真舒服啊"
  },
  {
   "type": "end",

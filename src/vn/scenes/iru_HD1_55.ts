@@ -48,7 +48,7 @@ export const iru_HD1_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言い勃起したペニスを取り出すチパイスキー。"
+  "text": "奇派斯基这样说着，掏出了勃起的阴茎。"
  },
  {
   "type": "cg",
@@ -56,13 +56,13 @@ export const iru_HD1_55: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ほら君のおっぱいで挟んで俺のチンポを気持ち良くしてくれ"
+  "speaker": "奇派斯基",
+  "text": "那，用你的奶子夹住，让我的老二舒服舒服"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "わかりました\nでは失礼します"
+  "speaker": "伊露",
+  "text": "明白了\n那就失礼了"
  },
  {
   "type": "cg",
@@ -75,22 +75,22 @@ export const iru_HD1_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "服をずらし胸を露出させ、チパイスキーのペニス挟むイル。"
+  "text": "伊露滑开衣服露出胸脯，夹住了奇派斯基的阴茎。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "どうですかチパイスキー様？"
+  "speaker": "伊露",
+  "text": "怎么样啊，奇派斯基大人？"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "良いよそのまま咥えて気持ち良くしてくれ"
+  "speaker": "奇派斯基",
+  "text": "不错，就这样含进去让我舒服舒服"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "わかりました"
+  "speaker": "伊露",
+  "text": "明白了"
  },
  {
   "type": "cg",
@@ -103,7 +103,7 @@ export const iru_HD1_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いペニスを咥えるイル。"
+  "text": "伊露这样说着，将阴茎含入口中。"
  },
  {
   "type": "cg",
@@ -112,27 +112,27 @@ export const iru_HD1_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そしてそのまま動きペニスを刺激する。"
+  "text": "接着就这样动起来，刺激着阴茎。"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "おおっ良いよ、その調子で続けて"
+  "speaker": "奇派斯基",
+  "text": "哦，不错，就这样继续"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "(チパイスキー様が喜んでくれている…幸せ…)"
+  "speaker": "伊露",
+  "text": "（奇派斯基大人因我而开心…好幸福…）"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "チパイスキーに従う喜びで頭がいっぱいのイル。"
+  "text": "脑子里满满都是服从奇派斯基大人的喜悦的伊露。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "(もっと…もっと気持ち良くなって欲しい)"
+  "speaker": "伊露",
+  "text": "（好想让您…更加更加舒服…）"
  },
  {
   "type": "cg",
@@ -141,17 +141,17 @@ export const iru_HD1_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "熱が入り動きも激しくなる。"
+  "text": "伊露越发热切，动作也愈发激烈。"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ああっ良いよ…\nそろそろイキそうだ"
+  "speaker": "奇派斯基",
+  "text": "啊啊，不错…\n差不多要射了"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ああ出るっ"
+  "speaker": "奇派斯基",
+  "text": "啊啊，要出来了"
  },
  {
   "type": "cg",
@@ -166,7 +166,7 @@ export const iru_HD1_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーー"
+  "text": "噗噗噗噗噗——"
  },
  {
   "type": "cg",
@@ -174,23 +174,23 @@ export const iru_HD1_55: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んぐぅ"
+  "speaker": "伊露",
+  "text": "唔唔"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "全部飲んで"
+  "speaker": "奇派斯基",
+  "text": "全部都喝下去"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んぐんぐんぐ…"
+  "speaker": "伊露",
+  "text": "唔咕唔咕唔咕…"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "命令に従い出された精液を飲み干すイル。"
+  "text": "伊露遵从命令，把射出来的精液喝得干干净净。"
  },
  {
   "type": "cg",
@@ -202,8 +202,8 @@ export const iru_HD1_55: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ぷはぁ…飲みました…"
+  "speaker": "伊露",
+  "text": "呼哈…我喝完了…"
  },
  {
   "type": "cg",
@@ -215,18 +215,18 @@ export const iru_HD1_55: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "偉いぞ"
+  "speaker": "奇派斯基",
+  "text": "真乖"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "当然です、私はチパイスキー様の奴隷なのですから♡"
+  "speaker": "伊露",
+  "text": "那是当然，因为我是奇派斯基大人的奴隶嘛♡"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "その表情はとても幸せそうだった…"
+  "text": "那个表情，看起来非常幸福…"
  },
  {
   "type": "end",

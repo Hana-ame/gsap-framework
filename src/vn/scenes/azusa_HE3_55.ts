@@ -47,31 +47,31 @@ export const azusa_HE3_55: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "それで、私はどうすればいい？"
- },
+  "speaker": "梓",
+   "text": "那么，我该怎么做？"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "那个…希望你能撩起裙子，让我看看内裤"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "说起来，你是那种看到内裤就会兴奋的人呢"
+  },
  {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "その…スカートをたくし上げてパンツを見せて欲しいかな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そう言えばあなたはパンツで興奮する人だったわね"
+  "type": "cg",
+  "key": "HE3-2"
  },
  {
   "type": "cg",
   "key": "HE3-2"
  },
  {
-  "type": "cg",
-  "key": "HE3-2"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "ほら、これでどう？"
+  "speaker": "梓",
+   "text": "喏，这样可以吗？"
  },
  {
   "type": "cg",
@@ -83,81 +83,81 @@ export const azusa_HE3_55: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "男子生徒",
-  "text": "ああ、良いよ美住さん…凄く興奮する！！"
- },
+  "speaker": "男学生",
+   "text": "啊啊，真棒，美住同学…我好兴奋！！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "男学生也取出了自己的阴茎。"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "啊啊，美住同学…"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "那个…如果能把胸罩也移开，让我看看胸部的话，我会很开心的"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "真拿你没办法呢"
+  },
  {
-  "type": "say",
-  "speaker": "",
-  "text": "男子生徒も自分のペニスを取り出す。"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "ああ、美住さん…"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "その…ブラもずらしておっぱいも見せてもらえると嬉しいんだけど"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "仕方ないわね"
+  "type": "cg",
+  "key": "HE3-4"
  },
  {
   "type": "cg",
   "key": "HE3-4"
  },
  {
-  "type": "cg",
-  "key": "HE3-4"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "ほらこれでどう？"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "ああいいよ…本当に可愛いよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そう、ありがと"
- },
+  "speaker": "梓",
+   "text": "喏，这样可以吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "啊啊，好棒…真可爱"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是吗，谢谢"
+  },
  {
   "type": "cg",
   "key": "HE3-5"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(可愛いと言われて悪い気はしないわね)"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "ああ…いつか美住さんとセックスしたい…美住さん…美住さん…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そうね、エッチしたいなら正野様みたいな強者にならないとね"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "絶対なってやる！将来は女の子とエッチできる強い男になるんだ！"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "ああ…美住さん…うっ…出るっ"
- },
+  "speaker": "梓",
+   "text": "（被人说可爱，心情倒是不坏呢）"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "啊啊…好想有一天能和美住同学做爱…美住同学…美住同学…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是啊，想做爱的话，就得成为正野大人那样的强者才行哦"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "我一定会成为的！将来要做一个能和女孩子做爱的强者！"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "啊啊…美住同学…唔…要射了"
+  },
  {
   "type": "cg",
   "key": "HE3-6"
@@ -165,41 +165,41 @@ export const azusa_HE3_55: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーーー"
- },
+  "text": "噗噗噗噗噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HE3-7"
+  },
  {
   "type": "cg",
   "key": "HE3-7"
  },
  {
-  "type": "cg",
-  "key": "HE3-7"
- },
- {
   "type": "say",
-  "speaker": "男子生徒",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "満足した？"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "う、うん\nありがとう美住さん"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "また溜まったら言ってね\nそれじゃ"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒",
-  "text": "うん、また"
- },
+  "speaker": "男学生",
+  "text": "呼…呼…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "满足了吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "嗯、嗯\n谢谢你，美住同学"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "积攒多了的话就告诉我哦\n那我先走了"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生",
+   "text": "嗯，再见"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

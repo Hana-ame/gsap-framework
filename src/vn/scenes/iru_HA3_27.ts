@@ -31,18 +31,18 @@ export const iru_HA3_27: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んっあっ…チパイスキー様ぁ…"
+  "speaker": "伊露",
+  "text": "唔嗯…奇派斯基大人…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっ…感じる…薬使った時と同じように感じる…"
+  "speaker": "伊露",
+  "text": "啊啊…有感觉…和用药时一样有感觉…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "おっぱい気持ち良い…\n良かった私薬が無くても胸だけで感じられるようになってる…"
+  "speaker": "伊露",
+  "text": "胸好舒服…\n太好了，我不用药也能光是摸胸就有感觉了…"
  },
  {
   "type": "cg",
@@ -50,58 +50,58 @@ export const iru_HA3_27: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああんっいいっもっと…もっと"
+  "speaker": "伊露",
+  "text": "啊啊嗯，好棒，再…再来"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "少しずつ胸を触る手の動きが激しくなる。"
+  "text": "抚摸胸部的手，动作渐渐激烈起来。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様！\nどうか私の胸を触ってくださいっ"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人！\n求求您，请摸我的胸"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "私を…チパイスキー様の物にしてくださいっ"
+  "speaker": "伊露",
+  "text": "请把我…变成奇派斯基大人的东西吧"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "チパイスキー様…私を…私を支配してください！"
+  "speaker": "伊露",
+  "text": "奇派斯基大人…请支配我…支配我吧！"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "心も体も全てチパイスキー様に捧げます"
+  "speaker": "伊露",
+  "text": "心与身体，全都奉献给奇派斯基大人"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "今までの人生を全て捨て\nチパイスキー様に従うだけの存在になります！"
+  "speaker": "伊露",
+  "text": "我要舍弃迄今为止的全部人生\n变成只追随奇派斯基大人的存在！"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "だから…だからどうかチパイスキー様の物にしてくださいぃ"
+  "speaker": "伊露",
+  "text": "所以…所以求求您，请让我成为奇派斯基大人的东西"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "チパイスキー様に忠誠を…永遠の忠誠を…"
+  "speaker": "伊露",
+  "text": "对奇派斯基大人宣誓忠诚…永远的忠诚…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "絶対の忠誠をおおおお"
+  "speaker": "伊露",
+  "text": "绝对的忠诚啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んあああっチパイスキー様ぁああああ"
+  "speaker": "伊露",
+  "text": "唔啊啊啊，奇派斯基大人啊啊啊啊"
  },
  {
   "type": "cg",
@@ -116,7 +116,7 @@ export const iru_HA3_27: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "プシャアアビクンビクン"
+  "text": "噗嗤——，痉挛般颤抖"
  },
  {
   "type": "cg",
@@ -124,13 +124,13 @@ export const iru_HA3_27: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああ…チパイスキー様…"
+  "speaker": "伊露",
+  "text": "啊啊…奇派斯基大人…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "早く本物のチパイスキー様に忠誠を誓いたいです…"
+  "speaker": "伊露",
+  "text": "好想快点向真正的奇派斯基大人宣誓忠诚…"
  },
  {
   "type": "end",
@@ -139,7 +139,7 @@ export const iru_HA3_27: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そのまま眠ってしまうイル。"
+  "text": "伊露就这样沉沉睡去。"
  },
  {
   "type": "end",

@@ -112,11 +112,15 @@ export interface VnUiStyle {
     align?: 'left' | 'center' | 'right';
     bg?: string; color?: string; textSize?: number; radius?: number;
     minHeight?: number; padding?: string;
+    /** 换台词时淡入上浮动画（默认 false）。 */
+    animate?: boolean;
   };
   /** 选项列表样式。 */
   choice?: {
     align?: 'center' | 'left' | 'right';
     itemBg?: string; itemColor?: string; fontSize?: number; gap?: number;
+    /** 出现时淡入上浮动画（默认 false）。 */
+    animate?: boolean;
   };
   /** CG 显示框（contain）。 */
   cgBox?: {

@@ -47,203 +47,203 @@ export const azusa_HC3_38: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "川瀬様！早く薬…薬ください！！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "欲しいならいつもの挨拶をしな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい、川瀬様！"
- },
- {
-  "type": "cg",
-  "key": "HC3-2"
- },
- {
-  "type": "cg",
-  "key": "HC3-2"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "川瀬様の忠実なるペットのアズサが参りました！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "今日もどんな命令にも従います！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ですからおクスリ…おクスリをお願いしますうううううう！！！！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "いいぜ、手を出しな"
- },
- {
-  "type": "cg",
-  "key": "HC3-3"
- },
- {
-  "type": "cg",
-  "key": "HC3-3"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "ほら味わいな"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "注射を打たれるアズサ。"
- },
- {
-  "type": "cg",
-  "key": "HC3-4"
- },
- {
-  "type": "cg",
-  "key": "HC3-4"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あひいいいいいきたあああああああああ\nこれしゅごいいいいいいいいあひいいいいいいいいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "イクウウウウウウああイッちゃううううううう！！！！！"
- },
- {
-  "type": "cg",
-  "key": "HC3-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "プシャーーーービクンビクン"
- },
- {
-  "type": "cg",
-  "key": "HC3-6"
- },
- {
-  "type": "cg",
-  "key": "HC3-6"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あひぃあひぃ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "今日もアズサのイキ芸を見てくださりありがとうございます！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "毎回薬持ってきてやる俺に感謝しろよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい感謝しています！\n私はもう川瀬様がいないと生きていけません！\n川瀬様が私の全てです！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "本当に俺が全てなんだな！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい、もちろんです！！"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "じゃあエンパイアが暴れていても関係ないんだな？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい！私は川瀬様の命令以外のことはしません！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "それにもう…私は魔法少女としての力はありませんので…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "アズサは魔法少女としての力を失っていた。\n矢口の薬の副作用なのか、強い意志を失ったからかは不明だが\nあれ以来変身することができなくなっていた。"
- },
- {
-  "type": "say",
-  "speaker": "川瀬",
-  "text": "いいだろう、じゃあ今日も俺の役に立ってもらおうかな"
- },
- {
-  "type": "cg",
-  "key": "HC3-7"
- },
- {
-  "type": "cg",
-  "key": "HC3-7"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いペニスを出す川瀬。"
- },
- {
-  "type": "cg",
-  "key": "HC3-8"
- },
- {
-  "type": "cg",
-  "key": "HC3-8"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "川瀬様のおチンポ！！！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "川瀬のペニスを見ただけで目を輝かせるアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああ…川瀬様のおチンポ…私に幸せをくれる最高のおチンポ…"
- },
+   "speaker": "梓",
+   "text": "川濑大人！快给我药…给我药！！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "想要的话，先做例行的问候"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，川濑大人！"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-2"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-2"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "川濑大人忠实的宠物梓，前来报到！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "今天也愿意听从任何命令！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "所以请您给点药…求您给药吧呜呜呜呜呜呜！！！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "行啊，把手伸出来"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-3"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-3"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "来，好好享受吧"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓被注射了药剂。"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-4"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-4"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呀啊啊啊，来了啊啊啊啊啊啊啊\n这好厉害啊啊啊啊啊啊呀啊啊啊啊啊啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "要去了呜呜呜呜呜啊啊要去了呜呜呜呜呜！！！！！"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "滋———痉挛般颤抖"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-6"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-6"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "咿啊…咿啊…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "今天也感谢各位观看梓的高潮表演！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "每次都给你带药来，好好感谢我吧"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是的，我非常感激！\n我已经离不开川濑大人了！\n川濑大人就是我的全部！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "我真的是你的全部吗！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是的，当然！！"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "那就算帝国在四处作乱，也跟你没关系了？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是的！除了川濑大人的命令，我什么都不会做！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "而且我已经…没有魔法少女的力量了…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓已经失去了魔法少女的力量。\n不知是矢口的药产生的副作用，还是失去了坚强意志的缘故，\n自那以后，她再也没能变身。"
+  },
+  {
+   "type": "say",
+   "speaker": "川濑",
+   "text": "很好，那今天也来帮我做事吧"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-7"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-7"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "川濑说着，掏出了阴茎。"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-8"
+  },
+  {
+   "type": "cg",
+   "key": "HC3-8"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "川濑大人的阴茎！！！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "光是看到川濑的阴茎，梓的双眼就闪闪发光。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊…川濑大人的阴茎…带给我幸福的、最棒的阴茎…"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

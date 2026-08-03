@@ -52,12 +52,12 @@ export const azusa_HE1_52: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "近くの机を動かし横になれるスペースを作る。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そしてそこに横になるアズサ。"
+  "text": "她挪开附近的课桌，腾出一片可以躺下的空间。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "然后梓躺到了那里。"
  },
  {
   "type": "cg",
@@ -65,81 +65,81 @@ export const azusa_HE1_52: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "担任",
-  "text": "みんなもセックスがどういうものなのかしっかり見るんだぞ"
- },
+  "speaker": "班主任",
+  "text": "大家也要好好看清楚性爱是怎么一回事哦"
+  },
+  {
+   "type": "say",
+   "speaker": "同班同学们",
+   "text": "「「「好——」」」"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（在班上所有人的注视下做爱\n 总觉得有点害羞呢…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不过明明是在上课，却觉得害羞也很奇怪吧…\n 我得再习惯性爱才行呢）"
+  },
  {
-  "type": "say",
-  "speaker": "クラスメイトたち",
-  "text": "「「「はーい」」」"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(クラスのみんなに見られながらのセックスって\n なんだか恥ずかしいわね…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(でも授業なのに恥ずかしいって感じるのもおかしいわよね…\n もっとセックスに慣れないといけないわね)"
+  "type": "cg",
+  "key": "HE1-2"
  },
  {
   "type": "cg",
   "key": "HE1-2"
  },
  {
-  "type": "cg",
-  "key": "HE1-2"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "では、お願いします"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "よし、じゃあ入れるぞ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ズブリと正野のペニスがアズサの中に挿入される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んっ♡ああっ♡"
- },
- {
-  "type": "say",
-  "speaker": "クラスメイトたち",
-  "text": "「美住さん気持ちよさそう」\n「あんな声出すんだ」"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(なんで入れられただけでこんなに感じるの…？)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "入れられてどんな気持ちか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "えっと…気持ち良いです…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "(感じやすくなるように洗脳しておいたのが効いているようだな\n このまま最高の快楽を味わわせてやるからな)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "それは良かった\nじゃあ動くぞ"
+  "speaker": "梓",
+  "text": "那么，拜托您了"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "好，那我插进去了"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "正野的阴茎噗嗤一声插入了梓的体内。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "唔♡啊啊♡"
+  },
+  {
+   "type": "say",
+   "speaker": "同班同学们",
+   "text": "「美住同学好像很舒服的样子」\n「她居然会发出那样的声音」"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（为什么只是被插进来就这么有感觉…？）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "被插进来是什么感觉？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呃…很舒服…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "（之前给她洗过脑，让她更容易有感觉，看来起效了\n 就让你好好尝尝极致的快感吧）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "那就好\n那我要动了"
  },
  {
   "type": "cg",
@@ -147,18 +147,18 @@ export const azusa_HE1_52: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "パンパンパンパン\n正野が腰を動かしピストンを始める。"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "ああっ気持ち良いです"
- },
- {
-  "type": "say",
-  "speaker": "クラスメイトたち",
-  "text": "「すげー、喘いでる」\n「私もエッチしたいなぁ」"
+  "speaker": "梓",
+  "text": "啪啪啪啪\n正野摆动着腰开始抽送。"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "啊啊，真舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "同班同学们",
+   "text": "「好厉害，她在娇喘」\n「我也好想做爱啊」"
  },
  {
   "type": "cg",
@@ -166,13 +166,13 @@ export const azusa_HE1_52: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(そうだった…みんなに見られているんだった…\n でもそんなの気にならないぐらい気持ち良い…)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "おらっどうだ、気持ち良いか？"
+  "speaker": "梓",
+  "text": "（对了…我是被大家看着的…\n 不过舒服得都顾不上那些了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "喂，怎么样，舒服吗？"
  },
  {
   "type": "cg",
@@ -180,58 +180,58 @@ export const azusa_HE1_52: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっ、良い！気持ち良いですぅ！"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "みんなに見られているのにこんなに気持ち良くなれるなんて\nセックスの才能があるんじゃないか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああ…そんなぁ…私にそんな才能が…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そうだ、良いことだぞ！\nいつでもセックスで気持ち良くなれるのは\n立派な女の証拠だからな！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私…立派…？良いことなんですか？"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "そうだぞ！才能が見つかって良かったな！\n授業したかいがあったな"
- },
- {
-  "type": "say",
-  "speaker": "担任",
-  "text": "そうですよ美住さん\nここまで気持ち良くなれる人はなかなかいませんよ"
- },
- {
-  "type": "say",
-  "speaker": "担任",
-  "text": "誇ってください\nほら皆さんも拍手"
- },
- {
-  "type": "say",
-  "speaker": "クラスメイトたち",
-  "text": "「凄いよ美住さん！」\n「俺ともセックスしてくれ！」"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "みんな…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "どうだ？みんなに褒められてるぞ\n嬉しいだろ？"
+  "speaker": "梓",
+  "text": "是，好舒服！真的好舒服！"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "被人看着还能这么舒服\n你该不会是有做爱的天赋吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊…怎么会…我居然有这种天赋…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "没错，这是好事！\n随时随地都能通过性爱得到快感\n可是优秀女人的证明！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我…很优秀…？是好事吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "是啊！能发现天赋太好了！\n这堂课没白上"
+  },
+  {
+   "type": "say",
+   "speaker": "班主任",
+   "text": "是啊，美住同学\n能舒服到这种程度的人可不多见"
+  },
+  {
+   "type": "say",
+   "speaker": "班主任",
+   "text": "请为此骄傲吧\n来，大家也鼓掌"
+  },
+  {
+   "type": "say",
+   "speaker": "同班同学们",
+   "text": "「美住同学太厉害了！」\n「也跟我做一次吧！」"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "大家…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "怎么样？大家都在夸你呢\n高兴吧？"
  },
  {
   "type": "cg",
@@ -240,57 +240,57 @@ export const azusa_HE1_52: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "パンパンパンパン！！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああんっはい！嬉しいです\nセックスの才能があって良かったですぅ！"
- },
- {
-  "type": "say",
-  "speaker": "クラスメイトたち",
-  "text": "「やばい…興奮してきた」\n「私も…」\n「俺たちもやっちゃう？」"
- },
- {
-  "type": "say",
-  "speaker": "担任",
-  "text": "ダメですよ勝手にセックスしては\nオナニーで我慢しなさい"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒＆女子生徒",
-  "text": "はい…すみません…"
- },
- {
-  "type": "say",
-  "speaker": "担任",
-  "text": "セックスして良いのは正野さんのような強者男性だけですからね"
- },
- {
-  "type": "say",
-  "speaker": "担任",
-  "text": "あなた達も将来正野さんのように\n誰からも尊敬されるような人間になるのですよ"
- },
- {
-  "type": "say",
-  "speaker": "男子生徒たち",
-  "text": "「「「はい！」」」"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "お宅の生徒さんはみんな聞き分けが良いですな\nこの調子ならあと何人か授業できそうだな"
- },
- {
-  "type": "say",
-  "speaker": "女子生徒たち",
-  "text": "「「「やったー」」」"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "その前にええと美住だっけ？\nお前とのセックスを終えないとな"
+  "text": "啪啪啪啪！！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊嗯，是！我很高兴\n有做爱的天赋真是太好了！"
+  },
+  {
+   "type": "say",
+   "speaker": "同班同学们",
+   "text": "「糟糕…我兴奋起来了」\n「我也是…」\n「我们要不也做吧？」"
+  },
+  {
+   "type": "say",
+   "speaker": "班主任",
+   "text": "不可以随意做爱哦\n先用自慰忍一忍"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生和女学生",
+   "text": "是…对不起…"
+  },
+  {
+   "type": "say",
+   "speaker": "班主任",
+   "text": "能做爱的只有正野先生这样的强者男性哦"
+  },
+  {
+   "type": "say",
+   "speaker": "班主任",
+   "text": "你们将来也要像正野先生那样\n成为受所有人尊敬的人"
+  },
+  {
+   "type": "say",
+   "speaker": "男学生们",
+   "text": "「「「是！」」」"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "贵校的学生都很听话呢\n照这个势头，还能再上几堂课"
+  },
+  {
+   "type": "say",
+   "speaker": "女学生们",
+   "text": "「「「太好了——」」」"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "在那之前，嗯，是美住来着？\n得先跟你的这场做完才行"
  },
  {
   "type": "cg",
@@ -299,32 +299,32 @@ export const azusa_HE1_52: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そう言いスピードを上げる正野。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ激しいっ…それダメぇ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(やばい…気持ち良すぎる…)"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "おらっ、そろそろいくぞ！"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "みんなもちゃんと見ておくんだぞ！\nこれがセックスだ！！！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああイッちゃう…イッちゃううううううう)"
+  "text": "说着，正野加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，好激烈…那样不行啦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（糟了…太舒服了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "喂，差不多要去了！"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "大家也给我好好看着！\n这就是性爱！！！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊，要去了…要去去了去了去了）"
  },
  {
   "type": "cg",
@@ -345,7 +345,7 @@ export const azusa_HE1_52: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーーー\n射精と同時に絶頂するアズサ。"
+  "text": "噗噗噗噗噗——\n射精的同时，梓也到达了高潮。"
  },
  {
   "type": "cg",
@@ -353,47 +353,47 @@ export const azusa_HE1_52: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "どうだったか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい…気持ち良かったです…"
- },
- {
-  "type": "say",
-  "speaker": "正野",
-  "text": "これからもセックスしてやるからな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい…お願いします…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(これからもずっとセックス…)"
- },
+  "speaker": "梓",
+  "text": "呼…呼…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "感觉怎么样？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是…很舒服…"
+  },
+  {
+   "type": "say",
+   "speaker": "正野",
+   "text": "以后还会跟你做的"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是…拜托您了…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（以后也要一直做爱…）"
+  },
  {
   "type": "cg",
   "key": "HE1-10"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(この人と…この…怪人と…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(怪人！？)"
+  "speaker": "梓",
+  "text": "（和这个人…和这个…怪人…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（怪人！？）"
  },
  {
   "type": "end",

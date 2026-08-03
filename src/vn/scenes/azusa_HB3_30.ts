@@ -99,74 +99,74 @@ export const azusa_HB3_30: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "しまった！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "再び捕らえられてしまうアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "僕を倒すのをためらったってことは、\nもうこのジュースの虜なんでしょ"
- },
- {
-  "type": "cg",
-  "key": "HB3-2"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そ…そんなことはない…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "ふーん、いらないんだ"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "みんなーこのお姉ちゃんはジュースいらないって\n欲しい人いる？"
- },
- {
-  "type": "cg",
-  "key": "HB3-3"
- },
- {
-  "type": "say",
-  "speaker": "子供たち",
-  "text": "「「「はーい」」」"
- },
- {
-  "type": "cg",
-  "key": "HB3-4"
- },
- {
-  "type": "cg",
-  "key": "HB3-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "子供たちが次々ジュースを飲む。\nその光景を見続けさせられるアズサ。"
- },
- {
-  "type": "cg",
-  "key": "HB3-5"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(私も欲しい…あれが飲みたい…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "あの味を思い出し飲みたくてしょうがなくなっているアズサ。"
- },
+   "speaker": "梓",
+   "text": "糟糕！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓再次被抓住了。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "刚才会犹豫要不要打倒我，\n说明你已经是这果汁的俘虏了吧"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-2"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "才…才不是那样…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "哦～那你是不要喽"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "大家～这位大姐姐说不要果汁\n有想要的吗？"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-3"
+  },
+  {
+   "type": "say",
+   "speaker": "孩子们",
+   "text": "「「「要——」」」"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-4"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "孩子们一个接一个地喝着果汁。\n梓被迫看着眼前的这一幕。"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-5"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（我也想要…好想喝那个…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "回想起那味道，梓已经忍不住想要喝了。"
+  },
  {
   "type": "say",
   "speaker": "",
@@ -174,168 +174,168 @@ export const azusa_HB3_30: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "今日はこれぐらいかな\nまた飲ませてあげるからね"
- },
- {
-  "type": "say",
-  "speaker": "子供たち",
-  "text": "「「「はーい！！」」」"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(終わりなの…私にはないの…)"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "さて、君はどうしようかな…このままエンパイアに連れて行くか…"
- },
- {
-  "type": "cg",
-  "key": "HB3-6"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "飲ませて…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "何か言った？"
- },
- {
-  "type": "cg",
-  "key": "HB3-7"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ジュース飲ませて！！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "さっきはいらないって言ったのに？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "もう我慢できないの！あれ飲みたいの！お願い飲ませて！！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "えーでも飲んで冷静になったら\nまた僕のこと倒そうとするんでしょ？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "しない！しないから！！\nあなたのこと倒さないって誓うからだから飲ませて！！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "じゃあエンパイアに忠誠を誓える？"
- },
- {
-  "type": "cg",
-  "key": "HB3-8"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そ…それは…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "じゃあお預けだね"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんな…お願いします！ジュース、ジュースくださいいいい"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "じゃあ僕に忠誠を誓える？"
- },
- {
-  "type": "cg",
-  "key": "HB3-8"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "奥田…に…？"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "あれっ？僕のことを知ってる？"
- },
- {
-  "type": "cg",
-  "key": "HB3-9"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あっ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(しまった…)"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "君…誰なの？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そ…それは…"
- },
- {
-  "type": "cg",
-  "key": "HB3-10"
- },
- {
-  "type": "cg",
-  "key": "HB3-10"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "これが欲しくないの？"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "触手を目の前に見せて来る奥田。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああ…欲しい欲しい欲しい)"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "ほら変身を解いて正体を見せてよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(どうせ奥田のこと倒す気もうないんだし…だったらいいよね…)"
- },
+   "type": "say",
+   "speaker": "奥田",
+   "text": "今天就到这里吧\n下次再给你喝哦"
+  },
+  {
+   "type": "say",
+   "speaker": "孩子们",
+   "text": "「「「好——！！」」」"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（这就结束了…我没有吗…）"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "那么，你要怎么办好呢…就这么把你带回帝国好了…"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-6"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "给我喝…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "你说什么？"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-7"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "给我果汁喝！！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "刚才不是还说不想要的吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我已经忍不了了！我想喝那个！求求你给我喝！！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "诶～不过等你喝完冷静下来，\n又会想把我打倒吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不会的！绝对不会！！\n我发誓不会打倒你，所以给我喝！！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "那你能对帝国宣誓忠诚吗？"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-8"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "那…那是…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "那就免谈了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "怎么这样…求求你了！果汁、给我果汁啊——"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "那你能对我宣誓忠诚吗？"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-8"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "向奥田…？"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "咦？你认识我吗？"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-9"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（糟了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "你…是谁？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "那…那是…"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-10"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-10"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "不想要这个吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "奥田把触手亮到梓面前。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊…好想要好想要好想要）"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "来，解除变身让我看看真面目吧"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（反正我也不打算打倒奥田了…这样的话也没关系吧…）"
+  },
  {
   "type": "cg",
   "key": "HB3-11"
@@ -347,165 +347,165 @@ export const azusa_HB3_30: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "say",
-  "speaker": "",
-  "text": "変身を解除するアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "美住さん！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "まさか美住さんが魔法少女だったなんて…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "でもそっか、だからか"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "美住さんは数少ない僕が抜いたことがある同級生だから"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "その美しい顔に小柄な体型、僕の理想と言ってもいい人…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "君にならいくらでもジュース飲ませてあげるよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そ…そう…だったら早く頂戴"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "嬉しくない告白をされているが、\n今のアズサにはそんなことはどうでも良かった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "飲みたいという考えで頭がいっぱいであった。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "そういえばさっきの返事もらえてなかったね\n忠誠を誓えるなら飲ませてあげるって話"
- },
- {
-  "type": "cg",
-  "key": "HB3-12"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あ、そ…それは…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "僕に忠誠を誓って、僕の言うことを何でも聞く恋人になってよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "恋･･･人…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "僕今まで恋人とかいなかったんだけど、\n美住さんのこと見てたら恋人になってほしいなって思っちゃって"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "恋人になってくれたら、近くにいる時間も増えるし、\nいつでもこれ飲ませてあげられるよ"
- },
- {
-  "type": "cg",
-  "key": "HB3-13"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いつでも…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "いつでも飲める…\nその提案はアズサにとってこの上なく魅力的に聞こえた。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "なります…"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "ん？何に？"
- },
- {
-  "type": "cg",
-  "key": "HB3-14"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "奥田の恋人になります！だからジュースください！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "美住さん…いや、アズサ！！\n今日から僕たちは恋人同士だ！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "じゃあそのお祝いにたっぷり味わってね！"
- },
- {
-  "type": "cg",
-  "key": "HB3-15"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い触手を挿入してくる奥田。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んんっ"
- },
- {
-  "type": "cg",
-  "key": "HB3-16"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(来た！ついに来た！！早く！早く出して！！)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "夢中で触手をしゃぶるアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "さあアズサ出すよ！たっぷり味わってね！"
- },
+   "type": "say",
+   "speaker": "",
+   "text": "梓解除了变身。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "美住同学！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "没想到美住同学竟然是魔法少女…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "不过也是，原来如此啊"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "毕竟美住同学是少有的几个我攻略过的同班同学"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "那张美丽的脸蛋配上娇小的身材，说是我的理想也不为过…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "如果是你的话，想喝多少果汁都行"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "那…那样的话就快点给我"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "虽然正承受着令人高兴不起来的告白，\n但对现在的梓来说，这些都无所谓了。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "她的脑子里满是想要喝果汁的念头。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "对了，刚才的答复我还没听到呢\n就是只要你宣誓忠诚就让你喝果汁那件事"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-12"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊，那…那是…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "对我宣誓忠诚，做我的恋人，什么都听我的，怎么样"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "恋…恋人…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "我以前一直没有恋人，\n但看着美住同学，就觉得好希望你能做我的恋人"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "做了我的恋人，待在一起的时间也会变多，\n随时都能给你喝这个哦"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-13"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "随时…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "随时都能喝…\n那个提议在梓听来，充满了难以抗拒的诱惑。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我做…"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "嗯？做什么？"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-14"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我要做奥田的恋人！所以给我果汁！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "美住同学…不，梓！！\n从今天起我们就是恋人了！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "那就作为庆祝，好好品尝吧！"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-15"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "奥田说着，把触手插了进来。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "唔嗯"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-16"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（来了！终于来了！！快！快射出来！！）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓忘情地吸吮着触手。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "好，梓，要射了哦！好好品尝吧！"
+  },
  {
   "type": "cg",
   "key": "HB3-17"
@@ -519,78 +519,78 @@ export const azusa_HB3_30: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュッドピューーーー"
- },
- {
-  "type": "cg",
-  "key": "HB3-18"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ごくごく"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああ最高！美味しい、美味しすぎる…\n これ以上の物なんてない…これがいつでも味わえるなんて…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(私なんて幸せなの…)"
- },
- {
-  "type": "cg",
-  "key": "HB3-19"
- },
- {
-  "type": "cg",
-  "key": "HB3-19"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "これからは僕の恋人として、\nそしてエンパイアの一員として一緒に過ごしてもらうよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアとして…？"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "えっ、嫌なの？\n困るなあ、エンパイアとして働いてくれないなら別れちゃうよ"
- },
- {
-  "type": "cg",
-  "key": "HB3-20"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いやっ、わかった！\n私もエンパイアの一員になるから！\nだから別れないで！！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "良かった\nじゃあこれからは一緒に活動できるね"
- },
- {
-  "type": "cg",
-  "key": "HB3-21"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "うん…奥田…いや、太(ふとし)♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサは奥田に堕とされ\nエンパイアの一員となるのだった。"
- },
+   "text": "噗——噗————"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-18"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "咕咚咕咚"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊太棒了！好喝，好喝得不得了…\n 没有比这更好的了…竟然能随时品尝到这种美味…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（我是多么幸福啊…）"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-19"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-19"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "今后你就要作为我的恋人，\n同时也是帝国的一员，和我一起度过了哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "作为帝国的一员…？"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "诶，你讨厌吗？\n那可真难办，要是你不愿意为帝国效力，我们可就要分手了哦"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-20"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不，我知道了！\n我也要做帝国的一员！\n所以别和我分手！！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "太好了\n那以后我们就能一起行动了呢"
+  },
+  {
+   "type": "cg",
+   "key": "HB3-21"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "嗯…奥田…不，太（Futoshi）♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓被奥田攻陷，\n成为了帝国的一员。"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

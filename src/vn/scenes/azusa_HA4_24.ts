@@ -14,34 +14,34 @@ export const azusa_HA4_24: VnScript = {
   ]
  },
  {
-  "type": "say",
-  "speaker": "市民",
-  "text": "「助けてくれー」\n「エンペラパールだ！逃げろーーー」"
- },
- {
-  "type": "cg",
-  "key": "HA4"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアに逆らうものは容赦しない"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアに服従か死か、好きな方を選べ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "機械のように冷酷な魔法少女エンペラパールは\n人類に恐れられる存在となってしまうのだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "悪の魔法少女エンド"
- },
+   "type": "say",
+   "speaker": "市民",
+   "text": "「救命啊——」\n「是帝国珍珠！快逃啊———」"
+  },
+  {
+   "type": "cg",
+   "key": "HA4"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "胆敢反抗帝国者，绝不轻饶"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "对帝国臣服，或者死，随你选"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "宛如机械般冷酷无情的魔法少女帝国珍珠，\n最终成为了让人类闻风丧胆的存在。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "邪恶魔法少女的结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

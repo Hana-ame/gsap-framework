@@ -32,27 +32,27 @@ export const iru_HA2_26: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そしてそのまま胸を触る。"
+  "text": "伊露就这样继续抚摸着胸。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっ、やっぱり敏感になってる…"
+  "speaker": "伊露",
+  "text": "啊啊，果然变得敏感了…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "この感じ、最高に気持ち良い…"
+  "speaker": "伊露",
+  "text": "这种感觉，真是舒服极了…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっ早くチパイスキー様に触って欲しい…"
+  "speaker": "伊露",
+  "text": "啊啊，好想让奇派斯基大人快点来摸…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "もしチパイスキー様に触ってもらえたら\nもっともっと気持ち良くなれる気がする"
+  "speaker": "伊露",
+  "text": "要是能被奇派斯基大人抚摸的话\n感觉一定会更加舒服"
  },
  {
   "type": "cg",
@@ -60,23 +60,23 @@ export const iru_HA2_26: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様…私の胸を触ってください\nチパイスキー様チパイスキー様ぁ"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人…请摸我的胸\n奇派斯基大人，奇派斯基大人啊"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "チパイスキーのことを想い激しく胸を揉みながら乳首を弄るイル。"
+  "text": "伊露想着奇派斯基，一边用力揉着胸，一边玩弄着乳头。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様ぁ来ちゃいます"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人，要去了"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んんっああんっイクッイクイクイッちゃうううううう"
+  "speaker": "伊露",
+  "text": "唔嗯啊啊嗯，要去了要去了要去了啊啊啊啊"
  },
  {
   "type": "cg",
@@ -91,7 +91,7 @@ export const iru_HA2_26: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン"
+  "text": "痉挛般颤抖"
  },
  {
   "type": "cg",
@@ -99,8 +99,8 @@ export const iru_HA2_26: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ…はあ…チパイスキー様…\nチパイスキー様に…忠誠を…"
+  "speaker": "伊露",
+  "text": "呼…呼…奇派斯基大人…\n对奇派斯基大人…宣誓忠诚…"
  },
  {
   "type": "end",
@@ -109,7 +109,7 @@ export const iru_HA2_26: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そのまま眠ってしまうイルであった。"
+  "text": "伊露就这样沉沉睡去了。"
  },
  {
   "type": "end",

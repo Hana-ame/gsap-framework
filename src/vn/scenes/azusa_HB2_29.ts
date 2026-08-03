@@ -46,155 +46,155 @@ export const azusa_HB2_29: VnScript = {
   "key": "HB2-1"
  },
  {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "また僕の勝ちだね\nもしかして、ジュースが飲みたかったのかな"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "それなら素直に言えばいいのに"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そんなわけないでしょ！！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "遠慮しないで\n君なら歓迎するよ"
- },
- {
-  "type": "cg",
-  "key": "HB2-2"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "んぐっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "再び触手を口に入れられるアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(この前飲んだ精液…あれから特に身体に異変はなかった)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(この状態じゃ抵抗できないし、\n 前みたいに出されて緩んでいるところで反撃しようかな…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "抵抗を止め飲む覚悟を決めるアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "おっ、もう抵抗しないんだ、じゃあお望み通り出してあげるよ"
- },
- {
-  "type": "cg",
-  "key": "HB2-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュッ"
- },
- {
-  "type": "cg",
-  "key": "HB2-4"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(来たっ…やっぱり美味しい…精液が美味しいなんて嫌だけど…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(でもこの味忘れられない…)"
- },
- {
-  "type": "cg",
-  "key": "HB2-5"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ってたったのこれだけ…？もうちょっと出ないの？)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "少量しか出なかったことに不満を抱くアズサ。"
- },
- {
-  "type": "cg",
-  "key": "HB2-6"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(もうちょっと…もうちょっとだけ…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう思い触手を吸うアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "お、おお…自分から刺激するなんて…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(さっさと出しなさいよ！私はまだ満足してないのよ！)"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "あ･･･ああ出るっ！"
- },
- {
-  "type": "cg",
-  "key": "HB2-7"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュー"
- },
- {
-  "type": "cg",
-  "key": "HB2-8"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(来た来た！これっ…ああ美味しい…)"
- },
+   "type": "say",
+   "speaker": "奥田",
+   "text": "又是我赢了哦\n莫非，你是想喝果汁了吗"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "想要的话直说不就好了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "怎么可能啊！！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "不用客气\n是你的话我很欢迎"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-2"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "唔唔"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓再一次被触手塞进嘴里。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（上次喝的精液…之后身体也没什么异常）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（这副样子也没法抵抗，\n 不如趁他像上次一样射完放松的时候反击吧…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓停止了抵抗，下定决心要喝下去。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "哦，不抵抗了呀，那就如你所愿都给你吧"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-4"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（来了…果然好喝…虽说精液好喝什么的太讨厌了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（但这份味道让我忘不掉…）"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-5"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（就这么一点…？不再多射点吗？）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓对只射出了这么一点感到不满。"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-6"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（再多一点…再多一点点…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓这样想着，吸吮起触手。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "哦、哦哦…自己主动刺激什么的…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（快给我射出来！我还没满足呢！）"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "啊…啊啊，要出来了！"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-7"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗——噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HB2-8"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（来了来了！这个…啊啊，好喝…）"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

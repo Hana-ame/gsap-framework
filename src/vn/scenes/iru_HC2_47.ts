@@ -24,7 +24,7 @@ export const iru_HC2_47: VnScript = {
  {
   "type": "say",
   "speaker": "男性",
-  "text": "ああ…いいよぉ"
+  "text": "啊啊…好棒…"
  },
  {
   "type": "cg",

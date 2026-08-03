@@ -14,44 +14,44 @@ export const azusa_HA2_22: VnScript = {
   ]
  },
  {
-  "type": "say",
-  "speaker": "市民",
-  "text": "エンパイアが攻めてきたぞー"
- },
- {
-  "type": "cg",
-  "key": "HA2"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアに忠誠を…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "エンパイアの戦闘員の中にアズサの姿はあった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そこにいたのは人格を失い命令に忠実に従うだけの\nただの戦闘員であった。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアに逆らうものは排除する"
- },
- {
-  "type": "say",
-  "speaker": "アズサ＆戦闘員たち",
-  "text": "エンパイアに忠誠を！！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "戦闘員堕ちエンド"
- },
+   "type": "say",
+   "speaker": "市民",
+   "text": "帝国攻过来啦——"
+  },
+  {
+   "type": "cg",
+   "key": "HA2"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "对帝国宣誓忠诚…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "帝国的战斗员中出现了梓的身影。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "站在那里的，只是丧失了人格、只会忠实服从命令的\n一介战斗员。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "胆敢反抗帝国者，一律排除"
+  },
+  {
+   "type": "say",
+   "speaker": "梓&战斗员们",
+   "text": "对帝国宣誓忠诚！！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "沦为战斗员的结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

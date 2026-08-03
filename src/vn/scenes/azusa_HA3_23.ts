@@ -26,88 +26,88 @@ export const azusa_HA3_23: VnScript = {
   "key": "HA3-1"
  },
  {
-  "type": "say",
-  "speaker": "毒沼の部下",
-  "text": "何とか捕らえることができましたね"
- },
- {
-  "type": "say",
-  "speaker": "毒沼",
-  "text": "危なかったな･･･"
- },
- {
-  "type": "say",
-  "speaker": "毒沼",
-  "text": "まだ目覚めたばかりで\nそこまで力を使いこなせてなかったのが幸いしたな"
- },
- {
-  "type": "say",
-  "speaker": "毒沼",
-  "text": "よし、再洗脳を開始しろ！"
- },
- {
-  "type": "say",
-  "speaker": "毒沼の部下",
-  "text": "はい！"
- },
- {
-  "type": "cg",
-  "key": "HA3-2"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "洗脳装置が起動する。"
- },
- {
-  "type": "say",
-  "speaker": "毒沼",
-  "text": "中途半端な洗脳では解ける可能性がある"
- },
- {
-  "type": "say",
-  "speaker": "毒沼",
-  "text": "人格を完全消去しエンパイアに従うだけの存在にするのだ"
- },
- {
-  "type": "say",
-  "speaker": "毒沼の部下",
-  "text": "わかりました、最大出力！！"
- },
- {
-  "type": "cg",
-  "key": "HA3-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "最大出力で洗脳装置が稼働する。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(あああああ私が消える…消えちゃううううううう)"
- },
- {
-  "type": "say",
-  "speaker": "毒沼",
-  "text": "これからは我々のために働いてもらうぞ、エンペラパール"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああああああ誰が･･･助け･･････)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(エンパイア･･･に･･･忠誠･･･を･･･…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサは人格を消され、\nエンパイアのために戦うだけの存在になってしまうのだった。"
- },
+   "type": "say",
+   "speaker": "毒沼部下",
+   "text": "总算把她抓住了呢"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼",
+   "text": "刚才真是危险…"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼",
+   "text": "幸好她才刚觉醒不久，\n还没能完全掌握那股力量"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼",
+   "text": "好，开始重新洗脑！"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼部下",
+   "text": "是！"
+  },
+  {
+   "type": "cg",
+   "key": "HA3-2"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "洗脑装置启动。"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼",
+   "text": "半吊子的洗脑有被解除的可能"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼",
+   "text": "把人格彻底抹消，让她成为只服从帝国的存在"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼部下",
+   "text": "明白了，最大输出！！"
+  },
+  {
+   "type": "cg",
+   "key": "HA3-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "洗脑装置以最大输出运转。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊啊，我要消失了…就这样消失掉了呜呜呜呜）"
+  },
+  {
+   "type": "say",
+   "speaker": "毒沼",
+   "text": "今后就为我们卖力吧，帝国珍珠"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（啊啊啊啊啊，谁来…救我…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（对帝…国…宣誓…忠…诚…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓的人格被抹消，\n沦为只为帝国而战的兵器。"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

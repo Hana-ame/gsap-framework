@@ -39,18 +39,18 @@ export const iru_HA1_25: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "胸が敏感になっているって話だったけども…"
+  "speaker": "伊露",
+  "text": "虽然说是胸变得敏感了…"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "ベッドに横になり、試しに触っているイル。"
+  "text": "伊露躺在床上，试着摸了摸胸。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああんっ\nなにこれ、凄い感じる…これが薬の力…"
+  "speaker": "伊露",
+  "text": "啊啊嗯\n这是什么，感觉好强烈…这就是药的力量…"
  },
  {
   "type": "cg",
@@ -63,7 +63,7 @@ export const iru_HA1_25: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "服をはだけさせ直接乳首を触るイル。"
+  "text": "伊露敞开衣服，直接抚摸起乳头。"
  },
  {
   "type": "cg",
@@ -71,38 +71,38 @@ export const iru_HA1_25: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ…はあ…本当に凄い感じる…"
+  "speaker": "伊露",
+  "text": "呼…呼…真的好有感觉…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "凄い…気持ち良い…もっと…もっと…"
+  "speaker": "伊露",
+  "text": "好厉害…好舒服…再…再…"
  },
  {
   "type": "say",
   "speaker": "",
-  "text": "乳首を弄る手も少しずつ激しくなっていく。"
+  "text": "揉弄乳头的手也渐渐用力起来。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああんっ良い！\n凄い気持ち良い…ああ…"
+  "speaker": "伊露",
+  "text": "啊啊嗯，好棒！\n好舒服…啊啊…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "気持ち良すぎる…やばい来ちゃう…"
+  "speaker": "伊露",
+  "text": "太舒服了…糟了，要去了…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああ…ダメっああっ"
+  "speaker": "伊露",
+  "text": "啊啊…不行了，啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "イクッイッちゃううううう"
+  "speaker": "伊露",
+  "text": "要去了要去了啊啊啊啊"
  },
  {
   "type": "cg",
@@ -117,7 +117,7 @@ export const iru_HA1_25: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ビクンビクン"
+  "text": "痉挛般颤抖"
  },
  {
   "type": "cg",
@@ -125,13 +125,13 @@ export const iru_HA1_25: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はあ…はあ…\n乳首だけでこんなに気持ち良くなるなんて…"
+  "speaker": "伊露",
+  "text": "呼…呼…\n光是乳头就能这么舒服…"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "薬の力って凄いのね…"
+  "speaker": "伊露",
+  "text": "药的力量真是厉害呢…"
  },
  {
   "type": "end",
@@ -140,7 +140,7 @@ export const iru_HA1_25: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "そしてそのまま疲れから眠ってしまうイルであった。"
+  "text": "而伊露就这样，因为疲惫沉沉睡去了。"
  },
  {
   "type": "end",

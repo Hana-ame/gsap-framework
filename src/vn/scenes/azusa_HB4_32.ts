@@ -51,165 +51,165 @@ export const azusa_HB4_32: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "奥田",
-  "text": "今日もお疲れだったね"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "エンパイアとしての活動を終えた二人は\n部屋で抱き合いセックスをしていた。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "太も女の子たちへのボランティアお疲れ様"
- },
- {
-  "type": "cg",
-  "key": "HB4-2"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ちゅっ"
- },
- {
-  "type": "cg",
-  "key": "HB4-3"
- },
- {
-  "type": "cg",
-  "key": "HB4-3"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "太の唾液美味しい♡"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "まさか僕の体液なら何でもおいしくなっているとはね"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "これはアズサが恋人になってくれなきゃわからなかったよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "でもこれは私だけの物\n他の人に許してるのは触手から出るジュースだけだからね"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "わかってるって\n僕だってキスはアズサとしかしないよ"
- },
- {
-  "type": "cg",
-  "key": "HB4-4"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "太♡…大好き"
- },
- {
-  "type": "cg",
-  "key": "HB4-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ピストンの速度が上がる。"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "僕もアズサのこと大好きだよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "嬉しい、太、愛してる！"
- },
- {
-  "type": "say",
-  "speaker": "奥田",
-  "text": "僕も愛してるよっああっイクッ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "私もイクッイッちゃううううう"
- },
- {
-  "type": "cg",
-  "key": "HB4-6"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュドピューーー"
- },
- {
-  "type": "cg",
-  "key": "HB4-7"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…"
- },
- {
-  "type": "cg",
-  "key": "HB4-8"
- },
- {
-  "type": "cg",
-  "key": "HB4-8"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "膣に出された精液を手に取るアズサ。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そしてそれを舐める。"
- },
- {
-  "type": "cg",
-  "key": "HB4-9"
- },
- {
-  "type": "cg",
-  "key": "HB4-9"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "やっぱりこの味が一番ね"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "奥田エンド"
- },
+   "speaker": "奥田",
+   "text": "今天也辛苦了哦"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "结束了作为帝国一员的活动的两人，\n在房间里相拥而卧，做爱。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "太，对女孩子们做志愿活动，辛苦你了"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-2"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "啾"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-3"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-3"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "太的唾液真好喝♡"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "没想到只要是你的体液，不管什么在你嘴里都变得美味了"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "这要是不做梓的恋人，我都没机会知道呢"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不过这美味只属于我\n允许别人享用的，只有触手里流出来的果汁哦"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "我知道啦\n我也只和梓亲亲"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-4"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "太♡…最喜欢了"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "抽插的速度加快了。"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "我也最喜欢梓了哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "好开心，太，我爱你！"
+  },
+  {
+   "type": "say",
+   "speaker": "奥田",
+   "text": "我也爱你，啊，要去了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我也要去，要去了呜呜呜呜"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-6"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗噗噗噗噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-7"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呼…呼…"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-8"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-8"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓用手指蘸起射在里面的精液。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "然后，将其舔入口中。"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-9"
+  },
+  {
+   "type": "cg",
+   "key": "HB4-9"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "果然还是这个味道最棒"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "奥田结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

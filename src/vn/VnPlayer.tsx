@@ -358,9 +358,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
   const uiStyle = script.meta?.ui;
   const dialog = uiStyle?.dialog ?? {};
   const choice = uiStyle?.choice ?? {};
-  const cgBox = uiStyle?.cgBox ?? {};
-  const cgAspect = cgBox.aspect ?? 16 / 9;
-  const cgMaxW = cgBox.maxWidth ?? 'calc(100vh * 16 / 9)';
+  const cgBox = uiStyle?.cgBox;
 
   return (
     <div
@@ -371,10 +369,15 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         overflow: 'hidden',
         cursor: 'pointer',
         fontFamily: script.meta?.fontFamily ?? '"Noto Serif SC", serif',
+        WebkitTapHighlightColor: 'transparent',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        touchAction: 'manipulation',
       }}
       onClick={advance}
     >
-      {/* 图层渲染：bg=cover 占满全屏，cg=contain 看全居中；按 index+zIndex 排序，同 index cg 前 bg 后 */}
+      {/* 图层渲染：bg=cover 占满全屏，cg=contain 看全居中；按 index+zIndex 排序，同 index cg 前 bg 后
+          cg 默认无包裹框（直接 contain 全屏，竖图立绘更大）；scenario 设了 meta.ui.cgBox 才套框 */}
       <div style={{ position: 'absolute', inset: 0 }}>
         {ui.layers
           .slice()
@@ -417,7 +420,29 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
                   zIndex: layer.index + 1,
                 }}
               >
-                <div style={{ position: 'relative', width: '100%', maxWidth: cgMaxW, aspectRatio: `${cgAspect}` }}>
+                {cgBox ? (
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      maxWidth: cgBox.maxWidth ?? 'calc(100vh * 16 / 9)',
+                      aspectRatio: String(cgBox.aspect ?? 16 / 9),
+                    }}
+                  >
+                    <img
+                      src={url}
+                      alt=""
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        display: 'block',
+                        animation:
+                          layer.fadeMs > 0 ? `vn-fade-in ${layer.fadeMs}ms ease both` : undefined,
+                      }}
+                    />
+                  </div>
+                ) : (
                   <img
                     src={url}
                     alt=""
@@ -430,7 +455,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
                         layer.fadeMs > 0 ? `vn-fade-in ${layer.fadeMs}ms ease both` : undefined,
                     }}
                   />
-                </div>
+                )}
               </div>
             );
           })}
@@ -505,7 +530,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             justifyContent: 'center',
             gap: choice.gap ?? 12,
             zIndex: 20,
-            animation: 'vn-fade-up 250ms ease both',
+            animation: choice.animate ? 'vn-fade-up 250ms ease both' : undefined,
           }}
         >
           {ui.choices
@@ -550,7 +575,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             minHeight: dialog.minHeight ?? 120,
             textAlign: dialog.align ?? 'left',
             zIndex: 30,
-            animation: 'vn-fade-up 250ms ease both',
+            animation: dialog.animate ? 'vn-fade-up 250ms ease both' : undefined,
           }}
         >
           {ui.speaker && (

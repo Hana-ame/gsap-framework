@@ -43,13 +43,13 @@ export const iru_HD2_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "さあどうぞチパイスキー様\nチパイスキー様のおチンポを私のおマンコに入れてください"
+  "speaker": "伊露",
+  "text": "来吧，奇派斯基大人\n请把您的老二放进我的小穴里"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "では入れるぞ"
+  "speaker": "奇派斯基",
+  "text": "那我进去了"
  },
  {
   "type": "cg",
@@ -57,8 +57,8 @@ export const iru_HD2_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様のおチンポが入って来ますぅ♡"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人的老二进来了♡"
  },
  {
   "type": "cg",
@@ -66,28 +66,28 @@ export const iru_HD2_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "どうだい気持ち良いかい？"
+  "speaker": "奇派斯基",
+  "text": "怎么样，舒服吗？"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はいっ気持ち良いです\nチパイスキー様を感じられて本当に幸せですぅ"
+  "speaker": "伊露",
+  "text": "是，很舒服\n能感受到奇派斯基大人，我真的好幸福"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "イルは本当に可愛いな"
+  "speaker": "奇派斯基",
+  "text": "伊露真是可爱啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああんっチパイスキー様こそ素敵ですよ♡"
+  "speaker": "伊露",
+  "text": "啊啊嗯，奇派斯基大人才帅气呢♡"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "本当に君は最高のメイドだよ"
+  "speaker": "奇派斯基",
+  "text": "你真是最棒的女仆啊"
  },
  {
   "type": "cg",
@@ -96,17 +96,17 @@ export const iru_HD2_56: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ピストンが激しさを増すチパイスキー。"
+  "text": "奇派斯基的抽插愈发猛烈。"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああんっ気持ち良い、気持ち良いですチパイスキー様"
+  "speaker": "伊露",
+  "text": "啊啊嗯，好舒服，好舒服啊奇派斯基大人"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ああいいよっ"
+  "speaker": "奇派斯基",
+  "text": "啊啊，好棒"
  },
  {
   "type": "cg",
@@ -114,28 +114,28 @@ export const iru_HD2_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ああっそろそろ出そうだ"
+  "speaker": "奇派斯基",
+  "text": "啊啊，差不多要射了"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "はいっ来てください、私の中にたくさん出してくださいっ"
+  "speaker": "伊露",
+  "text": "是，来吧，请在我里面多射一些"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっ私ももうイッちゃいそうです"
+  "speaker": "伊露",
+  "text": "啊啊，我也快要去了"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ああ出そうだ…"
+  "speaker": "奇派斯基",
+  "text": "啊啊，要射了…"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ああっ出るっ"
+  "speaker": "奇派斯基",
+  "text": "啊啊，要出来了"
  },
  {
   "type": "cg",
@@ -156,7 +156,7 @@ export const iru_HD2_56: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピュー"
+  "text": "噗噗噗噗噗——"
  },
  {
   "type": "cg",
@@ -164,18 +164,18 @@ export const iru_HD2_56: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "ああっチパイスキー様のがこんなに…"
+  "speaker": "伊露",
+  "text": "啊啊，奇派斯基大人的竟然这么多…"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
-  "text": "これからも俺に仕えるんだぞ"
+  "speaker": "奇派斯基",
+  "text": "今后也要好好侍奉我啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "もちろんですチパイスキー様♡"
+  "speaker": "伊露",
+  "text": "当然了，奇派斯基大人♡"
  },
  {
   "type": "end",

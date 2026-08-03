@@ -23,8 +23,8 @@ export const iru_HB_33: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "んああああああチパイスキー様ぁ"
+  "speaker": "伊露",
+  "text": "唔啊啊啊啊啊，奇派斯基大人啊"
  },
  {
   "type": "cg",
@@ -39,7 +39,7 @@ export const iru_HB_33: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "プシャアアア"
+  "text": "噗嗤——"
  },
  {
   "type": "end",
@@ -48,7 +48,7 @@ export const iru_HB_33: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "イルは心行くまでオナニーを楽しんだ。"
+  "text": "伊露尽情地享受着自慰，直到心满意足。"
  },
  {
   "type": "jump",

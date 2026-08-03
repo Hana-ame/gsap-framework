@@ -79,18 +79,18 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "あっああっ…ああ…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…やっぱりイケない…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ずいぶんと苦しそうだな"
+  "speaker": "梓",
+  "text": "啊，啊啊…啊啊…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "呼…呼…果然还是去不了…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "看起来相当痛苦啊"
  },
  {
   "type": "cg",
@@ -98,8 +98,8 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "！！！(見られた！？)"
+  "speaker": "梓",
+  "text": "！！！（被看到了！？）"
  },
  {
   "type": "cg",
@@ -111,48 +111,48 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "な…何か…用？"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "昨日は行けなかったからな、様子を見に来たぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "そ…そう…私なら変わりないわ…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "そんなに激しくオナニーをしておいてか"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "こ…これは…別に何でもないわ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "それより今日も調教するんでしょ？"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "アズサはドキドキしていた。\n剛島のペニスを期待してしまっているからだ。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(あいつのチンポなら…間違いなくイケる…\n 早く…早く来なさいよ…)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "あーそのことなんだが、今日も休みにしようかと思っている"
+  "speaker": "梓",
+  "text": "有…有什么事…吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "昨天你没能去成吧，我来看看你的情况"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "没…没事…我一切正常…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "那么激烈地自慰，还是没能去吧"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "这…这个…没什么大不了的"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "比起这个，今天也要调教我吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓心跳加速。\n因为她已经开始期待刚岛的阴茎了。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（要是那家伙的阴茎的话…肯定能去…\n 快点…快点来吧…）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "啊，你说那事啊，我在想今天也休息一天"
  },
  {
   "type": "cg",
@@ -160,38 +160,38 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "えっ…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "いやー昨日は新しい女の調教をしてたんだが\nすぐに堕ちてしまってな"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "だから今日は新しい女を調教しようかと思ってな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "なんで私じゃなくて…新しい人を…？"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "だってお前いくら調教しても堕ちないじゃないか"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "いくら即堕ちがつまらないと言っても\n時間がかかりすぎるのも俺は嫌なんだ"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "簡単に言えばお前の調教に飽きたってこと\nなんなら開放してやろうか？"
+  "speaker": "梓",
+  "text": "诶…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "哎呀，昨天去调教了个新女人，\n结果她马上就堕落了"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "所以今天想再去调教个新女人"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "为什么不是我…而是新的人…？"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "因为你不管怎么调教都不肯堕落啊"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "就算我再怎么嫌一下就堕落的没意思，\n花太多时间我也很烦"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "简单来说就是我对调教你腻了\n怎么，要放你自由吗？"
  },
  {
   "type": "cg",
@@ -199,46 +199,46 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "そ…そんな…"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(イキたいイキたいイキたいーーーーー)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(あのおチンポじゃないと\n もうイケない身体になってるっていうのに…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(解放する？それって私一生イケないってこと…)"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "(そんなの…そんなの嫌あああああああ)"
- },
- {
-  "type": "cg",
-  "key": "HD3-10"
+  "speaker": "梓",
+  "text": "怎…怎么会…"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（好想去好想去好想去—————）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（明明身体已经变成了\n 不是那根阴茎就去不了的样子…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（放我自由？那岂不是说我这辈子都去不了了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "（不要…我不要那样啊啊啊啊啊啊）"
  },
  {
   "type": "cg",
   "key": "HD3-10"
  },
  {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "それじゃあな魔法少女"
+  "type": "cg",
+  "key": "HD3-10"
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "待ってください！"
+  "speaker": "刚岛",
+  "text": "那就这样了，魔法少女"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "请等一下！"
  },
  {
   "type": "cg",
@@ -250,28 +250,28 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "剛島",
-  "text": "ん？なんだ？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "お願いします…おチンポ…おチンポ入れてください"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "おいおい俺の物にならないんじゃなかったのか？"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "俺のチンポを欲しがるってことは\n俺の奴隷になるのを認めるってことになるぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "認めます…奴隷になりますから…"
+  "speaker": "刚岛",
+  "text": "嗯？什么事？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "求求您…阴茎…请把阴茎插进来吧"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "喂喂，你不是说不做我的东西吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "想要我的阴茎，\n就等于是承认要做我的奴隶了哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我承认…我愿意做您的奴隶…"
  },
  {
   "type": "cg",
@@ -279,33 +279,33 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "だからおチンポください！！私もう我慢できないんです！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あのぶっといおチンポじゃないとイケないんです！！\nだからお願いします！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "奴隷になりますから！\n何でも言うこと聞きますから！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "だから私におチンポ入れてイカせてくださいいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "そうか、やっと堕ちてくれたか\nそれじゃあ入れてやるか"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ありがとうございますご主人様！！"
+  "speaker": "梓",
+  "text": "所以请给我阴茎！！我已经忍不住了！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不是那根粗粗的阴茎我就去不了！！\n所以求求您了！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "我愿意做您的奴隶！\n什么都听您的！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "所以请把阴茎插进来，让我去吧啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "是吗，你终于肯堕落了\n那就给你插进去吧"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "谢谢您，主人！！"
  },
  {
   "type": "cg",
@@ -313,13 +313,13 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "早く、ご主人様の大きいおチンポを\n私の奴隷マンコに入れてくださいいいい"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "良いおねだりだ\nほらお望みのものだぞ"
+  "speaker": "梓",
+  "text": "快，请把主人的大阴茎\n插进我奴隶的小穴里吧啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "真是个不错的请求\n喏，这就是你想要的"
  },
  {
   "type": "cg",
@@ -328,17 +328,17 @@ export const azusa_HD4_46: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ズブリと剛島のペニスが挿入される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ来たこれ！ご主人様のおチンポーーーー"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっイクううううううう"
+"text": "刚岛的阴茎噗嗤一声插了进去。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，来了！主人的阴茎————"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，要去了呜呜呜呜呜呜"
  },
  {
   "type": "cg",
@@ -353,7 +353,7 @@ export const azusa_HD4_46: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "プシャアアア"
+  "text": "噗沙啊啊啊"
  },
  {
   "type": "cg",
@@ -365,23 +365,23 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "(ああやっとイケた…\n もう私このおチンポがないと生きていけない…)"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "入れただけでイクなんてよっぽど我慢してたんだな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい…自分では全然イケなくて…\nご主人様のおチンポでしかイケない身体になってしまいました…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "俺のチンポを何度も入れられたんだ\nそりゃそうなるのも当然だ"
+  "speaker": "梓",
+  "text": "（啊啊，终于去了…\n 我已经离不开这根阴茎了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "光是插进去就去了，看来你忍得够久了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是…我自己怎么都去不了…\n身体已经变得只有主人的阴茎才能让我去了…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "被我那东西插了那么多次\n会变成那样也是理所当然的"
  },
  {
   "type": "cg",
@@ -390,47 +390,47 @@ export const azusa_HD4_46: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "動き出す剛島。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ、ご主人様急に…"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "お前は奴隷なんだからいつ動くかなんて俺の勝手だろ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっそうです…\n私はご主人様の奴隷なので\nいつでもご主人様の好きに使ってください"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ってことは俺の奴隷なんだから\n当然エンパイアの一員として戦ってもらうけど良いか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいもちろんです！\nご主人様の命令ならどんなことでもします！\n私にはこのおチンポさえあれば良いです！他には何もいりません！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "だからこれからも私のご主人様でいてください！！"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "ああ良いだろう\nしっかり働いてくれればご褒美にチンポやるからな"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっ！しっかり働きます！\nご主人様のために精一杯働きますぅ"
+  "text": "刚岛开始动了起来。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，主人突然…"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "你是奴隶，什么时候动当然是我说了算"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，没错…\n我是主人的奴隶\n主人想怎么用我都行"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "既然你是我的奴隶\n当然也要作为帝国的一员去战斗，可以吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，当然可以！\n只要是主人的命令，我什么都做！\n我只要有这根阴茎就够了！别的什么都不需要！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "所以请以后也一直做我的主人！！"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "啊，行吧\n好好干活的话，就赏你根阴茎"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是！我会好好干活的！\n为了主人拼命干活"
  },
  {
   "type": "cg",
@@ -438,18 +438,18 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "剛島",
-  "text": "良い子だ、それじゃあ出すぞ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいっ来てください！\n私の中にいっぱい出してください！！"
- },
- {
-  "type": "say",
-  "speaker": "剛島",
-  "text": "出るっ"
+  "speaker": "刚岛",
+  "text": "乖孩子，那我可要射了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，来吧！\n请在我身体里尽情地射出来！！"
+  },
+  {
+   "type": "say",
+   "speaker": "刚岛",
+   "text": "要射了"
  },
  {
   "type": "cg",
@@ -470,7 +470,7 @@ export const azusa_HD4_46: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピューーー\n射精と同時に絶頂するアズサ。"
+  "text": "噗噗噗——\n射精的同时，梓也达到了高潮。"
  },
  {
   "type": "cg",
@@ -482,18 +482,18 @@ export const azusa_HD4_46: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "剛島",
-  "text": "これから頼むぞ魔法少女シャイニーパール"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "いえ…これからの私はエンペラパールです、ご主人様♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサは剛島の手に堕ちてしまったのだった…"
+  "speaker": "刚岛",
+  "text": "以后就拜托你了，魔法少女闪亮珍珠"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "不…从今以后我是皇帝珍珠了，主人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓落入了刚岛的掌中…"
  },
  {
   "type": "end",
