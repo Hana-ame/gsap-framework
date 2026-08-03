@@ -32,164 +32,164 @@ export const iru_HG1_65: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "貧乳の国の住民になることに決めたイル。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そのためにはお金を稼がないといけない。\nそこでイルが取った行動は…"
- },
- {
-  "type": "cg",
-  "key": "HG1-1"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "パンパンパンパン"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "ああっ良いっ\nもっと気持ち良くして♡"
- },
- {
-  "type": "say",
-  "speaker": "男１",
-  "text": "ああ、やっぱりイルちゃんは最高だよ！"
- },
- {
-  "type": "say",
-  "speaker": "男２",
-  "text": "ほんとほんと、おっぱいも最高だし！"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "もっと褒めて～"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "男たちと交わるイルの姿があった。"
- },
- {
-  "type": "say",
-  "speaker": "男３",
-  "text": "凄い気持ち良い、もう出ちゃいそうだよ"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "あはっ、我慢しなくても良いよっ\nさっさと出しちゃえ"
- },
- {
-  "type": "say",
-  "speaker": "男１",
-  "text": "ああっ出るっ"
- },
- {
-  "type": "cg",
-  "key": "HG1-2"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュー"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "ああっ精液感じる～♡"
- },
- {
-  "type": "cg",
-  "key": "HG1-3"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "ほらあなた達も"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い手の動きが激しくなる。"
- },
- {
-  "type": "say",
-  "speaker": "男１",
-  "text": "ああっそんなに刺激されたら…"
- },
- {
-  "type": "say",
-  "speaker": "男２",
-  "text": "お、俺も…ああっ"
- },
- {
-  "type": "cg",
-  "key": "HG1-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュドピューーー\n大量の精液がイルに降り注ぐ。"
- },
- {
-  "type": "cg",
-  "key": "HG1-5"
- },
- {
-  "type": "cg",
-  "key": "HG1-5"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "ああ…いっぱい出したね♡"
- },
- {
-  "type": "say",
-  "speaker": "男１",
-  "text": "また来るから"
- },
- {
-  "type": "say",
-  "speaker": "男２",
-  "text": "俺も絶対また来る！"
- },
- {
-  "type": "say",
-  "speaker": "男３",
-  "text": "俺も！"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "(避妊魔法で妊娠もしないし、\n 気持ち良いしおっぱいも褒めてくれるし、ほんと最高♡)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "お金稼ぎのためにイルは娼婦として働いているのだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "住民エンド"
- },
+   "text": "伊露决定成为贫乳国的居民。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "为此必须先赚到钱。\n而伊露采取的行动是…"
+  },
+  {
+   "type": "cg",
+   "key": "HG1-1"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "啪啪啪啪"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "啊啊，好棒\n让我更舒服些♡"
+  },
+  {
+   "type": "say",
+   "speaker": "男1",
+   "text": "啊，果然伊露酱最棒了！"
+  },
+  {
+   "type": "say",
+   "speaker": "男2",
+   "text": "真的真的，胸部也超棒！"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "再多夸夸我嘛～"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "那里是伊露与男人们交合的身影。"
+  },
+  {
+   "type": "say",
+   "speaker": "男3",
+   "text": "太舒服了，我快要射了"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "啊哈，不用忍着哦\n快点射出来吧"
+  },
+  {
+   "type": "say",
+   "speaker": "男1",
+   "text": "啊啊，要射了"
+  },
+  {
+   "type": "cg",
+   "key": "HG1-2"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗噗——"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "啊啊，感受得到精液～♡"
+  },
+  {
+   "type": "cg",
+   "key": "HG1-3"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "来，你们也来吧"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，她的手动作变得激烈起来。"
+  },
+  {
+   "type": "say",
+   "speaker": "男1",
+   "text": "啊啊，被这样刺激的话…"
+  },
+  {
+   "type": "say",
+   "speaker": "男2",
+   "text": "我、我也…啊啊"
+  },
+  {
+   "type": "cg",
+   "key": "HG1-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗噗噗——\n大量的精液洒落在伊露身上。"
+  },
+  {
+   "type": "cg",
+   "key": "HG1-5"
+  },
+  {
+   "type": "cg",
+   "key": "HG1-5"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "啊啊…射了好多呢♡"
+  },
+  {
+   "type": "say",
+   "speaker": "男1",
+   "text": "我还会再来的"
+  },
+  {
+   "type": "say",
+   "speaker": "男2",
+   "text": "我也一定还会再来！"
+  },
+  {
+   "type": "say",
+   "speaker": "男3",
+   "text": "我也是！"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "（有避孕魔法不会怀孕，\n 又舒服胸部还会被夸，真是最棒了♡）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "为了赚钱，伊露以娼妇的身份工作着。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "居民结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

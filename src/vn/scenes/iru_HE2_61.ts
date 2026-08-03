@@ -36,203 +36,203 @@ export const iru_HE2_61: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "チパイスキーの部屋まで付いて行くイル。"
- },
- {
-  "type": "cg",
-  "key": "HE2-1"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ベッドに横になったチパイスキー。"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "さあ、自分から入れるんだ"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "はいご主人様"
- },
- {
-  "type": "cg",
-  "key": "HE2-2"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そのままイルはチパイスキーのペニスを入れる。"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "ご主人様のおチンポが入りました"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "そのまま動きなさい"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "はい、ご主人様"
- },
- {
-  "type": "cg",
-  "key": "HE2-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そのまま腰を動かすイル。"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "悪くはないが…やはり感情のない女はいまいちだな"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "とは言え下手に感情を戻して反抗されたら面倒だし…\nこのまま魔力タンクとして過ごしてもらうのが正解だな"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "色々言われているが\n今のイルはそれについて何かを感じることはない。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ただ、命令されたことをこなすだけの機械のような状態だった。"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "なあ、お前もそれでいいよな？"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "はい、私は感情を失ったまま、\nご主人様の魔力タンクとして一生を過ごします"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "チパイスキーに質問されたことで最低限の受け答えをするイル。"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "本当に感情のない女はつまらないな"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "まあ、あの生意気そうな性格の女がこうなったと思えば\n悪くはないか"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "さあ、もっと激しく動いて俺を刺激しろ！"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "わかりましたご主人様"
- },
- {
-  "type": "cg",
-  "key": "HE2-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い速度を上げるイル。"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "いいぞ、その調子で俺がイクまで続けろ"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "わかりましたご主人様"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "パンパンパンパン\n叩きつける音だけが聞こえている。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そして"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "出すぞっ！"
- },
- {
-  "type": "cg",
-  "key": "HE2-5"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュドピュドピューーー"
- },
- {
-  "type": "cg",
-  "key": "HE2-6"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "ふう、締まりは悪くなかったぞ\nただ、やっぱり機械的なのが難点だな…"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "まあそこをどうしていくかは今後の課題だな\nそれが解消できるまで魔力タンクとして過ごしてもらうぞ"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "はい、ご主人様\n私はご主人様の魔力タンクとしてこれから過ごしていきます"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "じゃあ持ち場に戻ってもらおうかな"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "はい、ご主人様"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてイルはチパイスキーの魔力タンクとして、\n国の結界の維持に利用され続けるのだった…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "チパイスキー敗北エンド"
- },
+   "text": "伊露跟着奇派斯基来到了他的房间。"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-1"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "奇派斯基躺到了床上。"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "来吧，自己放进去"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "是，主人"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-2"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "伊露就这样把奇派斯基的阴茎放了进去。"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "主人的肉棒放进来了"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "就这样动起来"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "是，主人"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "伊露就这样扭动起腰部。"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "不差，但…没有感情的女人还是差了点意思"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "不过，要是贸然恢复感情让她反抗就麻烦了…\n还是让她继续当魔力容器才是正解"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "虽然被说了种种，\n但现在的伊露对此已经没有任何感觉。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "她只是机械般执行命令的状态。"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "喂，你也没意见吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "是，我会在失去感情的状态下，\n作为主人的魔力容器度过一生"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "被奇派斯基提问时，伊露会做出最低限度的应答。"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "没有感情的女人真是无趣"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "不过，想想那个嚣张性格的女人变成了这样，\n倒也不坏"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "来，更激烈地动起来，刺激我！"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "明白了，主人"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，伊露加快了速度。"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "很好，保持这个势头一直动到我射"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "明白了，主人"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "啪啪啪啪\n只能听到碰撞的声音。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "然后"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "要射了！"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-5"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗噗噗——"
+  },
+  {
+   "type": "cg",
+   "key": "HE2-6"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "呼，紧致度不差\n只是，果然机械感是个缺点…"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "嗯，怎么解决这个问题是今后的课题\n在那解决之前，你就继续当魔力容器吧"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "是，主人\n我今后会作为主人的魔力容器活下去"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "那就回你的岗位吧"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "是，主人"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，伊露作为奇派斯基的魔力容器，\n被不断用于维持国家的结界…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "奇派斯基败北结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

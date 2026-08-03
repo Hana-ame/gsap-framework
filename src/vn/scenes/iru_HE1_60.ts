@@ -72,17 +72,17 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "你打算把我怎么样！？"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "把你变成和你来救的那个女人一样的状态就行了"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "一样的状态…"
  },
  {
@@ -92,32 +92,32 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "不，我才不要变成那样！！"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "不行，像你这样会反抗我的危险分子，我得先除掉你"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "不过，和那个女人不同，你的身体很不错"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "就算消除了你的感情，那个身体我也会拿来用的"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "不！被你这个家伙使用，我绝对不要啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "那就开始了！"
  },
  {
@@ -137,17 +137,17 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊啊啊啊啊啊住手！停下——！！！"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "先把你体内残存的魔力全部抽走吧"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "记忆大概也会跟着一起被抽走，\n不过反正这些东西今后你都不需要了，所以无所谓吧"
  },
  {
@@ -158,22 +158,22 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊啊啊啊啊不要啊，正在被抽走\n魔力正在被吸走啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊，是什么…有什么正从我身体里…\n不只是魔力，好像还有其他东西也在被吸走…"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "这就是记忆在被吸走的感觉…\n不要啊，可我连是什么正在消失都搞不清楚啊啊"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "不错不错，就这样\n吸完记忆之后，接下来把你的人格也吸出来消掉"
  },
  {
@@ -188,22 +188,22 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "不要啊啊啊啊，别把我消掉啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "求求您了奇派斯基大人！！\n我再也不反抗您了，求求您别把我消掉啊啊啊！！！"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "不可以"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "毕竟只要消掉人格，你就会自动不再反抗我了，\n我当然不可能还留着让你反抗的可能，对吧"
  },
  {
@@ -214,12 +214,12 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "不要啊啊啊啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊，要消失了要消失了啊啊啊啊"
  },
  {
@@ -243,37 +243,37 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊…啊啊…不行…我…我…"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "咦…什么都想不起来了…我是谁…我到底是谁…"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "我为什么会遭受这种事啊啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "谁来告诉我——"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "看来是失去记忆，陷入混乱了啊"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "放心，你那点人格也马上会消失的"
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "咦？我要消失了吗？"
  },
  {
@@ -288,12 +288,12 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "不不不，啊啊啊我不想消失啊啊啊啊\n谁来救救我啊啊啊啊啊"
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "好了，收尾吧！"
  },
  {
@@ -304,7 +304,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊啊啊啊啊我正被吸走啊啊啊啊\n啊啊啊啊啊啊啊啊啊"
  },
  {
@@ -337,7 +337,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "应该完成了吧"
  },
  {
@@ -355,7 +355,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "看来记忆和人格都全没了吧\n接下来只要给你注入对我顺从的最低限度感情，就算完成了"
  },
  {
@@ -373,7 +373,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "那么接下来，就给你注入对我有利的记忆和感情吧"
  },
  {
@@ -404,7 +404,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
+   "speaker": "伊露",
   "text": "啊啊…奇派斯基大人…我的主人…\n我宣誓绝对忠诚的主人…"
  },
  {
@@ -427,7 +427,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "这样就完成了吧"
  },
  {
@@ -445,7 +445,7 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "チパイスキー",
+   "speaker": "奇派斯基",
   "text": "那么，你是什么人？"
  },
  {
@@ -458,34 +458,34 @@ export const iru_HE1_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "イル",
-  "text": "私はご主人様の忠実なる奴隷です"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "名前は…わかりません"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "そうか、名前も忘れちゃったんだな"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "まあいいか\nどうせ君はほとんどの時間ここで魔力タンクとして過ごすんだ\n俺に呼ばれる機会なんてほぼないんだし"
- },
- {
-  "type": "say",
-  "speaker": "チパイスキー",
-  "text": "でも、今日は使ってやるからな\nほら、俺の部屋まで付いてこい"
- },
- {
-  "type": "say",
-  "speaker": "イル",
-  "text": "はい、ご主人様"
- },
+   "speaker": "伊露",
+   "text": "我是主人忠实的奴隶"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "名字…我不知道"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "是吗，连名字也忘了啊"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "算了\n反正你大部分时间都要在这里当魔力容器\n几乎不会有叫到你的机会"
+  },
+  {
+   "type": "say",
+   "speaker": "奇派斯基",
+   "text": "不过，今天要用你\n来，跟我到房间来"
+  },
+  {
+   "type": "say",
+   "speaker": "伊露",
+   "text": "是，主人"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
