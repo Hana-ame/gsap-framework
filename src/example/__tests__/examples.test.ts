@@ -24,23 +24,23 @@ describe('examples registry', () => {
     expect(mapKeys).toEqual(exampleKeys);
   });
 
-  it('component-single-window is registered', () => {
-    expect(EXAMPLES).toContain('component-single-window');
-    expect(exampleMap['component-single-window']).toBeDefined();
+  it('component-vn is registered', () => {
+    expect(EXAMPLES).toContain('component-vn');
+    expect(exampleMap['component-vn']).toBeDefined();
   });
 
   it('has correct head metadata', async () => {
-    const mod = await import('../component-single-window/ComponentSingleWindowDisplay');
-    expect(mod.ComponentSingleWindowDisplay.head).toBeDefined();
-    expect(mod.ComponentSingleWindowDisplay.head.title).toContain('Single Window');
-    expect(mod.ComponentSingleWindowDisplay.head.description).toContain('draggable');
+    const mod = await import('../component-vn/ComponentVnDisplay');
+    expect(mod.ComponentVnDisplay.head).toBeDefined();
+    expect(mod.ComponentVnDisplay.head.title).toContain('VN');
+    expect(mod.ComponentVnDisplay.head.description).toContain('ex.moonchan');
   });
 
   it('isExample returns true for valid examples', () => {
-    expect(isExample('single')).toBe(true);
-    expect(isExample('component-single-window')).toBe(true);
-    expect(isExample('multiple')).toBe(true);
-    expect(isExample('window')).toBe(true);
+    expect(isExample('component-vn')).toBe(true);
+    const anyH = EXAMPLES.find((e) => e.startsWith('hscene-'));
+    expect(anyH).toBeDefined();
+    expect(isExample(anyH!)).toBe(true);
   });
 
   it('isExample returns false for invalid examples', () => {

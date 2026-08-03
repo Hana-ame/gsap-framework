@@ -10,13 +10,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="subcanvas" />
-    <title>subcanvas — examples</title>
+    <title>subcanvas — VN</title>
     <script>
       (function () {
-        var valid = ['#screen-size', '#window-mobile', '#single', '#multiple', '#window', '#pixi-confirm', '#component-window', '#component-confirm', '#component-image', '#component-loading', '#component-bus', '#component-scrollable', '#component-clickable-image', '#component-scrollable-image', '#component-picture-drag', '#component-video-player', '#component-video-player-dom', '#component-cutscene', '#component-cutscene-minimal', '#component-2048', '#component-conway', '#component-life-map', '#component-avd', '#component-vn'];
+        // 仅新 VN 框架 hash：#component-vn 或 #hscene-*
         var h = window.location.hash;
-        if (h && h !== '#' && valid.indexOf(h) < 0) {
-          window.location.replace('#');
+        var ok = h === '#component-vn' || (h && h.indexOf('#hscene-') === 0);
+        if (h && h !== '#' && !ok) {
+          window.location.replace('#component-vn');
         }
       })();
     </script>
