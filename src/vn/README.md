@@ -48,17 +48,57 @@ ui: {
 }
 ```
 
+## 变量与条件（choice.set / showWhen / jump.if）
+
+剧本可带运行时变量，实现分支与选项联动：
+
+- **写入**：`choice` 选项 `set` 选中后写入 vars（如 `{ flag: 'a' }`）。
+- **条件**：`showWhen`（选项满足才显示）、`jump.if`（满足才跳转，不满足跳过继续下一行）。
+
+条件表达式语法（不 eval，安全解析）：
+
+```
+$name                  // 真值判断（非 0/''/false/undefined）
+$name == 'a'           // 与字符串比较（也可 == 数字、true/false）
+$name != 'a'
+$name === 1            // 严格比较
+$flag == 'x' && $cnt == 2     // 且
+$flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
+```
+
+```ts
+{ type: 'choice', options: [
+  { text: '留下', to: 'stay', set: { flag: 'stay' } },
+  { text: '离开', to: 'leave', set: { flag: 'leave' } },
+  { text: '隐藏项', to: 'secret', showWhen: "$flag == 'stay' && $lvl == 2" },
+] },
+{ type: 'jump', to: 'goodEnd', if: "$flag == 'stay'" },
+```
+
+## 立绘（say.stand）
+
+`say` 可带立绘：`stand`（key 或 URL）+ `standPos`（`left`/`center`/`right`，默认 `left`）。半身像底部对齐，点击可切换显示/隐藏。同位置的立绘后到覆盖。
+
+```ts
+{ type: 'say', speaker: '伊露', stand: 'char-iru', standPos: 'right', text: '台词' },
+```
+
+## 动画
+
+- `bg`/`cg`/`say` 的 `fadeMs`：切图淡入时长 ms（0=无动画，默认 0）。背景仍 cover、CG 仍 contain。
+- 对话框 / 选项层自动淡入上浮（250ms）。
+- 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示）。
 
 ## 指令集
 
 | 指令 | 作用 |
 |------|------|
 | `preload` | 声明资源 `{key,url}`。`wait:true` 等加载完再继续；`wait:false` 立即继续后台加载 |
-| `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`index`/`zIndex` 控制叠加 |
-| `bg` | 背景层，cover 占满全屏 |
-| `cg` | CG 层，contain 看全（16:9 框内） |
-| `choice` | 选项，`options[].to` 跳 label |
-| `jump` | 跳转：label 名 / `#hash` 路由 / `https://` 开网页 / 场景名加载 |
+| `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`stand`/`standPos` 带立绘；`fadeMs` 淡入 |
+| `bg` | 背景层，cover 占满全屏。`fadeMs` 淡入 |
+| `cg` | CG 层，contain 看全（16:9 框内）。`fadeMs` 淡入 |
+| `choice` | 选项。`options[].to` 跳 label；`set` 写变量；`showWhen` 条件显示 |
+| `jump` | 跳转：label 名 / `#hash` 路由 / `https://` 开网页 / 场景名加载。`if` 条件满足才跳 |
 | `label` | 跳转标签 |
 | `end` | 结束。`goto` 可跳 `#hash` / URL / 场景名 |
 

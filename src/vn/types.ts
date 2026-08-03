@@ -19,6 +19,9 @@ export interface VnPreload {
   wait?: boolean;
 }
 
+/** 变量值：choice.set 写入 / 条件表达式引用的值。 */
+export type VnValue = string | number | boolean;
+
 /** 对话指令。speaker 为空串 = 旁白。 */
 export interface VnSay {
   type: 'say';
@@ -28,10 +31,16 @@ export interface VnSay {
   bg?: string;
   /** 可选：CG 图（key 或完整 URL）。CG 层 contain 看全。 */
   cg?: string;
+  /** 可选：立绘（key 或完整 URL）。半身像，底部对齐。 */
+  stand?: string;
+  /** 立绘位置（默认 'left'）。 */
+  standPos?: 'left' | 'center' | 'right';
   /** 图层序号（默认 0）。同 index 时 cg 在 bg 前。 */
   index?: number;
   /** 可选：z 顺序（叠加排序）。 */
   zIndex?: number;
+  /** 换图淡入时长 ms（0=无动画）。 */
+  fadeMs?: number;
   effect?: 'shake' | 'flash';
 }
 
@@ -59,15 +68,26 @@ export interface VnCg {
 }
 
 /** 选项指令。每个选项跳到 label 或行号。 */
-export interface VnChoice {
-  type: 'choice';
-  options: Array<{ text: string; to: string; showWhen?: string }>;
+export interface VnChoiceOption {
+  text: string;
+  to: string;
+  /** 条件：满足才显示（如 "$flag == 'a'"）。缺省始终显示。 */
+  showWhen?: string;
+  /** 选中后写入 vars（如 { flag: 'a' }），供后续 showWhen / jump.if 引用。 */
+  set?: Record<string, VnValue>;
 }
 
-/** 跳转指令：跳到 label，或 'menu'（回菜单），或完整 URL（打开网页）。 */
+export interface VnChoice {
+  type: 'choice';
+  options: VnChoiceOption[];
+}
+
+/** 跳转指令：跳到 label、'menu'（回菜单）、完整 URL（打开网页），或场景名。 */
 export interface VnJump {
   type: 'jump';
   to: string;
+  /** 条件：满足才跳转；不满足则跳过继续下一行（如 "$flag == 'a'" 或 "$flag" 真值）。 */
+  if?: string;
 }
 
 /** 标签指令：跳转目标。 */
@@ -113,6 +133,8 @@ export interface VnScript {
     fontFamily?: string;
     textSize?: number;
     boxHeight?: number;
+    /** 打字机每字间隔 ms（默认 30）。0=瞬间显示全文。 */
+    typeSpeed?: number;
     /** 默认图片显示模式：cg=看全(contain)，bg=占满(cover)。 */
     bgMode?: 'cg' | 'bg';
     /** UI 布局/样式声明。 */

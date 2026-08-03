@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { VnLine, VnScript } from './types';
+import type { VnLine, VnScript, VnValue } from './types';
 import { VnAssetLoader } from './loader';
+import { evalCond } from './vars';
+import { injectVnStyles } from './styles';
 
 export interface VnPlayerProps {
   script: VnScript;
@@ -16,6 +18,14 @@ interface VnLayer {
   kind: 'bg' | 'cg';
   index: number;
   zIndex: number;
+  /** 换图淡入时长 ms（0=无动画）。 */
+  fadeMs: number;
+}
+
+/** 一个立绘层。同位置互斥（后到覆盖）。 */
+interface VnStand {
+  key: string;
+  pos: 'left' | 'center' | 'right';
 }
 
 interface VnUiState {
@@ -27,8 +37,17 @@ interface VnUiState {
   shown: number;
   /** 显示图层（bg cover 占满，cg contain 看全；按 index/zIndex 排序，同 index cg 前 bg 后）。 */
   layers: VnLayer[];
+  /** 立绘层（半身像，底部对齐，可点击隐藏）。 */
+  stands: VnStand[];
   loadingProgress: { loaded: number; total: number };
-  choices: Array<{ text: string; to: string }>;
+  choices: Array<{
+    text: string;
+    to: string;
+    /** 选中后写入 vars。 */
+    set?: Record<string, VnValue>;
+    /** 满足才显示。 */
+    showWhen?: string;
+  }>;
 }
 
 const EMPTY_UI: VnUiState = {
@@ -38,6 +57,7 @@ const EMPTY_UI: VnUiState = {
   text: '',
   shown: 0,
   layers: [],
+  stands: [],
   loadingProgress: { loaded: 0, total: 0 },
   choices: [],
 };
@@ -50,6 +70,19 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
   const [ended, setEnded] = useState(false);
 
+  /** 剧本变量（choice.set 写入，showWhen / jump.if 读取）。ref 让 runLine 读到最新。 */
+  const [vars, setVars] = useState<Record<string, VnValue>>({});
+  const varsRef = useRef(vars);
+  varsRef.current = vars;
+
+  /** 立绘层是否隐藏（点击立绘切换）。 */
+  const [standHidden, setStandHidden] = useState(false);
+
+  // 注入运行时关键帧样式
+  useEffect(() => {
+    injectVnStyles();
+  }, []);
+
   // 初始化 loader
   if (!loaderRef.current) {
     loaderRef.current = new VnAssetLoader();
@@ -60,17 +93,27 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
   /** 设置/替换某层。同 kind 同 index 替换（key 变化即换图）。 */
   const setLayer = useCallback(
-    (kind: 'bg' | 'cg', key: string, index = 0, zIndex = 0) => {
+    (kind: 'bg' | 'cg', key: string, index = 0, zIndex = 0, fadeMs = 0) => {
       setUi((prev) => {
         const next = prev.layers.filter(
           (l) => !(l.kind === kind && l.index === index),
         );
-        next.push({ key, kind, index, zIndex });
+        next.push({ key, kind, index, zIndex, fadeMs });
         return { ...prev, layers: next };
       });
     },
     [],
   );
+
+  /** 设置/替换某位置的立绘。 */
+  const setStand = useCallback((pos: VnStand['pos'], key: string) => {
+    setUi((prev) => {
+      const rest = prev.stands.filter((s) => s.pos !== pos);
+      rest.push({ key, pos });
+      return { ...prev, stands: rest };
+    });
+    setStandHidden(false);
+  }, []);
 
   /** 解析 label → 行号。 */
   const labelMap = useMemo(() => {
@@ -151,7 +194,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
         case 'bg': {
           loader.load(line.key);
-          setLayer('bg', line.key, line.index ?? 0, line.zIndex ?? 0);
+          setLayer('bg', line.key, line.index ?? 0, line.zIndex ?? 0, line.fadeMs ?? 0);
           setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
           runLine(idx + 1);
           break;
@@ -159,7 +202,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
         case 'cg': {
           loader.load(line.key);
-          setLayer('cg', line.key, line.index ?? 0, line.zIndex ?? 0);
+          setLayer('cg', line.key, line.index ?? 0, line.zIndex ?? 0, line.fadeMs ?? 0);
           setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
           runLine(idx + 1);
           break;
@@ -168,11 +211,15 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         case 'say': {
           if (line.bg) {
             loader.load(line.bg);
-            setLayer('bg', line.bg, line.index ?? 0, line.zIndex ?? 0);
+            setLayer('bg', line.bg, line.index ?? 0, line.zIndex ?? 0, line.fadeMs ?? 0);
           }
           if (line.cg) {
             loader.load(line.cg);
-            setLayer('cg', line.cg, line.index ?? 0, line.zIndex ?? 0);
+            setLayer('cg', line.cg, line.index ?? 0, line.zIndex ?? 0, line.fadeMs ?? 0);
+          }
+          if (line.stand) {
+            loader.load(line.stand);
+            setStand(line.standPos ?? 'left', line.stand);
           }
           setUi((prev) => ({
             ...prev,
@@ -190,12 +237,22 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             ...prev,
             lineIndex: idx,
             phase: 'choice',
-            choices: line.options.map((o) => ({ text: o.text, to: o.to })),
+            choices: line.options.map((o) => ({
+              text: o.text,
+              to: o.to,
+              set: o.set,
+              showWhen: o.showWhen,
+            })),
           }));
           break;
         }
 
         case 'jump': {
+          if (line.if && !evalCond(line.if, varsRef.current)) {
+            // 条件不满足：跳过，继续下一行
+            runLine(idx + 1);
+            break;
+          }
           const target = labelMap.get(line.to);
           if (target != null) {
             runLine(target);
@@ -223,7 +280,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         }
       }
     },
-    [loader, labelMap, script.lines, strictLoad, onEnd, navigate],
+    [loader, labelMap, script.lines, strictLoad, onEnd, navigate, setStand],
   );
 
   // 启动
@@ -239,16 +296,22 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
   useEffect(() => {
     if (ui.phase !== 'typing') return;
     const total = Array.from(ui.text).length;
+    const typeSpeed = script.meta?.typeSpeed ?? 30;
     if (ui.shown >= total) {
       // 显示完整，等点击
       setUi((prev) => (prev.phase === 'typing' ? { ...prev, phase: 'idle' } : prev));
       return;
     }
+    if (typeSpeed <= 0) {
+      // 0 = 瞬间显示全文
+      setUi((prev) => ({ ...prev, shown: total }));
+      return;
+    }
     const t = setTimeout(() => {
       setUi((prev) => ({ ...prev, shown: prev.shown + 1 }));
-    }, 30);
+    }, typeSpeed);
     return () => clearTimeout(t);
-  }, [ui.phase, ui.shown, ui.text]);
+  }, [ui.phase, ui.shown, ui.text, script.meta?.typeSpeed]);
 
   const advance = useCallback(() => {
     if (ui.phase === 'typing') {
@@ -267,7 +330,8 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
   }, [ui, runLine]);
 
   const pickChoice = useCallback(
-    (to: string) => {
+    (to: string, set?: Record<string, VnValue>) => {
+      if (set) setVars((prev) => ({ ...prev, ...set }));
       const target = labelMap.get(to);
       if (target != null) {
         setUi((prev) => ({ ...prev, phase: 'idle' }));
@@ -335,6 +399,8 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
                     objectFit: 'cover',
                     display: 'block',
                     zIndex: layer.index,
+                    animation:
+                      layer.fadeMs > 0 ? `vn-fade-in ${layer.fadeMs}ms ease both` : undefined,
                   }}
                 />
               );
@@ -355,13 +421,56 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
                   <img
                     src={url}
                     alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      display: 'block',
+                      animation:
+                        layer.fadeMs > 0 ? `vn-fade-in ${layer.fadeMs}ms ease both` : undefined,
+                    }}
                   />
                 </div>
               </div>
             );
           })}
       </div>
+
+      {/* 立绘层：半身像底部对齐，点击整幅立绘切换显示/隐藏 */}
+      {!standHidden &&
+        ui.stands.length > 0 &&
+        ui.stands.map((s) => {
+          const url = loader.get(s.key)?.url ?? s.key;
+          const posStyle =
+            s.pos === 'center'
+              ? { left: '50%', transform: 'translateX(-50%)' }
+              : s.pos === 'right'
+                ? { right: '2%' }
+                : { left: '2%' };
+          return (
+            <img
+              key={s.pos}
+              src={url}
+              alt=""
+              onClick={(e) => {
+                e.stopPropagation();
+                setStandHidden((h) => !h);
+              }}
+              style={{
+                position: 'absolute',
+                bottom: '10%',
+                height: '76%',
+                maxWidth: '36%',
+                objectFit: 'contain',
+                objectPosition: 'bottom center',
+                cursor: 'pointer',
+                zIndex: 24,
+                animation: 'vn-fade-in 300ms ease both',
+                ...posStyle,
+              }}
+            />
+          );
+        })}
 
       {/* loading 遮罩：phase==='loading' 且资源未全就绪 */}
       {ui.phase === 'loading' && ui.loadingProgress.total > 0 && (
@@ -386,6 +495,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
       {/* 选项层 */}
       {ui.phase === 'choice' && (
         <div
+          key={`choice-${ui.lineIndex}`}
           style={{
             position: 'absolute',
             inset: 0,
@@ -395,34 +505,38 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             justifyContent: 'center',
             gap: choice.gap ?? 12,
             zIndex: 20,
+            animation: 'vn-fade-up 250ms ease both',
           }}
         >
-          {ui.choices.map((c) => (
-            <button
-              key={c.to}
-              onClick={(e) => {
-                e.stopPropagation();
-                pickChoice(c.to);
-              }}
-              style={{
-                padding: '12px 32px',
-                fontSize: choice.fontSize ?? 18,
-                background: choice.itemBg ?? 'rgba(20,20,40,0.9)',
-                color: choice.itemColor ?? '#fff',
-                border: '1px solid #3a4a7a',
-                borderRadius: 8,
-                cursor: 'pointer',
-              }}
-            >
-              {c.text}
-            </button>
-          ))}
+          {ui.choices
+            .filter((c) => (c.showWhen ? evalCond(c.showWhen, vars) : true))
+            .map((c) => (
+              <button
+                key={c.to}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  pickChoice(c.to, c.set);
+                }}
+                style={{
+                  padding: '12px 32px',
+                  fontSize: choice.fontSize ?? 18,
+                  background: choice.itemBg ?? 'rgba(20,20,40,0.9)',
+                  color: choice.itemColor ?? '#fff',
+                  border: '1px solid #3a4a7a',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                }}
+              >
+                {c.text}
+              </button>
+            ))}
         </div>
       )}
 
       {/* 对话框 */}
       {ui.phase === 'typing' || ui.phase === 'idle' ? (
         <div
+          key={`dialog-${ui.lineIndex}`}
           style={{
             position: 'absolute',
             left: dialog.left ?? '4%',
@@ -436,6 +550,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             minHeight: dialog.minHeight ?? 120,
             textAlign: dialog.align ?? 'left',
             zIndex: 30,
+            animation: 'vn-fade-up 250ms ease both',
           }}
         >
           {ui.speaker && (
