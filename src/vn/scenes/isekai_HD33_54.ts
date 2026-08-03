@@ -64,295 +64,295 @@ export const isekai_HD33_54: VnScript = {
  {
   "type": "say",
   "speaker": "機械音声",
-  "text": "反乱分子の捕獲に成功\nこれよりブレインウォッシュを開始します"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ブレインウォッシュ…？"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "洗脳ってこと？！マズイ！早く抜け出さないと…"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ダメ拘束がきつくて抜け出せない…"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "ガウも動けない…"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ガウちゃん！！くっ…"
- },
- {
-  "type": "cg",
-  "key": "HD33-2"
- },
- {
-  "type": "cg",
-  "key": "HD33-2"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "何！？これで洗脳する気！？"
- },
- {
-  "type": "say",
-  "speaker": "機械音声",
-  "text": "まずは記憶の消去を行います"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "記憶の消去…？いやああああ離して！！消さないで！！！"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "ガウ怖いよ…"
- },
- {
-  "type": "cg",
-  "key": "HD33-3"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あああああああ頭が痛いいいいいい"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "ぎああああああ痛いやめてええええええ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "脳みそが焼ける焼けてるううううううう"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(ダメ、忘れないようにしないと！\n 私の記憶消えないように思い出し続けないと！！)"
- },
- {
-  "type": "cg",
-  "key": "HD33-4"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ぐぎぎぎぎぎぎぎ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "脳が焼けるような痛みに必死に耐えようとする有理紗。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(思い出さないと…私の名前、私の名前は…)"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(私の名前は･･････)"
- },
- {
-  "type": "cg",
-  "key": "HD33-5"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(あれ？私の名前…)"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(私…私･･････)"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(私って…誰…？)"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "(ガウ…消えちゃうの…)"
- },
- {
-  "type": "cg",
-  "key": "HD33-6"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "(■■消えたくない…)"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "(あれ？自分のことがわからない…)"
- },
- {
-  "type": "cg",
-  "key": "HD33-7"
- },
- {
-  "type": "say",
-  "speaker": "機械音声",
-  "text": "記憶消去完了\n感情の制御に移ります"
- },
- {
-  "type": "cg",
-  "key": "HD33-8"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(ああ…気持ち良い…頭が真っ白になる…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "先ほどまで脳が焼けるような痛みだったが、\n今は脳に走る電撃が心地よく感じている。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "もう有理紗は何の思考も残っていなかった。"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "(気持ち良い…)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "それはガウも一緒だった。"
- },
- {
-  "type": "say",
-  "speaker": "機械音声",
-  "text": "感情消失確認\n最終工程へ移ります"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "完全に無となっている有理紗とガウの中に\n１つの文章が浮かび上がる。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "『マシナ国に忠誠を』"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆ガウ",
-  "text": "マシナ国に…忠誠を…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "無意識に復唱する有理紗とガウ。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "『マシナ国に忠誠を』"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆ガウ",
-  "text": "マシナ国に忠誠を"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "『マシナ国に忠誠を』"
- },
- {
-  "type": "cg",
-  "key": "HD33-9"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆ガウ",
-  "text": "マシナ国に忠誠を！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "復唱するたびに有理紗とガウの中にマシナ国の情報が入って来る。"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(私はマシナ国に忠誠を誓う兵士…)"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(私はマシナ国のために戦うだけの存在…)"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "(■■…違う『ワタシ』…ワタシはマシナ国に忠誠を誓う兵士…)"
- },
- {
-  "type": "cg",
-  "key": "HD33-10"
- },
- {
-  "type": "say",
-  "speaker": "機械音声",
-  "text": "ブレインウォッシュ完了\n拘束を解除します"
- },
- {
-  "type": "cg",
-  "key": "HD33-11"
- },
- {
-  "type": "cg",
-  "key": "HD33-11"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "まず洗脳装置が外される。"
- },
- {
-  "type": "cg",
-  "key": "HD33-12"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆ガウ",
-  "text": "マシナ国に忠誠を！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "有理紗とガウにはもうマシナ国のことしか頭になかった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして有理紗とガウは、\n一般兵として前線へと送られるのだった･･･"
- },
+   "text": "成功捕获叛乱分子\n现在开始进行洗脑"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "洗脑…？"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "是要洗脑吗？！糟了！得赶快逃出去…"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "不行，束缚太紧，逃不出去…"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "伽乌也动不了…"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "伽乌酱！！可恶…"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-2"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-2"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "什么！？打算用这个洗脑！？"
+  },
+  {
+   "type": "say",
+   "speaker": "机械音",
+   "text": "首先进行记忆抹除"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "抹除记忆…？不要啊啊啊啊放开我！！不要抹掉！！！"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "伽乌好害怕…"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-3"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊啊啊啊啊啊啊头好痛啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "嗄啊啊啊啊啊好痛住手啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "脑子在燃烧，在燃烧啊啊啊啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（不行，我得想办法不忘记！\n 为了不让记忆消失，我必须一直回想！！）"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-4"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "咕叽叽叽叽叽叽"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱拼命忍耐着仿佛大脑燃烧般的疼痛。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（必须想起来…我的名字，我的名字是…）"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（我的名字是……）"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-5"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（咦？我的名字…）"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（我…我……）"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（我…是谁…？）"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "（伽乌…要消失了吗…）"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-6"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "（■■不想消失…）"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "（咦？记不清自己的事了…）"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-7"
+  },
+  {
+   "type": "say",
+   "speaker": "机械音",
+   "text": "记忆抹除完成\n转入感情控制"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-8"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（啊啊…好舒服…脑子变得一片空白…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "刚才还是仿佛大脑燃烧的疼痛，\n现在却觉得脑中流过的电击很舒服。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱脑中已经不剩任何思考了。"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "（好舒服…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "伽乌也一样。"
+  },
+  {
+   "type": "say",
+   "speaker": "机械音",
+   "text": "确认感情消失\n进入最终工序"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "在已经完全化为虚无的有理纱和伽乌脑中，\n浮现出一句话。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "『对马希纳国宣誓忠诚』"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&伽乌",
+   "text": "对马希纳国…宣誓忠诚…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱和伽乌无意识地复诵着。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "『对马希纳国宣誓忠诚』"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&伽乌",
+   "text": "对马希纳国宣誓忠诚"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "『对马希纳国宣誓忠诚』"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-9"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&伽乌",
+   "text": "对马希纳国宣誓忠诚！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "每复诵一次，马希纳国的信息就涌入有理纱和伽乌脑中。"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（我是向马希纳国宣誓忠诚的士兵…）"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（我是只为马希纳国而战的存在…）"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "（■■…不对「我」…我是向马希纳国宣誓忠诚的士兵…）"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-10"
+  },
+  {
+   "type": "say",
+   "speaker": "机械音",
+   "text": "洗脑完成\n解除束缚"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-11"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-11"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "首先取下了洗脑装置。"
+  },
+  {
+   "type": "cg",
+   "key": "HD33-12"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&伽乌",
+   "text": "对马希纳国宣誓忠诚！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱和伽乌脑中已经只剩马希纳国了。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，有理纱和伽乌作为普通士兵被送往了前线…"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
