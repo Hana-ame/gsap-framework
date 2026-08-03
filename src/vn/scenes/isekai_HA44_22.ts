@@ -44,149 +44,149 @@ export const isekai_HA44_22: VnScript = {
  {
   "type": "say",
   "speaker": "詩保",
-  "text": "ああん、ご主人様のが入って来ますぅ"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "どうだい詩保？気持ち良いかい？"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "はい、とても気持ち良いですご主人様！"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "僕も気持ち良いよ詩保"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ほら有理紗も"
- },
- {
-  "type": "cg",
-  "key": "HA44-2"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "あんっ、ご主人様ぁ･･･"
- },
- {
-  "type": "cg",
-  "key": "HA44-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "詩保が腰を動かしパンッパンッと激しい音が聞こえる。"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "(ご主人様とセックスしている時間…幸せです…)"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(私もご主人様のおチンポ欲しいなあ……)"
- },
- {
-  "type": "cg",
-  "key": "HA44-4"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "んっ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(ご主人様とキスできるから、これも悪くないわね)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "有理紗も小茂田に手マンされて気持ち良くなっていた。"
- },
- {
-  "type": "cg",
-  "key": "HA44-5"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ああご主人様、もうイキそうです！！"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "僕も出そうだよ、一緒にイこう！"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "私もイッちゃいそうです"
- },
- {
-  "type": "cg",
-  "key": "HA44-6"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "揃って絶頂する。"
- },
- {
-  "type": "cg",
-  "key": "HA44-7"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "ふう…気持ち良かったよ"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ありがとうございますご主人様"
- },
- {
-  "type": "say",
-  "speaker": "小茂田",
-  "text": "これからも僕の女でいてくれるかい？"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆詩保",
-  "text": "はい！もちろんですご主人様♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして二人は小茂田の奴隷として一生を過ごすことになる。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "小茂田エンド"
- },
+   "text": "啊啊嗯，主人的进来了"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "怎么样诗保？舒服吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "是，非常舒服，主人！"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "我也很舒服哦诗保"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "来，有理纱也"
+  },
+  {
+   "type": "cg",
+   "key": "HA44-2"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "啊嗯，主人…"
+  },
+  {
+   "type": "cg",
+   "key": "HA44-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "诗保扭动腰部，发出啪、啪的激烈声响。"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "（和主人做爱的时间…好幸福…）"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（我也想要主人的肉棒啊……）"
+  },
+  {
+   "type": "cg",
+   "key": "HA44-4"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "唔"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（能跟主人接吻，这样也不错）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "有理纱也被小茂田用手指玩弄着，舒服不已。"
+  },
+  {
+   "type": "cg",
+   "key": "HA44-5"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊啊主人，我快要去了！！"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "我也要射了，一起去吧！"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "我也快要去了"
+  },
+  {
+   "type": "cg",
+   "key": "HA44-6"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "三人同时到达了高潮。"
+  },
+  {
+   "type": "cg",
+   "key": "HA44-7"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "呼…真舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "谢谢您，主人"
+  },
+  {
+   "type": "say",
+   "speaker": "小茂田",
+   "text": "今后也继续做我的女人吧？"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&诗保",
+   "text": "是！当然，主人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，两人作为小茂田的奴隶度过了一生。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "小茂田结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
