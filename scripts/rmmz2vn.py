@@ -98,7 +98,7 @@ def convert_event(ev, cg_map, prefix):
             i += 1
         elif code == 224:
             if len(p) >= 1 and p[0]:
-                out.append({'type': 'say', 'speaker': '', 'text': '', 'effect': 'flash'})
+                out.append({'type': 'wait', 'effect': 'flash'})
             i += 1
         elif code == 102:
             choices_raw = [x for x in p[0] if x]

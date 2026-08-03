@@ -96,13 +96,20 @@ export interface VnLabel {
   name: string;
 }
 
+/** 挂起指令：停在当前画面，等点击才继续（不自动推进）。用于节奏停顿 / 特效定格。 */
+export interface VnWait {
+  type: 'wait';
+  /** 可选特效：flash 白屏闪、shake 抖动（与 say 一致）。 */
+  effect?: 'shake' | 'flash';
+}
+
 /** 结束指令。可选 goto：'#vn-menu' 回菜单、完整 URL 开网页、场景名加载。 */
 export interface VnEnd {
   type: 'end';
   goto?: string;
 }
 
-export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnEnd;
+export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnWait | VnEnd;
 
 /** UI 布局/样式声明（可选）。缺省用框架默认。 */
 export interface VnUiStyle {

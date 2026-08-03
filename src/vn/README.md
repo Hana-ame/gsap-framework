@@ -86,6 +86,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 ## 动画
 
 - `bg`/`cg`/`say` 的 `fadeMs`：切图淡入时长 ms（0=无动画，默认 0）。背景仍 cover、CG 仍 contain。
+- `say.effect` / `wait.effect`：`shake` 抖动画面、`flash` 白屏闪（瞬时，动画结束自动清除）。
 - 对话框 / 选项层自动淡入上浮（250ms）。
 - 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示）。
 
@@ -94,7 +95,8 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | 指令 | 作用 |
 |------|------|
 | `preload` | 声明资源 `{key,url}`。`wait:true` 等加载完再继续；`wait:false` 立即继续后台加载 |
-| `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`stand`/`standPos` 带立绘；`fadeMs` 淡入；`effect`（`flash` 白屏闪 / `shake` 画面抖动） |
+| `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`stand`/`standPos` 带立绘；`fadeMs` 淡入；`effect`（`shake`/`flash`） |
+| `wait` | 显式挂起：停在当前画面，等点击（advance）才继续，不自动推进。可带 `effect`（如 `{ type: 'wait', effect: 'flash' }` 白闪+定格） |
 | `bg` | 背景层，cover 占满全屏。`fadeMs` 淡入 |
 | `cg` | CG 层，contain 看全（16:9 框内）。`fadeMs` 淡入 |
 | `choice` | 选项。`options[].to` 跳 label；`set` 写变量；`showWhen` 条件显示 |

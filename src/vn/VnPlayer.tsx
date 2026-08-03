@@ -186,20 +186,21 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
           }));
 
           if (line.wait || strictLoad) {
-            // 等加载完再继续；期间订阅进度变化刷新 UI
-            const unsub = loader.subscribe(() => {
-              setUi((prev) =>
-                prev.phase === 'loading'
-                  ? { ...prev, loadingProgress: loader.progress(keys) }
-                  : prev,
-              );
-              if (loader.allLoaded(keys)) {
-                unsub();
-                loader.waitAll(keys).then(() => runLine(idx + 1));
-              }
-            });
+            // 等加载完再继续；尚未就绪才订阅（已就绪则无监听器可泄漏）
             if (allDone) {
               loader.waitAll(keys).then(() => runLine(idx + 1));
+            } else {
+              const unsub = loader.subscribe(() => {
+                setUi((prev) =>
+                  prev.phase === 'loading'
+                    ? { ...prev, loadingProgress: loader.progress(keys) }
+                    : prev,
+                );
+                if (loader.allLoaded(keys)) {
+                  unsub();
+                  loader.waitAll(keys).then(() => runLine(idx + 1));
+                }
+              });
             }
           } else {
             // 不等，立即继续
@@ -211,16 +212,35 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         case 'bg': {
           loader.load(line.key);
           setLayer('bg', line.key, line.index ?? 0, line.zIndex ?? 0, line.fadeMs ?? 0);
-          setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
-          runLine(idx + 1);
+          // 切图等待：图未加载完就停在当前画面（loading 遮罩只在真实 preload 时显示），onload 后继续
+          setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'loading' }));
+          const bgEntry = loader.get(line.key);
+          if (bgEntry && bgEntry.loaded) {
+            runLine(idx + 1);
+          } else {
+            loader.waitFor(line.key).then(() => runLine(idx + 1));
+          }
           break;
         }
 
         case 'cg': {
           loader.load(line.key);
           setLayer('cg', line.key, line.index ?? 0, line.zIndex ?? 0, line.fadeMs ?? 0);
+          setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'loading' }));
+          const cgEntry = loader.get(line.key);
+          if (cgEntry && cgEntry.loaded) {
+            runLine(idx + 1);
+          } else {
+            loader.waitFor(line.key).then(() => runLine(idx + 1));
+          }
+          break;
+        }
+
+        case 'wait': {
+          // 显式挂起：停在当前画面，等点击（advance）才继续，不自动推进
           setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
-          runLine(idx + 1);
+          if (line.effect === 'shake') setShaking(true);
+          if (line.effect === 'flash') setFlash(idx);
           break;
         }
 
@@ -298,7 +318,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         }
       }
     },
-    [loader, labelMap, script.lines, strictLoad, onEnd, navigate, setStand],
+    [loader, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand],
   );
 
   // 启动
@@ -347,16 +367,25 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     }
   }, [ui, runLine]);
 
+  /** 写剧本变量：同步更新 ref（choice.set 后紧跟的 jump.if / showWhen 能立刻读到新值）。 */
+  const writeVars = useCallback((patch: Record<string, VnValue>) => {
+    setVars((prev) => ({ ...prev, ...patch }));
+    varsRef.current = { ...varsRef.current, ...patch };
+  }, []);
+
   const pickChoice = useCallback(
     (to: string, set?: Record<string, VnValue>) => {
-      if (set) setVars((prev) => ({ ...prev, ...set }));
+      if (set) writeVars(set);
       const target = labelMap.get(to);
       if (target != null) {
         setUi((prev) => ({ ...prev, phase: 'idle' }));
         runLine(target);
+      } else {
+        // 非 label：可能是 #hash / URL / 场景名（与 jump 语义一致）
+        navigate(to);
       }
     },
-    [labelMap, runLine],
+    [labelMap, runLine, navigate, writeVars],
   );
 
   // 键盘推进
@@ -517,7 +546,9 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         })}
 
       {/* loading 遮罩：phase==='loading' 且资源未全就绪 */}
-      {ui.phase === 'loading' && ui.loadingProgress.total > 0 && (
+      {ui.phase === 'loading' &&
+        ui.loadingProgress.total > 0 &&
+        ui.loadingProgress.loaded < ui.loadingProgress.total && (
         <div
           style={{
             position: 'absolute',
