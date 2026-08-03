@@ -35,8 +35,6 @@ interface VnUiState {
   text: string;
   /** 已显示的字符数（打字机）。 */
   shown: number;
-  /** 本条台词的特效：flash 白屏闪、shake 抖动。 */
-  effect?: 'shake' | 'flash';
   /** 显示图层（bg cover 占满，cg contain 看全；按 index/zIndex 排序，同 index cg 前 bg 后）。 */
   layers: VnLayer[];
   /** 立绘层（半身像，底部对齐，可点击隐藏）。 */
@@ -58,7 +56,6 @@ const EMPTY_UI: VnUiState = {
   speaker: '',
   text: '',
   shown: 0,
-  effect: undefined,
   layers: [],
   stands: [],
   loadingProgress: { loaded: 0, total: 0 },
@@ -88,6 +85,14 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     const t = setTimeout(() => setShaking(false), 450);
     return () => clearTimeout(t);
   }, [shaking]);
+
+  /** 白屏闪（say.effect='flash' 时触发，keyed by 触发行号，260ms 动画结束后自动清除，避免残留重播）。 */
+  const [flash, setFlash] = useState<number | null>(null);
+  useEffect(() => {
+    if (flash === null) return;
+    const t = setTimeout(() => setFlash(null), 320);
+    return () => clearTimeout(t);
+  }, [flash]);
 
   // 注入运行时关键帧样式
   useEffect(() => {
@@ -239,9 +244,9 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
             speaker: line.speaker ?? '',
             text: line.text,
             shown: 0,
-            effect: line.effect,
           }));
           if (line.effect === 'shake') setShaking(true);
+          if (line.effect === 'flash') setFlash(idx);
           break;
         }
 
@@ -625,10 +630,10 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         </div>
       ) : null}
 
-      {/* 台词特效：flash = 白屏闪一下（全屏覆盖，可穿透点击） */}
-      {ui.effect === 'flash' && (
+      {/* 台词特效：flash = 白屏闪一下（keyed by 触发行号，动画结束自动清除，全屏覆盖可穿透点击） */}
+      {flash !== null && (
         <div
-          key={`flash-${ui.lineIndex}`}
+          key={`flash-${flash}`}
           style={{
             position: 'absolute',
             inset: 0,
