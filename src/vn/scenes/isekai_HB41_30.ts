@@ -48,200 +48,200 @@ export const isekai_HB41_30: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "茶羅井はセイレアの力を行使し\n世界を自分の都合の良い世界に変えた。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "もう茶羅井に逆らえるものなど存在しない。"
- },
- {
-  "type": "cg",
-  "key": "HB41-1"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "茶羅井様♡\n(茶羅井様のおチンポ…)"
- },
- {
-  "type": "say",
-  "speaker": "セイレア",
-  "text": "茶羅井様♡"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "茶羅井様♡"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "ご主人様♡"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "４人の女性が茶羅井にくっ付いている。"
- },
- {
-  "type": "say",
-  "speaker": "セイレア",
-  "text": "茶羅井様、どうですかこの世界は"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "ああ、最高だよ\nなんでも俺の思うがまま"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "こんな素晴らしい世界良いに決まってるだろ！"
- },
- {
-  "type": "cg",
-  "key": "HB41-2"
- },
- {
-  "type": "say",
-  "speaker": "セイレア",
-  "text": "ありがとうございます♡"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "私も茶羅井様に何かしたいです"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "いいんだよ詩保は\nそこにいてくれるだけで目の保養になる"
- },
- {
-  "type": "cg",
-  "key": "HB41-3"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "茶羅井様ぁ♡んっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言いながらキスをする詩保。"
- },
- {
-  "type": "cg",
-  "key": "HB41-4"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "まったく詩保はいきなりなんだから"
- },
- {
-  "type": "cg",
-  "key": "HB41-5"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "ご主人様！ご主人様！ガウは？"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "ガウ？ああ、良いペットだよ"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "これからも俺を楽しませてくれ"
- },
- {
-  "type": "cg",
-  "key": "HB41-6"
- },
- {
-  "type": "say",
-  "speaker": "ガウ",
-  "text": "うん！\nガウ、ご主人様の言うことなんでも聞く！"
- },
- {
-  "type": "cg",
-  "key": "HB41-7"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "有理紗も良い感じだぞ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ありがとうございます"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "ああ出すぞ･･･ちゃんと飲むんだぞ！"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "ふぁい･･･"
- },
- {
-  "type": "cg",
-  "key": "HB41-8"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ドピュッビュルルルー"
- },
- {
-  "type": "cg",
-  "key": "HB41-9"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "んぐんぐ……ぷはっ"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "(茶羅井様の精液おいしい…やっぱりこれが一番…)"
- },
- {
-  "type": "say",
-  "speaker": "茶羅井",
-  "text": "(最高だ･･･)"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "もう茶羅井にできないことなどない。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "永遠の命と永遠のハーレム\nこの世界は茶羅井が飽きるまで続くことになる…"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "茶羅井エンド"
- },
+   "text": "茶罗井动用了赛蕾雅的力量，\n把世界变成了随心所欲的世界。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "已经没有人能反抗茶罗井了。"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-1"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "茶罗井大人♡\n（茶罗井大人的肉棒…）"
+  },
+  {
+   "type": "say",
+   "speaker": "赛蕾雅",
+   "text": "茶罗井大人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "茶罗井大人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "主人♡"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "四位女性紧贴着茶罗井。"
+  },
+  {
+   "type": "say",
+   "speaker": "赛蕾雅",
+   "text": "茶罗井大人，这个世界如何？"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "啊啊，最棒了\n一切都随我心"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "这么美好的世界，当然是完美了！"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-2"
+  },
+  {
+   "type": "say",
+   "speaker": "赛蕾雅",
+   "text": "谢谢您♡"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "我也想为茶罗井大人做点什么"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "诗保不用做什么\n你只要在那里，就很养眼"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-3"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "茶罗井大人♡唔"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，诗保吻了上去。"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-4"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "真是的，诗保总是这么突然"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-5"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "主人！主人！伽乌呢？"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "伽乌？啊，是只很好的宠物"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "今后也要好好取悦我"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-6"
+  },
+  {
+   "type": "say",
+   "speaker": "伽乌",
+   "text": "嗯！\n伽乌会听主人说的任何话！"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-7"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "有理纱也很不错"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "谢谢您"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "啊啊，要射了…要好好喝下去哦！"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "好哦…"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-8"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "噗——哔噜噜噜——"
+  },
+  {
+   "type": "cg",
+   "key": "HB41-9"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "咕嘟咕嘟……哈啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "（茶罗井大人的精液真好吃…果然这个最棒…）"
+  },
+  {
+   "type": "say",
+   "speaker": "茶罗井",
+   "text": "（太棒了…）"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "已经没有什么茶罗井做不到的事了。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "永恒的生命和永恒的后宫\n这个世界将持续到茶罗井厌倦为止…"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "茶罗井结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
