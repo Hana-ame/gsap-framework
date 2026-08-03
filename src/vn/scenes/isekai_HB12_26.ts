@@ -36,125 +36,125 @@ export const isekai_HB12_26: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "セイレア教は世界を支配した。"
- },
- {
-  "type": "cg",
-  "key": "HB12-1"
- },
- {
-  "type": "say",
-  "speaker": "教皇マルクス",
-  "text": "よくやりました、あなた達のおかげです"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そこには教皇のペニスに奉仕する二人の女性がいた。"
- },
- {
-  "type": "cg",
-  "key": "HB12-2"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "私たちはただ教皇様の命令に従っただけです"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "そうです、全て教皇様のお力です"
- },
- {
-  "type": "cg",
-  "key": "HB12-3"
- },
- {
-  "type": "cg",
-  "key": "HB12-3"
- },
- {
-  "type": "say",
-  "speaker": "教皇マルクス",
-  "text": "そうですか\nあなた達は本当に優秀な私の人形ですね"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "教皇様に従うことが私の全てですから"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "その通りです\n教皇様に従うことこそが幸福なのですから"
- },
- {
-  "type": "say",
-  "speaker": "教皇マルクス",
-  "text": "素晴らしい忠誠心です！"
- },
- {
-  "type": "cg",
-  "key": "HB12-3"
- },
- {
-  "type": "say",
-  "speaker": "教皇マルクス",
-  "text": "ではたくさんかけてあげますからね"
- },
- {
-  "type": "cg",
-  "key": "HB12-4"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "教皇は二人の顔に精液をかける。"
- },
- {
-  "type": "cg",
-  "key": "HB12-5"
- },
- {
-  "type": "cg",
-  "key": "HB12-5"
- },
- {
-  "type": "say",
-  "speaker": "詩保",
-  "text": "ああこんなにたくさん…ありがとうございます教皇様"
- },
- {
-  "type": "say",
-  "speaker": "有理紗",
-  "text": "私も心から感謝しています"
- },
- {
-  "type": "say",
-  "speaker": "教皇マルクス",
-  "text": "これからも私のために働いてもらいますよ"
- },
- {
-  "type": "cg",
-  "key": "HB12-6"
- },
- {
-  "type": "say",
-  "speaker": "有理紗＆詩保",
-  "text": "はい教皇様"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "詩保敗北エンド"
- },
+   "text": "赛蕾雅教支配了世界。"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-1"
+  },
+  {
+   "type": "say",
+   "speaker": "教皇马尔克斯",
+   "text": "干得好，多亏了你们"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "那里有两位侍奉教皇阴茎的女性。"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-2"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "我们只是听从教皇大人的命令而已"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "没错，一切都是教皇大人的力量"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-3"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-3"
+  },
+  {
+   "type": "say",
+   "speaker": "教皇马尔克斯",
+   "text": "是吗\n你们真是我优秀的人偶啊"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "服从教皇大人就是我的一切"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "正是如此\n服从教皇大人才是幸福"
+  },
+  {
+   "type": "say",
+   "speaker": "教皇马尔克斯",
+   "text": "多么出色的忠诚心！"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-3"
+  },
+  {
+   "type": "say",
+   "speaker": "教皇马尔克斯",
+   "text": "那我会射很多在你们身上哦"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-4"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "教皇把精液射在了两人的脸上。"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-5"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-5"
+  },
+  {
+   "type": "say",
+   "speaker": "诗保",
+   "text": "啊啊有这么多…谢谢您，教皇大人"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱",
+   "text": "我也由衷地感谢"
+  },
+  {
+   "type": "say",
+   "speaker": "教皇马尔克斯",
+   "text": "今后也要为我工作哦"
+  },
+  {
+   "type": "cg",
+   "key": "HB12-6"
+  },
+  {
+   "type": "say",
+   "speaker": "有理纱&诗保",
+   "text": "是，教皇大人"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "诗保败北结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
