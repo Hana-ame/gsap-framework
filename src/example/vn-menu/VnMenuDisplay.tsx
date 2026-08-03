@@ -1,4 +1,5 @@
 import { SCENE_GROUPS } from './scene-groups';
+import { SCENE_COVERS } from './scene-covers';
 
 export function VnMenuDisplay() {
   return (
@@ -17,7 +18,7 @@ export function VnMenuDisplay() {
         H-Scene 回想
       </h1>
       {SCENE_GROUPS.map((g) => (
-        <div key={g.id} style={{ maxWidth: 900, margin: '0 auto 36px' }}>
+        <div key={g.id} style={{ maxWidth: 960, margin: '0 auto 36px' }}>
           <h2
             style={{
               fontSize: 20,
@@ -29,27 +30,49 @@ export function VnMenuDisplay() {
           >
             {g.title}
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
-            {g.scenes.map((s) => (
-              <a
-                key={s}
-                href={`#hscene-${s}`}
-                style={{
-                  display: 'block',
-                  padding: '12px 16px',
-                  background: 'rgba(26,26,58,0.9)',
-                  border: '1px solid #2a2a4a',
-                  borderRadius: 8,
-                  color: '#fff',
-                  textDecoration: 'none',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                }}
-              >
-                {s}
-              </a>
-            ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+            {g.scenes.map((s) => {
+              const meta = SCENE_COVERS[s];
+              return (
+                <a
+                  key={s}
+                  href={`#hscene-${s}`}
+                  style={{
+                    display: 'block',
+                    background: 'rgba(26,26,58,0.9)',
+                    border: '1px solid #2a2a4a',
+                    borderRadius: 8,
+                    color: '#fff',
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ width: '100%', aspectRatio: '3 / 4', background: '#111', overflow: 'hidden' }}>
+                    {meta && (
+                      <img
+                        src={meta.cover}
+                        alt=""
+                        loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      padding: '8px 10px',
+                      fontSize: 12,
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {meta?.title ?? s}
+                  </div>
+                </a>
+              );
+            })}
           </div>
         </div>
       ))}
