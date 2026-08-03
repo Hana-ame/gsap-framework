@@ -53,12 +53,12 @@ export const azusa_HH5_74: VnScript = {
   "type": "choice",
   "options": [
    {
-    "text": "魔法少女の姿でエッチする",
-    "to": "azusa_74_c0"
-   },
-   {
-    "text": "アズサとしてエッチする",
-    "to": "azusa_74_c1"
+     "text": "以魔法少女的姿态做爱",
+     "to": "azusa_74_c0"
+    },
+    {
+     "text": "以梓的身份做爱",
+     "to": "azusa_74_c1"
    }
   ]
  },

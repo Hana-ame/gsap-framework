@@ -186,7 +186,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "啊啊啊…为什么…为什么会变得舒服起来…"
   },
   {
@@ -244,7 +244,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "唔唔唔唔"
   },
   {
@@ -258,7 +258,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "（不要…陌生的记忆正在进入我的脑中…）"
   },
   {
@@ -282,7 +282,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "（洗脑…帝国最大的目的是征服世界…）"
   },
   {
@@ -364,7 +364,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "让你失望了…我才不是你！"
   },
   {
@@ -403,7 +403,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "过去的我在一无所知的情况下反抗了帝国…\n真是太抱歉了"
   },
   {
@@ -427,7 +427,7 @@ export const azusa_HG1_63: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "嗯，交给我吧"
   },
  {

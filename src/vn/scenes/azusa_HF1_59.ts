@@ -387,7 +387,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "不对…我不是克赖西斯大人的东西…"
   },
   {
@@ -415,7 +415,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "啊啊不对…我不是克赖西斯大人的东西…啊啊"
   },
   {
@@ -449,7 +449,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "再也…"
   },
   {
@@ -503,7 +503,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "是…我承认…我要成为克赖西斯大人的东西！"
   },
   {
@@ -532,7 +532,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "刚才那样奇怪的态度，真是对不起"
   },
   {
@@ -560,7 +560,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "被洗脑原来是这么舒服的事啊"
   },
   {
@@ -599,7 +599,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "クライシス",
+   "speaker": "克赖西斯",
    "text": "很好！那我差不多也要射了"
   },
   {
@@ -676,7 +676,7 @@ export const azusa_HF1_59: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "一切为了克赖西斯大人…"
   },
   {

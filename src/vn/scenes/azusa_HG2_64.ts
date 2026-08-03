@@ -20,27 +20,27 @@ export const azusa_HG2_64: VnScript = {
  {
   "type": "say",
   "speaker": "市民",
-  "text": "「きゃーーー」\n「助けてくれーーー」"
- },
- {
-  "type": "cg",
-  "key": "HG2-1"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "あはははは、弱い人間たちよ！\nエンパイアの前にひれ伏すのだ！！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "エンパイアに服従するなら命だけは助けてやる\nだが断るなら…"
- },
- {
-  "type": "say",
-  "speaker": "市民",
-  "text": "するっ、服従するから助けてくれ…"
- },
+   "text": "「呀啊啊啊」\n「救命啊———」"
+  },
+  {
+   "type": "cg",
+   "key": "HG2-1"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "哈哈哈，弱小的家伙们！\n在帝国面前俯首称臣吧！！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "向帝国臣服的话就饶你们一命\n但要拒绝的话…"
+  },
+  {
+   "type": "say",
+   "speaker": "市民",
+   "text": "我臣服，我臣服，救救我吧…"
+  },
  {
   "type": "say",
   "speaker": "",
@@ -50,8 +50,8 @@ export const azusa_HG2_64: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "魔法で毒沼の施設へ送られる男性。"
- },
+   "text": "男性被魔法送到了毒沼的设施。"
+  },
  {
   "type": "cg",
   "key": "HG2-2"
@@ -62,29 +62,29 @@ export const azusa_HG2_64: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "他のみんなはどうなんだ？\n死がお望みか？"
- },
- {
-  "type": "say",
-  "speaker": "市民",
-  "text": "ひぃいいいい"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "悪の魔法少女エンペラパールにより、\n人々はエンパイアに服従していった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうして世界はエンパイアのものとなるのだった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "最悪の魔法少女エンド"
- },
+   "speaker": "梓",
+   "text": "其他人怎么样？\n想要找死吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "市民",
+   "text": "啊啊啊不要"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "在邪恶的魔法少女帝国珍珠手下，\n人们纷纷向帝国臣服。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，世界落入了帝国之手。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "最邪恶的魔法少女结局"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"

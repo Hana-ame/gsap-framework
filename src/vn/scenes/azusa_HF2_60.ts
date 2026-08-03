@@ -147,7 +147,7 @@ export const azusa_HF2_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "啊啊，克赖西斯大人的有这么多…"
   },
   {
@@ -165,7 +165,7 @@ export const azusa_HF2_60: VnScript = {
  },
  {
   "type": "say",
-  "speaker": "アズサ",
+   "speaker": "梓",
    "text": "谢谢您♡\n下一次请进到我的身体里"
   },
   {

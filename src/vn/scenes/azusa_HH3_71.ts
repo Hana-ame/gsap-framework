@@ -36,148 +36,148 @@ export const azusa_HH3_71: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "教祖の部屋にあるベッドに横になるアズサ。"
- },
- {
-  "type": "cg",
-  "key": "HH3-1"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "どうぞ教祖様、私のおマンコへ教祖様のおチンポを入れてください"
- },
- {
-  "type": "cg",
-  "key": "HH3-2"
- },
- {
-  "type": "cg",
-  "key": "HH3-2"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "では入れますよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい来てください教祖様"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "教祖のペニスが挿入される。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ、これが夢にまで見た教祖様の…"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "そんなに心待ちにしていたのですか？"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい、毎日教祖様のことを想ってオナニーしていました！"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ずっと教祖様に抱かれることを夢見ていました"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "それがこうして本当に抱いてもらえて…\n幸せすぎてもうイッちゃいそうなぐらいです"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "それは気が早すぎますよ\n気持ち良くなるのはこれからなのですから"
- },
- {
-  "type": "cg",
-  "key": "HH3-3"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "そう言い動き出す教祖。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああっ、教祖様ぁ、気持ち良い、気持ち良いですぅ"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "私も気持ち良いですよ\n今まで抱いてきた信者の誰よりも気持ち良いです"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "本当ですか！嬉しいです！！"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "アズサは教祖が何人もの女性と関係を持っていることなど\n気にも留めていなかった。"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "それよりもその中で一番と言われた嬉しさ方がずっと大きかった。"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "教祖様ぁ好きぃ大好きです！"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "私もあなたのこと大切に思っていますよ\nですからこれからも私のものでいてくださいね"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい！もちろんですっ！\nこれからもずっと私は教祖様のものです！"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "良い返事です\nその気持ち絶対に忘れないでくださいよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいぃ忘れません！\n私は一生教祖様のものでいますぅ！"
- },
- {
-  "type": "cg",
-  "key": "HH3-4"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "それでいいのですぅ\nああ…そろそろイキますよ"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はいぃ、来てください。\n教祖様の精液私の中に出してくださいぃ"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "ああ出ますっ"
- },
+   "text": "梓躺在了教主房间的床上。"
+  },
+  {
+   "type": "cg",
+   "key": "HH3-1"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "来吧，教主大人，请把您的肉棒放进我的小穴里"
+  },
+  {
+   "type": "cg",
+   "key": "HH3-2"
+  },
+  {
+   "type": "cg",
+   "key": "HH3-2"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "那么我要进来了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，请来吧，教主大人"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "教主的阴茎插了进去。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，这就是连做梦都梦见的教主大人的…"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "你就这么期待吗？"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是的，我每天都想着教主大人自慰！"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "一直梦想着被教主大人拥抱"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "如今真的被您抱在怀中…\n幸福得快要去了"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "那也太心急了\n舒服的事还在后头呢"
+  },
+  {
+   "type": "cg",
+   "key": "HH3-3"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "说着，教主开始动了起来。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊，教主大人，好舒服，好舒服啊"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "我也很舒服\n比至今抱过的任何一个信徒都舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "真的吗！太高兴了！！"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "梓根本不在意教主和许多女性都有关系。"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "相比之下，被说成其中最好的那份喜悦要大得多。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "教主大人，喜欢，最喜欢你了！"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "我也很珍惜你\n所以今后也要一直属于我哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是！当然！\n今后我会一直属于教主大人！"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "答得好\n这份心情千万不要忘记"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，我不会忘的！\n我一辈子都属于教主大人！"
+  },
+  {
+   "type": "cg",
+   "key": "HH3-4"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "这就对了\n啊啊…我差不多要去了"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是，请来吧。\n请把教主大人的精液射进我的身体里"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "啊啊，要射了"
+  },
  {
   "type": "cg",
   "key": "HH3-5"
@@ -191,52 +191,52 @@ export const azusa_HH3_71: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "ドピュドピュドピューーーー\n大量の精液がアズサの中に注ぎ込まれる。"
- },
+   "text": "噗噗噗噗噗——\n大量的精液注入了梓的体内。"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "啊啊…教主大人的精液…啊啊"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "",
+   "effect": "flash"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "痉挛般颤抖\n感受到教主的精液，梓到达了高潮。"
+  },
  {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "ああ…教祖様の精液が…ああっ"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "",
-  "effect": "flash"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "ビクンビクン\n教祖の精液を感じて絶頂するアズサ。"
+  "type": "cg",
+  "key": "HH3-6"
  },
  {
   "type": "cg",
   "key": "HH3-6"
  },
  {
-  "type": "cg",
-  "key": "HH3-6"
- },
- {
   "type": "say",
-  "speaker": "アズサ",
-  "text": "はあ…はあ…教祖様…気持ち良かったです"
- },
- {
-  "type": "say",
-  "speaker": "教祖",
-  "text": "私も気持ち良かったですよ\nまたお願いしますね"
- },
- {
-  "type": "say",
-  "speaker": "アズサ",
-  "text": "はい…いつでもお待ちしています"
- },
- {
-  "type": "say",
-  "speaker": "",
-  "text": "こうしてアズサは教祖のものになったのだった。"
- },
+   "speaker": "梓",
+   "text": "呼…呼…教主大人…好舒服"
+  },
+  {
+   "type": "say",
+   "speaker": "教主",
+   "text": "我也很舒服\n下次也拜托了哦"
+  },
+  {
+   "type": "say",
+   "speaker": "梓",
+   "text": "是…我随时恭候"
+  },
+  {
+   "type": "say",
+   "speaker": "",
+   "text": "就这样，梓成为了教主的东西。"
+  },
  {
   "type": "end",
   "goto": "#vn-menu"
