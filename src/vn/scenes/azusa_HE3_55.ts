@@ -38,7 +38,11 @@ export const azusa_HE3_55: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE3-1"
+ },
+ {
+  "type": "cg",
   "key": "HE3-1"
  },
  {
@@ -57,7 +61,11 @@ export const azusa_HE3_55: VnScript = {
   "text": "そう言えばあなたはパンツで興奮する人だったわね"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE3-2"
+ },
+ {
+  "type": "cg",
   "key": "HE3-2"
  },
  {
@@ -66,7 +74,11 @@ export const azusa_HE3_55: VnScript = {
   "text": "ほら、これでどう？"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE3-3"
+ },
+ {
+  "type": "cg",
   "key": "HE3-3"
  },
  {
@@ -95,7 +107,11 @@ export const azusa_HE3_55: VnScript = {
   "text": "仕方ないわね"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE3-4"
+ },
+ {
+  "type": "cg",
   "key": "HE3-4"
  },
  {
@@ -114,7 +130,7 @@ export const azusa_HE3_55: VnScript = {
   "text": "そう、ありがと"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE3-5"
  },
  {
@@ -143,7 +159,7 @@ export const azusa_HE3_55: VnScript = {
   "text": "ああ…美住さん…うっ…出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE3-6"
  },
  {
@@ -152,7 +168,11 @@ export const azusa_HE3_55: VnScript = {
   "text": "ドピュドピュドピューーーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE3-7"
+ },
+ {
+  "type": "cg",
   "key": "HE3-7"
  },
  {

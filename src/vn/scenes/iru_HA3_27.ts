@@ -26,7 +26,7 @@ export const iru_HA3_27: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-1"
  },
  {
@@ -45,7 +45,7 @@ export const iru_HA3_27: VnScript = {
   "text": "おっぱい気持ち良い…\n良かった私薬が無くても胸だけで感じられるようになってる…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-2"
  },
  {
@@ -104,7 +104,7 @@ export const iru_HA3_27: VnScript = {
   "text": "んあああっチパイスキー様ぁああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-3"
  },
  {
@@ -119,7 +119,7 @@ export const iru_HA3_27: VnScript = {
   "text": "プシャアアビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-4"
  },
  {

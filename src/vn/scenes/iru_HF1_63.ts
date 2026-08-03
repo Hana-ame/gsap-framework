@@ -38,7 +38,7 @@ export const iru_HF1_63: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF1-1"
  },
  {
@@ -62,7 +62,7 @@ export const iru_HF1_63: VnScript = {
   "text": "そうか、じゃあ遠慮なく入れさせてもらうよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF1-2"
  },
  {
@@ -76,7 +76,7 @@ export const iru_HF1_63: VnScript = {
   "text": "ああっチパイスキー様のおチンポが入って来ますぅ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF1-3"
  },
  {
@@ -135,7 +135,7 @@ export const iru_HF1_63: VnScript = {
   "text": "ですから、これからも私のことを使ってくださいいいいい"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF1-4"
  },
  {
@@ -164,7 +164,7 @@ export const iru_HF1_63: VnScript = {
   "text": "ああ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF1-5"
  },
  {
@@ -184,7 +184,7 @@ export const iru_HF1_63: VnScript = {
   "text": "ああっ…チパイスキー様ぁああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF1-6"
  },
  {
@@ -199,7 +199,11 @@ export const iru_HF1_63: VnScript = {
   "text": "ビクンビクン\nイルも絶頂する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF1-7"
+ },
+ {
+  "type": "cg",
   "key": "HF1-7"
  },
  {

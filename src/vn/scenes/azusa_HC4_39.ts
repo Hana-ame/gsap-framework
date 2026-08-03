@@ -34,7 +34,7 @@ export const azusa_HC4_39: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC4-1"
  },
  {
@@ -68,7 +68,7 @@ export const azusa_HC4_39: VnScript = {
   "text": "ほら、入れてやるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC4-2"
  },
  {
@@ -87,7 +87,7 @@ export const azusa_HC4_39: VnScript = {
   "text": "相変わらず締りがいいな\nほら動くぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC4-3"
  },
  {
@@ -106,7 +106,7 @@ export const azusa_HC4_39: VnScript = {
   "text": "言われなくても突いてやるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC4-4"
  },
  {
@@ -165,7 +165,7 @@ export const azusa_HC4_39: VnScript = {
   "text": "イクッ！イッくうううう！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC4-5"
  },
  {
@@ -186,7 +186,11 @@ export const azusa_HC4_39: VnScript = {
   "text": "ドピュドピュドピューーー\n射精と同時に絶頂するアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC4-6"
+ },
+ {
+  "type": "cg",
   "key": "HC4-6"
  },
  {

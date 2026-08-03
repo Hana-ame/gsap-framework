@@ -30,7 +30,7 @@ export const iru_T22_40: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-0"
  },
  {
@@ -39,7 +39,7 @@ export const iru_T22_40: VnScript = {
   "text": "じゃあさっそく失礼して"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-1"
  },
  {
@@ -58,7 +58,7 @@ export const iru_T22_40: VnScript = {
   "text": "(やばい…胸敏感になりすぎてて感じちゃう…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-2"
  },
  {
@@ -87,7 +87,7 @@ export const iru_T22_40: VnScript = {
   "text": "(やばい…イッちゃう…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-3"
  },
  {
@@ -102,7 +102,7 @@ export const iru_T22_40: VnScript = {
   "text": "ビクンビクン\n絶頂するイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-4"
  },
  {

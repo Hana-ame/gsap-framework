@@ -66,7 +66,7 @@ export const iru_T3_54: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "z_e"
  },
  {
@@ -80,7 +80,7 @@ export const iru_T3_54: VnScript = {
   "text": "おお、良い胸をしているな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T3-1"
  },
  {
@@ -104,7 +104,7 @@ export const iru_T3_54: VnScript = {
   "text": "(えっ…今チパイスキー様に触られたら私…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T3-2"
  },
  {
@@ -113,7 +113,7 @@ export const iru_T3_54: VnScript = {
   "text": "おお…良い形だ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T3-3"
  },
  {
@@ -127,7 +127,7 @@ export const iru_T3_54: VnScript = {
   "text": "ああんっチパイスキー様、ああっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T3-4"
  },
  {
@@ -142,7 +142,7 @@ export const iru_T3_54: VnScript = {
   "text": "ビクンビクン\n絶頂してしまうイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T3-5"
  },
  {
@@ -151,7 +151,7 @@ export const iru_T3_54: VnScript = {
   "text": "おっと、すまないイカせてしまったか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "z_e2"
  },
  {
@@ -165,7 +165,7 @@ export const iru_T3_54: VnScript = {
   "text": "構わん、それだけ俺のことを想っているということだろう？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "z_ht"
  },
  {
@@ -204,7 +204,7 @@ export const iru_T3_54: VnScript = {
   "text": "はいチパイスキー様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "m0_e"
  },
  {
@@ -218,7 +218,7 @@ export const iru_T3_54: VnScript = {
   "text": "最後にこれを付けないとな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "m_e"
  },
  {
@@ -227,7 +227,7 @@ export const iru_T3_54: VnScript = {
   "text": "そして首に金の首輪が付けられる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "m_e2"
  },
  {
@@ -276,7 +276,7 @@ export const iru_T3_54: VnScript = {
   "text": "もちろん、君は見た目も良いし実力も申し分ない\n君なら俺と一緒にこの国を良くしていけると思ったからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "m_e3"
  },
  {
@@ -391,7 +391,7 @@ export const iru_T3_54: VnScript = {
   "text": "イルはチパイスキーに契約のやり方を伝える。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "m_hy"
  },
  {
@@ -405,7 +405,7 @@ export const iru_T3_54: VnScript = {
   "text": "そして契約が完了する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "m_ht3"
  },
  {

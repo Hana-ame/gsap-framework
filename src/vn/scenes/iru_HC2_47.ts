@@ -18,7 +18,7 @@ export const iru_HC2_47: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-6"
  },
  {
@@ -27,7 +27,7 @@ export const iru_HC2_47: VnScript = {
   "text": "ああ…いいよぉ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-7"
  },
  {

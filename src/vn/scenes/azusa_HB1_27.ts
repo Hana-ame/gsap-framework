@@ -38,7 +38,7 @@ export const azusa_HB1_27: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-1"
  },
  {
@@ -57,7 +57,7 @@ export const azusa_HB1_27: VnScript = {
   "text": "だからそれってジュースじゃなくてせいえ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-2"
  },
  {
@@ -96,7 +96,7 @@ export const azusa_HB1_27: VnScript = {
   "text": "そう睨まなくても\nとびっきり美味しいジュースを飲ませてあげるから"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-3"
  },
  {
@@ -110,7 +110,7 @@ export const azusa_HB1_27: VnScript = {
   "text": "そんな甘噛みされると刺激されて出ちゃう…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-4"
  },
  {
@@ -125,7 +125,7 @@ export const azusa_HB1_27: VnScript = {
   "text": "ドピュドピューーー\n触手の先端から白い液体が触手から放たれる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-5"
  },
  {
@@ -159,7 +159,7 @@ export const azusa_HB1_27: VnScript = {
   "text": "(私…精液飲んでしまったの…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-6"
  },
  {
@@ -168,7 +168,7 @@ export const azusa_HB1_27: VnScript = {
   "text": "(そんな…そんなの…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-7"
  },
  {

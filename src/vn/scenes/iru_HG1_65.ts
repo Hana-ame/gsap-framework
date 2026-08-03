@@ -40,7 +40,7 @@ export const iru_HG1_65: VnScript = {
   "text": "そのためにはお金を稼がないといけない。\nそこでイルが取った行動は…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-1"
  },
  {
@@ -89,7 +89,7 @@ export const iru_HG1_65: VnScript = {
   "text": "ああっ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-2"
  },
  {
@@ -109,7 +109,7 @@ export const iru_HG1_65: VnScript = {
   "text": "ああっ精液感じる～♡"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-3"
  },
  {
@@ -133,7 +133,7 @@ export const iru_HG1_65: VnScript = {
   "text": "お、俺も…ああっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-4"
  },
  {
@@ -148,7 +148,11 @@ export const iru_HG1_65: VnScript = {
   "text": "ドピュドピュドピューーー\n大量の精液がイルに降り注ぐ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HG1-5"
+ },
+ {
+  "type": "cg",
   "key": "HG1-5"
  },
  {

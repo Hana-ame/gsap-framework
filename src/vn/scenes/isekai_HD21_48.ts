@@ -75,7 +75,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "こうして狂信者によるセックス指導が始まった。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-1"
  },
  {
@@ -89,7 +89,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "はいお願いします！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-2"
  },
  {
@@ -119,7 +119,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "処女を捨てられて良かったでしょう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-3"
  },
  {
@@ -133,7 +133,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "初めてですし、まずは慣らすためにゆっくりと動きますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-4"
  },
  {
@@ -157,7 +157,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "そう言いしばらくの間はゆっくりとしたピストンが続く。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-5"
  },
  {
@@ -176,7 +176,11 @@ export const isekai_HD21_48: VnScript = {
   "text": "はい、よろしくお願いします"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD21-6"
+ },
+ {
+  "type": "cg",
   "key": "HD21-6"
  },
  {
@@ -205,7 +209,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "ほら\n『私のおマンコにそのたくましいおチンポを入れてください』\nと言いなさい"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-7"
  },
  {
@@ -219,7 +223,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "良いでしょう、入れますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-8"
  },
  {
@@ -258,7 +262,11 @@ export const isekai_HD21_48: VnScript = {
   "text": "では挿入からやり直しますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD21-9"
+ },
+ {
+  "type": "cg",
   "key": "HD21-9"
  },
  {
@@ -267,7 +275,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "ペニスが抜かれる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-10"
  },
  {
@@ -281,7 +289,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "再び入れてもらうための言葉を発する有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-11"
  },
  {
@@ -300,7 +308,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "はい！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-12"
  },
  {
@@ -329,7 +337,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "その後もセックス指導は続く。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-13"
  },
  {
@@ -378,7 +386,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "うっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-14"
  },
  {
@@ -393,7 +401,7 @@ export const isekai_HD21_48: VnScript = {
   "text": "中に出される有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD21-15"
  },
  {

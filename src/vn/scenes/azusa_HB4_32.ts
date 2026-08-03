@@ -46,7 +46,7 @@ export const azusa_HB4_32: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB4-1"
  },
  {
@@ -65,7 +65,7 @@ export const azusa_HB4_32: VnScript = {
   "text": "太も女の子たちへのボランティアお疲れ様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB4-2"
  },
  {
@@ -74,7 +74,11 @@ export const azusa_HB4_32: VnScript = {
   "text": "ちゅっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB4-3"
+ },
+ {
+  "type": "cg",
   "key": "HB4-3"
  },
  {
@@ -103,7 +107,7 @@ export const azusa_HB4_32: VnScript = {
   "text": "わかってるって\n僕だってキスはアズサとしかしないよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB4-4"
  },
  {
@@ -112,7 +116,7 @@ export const azusa_HB4_32: VnScript = {
   "text": "太♡…大好き"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB4-5"
  },
  {
@@ -141,7 +145,7 @@ export const azusa_HB4_32: VnScript = {
   "text": "私もイクッイッちゃううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB4-6"
  },
  {
@@ -162,7 +166,7 @@ export const azusa_HB4_32: VnScript = {
   "text": "ドピュドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB4-7"
  },
  {
@@ -171,7 +175,11 @@ export const azusa_HB4_32: VnScript = {
   "text": "はあ…はあ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB4-8"
+ },
+ {
+  "type": "cg",
   "key": "HB4-8"
  },
  {
@@ -185,7 +193,11 @@ export const azusa_HB4_32: VnScript = {
   "text": "そしてそれを舐める。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB4-9"
+ },
+ {
+  "type": "cg",
   "key": "HB4-9"
  },
  {

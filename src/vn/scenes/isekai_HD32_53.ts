@@ -39,7 +39,7 @@ export const isekai_HD32_53: VnScript = {
   "text": "一般兵となった有理紗は前線部隊にいた。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD32-1"
  },
  {
@@ -53,7 +53,7 @@ export const isekai_HD32_53: VnScript = {
   "text": "他の洗脳された女性たちと共にマシナ国への忠誠を叫ぶ有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD32-2"
  },
  {
@@ -62,7 +62,11 @@ export const isekai_HD32_53: VnScript = {
   "text": "よし！次に俺に対しての挨拶！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD32-3"
+ },
+ {
+  "type": "cg",
   "key": "HD32-3"
  },
  {
@@ -76,7 +80,7 @@ export const isekai_HD32_53: VnScript = {
   "text": "何度見ても凄い眺めだな…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD32-4"
  },
  {
@@ -100,7 +104,7 @@ export const isekai_HD32_53: VnScript = {
   "text": "スカートをたくし上げて静止している女性兵士を\n品定めするような目で見る上官。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD32-5"
  },
  {
@@ -109,7 +113,7 @@ export const isekai_HD32_53: VnScript = {
   "text": "よし！今日はお前だ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD32-6"
  },
  {

@@ -66,7 +66,11 @@ export const azusa_HH2_70: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-1"
+ },
+ {
+  "type": "cg",
   "key": "HH2-1"
  },
  {
@@ -75,7 +79,11 @@ export const azusa_HH2_70: VnScript = {
   "text": "椅子に座るアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-2"
+ },
+ {
+  "type": "cg",
   "key": "HH2-2"
  },
  {
@@ -99,7 +107,11 @@ export const azusa_HH2_70: VnScript = {
   "text": "(頭がぼーっとしてきて…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-3"
+ },
+ {
+  "type": "cg",
   "key": "HH2-3"
  },
  {
@@ -178,7 +190,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "私のことを考えていると、だんだんムラムラしてきますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-4"
  },
  {
@@ -192,7 +204,11 @@ export const azusa_HH2_70: VnScript = {
   "text": "ほら、手はおマンコの方に動いていきますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-5"
+ },
+ {
+  "type": "cg",
   "key": "HH2-5"
  },
  {
@@ -206,7 +222,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "(ああ…どうしてだろう…\n 教祖様のことを考えていたら\n 無性にオナニーがしたくなってきちゃった…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-6"
  },
  {
@@ -245,7 +261,11 @@ export const azusa_HH2_70: VnScript = {
   "text": "だんだんと手の動きが激しくなってくる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-7"
+ },
+ {
+  "type": "cg",
   "key": "HH2-7"
  },
  {
@@ -254,7 +274,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "もう片方の手で胸も揉み始める。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-8"
  },
  {
@@ -323,7 +343,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "エッチ…エッチ！教祖様とエッチしたい！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-9"
  },
  {
@@ -392,7 +412,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "ああっイクッ…\nああ教祖様に全てを捧げながらイッちゃうううううううう！！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-10"
  },
  {
@@ -407,7 +427,11 @@ export const azusa_HH2_70: VnScript = {
   "text": "プシャアアアビクンビクン…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-11"
+ },
+ {
+  "type": "cg",
   "key": "HH2-11"
  },
  {
@@ -431,7 +455,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "さあ目を覚ましてください"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-12"
  },
  {
@@ -440,7 +464,11 @@ export const azusa_HH2_70: VnScript = {
   "text": "あれ…私…また眠って…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH2-13"
+ },
+ {
+  "type": "cg",
   "key": "HH2-13"
  },
  {
@@ -484,7 +512,7 @@ export const azusa_HH2_70: VnScript = {
   "text": "(教祖様がそう言うなら\n 本当に気にしていないってことなのかな…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH2-14"
  },
  {

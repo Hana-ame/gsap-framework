@@ -74,7 +74,7 @@ export const isekai_HA21_14: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA21-1"
  },
  {
@@ -108,7 +108,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "それはね…僕の言うこと何でも聞いてくれる\n理想の女の子になってもらうんだよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA21-2"
  },
  {
@@ -127,7 +127,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "だから今付けている洗脳装置の出番ってわけさ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA21-3"
  },
  {
@@ -161,7 +161,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "嫌だね、じゃあ始めるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA21-4"
  },
  {
@@ -205,7 +205,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "まさか脳へのダメージも即座に回復している！？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA21-5"
  },
  {
@@ -219,7 +219,11 @@ export const isekai_HA21_14: VnScript = {
   "text": "ああそうかよ！そこまで僕のものになりたくないのかよ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA21-6"
+ },
+ {
+  "type": "cg",
   "key": "HA21-6"
  },
  {
@@ -243,7 +247,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "何を言って…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-1"
  },
  {
@@ -257,7 +261,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "次は何ですか！？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-2"
  },
  {
@@ -291,7 +295,11 @@ export const isekai_HA21_14: VnScript = {
   "text": "じゃあほら"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA22-3"
+ },
+ {
+  "type": "cg",
   "key": "HA22-3"
  },
  {
@@ -315,7 +323,11 @@ export const isekai_HA21_14: VnScript = {
   "text": "ほら、左手も"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA22-4"
+ },
+ {
+  "type": "cg",
   "key": "HA22-4"
  },
  {
@@ -329,7 +341,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "いいねいいね、エッチだよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-5"
  },
  {
@@ -353,7 +365,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "イクまで…\nいや、イッても僕が良いと言うまでオナニーを続けるんだ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-6"
  },
  {
@@ -382,7 +394,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "ほらイケ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-7"
  },
  {
@@ -397,7 +409,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "絶頂してしまう詩保。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-8"
  },
  {
@@ -416,7 +428,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "嘘でしょ･･･"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-9"
  },
  {
@@ -440,7 +452,7 @@ export const isekai_HA21_14: VnScript = {
   "text": "こんなんじゃ済まさないよ\nエッチなことだけじゃない、\n君がきっと嫌がるであろうこと、いっぱいさせてあげるからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA22-10"
  },
  {

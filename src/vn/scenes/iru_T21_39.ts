@@ -30,7 +30,7 @@ export const iru_T21_39: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T21-0"
  },
  {
@@ -39,7 +39,7 @@ export const iru_T21_39: VnScript = {
   "text": "じゃあさっそく失礼して"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T21-1"
  },
  {
@@ -58,7 +58,7 @@ export const iru_T21_39: VnScript = {
   "text": "(胸でイケる薬の影響が残ってるのかしら…感じちゃうわね…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T21-2"
  },
  {
@@ -87,7 +87,7 @@ export const iru_T21_39: VnScript = {
   "text": "(やばい…イッちゃう…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T21-3"
  },
  {
@@ -102,7 +102,7 @@ export const iru_T21_39: VnScript = {
   "text": "ビクンビクン\n絶頂するイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T21-4"
  },
  {

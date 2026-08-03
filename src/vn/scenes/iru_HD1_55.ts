@@ -51,7 +51,7 @@ export const iru_HD1_55: VnScript = {
   "text": "そう言い勃起したペニスを取り出すチパイスキー。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-1"
  },
  {
@@ -65,7 +65,11 @@ export const iru_HD1_55: VnScript = {
   "text": "わかりました\nでは失礼します"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD1-2"
+ },
+ {
+  "type": "cg",
   "key": "HD1-2"
  },
  {
@@ -89,7 +93,11 @@ export const iru_HD1_55: VnScript = {
   "text": "わかりました"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD1-3"
+ },
+ {
+  "type": "cg",
   "key": "HD1-3"
  },
  {
@@ -98,7 +106,7 @@ export const iru_HD1_55: VnScript = {
   "text": "そう言いペニスを咥えるイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-4"
  },
  {
@@ -127,7 +135,7 @@ export const iru_HD1_55: VnScript = {
   "text": "(もっと…もっと気持ち良くなって欲しい)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-5"
  },
  {
@@ -146,7 +154,7 @@ export const iru_HD1_55: VnScript = {
   "text": "ああ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-6"
  },
  {
@@ -161,7 +169,7 @@ export const iru_HD1_55: VnScript = {
   "text": "ドピュドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-7"
  },
  {
@@ -185,7 +193,11 @@ export const iru_HD1_55: VnScript = {
   "text": "命令に従い出された精液を飲み干すイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD1-8"
+ },
+ {
+  "type": "cg",
   "key": "HD1-8"
  },
  {
@@ -194,7 +206,11 @@ export const iru_HD1_55: VnScript = {
   "text": "ぷはぁ…飲みました…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD1-9"
+ },
+ {
+  "type": "cg",
   "key": "HD1-9"
  },
  {

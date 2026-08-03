@@ -39,7 +39,7 @@ export const isekai_HB31_28: VnScript = {
   "text": "茶羅井は有理紗たちを自室に案内した。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB31-1"
  },
  {
@@ -53,7 +53,7 @@ export const isekai_HB31_28: VnScript = {
   "text": "おっ、処女なのか\nいいぜ最高の思い出にしてやるからな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB31-2"
  },
  {
@@ -78,7 +78,7 @@ export const isekai_HB31_28: VnScript = {
   "text": "(ああ･･･茶羅井様とセックスしてる…なんて幸せなの！！)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB31-3"
  },
  {
@@ -97,7 +97,7 @@ export const isekai_HB31_28: VnScript = {
   "text": "いいぜ、いっぱい突いてやるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB31-4"
  },
  {
@@ -131,7 +131,7 @@ export const isekai_HB31_28: VnScript = {
   "text": "はい！中に出してください！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB31-5"
  },
  {
@@ -152,7 +152,7 @@ export const isekai_HB31_28: VnScript = {
   "text": "ドピュッビュルルルー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB31-6"
  },
  {

@@ -67,7 +67,7 @@ export const iru_HE1_60: VnScript = {
   "text": "チパイスキーにまさかの敗北をしたイルは捕らえられ、\n装置に拘束されてしまう。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-1"
  },
  {
@@ -127,7 +127,7 @@ export const iru_HE1_60: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-2"
  },
  {
@@ -183,7 +183,7 @@ export const iru_HE1_60: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-3"
  },
  {
@@ -223,7 +223,7 @@ export const iru_HE1_60: VnScript = {
   "text": "ああ消える消えるううううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-4"
  },
  {
@@ -238,7 +238,7 @@ export const iru_HE1_60: VnScript = {
   "text": "ビクンと身体が跳ねる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-5"
  },
  {
@@ -283,7 +283,7 @@ export const iru_HE1_60: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-6"
  },
  {
@@ -308,7 +308,7 @@ export const iru_HE1_60: VnScript = {
   "text": "あああああああ私が吸われていくううううううううう\nあああああああああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-7"
  },
  {
@@ -323,7 +323,11 @@ export const iru_HE1_60: VnScript = {
   "text": "ビクンビクン\n絶頂したかのような反応を示すイルの身体。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-8"
+ },
+ {
+  "type": "cg",
   "key": "HE1-8"
  },
  {
@@ -337,7 +341,11 @@ export const iru_HE1_60: VnScript = {
   "text": "完了したかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-9"
+ },
+ {
+  "type": "cg",
   "key": "HE1-9"
  },
  {
@@ -351,7 +359,11 @@ export const iru_HE1_60: VnScript = {
   "text": "記憶も人格も全て失ったようだな\nあとは、俺に従順な最低限の感情だけ投入してあげれば完了だな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-10"
+ },
+ {
+  "type": "cg",
   "key": "HE1-10"
  },
  {
@@ -365,7 +377,7 @@ export const iru_HE1_60: VnScript = {
   "text": "さて次は俺に都合の良い記憶と感情を投入するぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-11"
  },
  {
@@ -401,7 +413,11 @@ export const iru_HE1_60: VnScript = {
   "text": "イルの中にチパイスキーに都合が良い感情が植え付けられていく…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-10"
+ },
+ {
+  "type": "cg",
   "key": "HE1-10"
  },
  {
@@ -415,7 +431,11 @@ export const iru_HE1_60: VnScript = {
   "text": "これでできたかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-13"
+ },
+ {
+  "type": "cg",
   "key": "HE1-13"
  },
  {
@@ -429,7 +449,11 @@ export const iru_HE1_60: VnScript = {
   "text": "さて君は何者かな？"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-14"
+ },
+ {
+  "type": "cg",
   "key": "HE1-14"
  },
  {

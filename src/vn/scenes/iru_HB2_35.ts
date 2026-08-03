@@ -31,7 +31,7 @@ export const iru_HB2_35: VnScript = {
   "text": "自然と手は胸へと伸びていく。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-1"
  },
  {
@@ -65,7 +65,7 @@ export const iru_HB2_35: VnScript = {
   "text": "チパイスキー様に命令されたい…\nチパイスキー様に身も心も捧げたい…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-2"
  },
  {
@@ -124,7 +124,7 @@ export const iru_HB2_35: VnScript = {
   "text": "んああああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-3"
  },
  {
@@ -139,7 +139,7 @@ export const iru_HB2_35: VnScript = {
   "text": "プシャアアビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-4"
  },
  {

@@ -111,7 +111,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "奥のベッドへ無理やり連れていかれるアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-1"
  },
  {
@@ -125,7 +125,11 @@ export const azusa_HF1_59: VnScript = {
   "text": "(どうして抵抗できないの…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF2-2"
+ },
+ {
+  "type": "cg",
   "key": "HF2-2"
  },
  {
@@ -144,7 +148,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "(クライシス様のおチンポ！！)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-3"
  },
  {
@@ -173,7 +177,11 @@ export const azusa_HF1_59: VnScript = {
   "text": "い…いらない…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF2-4"
+ },
+ {
+  "type": "cg",
   "key": "HF2-4"
  },
  {
@@ -212,7 +220,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "ほら、どうなんだ？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-5"
  },
  {
@@ -221,7 +229,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "い…入れたければ入れればいいでしょ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-6"
  },
  {
@@ -230,7 +238,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "主人に向かってなんだその言い方は！\nそんな言い方じゃチンポはやらんぞ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-7"
  },
  {
@@ -244,7 +252,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "(どうしてこんなに悲しい気持ちになるの…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-8"
  },
  {
@@ -283,7 +291,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "ん？よく聞こえなかったな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-9"
  },
  {
@@ -302,7 +310,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "ほらお望み通り入れてやろう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-10"
  },
  {
@@ -321,7 +329,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "(入れられただけで…ああっイッちゃうううううう)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-11"
  },
  {
@@ -336,7 +344,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "ビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-12"
  },
  {
@@ -355,7 +363,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "入れられただけでイクとは\nだが私はまだ満足しておらんぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-13"
  },
  {
@@ -374,7 +382,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "お前は私の物だ、私の好きにさせてもらうぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-14"
  },
  {
@@ -383,7 +391,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "違う…私はクライシス様のものじゃぁ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-15"
  },
  {
@@ -402,7 +410,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "まだ口答えするとは…\nいい加減認めなさい！お前は私のものだ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-16"
  },
  {
@@ -436,7 +444,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "そうだ！そして私のものにならないなら\n二度とこの快楽を得ることはできなくなるぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-17"
  },
  {
@@ -490,7 +498,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "そうか、ついに認めたか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-18"
  },
  {
@@ -519,7 +527,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "さっきまでとは随分態度が違うな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-19"
  },
  {
@@ -543,7 +551,11 @@ export const azusa_HF1_59: VnScript = {
   "text": "洗脳…？そっか、私…洗脳されちゃったんですね…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF2-20"
+ },
+ {
+  "type": "cg",
   "key": "HF2-20"
  },
  {
@@ -582,7 +594,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "はいっ！クライシス様に絶対の忠誠を誓います！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-21"
  },
  {
@@ -606,7 +618,7 @@ export const azusa_HF1_59: VnScript = {
   "text": "私もイキます…イクぅうううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF2-22"
  },
  {
@@ -627,7 +639,11 @@ export const azusa_HF1_59: VnScript = {
   "text": "ドピュドピュドピューーーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF2-23"
+ },
+ {
+  "type": "cg",
   "key": "HF2-23"
  },
  {
@@ -651,7 +667,11 @@ export const azusa_HF1_59: VnScript = {
   "text": "エンパイアのために全力で戦います"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF2-24"
+ },
+ {
+  "type": "cg",
   "key": "HF2-24"
  },
  {

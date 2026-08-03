@@ -90,7 +90,7 @@ export const azusa_HC2_36: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-1"
  },
  {
@@ -104,7 +104,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "戦いに敗れ力が入らないアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-2"
  },
  {
@@ -124,7 +124,11 @@ export const azusa_HC2_36: VnScript = {
   "text": "ああああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC2-3"
+ },
+ {
+  "type": "cg",
   "key": "HC2-3"
  },
  {
@@ -143,7 +147,11 @@ export const azusa_HC2_36: VnScript = {
   "text": "(ダメ…この快楽に流されちゃう…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC2-4"
+ },
+ {
+  "type": "cg",
   "key": "HC2-4"
  },
  {
@@ -167,7 +175,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "(やばい気持ち良いいいいい)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-5"
  },
  {
@@ -197,7 +205,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "まだまだこれからだぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-6"
  },
  {
@@ -216,7 +224,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "知るかよ、お前が勝手にイッたんだろ\n俺はまだイッてないんだからな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-7"
  },
  {
@@ -235,7 +243,11 @@ export const azusa_HC2_36: VnScript = {
   "text": "お前らもこいつで気持ち良くなれよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC2-8"
+ },
+ {
+  "type": "cg",
   "key": "HC2-8"
  },
  {
@@ -269,7 +281,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "(でもおチンポは気持ち良いものだから良いのかな…？)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-9"
  },
  {
@@ -293,7 +305,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "チュパチュパと熱心にしゃぶるアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-10"
  },
  {
@@ -332,7 +344,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "(ああイクううううう)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-11"
  },
  {
@@ -353,7 +365,11 @@ export const azusa_HC2_36: VnScript = {
   "text": "ドピュドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC2-12"
+ },
+ {
+  "type": "cg",
   "key": "HC2-12"
  },
  {
@@ -367,7 +383,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "どうだ魔法少女、まだ足りないよな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-13"
  },
  {
@@ -391,7 +407,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "それから不良たちと代わる代わるセックスしたアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-14"
  },
  {
@@ -411,7 +427,11 @@ export const azusa_HC2_36: VnScript = {
   "text": "ドピュドピュ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC2-15"
+ },
+ {
+  "type": "cg",
   "key": "HC2-15"
  },
  {
@@ -430,7 +450,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "薬が切れてきたのかもな\n強力なのを一発入れておこうか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-16"
  },
  {
@@ -450,7 +470,11 @@ export const azusa_HC2_36: VnScript = {
   "text": "こいつは普通のやつとは違う超強力なやつだ\n二度と俺に逆らうことが無いようにしないとだからな\n多少壊れても仕方ない"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC2-17"
+ },
+ {
+  "type": "cg",
   "key": "HC2-17"
  },
  {
@@ -459,7 +483,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "あああああああひいいいいいいいいいいい"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-18"
  },
  {
@@ -484,7 +508,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "すると…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-19"
  },
  {
@@ -554,7 +578,7 @@ export const azusa_HC2_36: VnScript = {
   "text": "いいかアズサ！今日から俺がお前のご主人様だからな！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC2-20"
  },
  {

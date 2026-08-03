@@ -58,7 +58,7 @@ export const isekai_HC31_37: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-1"
  },
  {
@@ -92,7 +92,11 @@ export const isekai_HC31_37: VnScript = {
   "text": "少し私の性処理に付き合ってもらいましょう"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC31-2"
+ },
+ {
+  "type": "cg",
   "key": "HC31-2"
  },
  {
@@ -126,7 +130,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "さあ、入れますよ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-3"
  },
  {
@@ -156,7 +160,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "初めてだったのですか\nまあ私には関係ありませんが"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-4"
  },
  {
@@ -200,7 +204,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "やめるわけないでしょう\nもっと激しく動きますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-5"
  },
  {
@@ -224,7 +228,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "いやいやいやあああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-6"
  },
  {
@@ -239,7 +243,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "ドピュッ！ビュルルルー！！ドクンドクン……"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-7"
  },
  {
@@ -263,7 +267,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "おっそうですか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-8"
  },
  {
@@ -272,7 +276,11 @@ export const isekai_HC31_37: VnScript = {
   "text": "良かったですね有理紗さん\nこれであたなも私の信徒になれますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC31-9"
+ },
+ {
+  "type": "cg",
   "key": "HC31-9"
  },
  {
@@ -281,7 +289,7 @@ export const isekai_HC31_37: VnScript = {
   "text": "有理紗に手をかざす教皇。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC31-10"
  },
  {
@@ -295,7 +303,11 @@ export const isekai_HC31_37: VnScript = {
   "text": "(ああ･･･だめぇ･･･頭が･･･ボーっとしてきて･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC31-11"
+ },
+ {
+  "type": "cg",
   "key": "HC31-11"
  },
  {
@@ -314,7 +326,11 @@ export const isekai_HC31_37: VnScript = {
   "text": "無理やり犯され心が弱っている有理紗は\n抵抗する力もなくあっけなく教皇の洗脳魔法に堕ちる…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC31-12"
+ },
+ {
+  "type": "cg",
   "key": "HC31-12"
  },
  {

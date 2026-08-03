@@ -59,7 +59,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "コポコポと水の音が鳴っている。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-1"
  },
  {
@@ -88,7 +88,11 @@ export const azusa_HA1_21: VnScript = {
   "text": "エンパイアの技術のほとんどはこの毒沼が作ったものである。\nその毒沼の命令によりアズサの改造処置が開始される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA1-2"
+ },
+ {
+  "type": "cg",
   "key": "HA1-2"
  },
  {
@@ -97,7 +101,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "触手のような機械が伸びてくる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-3"
  },
  {
@@ -127,7 +131,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "挿入を確認、不老化液を投入します"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-4"
  },
  {
@@ -136,7 +140,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "ドピュドピュと触手から薬が放出される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-5"
  },
  {
@@ -170,7 +174,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "始めろ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-6"
  },
  {
@@ -234,7 +238,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "(エンパイアに忠誠を誓います･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-6"
  },
  {
@@ -263,7 +267,11 @@ export const azusa_HA1_21: VnScript = {
   "text": "わかりました…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA1-7"
+ },
+ {
+  "type": "cg",
   "key": "HA1-7"
  },
  {
@@ -272,7 +280,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "注射のような機械が伸びてきて、アズサの腕に刺さる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-8"
  },
  {
@@ -286,7 +294,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "(何…身体の中に何かが入ってくる…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-9"
  },
  {
@@ -352,7 +360,7 @@ export const azusa_HA1_21: VnScript = {
   "text": "(最後まで抗ってやる！！！)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-11"
  },
  {
@@ -375,7 +383,11 @@ export const azusa_HA1_21: VnScript = {
   "text": "(もう…無理…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA1-10"
+ },
+ {
+  "type": "cg",
   "key": "HA1-10"
  },
  {

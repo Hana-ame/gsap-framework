@@ -24,16 +24,37 @@ export interface VnSay {
   type: 'say';
   speaker: string;
   text: string;
-  /** 可选：换背景（key 须在 preload 里声明过）。 */
+  /** 可选：背景图（key 或完整 URL）。背景层 cover 占满。 */
   bg?: string;
+  /** 可选：CG 图（key 或完整 URL）。CG 层 contain 看全。 */
+  cg?: string;
+  /** 图层序号（默认 0）。同 index 时 cg 在 bg 前。 */
+  index?: number;
+  /** 可选：z 顺序（叠加排序）。 */
+  zIndex?: number;
   effect?: 'shake' | 'flash';
 }
 
-/** 背景指令：切到指定资源 key。 */
+/** 背景指令：切到指定背景资源（key 或完整 URL）。背景层 cover 占满。 */
 export interface VnBg {
   type: 'bg';
   key: string;
+  /** 图层序号（默认 0）。 */
+  index?: number;
+  /** 可选：z 顺序。 */
+  zIndex?: number;
   /** 进入动画时长 ms，0=无动画。 */
+  fadeMs?: number;
+}
+
+/** CG 指令：切到指定 CG 资源（key 或完整 URL）。CG 层 contain 看全。 */
+export interface VnCg {
+  type: 'cg';
+  key: string;
+  /** 图层序号（默认 0）。 */
+  index?: number;
+  /** 可选：z 顺序。 */
+  zIndex?: number;
   fadeMs?: number;
 }
 
@@ -60,7 +81,7 @@ export interface VnEnd {
   type: 'end';
 }
 
-export type VnLine = VnPreload | VnSay | VnBg | VnChoice | VnJump | VnLabel | VnEnd;
+export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnEnd;
 
 /** 剧本：meta（可选全局配置）+ lines。 */
 export interface VnScript {
@@ -70,6 +91,8 @@ export interface VnScript {
     fontFamily?: string;
     textSize?: number;
     boxHeight?: number;
+    /** 默认图片显示模式：cg=看全(contain)，bg=占满(cover)。 */
+    bgMode?: 'cg' | 'bg';
   };
   lines: VnLine[];
 }

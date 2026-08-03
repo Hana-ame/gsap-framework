@@ -56,7 +56,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "もう茶羅井に逆らえるものなど存在しない。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-1"
  },
  {
@@ -100,7 +100,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "こんな素晴らしい世界良いに決まってるだろ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-2"
  },
  {
@@ -119,7 +119,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "いいんだよ詩保は\nそこにいてくれるだけで目の保養になる"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-3"
  },
  {
@@ -133,7 +133,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "そう言いながらキスをする詩保。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-4"
  },
  {
@@ -142,7 +142,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "まったく詩保はいきなりなんだから"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-5"
  },
  {
@@ -161,7 +161,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "これからも俺を楽しませてくれ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-6"
  },
  {
@@ -170,7 +170,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "うん！\nガウ、ご主人様の言うことなんでも聞く！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-7"
  },
  {
@@ -194,7 +194,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "ふぁい･･･"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-8"
  },
  {
@@ -209,7 +209,7 @@ export const isekai_HB41_30: VnScript = {
   "text": "ドピュッビュルルルー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB41-9"
  },
  {

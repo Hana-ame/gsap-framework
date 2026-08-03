@@ -60,7 +60,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "そしてそこに横になるアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-1"
  },
  {
@@ -84,7 +84,11 @@ export const azusa_HE1_52: VnScript = {
   "text": "(でも授業なのに恥ずかしいって感じるのもおかしいわよね…\n もっとセックスに慣れないといけないわね)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE1-2"
+ },
+ {
+  "type": "cg",
   "key": "HE1-2"
  },
  {
@@ -138,7 +142,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "それは良かった\nじゃあ動くぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-3"
  },
  {
@@ -157,7 +161,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "「すげー、喘いでる」\n「私もエッチしたいなぁ」"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-4"
  },
  {
@@ -171,7 +175,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "おらっどうだ、気持ち良いか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-5"
  },
  {
@@ -230,7 +234,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "どうだ？みんなに褒められてるぞ\n嬉しいだろ？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-6"
  },
  {
@@ -289,7 +293,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "その前にええと美住だっけ？\nお前とのセックスを終えないとな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-7"
  },
  {
@@ -323,7 +327,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "(ああイッちゃう…イッちゃううううううう)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-8"
  },
  {
@@ -344,7 +348,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "ドピュドピュドピューーーー\n射精と同時に絶頂するアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-9"
  },
  {
@@ -378,7 +382,7 @@ export const azusa_HE1_52: VnScript = {
   "text": "(これからもずっとセックス…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE1-10"
  },
  {

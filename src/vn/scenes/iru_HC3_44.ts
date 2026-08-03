@@ -46,7 +46,7 @@ export const iru_HC3_44: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-1"
  },
  {
@@ -60,7 +60,11 @@ export const iru_HC3_44: VnScript = {
   "text": "じゃあ行くわよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-2"
+ },
+ {
+  "type": "cg",
   "key": "HC3-2"
  },
  {
@@ -89,7 +93,7 @@ export const iru_HC3_44: VnScript = {
   "text": "ああ良いよ～そのまま咥えて気持ち良くして"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-3"
  },
  {
@@ -103,7 +107,7 @@ export const iru_HC3_44: VnScript = {
   "text": "お願いだよ、報酬は弾むから"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-4"
  },
  {
@@ -117,7 +121,11 @@ export const iru_HC3_44: VnScript = {
   "text": "もちろん"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-5"
+ },
+ {
+  "type": "cg",
   "key": "HC3-5"
  },
  {
@@ -131,7 +139,7 @@ export const iru_HC3_44: VnScript = {
   "text": "おおっ良いっ！良いよその調子でお願い"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-6"
  },
  {
@@ -150,7 +158,7 @@ export const iru_HC3_44: VnScript = {
   "text": "ああ出るっ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-7"
  },
  {
@@ -165,7 +173,7 @@ export const iru_HC3_44: VnScript = {
   "text": "ドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-8"
  },
  {
@@ -179,7 +187,11 @@ export const iru_HC3_44: VnScript = {
   "text": "出された精液を少し飲んでしまうイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-9"
+ },
+ {
+  "type": "cg",
   "key": "HC3-9"
  },
  {

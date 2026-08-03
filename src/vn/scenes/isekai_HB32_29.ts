@@ -47,7 +47,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "有理紗と入れ替わる形で詩保が横になる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-1"
  },
  {
@@ -66,7 +66,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "はい、シスターでもありましたし、\nそれに男の人と接する機会がほとんどなかったので"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-2"
  },
  {
@@ -110,7 +110,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "はい、お願いします"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-3"
  },
  {
@@ -130,7 +130,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "ああっ、これが初めての痛み…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-4"
  },
  {
@@ -159,7 +159,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "じゃあ動くぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-5"
  },
  {
@@ -193,7 +193,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "じゃあもっと幸せな気持ちにしてやるよ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-6"
  },
  {
@@ -222,7 +222,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "はい、出してください！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-7"
  },
  {
@@ -243,7 +243,7 @@ export const isekai_HB32_29: VnScript = {
   "text": "ドピュッビュルルルー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB32-8"
  },
  {

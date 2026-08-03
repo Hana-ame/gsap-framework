@@ -19,7 +19,7 @@ export const azusa_HA2_22: VnScript = {
   "text": "エンパイアが攻めてきたぞー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA2"
  },
  {

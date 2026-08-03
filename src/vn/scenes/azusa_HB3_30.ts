@@ -94,7 +94,7 @@ export const azusa_HB3_30: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-1"
  },
  {
@@ -113,7 +113,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "僕を倒すのをためらったってことは、\nもうこのジュースの虜なんでしょ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-2"
  },
  {
@@ -132,7 +132,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "みんなーこのお姉ちゃんはジュースいらないって\n欲しい人いる？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-3"
  },
  {
@@ -141,7 +141,11 @@ export const azusa_HB3_30: VnScript = {
   "text": "「「「はーい」」」"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB3-4"
+ },
+ {
+  "type": "cg",
   "key": "HB3-4"
  },
  {
@@ -150,7 +154,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "子供たちが次々ジュースを飲む。\nその光景を見続けさせられるアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-5"
  },
  {
@@ -190,7 +194,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "さて、君はどうしようかな…このままエンパイアに連れて行くか…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-6"
  },
  {
@@ -204,7 +208,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "何か言った？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-7"
  },
  {
@@ -238,7 +242,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "じゃあエンパイアに忠誠を誓える？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-8"
  },
  {
@@ -262,7 +266,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "じゃあ僕に忠誠を誓える？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-8"
  },
  {
@@ -276,7 +280,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "あれっ？僕のことを知ってる？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-9"
  },
  {
@@ -300,7 +304,11 @@ export const azusa_HB3_30: VnScript = {
   "text": "そ…それは…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB3-10"
+ },
+ {
+  "type": "cg",
   "key": "HB3-10"
  },
  {
@@ -329,7 +337,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "(どうせ奥田のこと倒す気もうないんだし…だったらいいよね…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-11"
  },
  {
@@ -394,7 +402,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "そういえばさっきの返事もらえてなかったね\n忠誠を誓えるなら飲ませてあげるって話"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-12"
  },
  {
@@ -423,7 +431,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "恋人になってくれたら、近くにいる時間も増えるし、\nいつでもこれ飲ませてあげられるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-13"
  },
  {
@@ -447,7 +455,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "ん？何に？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-14"
  },
  {
@@ -466,7 +474,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "じゃあそのお祝いにたっぷり味わってね！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-15"
  },
  {
@@ -480,7 +488,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "んんっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-16"
  },
  {
@@ -499,7 +507,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "さあアズサ出すよ！たっぷり味わってね！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-17"
  },
  {
@@ -514,7 +522,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "ドピュッドピューーーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-18"
  },
  {
@@ -533,7 +541,11 @@ export const azusa_HB3_30: VnScript = {
   "text": "(私なんて幸せなの…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB3-19"
+ },
+ {
+  "type": "cg",
   "key": "HB3-19"
  },
  {
@@ -552,7 +564,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "えっ、嫌なの？\n困るなあ、エンパイアとして働いてくれないなら別れちゃうよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-20"
  },
  {
@@ -566,7 +578,7 @@ export const azusa_HB3_30: VnScript = {
   "text": "良かった\nじゃあこれからは一緒に活動できるね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB3-21"
  },
  {

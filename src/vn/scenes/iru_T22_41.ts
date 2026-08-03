@@ -68,7 +68,7 @@ export const iru_T22_41: VnScript = {
   "text": "(やばい…イッちゃう…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-3"
  },
  {
@@ -83,7 +83,7 @@ export const iru_T22_41: VnScript = {
   "text": "ビクンビクン\n絶頂するイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "T22-4"
  },
  {

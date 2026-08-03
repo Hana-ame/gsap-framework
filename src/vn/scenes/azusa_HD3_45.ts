@@ -26,7 +26,11 @@ export const azusa_HD3_45: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD3-1"
+ },
+ {
+  "type": "cg",
   "key": "HD3-1"
  },
  {
@@ -50,7 +54,7 @@ export const azusa_HD3_45: VnScript = {
   "text": "度重なる調教によって、\n軽く触ったぐらいでは何も感じなくなってしまっているアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-2"
  },
  {
@@ -64,7 +68,7 @@ export const azusa_HD3_45: VnScript = {
   "text": "ダメぇ全然足りない…こんなんじゃイケない…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-3"
  },
  {
@@ -83,7 +87,7 @@ export const azusa_HD3_45: VnScript = {
   "text": "(ちょっとは気持ち良くなってきた…このまま刺激を続ければ)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-4"
  },
  {

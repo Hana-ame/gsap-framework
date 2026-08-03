@@ -42,7 +42,7 @@ export const azusa_HC3_38: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-1"
  },
  {
@@ -61,7 +61,11 @@ export const azusa_HC3_38: VnScript = {
   "text": "はい、川瀬様！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-2"
+ },
+ {
+  "type": "cg",
   "key": "HC3-2"
  },
  {
@@ -85,7 +89,11 @@ export const azusa_HC3_38: VnScript = {
   "text": "いいぜ、手を出しな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-3"
+ },
+ {
+  "type": "cg",
   "key": "HC3-3"
  },
  {
@@ -105,7 +113,11 @@ export const azusa_HC3_38: VnScript = {
   "text": "注射を打たれるアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-4"
+ },
+ {
+  "type": "cg",
   "key": "HC3-4"
  },
  {
@@ -119,7 +131,7 @@ export const azusa_HC3_38: VnScript = {
   "text": "イクウウウウウウああイッちゃううううううう！！！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC3-5"
  },
  {
@@ -134,7 +146,11 @@ export const azusa_HC3_38: VnScript = {
   "text": "プシャーーーービクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-6"
+ },
+ {
+  "type": "cg",
   "key": "HC3-6"
  },
  {
@@ -193,7 +209,11 @@ export const azusa_HC3_38: VnScript = {
   "text": "いいだろう、じゃあ今日も俺の役に立ってもらおうかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-7"
+ },
+ {
+  "type": "cg",
   "key": "HC3-7"
  },
  {
@@ -202,7 +222,11 @@ export const azusa_HC3_38: VnScript = {
   "text": "そう言いペニスを出す川瀬。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC3-8"
+ },
+ {
+  "type": "cg",
   "key": "HC3-8"
  },
  {

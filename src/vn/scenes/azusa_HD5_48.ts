@@ -26,7 +26,11 @@ export const azusa_HD5_48: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD5-1"
+ },
+ {
+  "type": "cg",
   "key": "HD5-1"
  },
  {
@@ -35,7 +39,7 @@ export const azusa_HD5_48: VnScript = {
   "text": "なあ、エンペラパールよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD5-2"
  },
  {
@@ -69,7 +73,7 @@ export const azusa_HD5_48: VnScript = {
   "text": "さあ出すぞ、全部飲めよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD5-3"
  },
  {
@@ -94,7 +98,11 @@ export const azusa_HD5_48: VnScript = {
   "text": "出された精液を飲み干すアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD5-4"
+ },
+ {
+  "type": "cg",
   "key": "HD5-4"
  },
  {

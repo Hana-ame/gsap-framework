@@ -56,7 +56,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "そのままベッドへ押し倒される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-1"
  },
  {
@@ -90,7 +90,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "ですが…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-2"
  },
  {
@@ -119,7 +119,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "あなたはただ私に従っていればいいのです！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-3"
  },
  {
@@ -148,7 +148,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "ただ私の命令にだけ従っていればいいのです！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-4"
  },
  {
@@ -182,7 +182,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "(だったらマルクス様に世界を支配してもらった方が\n 平和になるに違いない･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-5"
  },
  {
@@ -201,7 +201,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "ほらっ、どうですか？私に力を譲る気になりましたか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-6"
  },
  {
@@ -235,7 +235,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "この世界の女神も私のものに･･･\nこれはもう私は世界を支配したと言っても過言ではないですね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-7"
  },
  {
@@ -264,7 +264,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "出るっ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-8"
  },
  {
@@ -284,7 +284,7 @@ export const isekai_HC32_39: VnScript = {
   "text": "ああ、マルクス様のが私の中に入ってきます"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC32-9"
  },
  {

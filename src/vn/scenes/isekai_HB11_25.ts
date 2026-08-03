@@ -50,7 +50,7 @@ export const isekai_HB11_25: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-1"
  },
  {
@@ -69,7 +69,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "では有理紗さん、入れますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-2"
  },
  {
@@ -105,7 +105,7 @@ export const isekai_HB11_25: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-3"
  },
  {
@@ -124,7 +124,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "凄い、痛みが消えました･･･\nなんていう奇跡の力･･･"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-4"
  },
  {
@@ -163,7 +163,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "はい教皇様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-5"
  },
  {
@@ -192,7 +192,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "ほらほらもっと激しくしますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-6"
  },
  {
@@ -241,7 +241,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "出してください！教皇様の精液、私の中に出してくださいいいい！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-7"
  },
  {
@@ -256,7 +256,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "そして有理紗の中に精液が注がれる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-8"
  },
  {
@@ -270,7 +270,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "(凄いいいい、セックス気持ち良すぎるうううう……)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-9"
  },
  {
@@ -285,7 +285,7 @@ export const isekai_HB11_25: VnScript = {
   "text": "幸福感に酔いしれながら絶頂する有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB11-10"
  },
  {

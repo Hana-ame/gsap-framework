@@ -47,8 +47,36 @@ export const iru_HC1_42: VnScript = {
   "text": "建物の影へと移動する二人。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-1"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-2"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-3"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-4"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-5"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-6"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-7"
+ },
+ {
+  "type": "cg",
+  "key": "HC1-8"
  },
  {
   "type": "say",
@@ -71,7 +99,7 @@ export const iru_HC1_42: VnScript = {
   "text": "ああ、もう我慢できない"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-2"
  },
  {
@@ -100,7 +128,7 @@ export const iru_HC1_42: VnScript = {
   "text": "もちろん！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-3"
  },
  {
@@ -119,7 +147,7 @@ export const iru_HC1_42: VnScript = {
   "text": "できればパンツも見せて欲しいんだけど…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-4"
  },
  {
@@ -148,7 +176,7 @@ export const iru_HC1_42: VnScript = {
   "text": "胸を露出することに関しては思想が染まりかけていることで\nあまり抵抗がなくなっているイルだが、\nそれ以外の認識はそのままであるため、\nパンツを露出することに関しては抵抗感があった。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-5"
  },
  {
@@ -162,7 +190,7 @@ export const iru_HC1_42: VnScript = {
   "text": "そう言いスカートをたくし上げパンツを見せるイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-6"
  },
  {
@@ -181,7 +209,7 @@ export const iru_HC1_42: VnScript = {
   "text": "本当に最高だよ…ああっ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-7"
  },
  {
@@ -196,7 +224,7 @@ export const iru_HC1_42: VnScript = {
   "text": "ドピュドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-8"
  },
  {

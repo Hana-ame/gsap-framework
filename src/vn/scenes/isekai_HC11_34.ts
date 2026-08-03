@@ -86,7 +86,7 @@ export const isekai_HC11_34: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-1"
  },
  {
@@ -135,7 +135,11 @@ export const isekai_HC11_34: VnScript = {
   "text": "だから受け入れてくれるようにしっかり洗脳してあげるからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC11-2"
+ },
+ {
+  "type": "cg",
   "key": "HC11-2"
  },
  {
@@ -149,7 +153,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "じゃあ始めるよー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-3"
  },
  {
@@ -173,7 +177,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "まずは洗脳を受け入れやすくするために\n刺激を与えて準備しないとだからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-4"
  },
  {
@@ -207,7 +211,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "それから少しして小茂田は戻って来る。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-5"
  },
  {
@@ -236,7 +240,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "小茂田様に忠誠を誓うこと"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-6"
  },
  {
@@ -250,7 +254,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "脳内に言葉が浮かんでくる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-7"
  },
  {
@@ -259,7 +263,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "だめ…そんなこと…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-8"
  },
  {
@@ -278,7 +282,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "(止めてもらうために演技で言えば…演技…演技だったら…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-9"
  },
  {
@@ -287,7 +291,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "小茂田様に忠誠を誓います…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-10"
  },
  {
@@ -316,7 +320,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "誓いますうううう、小茂田様に忠誠を誓いますうううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-10"
  },
  {
@@ -345,7 +349,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "(心からなんて…そんな……)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-11"
  },
  {
@@ -359,7 +363,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "(どうして演技なんてしてたんだろう･･･\n 心から小茂田様に忠誠を誓えばこれを止めてもらえるのに)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-12"
  },
  {
@@ -378,7 +382,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "もちろんですうううう！どんな命令でも従いますううう！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-13"
  },
  {
@@ -397,7 +401,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "はい、本心です！！\n身も心も小茂田様のものですうううう！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-13"
  },
  {
@@ -431,7 +435,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "小茂田様最高！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-13"
  },
  {
@@ -450,7 +454,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "有理紗は小茂田様のものです！\n有理紗は小茂田様に永遠の忠誠を誓います！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-13"
  },
  {
@@ -484,7 +488,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "じゃあトドメに最高の快楽を与えてあげるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-14"
  },
  {
@@ -513,7 +517,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "有理紗は小茂田様に心から感謝しますうううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-15"
  },
  {
@@ -528,7 +532,7 @@ export const isekai_HC11_34: VnScript = {
   "text": "絶頂する有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC11-16"
  },
  {
@@ -542,7 +546,11 @@ export const isekai_HC11_34: VnScript = {
   "text": "これで完全に心に刻み込めたかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC11-17"
+ },
+ {
+  "type": "cg",
   "key": "HC11-17"
  },
  {
@@ -551,7 +559,11 @@ export const isekai_HC11_34: VnScript = {
   "text": "装置が停止する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC11-18"
+ },
+ {
+  "type": "cg",
   "key": "HC11-18"
  },
  {
@@ -560,7 +572,11 @@ export const isekai_HC11_34: VnScript = {
   "text": "装置が外される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC11-19"
+ },
+ {
+  "type": "cg",
   "key": "HC11-19"
  },
  {

@@ -38,7 +38,7 @@ export const isekai_HA44_22: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-1"
  },
  {
@@ -67,7 +67,7 @@ export const isekai_HA44_22: VnScript = {
   "text": "ほら有理紗も"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-2"
  },
  {
@@ -76,7 +76,7 @@ export const isekai_HA44_22: VnScript = {
   "text": "あんっ、ご主人様ぁ･･･"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-3"
  },
  {
@@ -95,7 +95,7 @@ export const isekai_HA44_22: VnScript = {
   "text": "(私もご主人様のおチンポ欲しいなあ……)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-4"
  },
  {
@@ -114,7 +114,7 @@ export const isekai_HA44_22: VnScript = {
   "text": "有理紗も小茂田に手マンされて気持ち良くなっていた。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-5"
  },
  {
@@ -133,7 +133,7 @@ export const isekai_HA44_22: VnScript = {
   "text": "私もイッちゃいそうです"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-6"
  },
  {
@@ -154,7 +154,7 @@ export const isekai_HA44_22: VnScript = {
   "text": "揃って絶頂する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA44-7"
  },
  {

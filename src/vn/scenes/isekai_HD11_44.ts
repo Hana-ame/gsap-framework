@@ -62,7 +62,7 @@ export const isekai_HD11_44: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-1"
  },
  {
@@ -76,7 +76,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "すっかり薬の虜になってしまったな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-2"
  },
  {
@@ -95,7 +95,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "こうして心を壊して永遠に飼ってやるのが正解だろ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-3"
  },
  {
@@ -134,7 +134,11 @@ export const isekai_HD11_44: VnScript = {
   "text": "はい"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD11-4"
+ },
+ {
+  "type": "cg",
   "key": "HD11-4"
  },
  {
@@ -143,7 +147,11 @@ export const isekai_HD11_44: VnScript = {
   "text": "一気に飲み干す有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD11-5"
+ },
+ {
+  "type": "cg",
   "key": "HD11-5"
  },
  {
@@ -152,7 +160,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "あああああきたあああああこれえええええ\nこれしゅごいのおおおおお"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-6"
  },
  {
@@ -167,7 +175,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "薬を飲んだだけで絶頂する有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-7"
  },
  {
@@ -196,7 +204,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "そう言いボスとガウは去っていく。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-9"
  },
  {
@@ -225,7 +233,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "薬とペニス漬けの日々は有理紗の心を完全に壊し、\n今では薬とペニスのことしか頭になくなっていた。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-10"
  },
  {
@@ -234,7 +242,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "(おチンポ･･･おチンポ･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-11"
  },
  {
@@ -298,7 +306,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "(来る･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-12"
  },
  {
@@ -319,7 +327,7 @@ export const isekai_HD11_44: VnScript = {
   "text": "(精液きたぁああああ)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD11-13"
  },
  {
@@ -333,7 +341,11 @@ export const isekai_HD11_44: VnScript = {
   "text": "ふう、出した出した"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD11-14"
+ },
+ {
+  "type": "cg",
   "key": "HD11-14"
  },
  {

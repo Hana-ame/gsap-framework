@@ -19,7 +19,7 @@ export const azusa_HA4_24: VnScript = {
   "text": "「助けてくれー」\n「エンペラパールだ！逃げろーーー」"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA4"
  },
  {

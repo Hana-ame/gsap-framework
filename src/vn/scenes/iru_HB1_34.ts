@@ -51,7 +51,7 @@ export const iru_HB1_34: VnScript = {
   "text": "急いで服を脱ぐイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-1"
  },
  {
@@ -60,7 +60,7 @@ export const iru_HB1_34: VnScript = {
   "text": "ああチパイスキー様チパイスキー様ぁ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-2"
  },
  {
@@ -74,7 +74,7 @@ export const iru_HB1_34: VnScript = {
   "text": "ああっチパイスキー様のことを考えるとそれだけでああっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-3"
  },
  {
@@ -89,7 +89,7 @@ export const iru_HB1_34: VnScript = {
   "text": "ビクンビクン\n絶頂してしまうイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-4"
  },
  {
@@ -98,7 +98,11 @@ export const iru_HB1_34: VnScript = {
   "text": "はあ…はあ…足りない…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB1-5"
+ },
+ {
+  "type": "cg",
   "key": "HB1-5"
  },
  {
@@ -112,7 +116,7 @@ export const iru_HB1_34: VnScript = {
   "text": "もっともっとチパイスキー様への忠誠心を高めないと"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-6"
  },
  {
@@ -126,7 +130,7 @@ export const iru_HB1_34: VnScript = {
   "text": "んああっ気持ち良い…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-7"
  },
  {
@@ -170,7 +174,7 @@ export const iru_HB1_34: VnScript = {
   "text": "おお…んあああああっ\nチパイスキー様ぁ！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-8"
  },
  {
@@ -185,7 +189,7 @@ export const iru_HB1_34: VnScript = {
   "text": "プシャアアアアアビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-9"
  },
  {

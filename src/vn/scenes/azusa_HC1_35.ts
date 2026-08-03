@@ -66,7 +66,7 @@ export const azusa_HC1_35: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-1"
  },
  {
@@ -75,7 +75,11 @@ export const azusa_HC1_35: VnScript = {
   "text": "身体の自由が効かないアズサは川瀬に抱きかかえられてしまう。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC1-2"
+ },
+ {
+  "type": "cg",
   "key": "HC1-2"
  },
  {
@@ -99,7 +103,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "そんなつれないこと言うなよ\n絶対気持ち良くしてやるからさ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-3"
  },
  {
@@ -138,7 +142,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "これでもか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-4"
  },
  {
@@ -172,7 +176,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "強情だな、ならもっと強くするか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-5"
  },
  {
@@ -186,7 +190,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "(ダメダメ、イッちゃう…\n こんな男にちょっと刺激されただけでイッちゃうううう)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-6"
  },
  {
@@ -201,7 +205,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "ビクンビクン…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-7"
  },
  {
@@ -225,7 +229,11 @@ export const azusa_HC1_35: VnScript = {
   "text": "嘘言いやがって\nまあいい、次はこいつをぶち込んで気持ち良くしてやるからな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC1-8"
+ },
+ {
+  "type": "cg",
   "key": "HC1-8"
  },
  {
@@ -259,7 +267,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "おらっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-9"
  },
  {
@@ -298,7 +306,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "抜くわけねーだろ、おらっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-10"
  },
  {
@@ -332,7 +340,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "そんなに嫌がらずに受け入れちまえよ\nどうせもうあの薬打たれた時点でお前も終わりなんだからよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-11"
  },
  {
@@ -391,7 +399,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "お前もそうなる絶対に！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-12"
  },
  {
@@ -420,7 +428,7 @@ export const azusa_HC1_35: VnScript = {
   "text": "ああ出るっ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC1-13"
  },
  {
@@ -441,7 +449,11 @@ export const azusa_HC1_35: VnScript = {
   "text": "ドピュドピュドピューーー\nビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC1-14"
+ },
+ {
+  "type": "cg",
   "key": "HC1-14"
  },
  {

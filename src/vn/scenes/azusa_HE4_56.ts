@@ -42,7 +42,7 @@ export const azusa_HE4_56: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE4-1"
  },
  {
@@ -56,7 +56,11 @@ export const azusa_HE4_56: VnScript = {
   "text": "ずいぶん淫乱になったな\n元魔法少女とは思えない"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE4-2"
+ },
+ {
+  "type": "cg",
   "key": "HE4-2"
  },
  {
@@ -90,7 +94,11 @@ export const azusa_HE4_56: VnScript = {
   "text": "(魔法少女として洗脳して戦力とすることには失敗したが、\n 脅威である魔法少女を無力化できたから良しとするか…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE4-3"
+ },
+ {
+  "type": "cg",
   "key": "HE4-3"
  },
  {
@@ -109,7 +117,11 @@ export const azusa_HE4_56: VnScript = {
   "text": "俺も相手が多くて忙しいからな\nだが今日はそうだな…\nこの後の予定も無いし気が済む前相手してやろう"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE4-4"
+ },
+ {
+  "type": "cg",
   "key": "HE4-4"
  },
  {
@@ -128,7 +140,7 @@ export const azusa_HE4_56: VnScript = {
   "text": "早く…早く正野様の精液が欲しいです"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE4-5"
  },
  {
@@ -152,7 +164,7 @@ export const azusa_HE4_56: VnScript = {
   "text": "ああ出るっ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE4-7"
  },
  {
@@ -172,7 +184,7 @@ export const azusa_HE4_56: VnScript = {
   "text": "ああ…正野様の精液…ああっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE4-8"
  },
  {
@@ -187,7 +199,11 @@ export const azusa_HE4_56: VnScript = {
   "text": "ビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE4-9"
+ },
+ {
+  "type": "cg",
   "key": "HE4-9"
  },
  {

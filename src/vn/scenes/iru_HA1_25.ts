@@ -30,7 +30,11 @@ export const iru_HA1_25: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA1-1"
+ },
+ {
+  "type": "cg",
   "key": "HA1-1"
  },
  {
@@ -49,7 +53,11 @@ export const iru_HA1_25: VnScript = {
   "text": "ああんっ\nなにこれ、凄い感じる…これが薬の力…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA1-2"
+ },
+ {
+  "type": "cg",
   "key": "HA1-2"
  },
  {
@@ -58,7 +66,7 @@ export const iru_HA1_25: VnScript = {
   "text": "服をはだけさせ直接乳首を触るイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-3"
  },
  {
@@ -97,7 +105,7 @@ export const iru_HA1_25: VnScript = {
   "text": "イクッイッちゃううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-4"
  },
  {
@@ -112,7 +120,7 @@ export const iru_HA1_25: VnScript = {
   "text": "ビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-5"
  },
  {

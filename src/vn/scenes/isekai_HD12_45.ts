@@ -62,7 +62,7 @@ export const isekai_HD12_45: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-1"
  },
  {
@@ -81,7 +81,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "すっかり薬の虜になってしまったな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-2"
  },
  {
@@ -100,7 +100,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "こうして心を壊して永遠に飼ってやるのが正解だろ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-3"
  },
  {
@@ -139,7 +139,11 @@ export const isekai_HD12_45: VnScript = {
   "text": "はい"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD12-4"
+ },
+ {
+  "type": "cg",
   "key": "HD12-4"
  },
  {
@@ -148,7 +152,11 @@ export const isekai_HD12_45: VnScript = {
   "text": "一気に飲み干す二人。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD12-5"
+ },
+ {
+  "type": "cg",
   "key": "HD12-5"
  },
  {
@@ -162,7 +170,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "あひいいいいい、しゅごいいいいいいい\n頭おかしくなりゅううううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-6"
  },
  {
@@ -177,7 +185,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "薬を飲んだだけで絶頂する有理紗と詩保。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-7"
  },
  {
@@ -206,7 +214,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "そう言いボスとガウは去っていく。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-9"
  },
  {
@@ -245,7 +253,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "薬とペニス漬けの日々は有理紗と詩保の心を完全に壊し、\n今では薬とペニスのことしか頭になくなっていた。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-10"
  },
  {
@@ -259,7 +267,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "(ああこれぇ･･･これがないと私おかしくなってしまいますぅ)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-11"
  },
  {
@@ -333,7 +341,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "ああ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-12"
  },
  {
@@ -359,7 +367,7 @@ export const isekai_HD12_45: VnScript = {
   "text": "(ああきたぁ)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD12-13"
  },
  {
@@ -373,7 +381,11 @@ export const isekai_HD12_45: VnScript = {
   "text": "ふう、出した出した"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD12-14"
+ },
+ {
+  "type": "cg",
   "key": "HD12-14"
  },
  {

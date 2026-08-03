@@ -47,7 +47,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "一般兵となった有理紗は前線部隊にいた。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-1"
  },
  {
@@ -61,7 +61,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "他の洗脳された女性たちと共にマシナ国への忠誠を叫ぶ\n有理紗とガウ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-2"
  },
  {
@@ -70,7 +70,11 @@ export const isekai_HD34_55: VnScript = {
   "text": "よし！次に俺に対しての挨拶！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD34-3"
+ },
+ {
+  "type": "cg",
   "key": "HD34-3"
  },
  {
@@ -84,7 +88,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "何度見ても凄い眺めだな…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-4"
  },
  {
@@ -113,7 +117,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "獣人の子も良いが…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-5"
  },
  {
@@ -122,7 +126,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "今日はお前だ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-6"
  },
  {
@@ -201,7 +205,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "そこの獣人の子は１８番だ！良いな？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-7"
  },
  {
@@ -215,7 +219,7 @@ export const isekai_HD34_55: VnScript = {
   "text": "良い返事だ！\nじゃあ１７番、後で俺の部屋に来なさい！\n１８番も近いうちに頼むからな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD34-8"
  },
  {

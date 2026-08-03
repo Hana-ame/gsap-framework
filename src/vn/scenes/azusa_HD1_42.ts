@@ -58,7 +58,7 @@ export const azusa_HD1_42: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-1"
  },
  {
@@ -122,7 +122,11 @@ export const azusa_HD1_42: VnScript = {
   "text": "ははは果たしてどうかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD1-2"
+ },
+ {
+  "type": "cg",
   "key": "HD1-2"
  },
  {
@@ -156,7 +160,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "そりゃそうかこんな大きい物を入れられてるんだからな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-3"
  },
  {
@@ -170,7 +174,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "その威勢がいつまで持つかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-4"
  },
  {
@@ -214,7 +218,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "ああ滑りが良くなってきたな、気持ち良いぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-5"
  },
  {
@@ -293,7 +297,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "まだ素直になれないか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-6"
  },
  {
@@ -317,7 +321,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "オラオラ、気持ち良いだろ？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-7"
  },
  {
@@ -336,7 +340,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "あくまで認めないんだな…\n俺の方が限界だ、そろそろ出すぞ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-8"
  },
  {
@@ -355,7 +359,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "いやああああああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-9"
  },
  {
@@ -380,7 +384,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "(ああ何か来る…来ちゃう…ああイクううううう)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-10"
  },
  {
@@ -395,7 +399,7 @@ export const azusa_HD1_42: VnScript = {
   "text": "絶頂してしまうアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD1-11"
  },
  {
@@ -424,7 +428,11 @@ export const azusa_HD1_42: VnScript = {
   "text": "(絶頂して力が抜けてる…？今のうちに)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD1-12"
+ },
+ {
+  "type": "cg",
   "key": "HD1-12"
  },
  {

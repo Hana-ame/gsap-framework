@@ -87,14 +87,14 @@ def convert_event(ev, cg_map, prefix):
             if url:
                 # 连续 bg 压缩：只保留第一张（232 差分切换后续）
                 if not (out and out[-1].get('type') == 'bg'):
-                    out.append({'type': 'bg', 'key': name})
+                    out.append({'type': 'cg', 'key': name})
             i += 1
         elif code == 232:
             target = pic_map.get(p[0])
             if target:
                 url, _ = cg_url(cg_map, target)
                 if url and not (out and out[-1].get('type') == 'bg'):
-                    out.append({'type': 'bg', 'key': target})
+                    out.append({'type': 'cg', 'key': target})
             i += 1
         elif code == 224:
             if len(p) >= 1 and p[0]:
@@ -180,14 +180,14 @@ def convert_sub(cmds, cg_map):
             pic_map[pid] = name
             url, _ = cg_url(cg_map, name)
             if url and not (out and out[-1].get('type') == 'bg'):
-                out.append({'type': 'bg', 'key': name})
+                out.append({'type': 'cg', 'key': name})
             i += 1
         elif code == 232:
             target = pic_map.get(p[0])
             if target:
                 url, _ = cg_url(cg_map, target)
                 if url and not (out and out[-1].get('type') == 'bg'):
-                    out.append({'type': 'bg', 'key': target})
+                    out.append({'type': 'cg', 'key': target})
             i += 1
         else:
             i += 1
@@ -212,7 +212,7 @@ def main():
             # 收集 bg 用到的 key 生成 preload
             bg_keys = []
             for l in lines:
-                if l.get('type') == 'bg':
+                if l.get('type') in ('bg','cg'):
                     bg_keys.append(l['key'])
             assets = []
             for k in dict.fromkeys(bg_keys):

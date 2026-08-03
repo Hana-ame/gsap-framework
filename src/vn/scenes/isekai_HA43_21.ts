@@ -38,7 +38,7 @@ export const isekai_HA43_21: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-1"
  },
  {
@@ -62,7 +62,7 @@ export const isekai_HA43_21: VnScript = {
   "text": "ほら詩保も"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-2"
  },
  {
@@ -71,7 +71,7 @@ export const isekai_HA43_21: VnScript = {
   "text": "ああんっ、ご主人様ぁ･･･"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-3"
  },
  {
@@ -95,7 +95,7 @@ export const isekai_HA43_21: VnScript = {
   "text": "(有理紗さん羨ましい･･･\n 私もご主人様のおチンチン欲しいです･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-4"
  },
  {
@@ -114,7 +114,7 @@ export const isekai_HA43_21: VnScript = {
   "text": "詩保は詩保で気持ち良くなっている。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-5"
  },
  {
@@ -133,7 +133,7 @@ export const isekai_HA43_21: VnScript = {
   "text": "私も･･･"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-6"
  },
  {
@@ -154,7 +154,7 @@ export const isekai_HA43_21: VnScript = {
   "text": "揃って絶頂する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA43-7"
  },
  {

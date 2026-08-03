@@ -58,7 +58,7 @@ export const isekai_HD33_54: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-1"
  },
  {
@@ -92,7 +92,11 @@ export const isekai_HD33_54: VnScript = {
   "text": "ガウちゃん！！くっ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD33-2"
+ },
+ {
+  "type": "cg",
   "key": "HD33-2"
  },
  {
@@ -116,7 +120,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "ガウ怖いよ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-3"
  },
  {
@@ -140,7 +144,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "(ダメ、忘れないようにしないと！\n 私の記憶消えないように思い出し続けないと！！)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-4"
  },
  {
@@ -164,7 +168,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "(私の名前は･･････)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-5"
  },
  {
@@ -188,7 +192,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "(ガウ…消えちゃうの…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-6"
  },
  {
@@ -202,7 +206,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "(あれ？自分のことがわからない…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-7"
  },
  {
@@ -211,7 +215,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "記憶消去完了\n感情の制御に移ります"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-8"
  },
  {
@@ -280,7 +284,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "『マシナ国に忠誠を』"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-9"
  },
  {
@@ -309,7 +313,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "(■■…違う『ワタシ』…ワタシはマシナ国に忠誠を誓う兵士…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-10"
  },
  {
@@ -318,7 +322,11 @@ export const isekai_HD33_54: VnScript = {
   "text": "ブレインウォッシュ完了\n拘束を解除します"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD33-11"
+ },
+ {
+  "type": "cg",
   "key": "HD33-11"
  },
  {
@@ -327,7 +335,7 @@ export const isekai_HD33_54: VnScript = {
   "text": "まず洗脳装置が外される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD33-12"
  },
  {

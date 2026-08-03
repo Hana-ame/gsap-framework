@@ -34,7 +34,7 @@ export const iru_HD3_57: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-1"
  },
  {
@@ -78,7 +78,7 @@ export const iru_HD3_57: VnScript = {
   "text": "本当に俺への忠誠心が素晴らしいね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-2"
  },
  {
@@ -117,7 +117,7 @@ export const iru_HD3_57: VnScript = {
   "text": "もちろんだよ、これからもずっと俺に仕えてくれよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-3"
  },
  {
@@ -146,7 +146,7 @@ export const iru_HD3_57: VnScript = {
   "text": "ああ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-4"
  },
  {
@@ -167,7 +167,7 @@ export const iru_HD3_57: VnScript = {
   "text": "ドピュドピュドピュー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-5"
  },
  {
@@ -181,7 +181,7 @@ export const iru_HD3_57: VnScript = {
   "text": "これからもよろしく頼むよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-6"
  },
  {

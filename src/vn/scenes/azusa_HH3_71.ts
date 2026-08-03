@@ -39,7 +39,7 @@ export const azusa_HH3_71: VnScript = {
   "text": "教祖の部屋にあるベッドに横になるアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH3-1"
  },
  {
@@ -48,7 +48,11 @@ export const azusa_HH3_71: VnScript = {
   "text": "どうぞ教祖様、私のおマンコへ教祖様のおチンポを入れてください"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH3-2"
+ },
+ {
+  "type": "cg",
   "key": "HH3-2"
  },
  {
@@ -97,7 +101,7 @@ export const azusa_HH3_71: VnScript = {
   "text": "それは気が早すぎますよ\n気持ち良くなるのはこれからなのですから"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH3-3"
  },
  {
@@ -156,7 +160,7 @@ export const azusa_HH3_71: VnScript = {
   "text": "はいぃ忘れません！\n私は一生教祖様のものでいますぅ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH3-4"
  },
  {
@@ -175,7 +179,7 @@ export const azusa_HH3_71: VnScript = {
   "text": "ああ出ますっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH3-5"
  },
  {
@@ -206,7 +210,11 @@ export const azusa_HH3_71: VnScript = {
   "text": "ビクンビクン\n教祖の精液を感じて絶頂するアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH3-6"
+ },
+ {
+  "type": "cg",
   "key": "HH3-6"
  },
  {

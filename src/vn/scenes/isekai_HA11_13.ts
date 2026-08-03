@@ -35,7 +35,7 @@ export const isekai_HA11_13: VnScript = {
   "text": "戦争はパワルが勝利した。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA11-1"
  },
  {
@@ -109,7 +109,7 @@ export const isekai_HA11_13: VnScript = {
   "text": "ああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA11-2"
  },
  {
@@ -128,7 +128,7 @@ export const isekai_HA11_13: VnScript = {
   "text": "はい！来てください！私の中を茶羅井様で満たしてください！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA11-3"
  },
  {
@@ -143,7 +143,7 @@ export const isekai_HA11_13: VnScript = {
   "text": "ドピュッドピュー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA11-4"
  },
  {
@@ -162,7 +162,7 @@ export const isekai_HA11_13: VnScript = {
   "text": "ありがとうございます茶羅井様\n一生お側でお仕えいたします"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA11-5"
  },
  {

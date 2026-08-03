@@ -28,6 +28,10 @@ export const isekai_HA41_19: VnScript = {
     "url": "https://ex.moonchan.xyz/s/106c47e2fa/3484866-53?redirect_to=image"
    },
    {
+    "key": "HA41-6",
+    "url": "https://ex.moonchan.xyz/s/8a65ef21d6/3484866-55?redirect_to=image"
+   },
+   {
     "key": "HA41-7",
     "url": "https://ex.moonchan.xyz/s/914b80ab50/3484866-56?redirect_to=image"
    },
@@ -110,7 +114,7 @@ export const isekai_HA41_19: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA41-1"
  },
  {
@@ -119,7 +123,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "二人ともよく来たね"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA41-2"
+ },
+ {
+  "type": "cg",
   "key": "HA41-2"
  },
  {
@@ -153,7 +161,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "本来であれば一生関わることのできないであろう美少女二人が\n自分に忠誠を誓う姿は何度見ても興奮するものであった。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA41-3"
+ },
+ {
+  "type": "cg",
   "key": "HA41-3"
  },
  {
@@ -182,7 +194,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "もちろんだよ\n二人ともしっかり見てあげるからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA41-4"
+ },
+ {
+  "type": "cg",
   "key": "HA41-4"
  },
  {
@@ -206,8 +222,20 @@ export const isekai_HA41_19: VnScript = {
   "text": "(小茂田様･･･私のこともっと見て欲しいです\n できれば私のことだけ見て欲しいです･･･)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA41-5"
+ },
+ {
+  "type": "cg",
+  "key": "HA41-5"
+ },
+ {
+  "type": "cg",
+  "key": "HA41-6"
+ },
+ {
+  "type": "cg",
+  "key": "HA41-6"
  },
  {
   "type": "say",
@@ -240,7 +268,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "わかりましたご主人様"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA41-7"
+ },
+ {
+  "type": "cg",
   "key": "HA41-7"
  },
  {
@@ -254,7 +286,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "本当にエッチなメイドたちだなあ、ほらおいで"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA41-8"
+ },
+ {
+  "type": "cg",
   "key": "HA41-8"
  },
  {
@@ -268,7 +304,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "ご主人様のおチンポ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-1"
  },
  {
@@ -277,7 +313,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "飛びかかる勢いでペニスに食らいつこうとする二人。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-2"
  },
  {
@@ -306,7 +342,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "まずは有理紗から"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-3"
  },
  {
@@ -330,7 +366,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "それでは失礼いたします"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA42-4"
+ },
+ {
+  "type": "cg",
   "key": "HA42-4"
  },
  {
@@ -359,7 +399,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "ありがとうございます"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-5"
  },
  {
@@ -378,7 +418,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "ダメだ出ちゃいそうだからストップ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA42-6"
+ },
+ {
+  "type": "cg",
   "key": "HA42-6"
  },
  {
@@ -397,7 +441,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "はいご主人様"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA42-7"
+ },
+ {
+  "type": "cg",
   "key": "HA42-7"
  },
  {
@@ -406,7 +454,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "次は詩保が小茂田のペニスを咥える。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-8"
  },
  {
@@ -440,7 +488,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "うれふぃいでひゅごひゅじんひゃま(嬉しいですご主人様)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-9"
  },
  {
@@ -459,7 +507,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "もちろん有理紗のことも好きだよ\n僕は君たち二人のことを愛してるからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-10"
  },
  {
@@ -483,7 +531,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "ああ、詩保ストップ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA42-11"
+ },
+ {
+  "type": "cg",
   "key": "HA42-11"
  },
  {
@@ -492,7 +544,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "ご主人様、どうして止めないといけないのですか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-12"
  },
  {
@@ -501,7 +553,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "最後は二人に舐めて欲しいからさ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-13"
  },
  {
@@ -515,7 +567,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "わかったわ詩保\nそれじゃあご主人様、二人でご奉仕しますね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-14"
  },
  {
@@ -544,7 +596,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "ああ、出るよ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-15"
  },
  {
@@ -559,7 +611,11 @@ export const isekai_HA41_19: VnScript = {
   "text": "ドピュッ！！ドピュッ！！ドピュッ！！ \n大量の精液が有理紗と詩保に降りかかる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA42-16"
+ },
+ {
+  "type": "cg",
   "key": "HA42-16"
  },
  {
@@ -610,7 +666,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "じゃあ、今日は有理紗！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-17a"
  },
  {
@@ -633,7 +689,7 @@ export const isekai_HA41_19: VnScript = {
   "text": "じゃあ、今日は詩保！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA42-17s"
  },
  {

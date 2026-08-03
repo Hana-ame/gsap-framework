@@ -26,7 +26,7 @@ export const iru_HA2_26: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-3"
  },
  {
@@ -55,7 +55,7 @@ export const iru_HA2_26: VnScript = {
   "text": "もしチパイスキー様に触ってもらえたら\nもっともっと気持ち良くなれる気がする"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA2-3"
  },
  {
@@ -79,7 +79,7 @@ export const iru_HA2_26: VnScript = {
   "text": "んんっああんっイクッイクイクイッちゃうううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-4"
  },
  {
@@ -94,7 +94,7 @@ export const iru_HA2_26: VnScript = {
   "text": "ビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA1-5"
  },
  {

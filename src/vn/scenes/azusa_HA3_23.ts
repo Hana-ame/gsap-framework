@@ -22,7 +22,7 @@ export const azusa_HA3_23: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-1"
  },
  {
@@ -51,7 +51,7 @@ export const azusa_HA3_23: VnScript = {
   "text": "はい！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-2"
  },
  {
@@ -75,7 +75,7 @@ export const azusa_HA3_23: VnScript = {
   "text": "わかりました、最大出力！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA3-3"
  },
  {

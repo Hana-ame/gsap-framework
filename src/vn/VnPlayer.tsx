@@ -10,6 +10,14 @@ export interface VnPlayerProps {
 /** 播放器内部状态。 */
 type VnPhase = 'loading' | 'typing' | 'idle' | 'choice' | 'done';
 
+/** 一个显示图层。 */
+interface VnLayer {
+  key: string;
+  kind: 'bg' | 'cg';
+  index: number;
+  zIndex: number;
+}
+
 interface VnUiState {
   phase: VnPhase;
   lineIndex: number;
@@ -17,8 +25,8 @@ interface VnUiState {
   text: string;
   /** 已显示的字符数（打字机）。 */
   shown: number;
-  /** 当前背景 key。 */
-  bgKey: string | null;
+  /** 显示图层（bg cover 占满，cg contain 看全；按 index/zIndex 排序，同 index cg 前 bg 后）。 */
+  layers: VnLayer[];
   loadingProgress: { loaded: number; total: number };
   choices: Array<{ text: string; to: string }>;
 }
@@ -29,7 +37,7 @@ const EMPTY_UI: VnUiState = {
   speaker: '',
   text: '',
   shown: 0,
-  bgKey: null,
+  layers: [],
   loadingProgress: { loaded: 0, total: 0 },
   choices: [],
 };
@@ -49,6 +57,20 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
   const loader = loaderRef.current;
 
   const strictLoad = script.meta?.strictLoad ?? true;
+
+  /** 设置/替换某层。同 kind 同 index 替换（key 变化即换图）。 */
+  const setLayer = useCallback(
+    (kind: 'bg' | 'cg', key: string, index = 0, zIndex = 0) => {
+      setUi((prev) => {
+        const next = prev.layers.filter(
+          (l) => !(l.kind === kind && l.index === index),
+        );
+        next.push({ key, kind, index, zIndex });
+        return { ...prev, layers: next };
+      });
+    },
+    [],
+  );
 
   /** 解析 label → 行号。 */
   const labelMap = useMemo(() => {
@@ -115,7 +137,16 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
         case 'bg': {
           loader.load(line.key);
-          setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle', bgKey: line.key }));
+          setLayer('bg', line.key, line.index ?? 0, line.zIndex ?? 0);
+          setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
+          runLine(idx + 1);
+          break;
+        }
+
+        case 'cg': {
+          loader.load(line.key);
+          setLayer('cg', line.key, line.index ?? 0, line.zIndex ?? 0);
+          setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
           runLine(idx + 1);
           break;
         }
@@ -123,7 +154,11 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         case 'say': {
           if (line.bg) {
             loader.load(line.bg);
-            setUi((prev) => ({ ...prev, bgKey: line.bg }));
+            setLayer('bg', line.bg, line.index ?? 0, line.zIndex ?? 0);
+          }
+          if (line.cg) {
+            loader.load(line.cg);
+            setLayer('cg', line.cg, line.index ?? 0, line.zIndex ?? 0);
           }
           setUi((prev) => ({
             ...prev,
@@ -236,9 +271,6 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
 
   if (ended) return null;
 
-  const bgEntry = ui.bgKey ? loader.get(ui.bgKey) : undefined;
-  const bgSrc = bgEntry?.url ?? ui.bgKey ?? '';
-
   return (
     <div
       style={{
@@ -251,15 +283,57 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
       }}
       onClick={advance}
     >
-      {/* 背景层 */}
+      {/* 图层渲染：bg=cover 占满全屏，cg=contain 看全居中；按 index+zIndex 排序，同 index cg 前 bg 后 */}
       <div style={{ position: 'absolute', inset: 0 }}>
-        {bgSrc && (
-          <img
-            src={bgSrc}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
-        )}
+        {ui.layers
+          .slice()
+          .sort((a, b) => {
+            const aIdx = a.index + (a.kind === 'cg' ? 0.5 : 0);
+            const bIdx = b.index + (b.kind === 'cg' ? 0.5 : 0);
+            return aIdx - bIdx || a.zIndex - b.zIndex;
+          })
+          .map((layer) => {
+            const url = loader.get(layer.key)?.url ?? layer.key;
+            if (layer.kind === 'bg') {
+              return (
+                <img
+                  key={`${layer.kind}-${layer.index}-${layer.key}`}
+                  src={url}
+                  alt=""
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    zIndex: layer.index,
+                  }}
+                />
+              );
+            }
+            return (
+              <div
+                key={`${layer.kind}-${layer.index}-${layer.key}`}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: layer.index + 1,
+                }}
+              >
+                <div style={{ position: 'relative', width: '100%', maxWidth: 'calc(100vh * 16 / 9)', aspectRatio: '16 / 9' }}>
+                  <img
+                    src={url}
+                    alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
       </div>
 
       {/* loading 遮罩：phase==='loading' 且资源未全就绪 */}

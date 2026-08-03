@@ -34,7 +34,7 @@ export const azusa_HD2_44: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-1"
  },
  {
@@ -73,7 +73,7 @@ export const azusa_HD2_44: VnScript = {
   "text": "すっかり俺のチンポにも慣れちまったな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-2"
  },
  {
@@ -127,7 +127,7 @@ export const azusa_HD2_44: VnScript = {
   "text": "ああ…だめぇ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-3"
  },
  {
@@ -142,7 +142,7 @@ export const azusa_HD2_44: VnScript = {
   "text": "ビクビクと絶頂するアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-4"
  },
  {
@@ -171,7 +171,7 @@ export const azusa_HD2_44: VnScript = {
   "text": "ああんっ、また来る…またイッちゃう…ああっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-5"
  },
  {
@@ -192,7 +192,11 @@ export const azusa_HD2_44: VnScript = {
   "text": "ドピュドピューーー\n剛島の射精と同時に再び絶頂するアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD2-6"
+ },
+ {
+  "type": "cg",
   "key": "HD2-6"
  },
  {

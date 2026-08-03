@@ -74,7 +74,7 @@ export const azusa_HD4_46: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-5"
  },
  {
@@ -93,7 +93,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "ずいぶんと苦しそうだな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-6"
  },
  {
@@ -102,7 +102,11 @@ export const azusa_HD4_46: VnScript = {
   "text": "！！！(見られた！？)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD3-7"
+ },
+ {
+  "type": "cg",
   "key": "HD3-7"
  },
  {
@@ -151,7 +155,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "あーそのことなんだが、今日も休みにしようかと思っている"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-8"
  },
  {
@@ -190,7 +194,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "簡単に言えばお前の調教に飽きたってこと\nなんなら開放してやろうか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-9"
  },
  {
@@ -219,7 +223,11 @@ export const azusa_HD4_46: VnScript = {
   "text": "(そんなの…そんなの嫌あああああああ)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD3-10"
+ },
+ {
+  "type": "cg",
   "key": "HD3-10"
  },
  {
@@ -233,7 +241,11 @@ export const azusa_HD4_46: VnScript = {
   "text": "待ってください！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD3-11"
+ },
+ {
+  "type": "cg",
   "key": "HD3-11"
  },
  {
@@ -262,7 +274,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "認めます…奴隷になりますから…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD3-12"
  },
  {
@@ -296,7 +308,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "ありがとうございますご主人様！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD4-0"
  },
  {
@@ -310,7 +322,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "良いおねだりだ\nほらお望みのものだぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD4-1"
  },
  {
@@ -329,7 +341,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "ああっイクううううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD4-2"
  },
  {
@@ -344,7 +356,11 @@ export const azusa_HD4_46: VnScript = {
   "text": "プシャアアア"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD4-3"
+ },
+ {
+  "type": "cg",
   "key": "HD4-3"
  },
  {
@@ -368,7 +384,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "俺のチンポを何度も入れられたんだ\nそりゃそうなるのも当然だ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD4-4"
  },
  {
@@ -417,7 +433,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "はいっ！しっかり働きます！\nご主人様のために精一杯働きますぅ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD4-5"
  },
  {
@@ -436,7 +452,7 @@ export const azusa_HD4_46: VnScript = {
   "text": "出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD4-6"
  },
  {
@@ -457,7 +473,11 @@ export const azusa_HD4_46: VnScript = {
   "text": "ドピュドピューーー\n射精と同時に絶頂するアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD4-7"
+ },
+ {
+  "type": "cg",
   "key": "HD4-7"
  },
  {

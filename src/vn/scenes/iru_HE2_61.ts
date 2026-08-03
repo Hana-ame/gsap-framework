@@ -39,7 +39,7 @@ export const iru_HE2_61: VnScript = {
   "text": "チパイスキーの部屋まで付いて行くイル。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-1"
  },
  {
@@ -58,7 +58,7 @@ export const iru_HE2_61: VnScript = {
   "text": "はいご主人様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-2"
  },
  {
@@ -82,7 +82,7 @@ export const iru_HE2_61: VnScript = {
   "text": "はい、ご主人様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-3"
  },
  {
@@ -146,7 +146,7 @@ export const iru_HE2_61: VnScript = {
   "text": "わかりましたご主人様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-4"
  },
  {
@@ -180,7 +180,7 @@ export const iru_HE2_61: VnScript = {
   "text": "出すぞっ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-5"
  },
  {
@@ -195,7 +195,7 @@ export const iru_HE2_61: VnScript = {
   "text": "ドピュドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-6"
  },
  {

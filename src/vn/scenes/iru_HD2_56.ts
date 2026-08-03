@@ -38,7 +38,7 @@ export const iru_HD2_56: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-1"
  },
  {
@@ -52,7 +52,7 @@ export const iru_HD2_56: VnScript = {
   "text": "では入れるぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-2"
  },
  {
@@ -61,7 +61,7 @@ export const iru_HD2_56: VnScript = {
   "text": "ああっチパイスキー様のおチンポが入って来ますぅ♡"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-3"
  },
  {
@@ -90,7 +90,7 @@ export const iru_HD2_56: VnScript = {
   "text": "本当に君は最高のメイドだよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-4"
  },
  {
@@ -109,7 +109,7 @@ export const iru_HD2_56: VnScript = {
   "text": "ああいいよっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-5"
  },
  {
@@ -138,7 +138,7 @@ export const iru_HD2_56: VnScript = {
   "text": "ああっ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-6"
  },
  {
@@ -159,7 +159,7 @@ export const iru_HD2_56: VnScript = {
   "text": "ドピュドピュドピュー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD2-7"
  },
  {

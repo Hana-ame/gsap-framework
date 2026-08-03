@@ -2,6 +2,9 @@
 import { lazy } from 'react';
 import type { ComponentType } from 'react';
 
+const vnMenu = lazy(() =>
+  import('./vn-menu/VnMenuDisplay').then((m) => ({ default: m.VnMenuDisplay as ComponentType })),
+);
 const componentVn = lazy(() =>
   import('./component-vn/ComponentVnDisplay').then((m) => ({ default: m.ComponentVnDisplay as ComponentType })),
 );
@@ -239,16 +242,17 @@ const hisekai_HD34_55 = lazy(() =>
 );
 
 export const EXAMPLES = [
-  'component-vn', 'hscene-azusa_HA1_21', 'hscene-azusa_HA2_22', 'hscene-azusa_HA3_23', 'hscene-azusa_HA4_24', 'hscene-azusa_HB1_27', 'hscene-azusa_HB2_29', 'hscene-azusa_HB3_30', 'hscene-azusa_HB4_32', 'hscene-azusa_HC1_35', 'hscene-azusa_HC2_36', 'hscene-azusa_HC3_38', 'hscene-azusa_HC4_39', 'hscene-azusa_HD1_42', 'hscene-azusa_HD2_44', 'hscene-azusa_HD3_45', 'hscene-azusa_HD4_46', 'hscene-azusa_HD5_48', 'hscene-azusa_HE1_52', 'hscene-azusa_HE2_53', 'hscene-azusa_HE3_55', 'hscene-azusa_HE4_56', 'hscene-azusa_HF1_59', 'hscene-azusa_HF2_60', 'hscene-azusa_HG1_63', 'hscene-azusa_HG2_64', 'hscene-azusa_HH1_69', 'hscene-azusa_HH2_70', 'hscene-azusa_HH3_71', 'hscene-azusa_HH4_72', 'hscene-azusa_HH5_74', 'hscene-iru_HA1_25', 'hscene-iru_HA2_26', 'hscene-iru_HA3_27', 'hscene-iru_HB1_34', 'hscene-iru_HB2_35', 'hscene-iru_HB_33', 'hscene-iru_HC1_42', 'hscene-iru_HC1_46', 'hscene-iru_HC2_47', 'hscene-iru_HC3_44', 'hscene-iru_HC3_48', 'hscene-iru_HD1_55', 'hscene-iru_HD2_56', 'hscene-iru_HD3_57', 'hscene-iru_HE1_60', 'hscene-iru_HE2_61', 'hscene-iru_HF1_63', 'hscene-iru_HG1_65', 'hscene-iru_T21_39', 'hscene-iru_T22_40', 'hscene-iru_T22_41', 'hscene-iru_T3_54', 'hscene-isekai_HA11_13', 'hscene-isekai_HA21_14', 'hscene-isekai_HA31_16', 'hscene-isekai_HA41_19', 'hscene-isekai_HA43_21', 'hscene-isekai_HA44_22', 'hscene-isekai_HB11_25', 'hscene-isekai_HB12_26', 'hscene-isekai_HB21_27', 'hscene-isekai_HB31_28', 'hscene-isekai_HB32_29', 'hscene-isekai_HB41_30', 'hscene-isekai_HC11_34', 'hscene-isekai_HC12_35', 'hscene-isekai_HC21_36', 'hscene-isekai_HC31_37', 'hscene-isekai_HC32_39', 'hscene-isekai_HC41_40', 'hscene-isekai_HD11_44', 'hscene-isekai_HD12_45', 'hscene-isekai_HD21_48', 'hscene-isekai_HD31_52', 'hscene-isekai_HD32_53', 'hscene-isekai_HD33_54', 'hscene-isekai_HD34_55'
+  'vn-menu', 'component-vn', 'hscene-azusa_HA1_21', 'hscene-azusa_HA2_22', 'hscene-azusa_HA3_23', 'hscene-azusa_HA4_24', 'hscene-azusa_HB1_27', 'hscene-azusa_HB2_29', 'hscene-azusa_HB3_30', 'hscene-azusa_HB4_32', 'hscene-azusa_HC1_35', 'hscene-azusa_HC2_36', 'hscene-azusa_HC3_38', 'hscene-azusa_HC4_39', 'hscene-azusa_HD1_42', 'hscene-azusa_HD2_44', 'hscene-azusa_HD3_45', 'hscene-azusa_HD4_46', 'hscene-azusa_HD5_48', 'hscene-azusa_HE1_52', 'hscene-azusa_HE2_53', 'hscene-azusa_HE3_55', 'hscene-azusa_HE4_56', 'hscene-azusa_HF1_59', 'hscene-azusa_HF2_60', 'hscene-azusa_HG1_63', 'hscene-azusa_HG2_64', 'hscene-azusa_HH1_69', 'hscene-azusa_HH2_70', 'hscene-azusa_HH3_71', 'hscene-azusa_HH4_72', 'hscene-azusa_HH5_74', 'hscene-iru_HA1_25', 'hscene-iru_HA2_26', 'hscene-iru_HA3_27', 'hscene-iru_HB1_34', 'hscene-iru_HB2_35', 'hscene-iru_HB_33', 'hscene-iru_HC1_42', 'hscene-iru_HC1_46', 'hscene-iru_HC2_47', 'hscene-iru_HC3_44', 'hscene-iru_HC3_48', 'hscene-iru_HD1_55', 'hscene-iru_HD2_56', 'hscene-iru_HD3_57', 'hscene-iru_HE1_60', 'hscene-iru_HE2_61', 'hscene-iru_HF1_63', 'hscene-iru_HG1_65', 'hscene-iru_T21_39', 'hscene-iru_T22_40', 'hscene-iru_T22_41', 'hscene-iru_T3_54', 'hscene-isekai_HA11_13', 'hscene-isekai_HA21_14', 'hscene-isekai_HA31_16', 'hscene-isekai_HA41_19', 'hscene-isekai_HA43_21', 'hscene-isekai_HA44_22', 'hscene-isekai_HB11_25', 'hscene-isekai_HB12_26', 'hscene-isekai_HB21_27', 'hscene-isekai_HB31_28', 'hscene-isekai_HB32_29', 'hscene-isekai_HB41_30', 'hscene-isekai_HC11_34', 'hscene-isekai_HC12_35', 'hscene-isekai_HC21_36', 'hscene-isekai_HC31_37', 'hscene-isekai_HC32_39', 'hscene-isekai_HC41_40', 'hscene-isekai_HD11_44', 'hscene-isekai_HD12_45', 'hscene-isekai_HD21_48', 'hscene-isekai_HD31_52', 'hscene-isekai_HD32_53', 'hscene-isekai_HD33_54', 'hscene-isekai_HD34_55'
 ] as const;
 
 export type Example = (typeof EXAMPLES)[number];
-export const DEFAULT_EXAMPLE: Example = 'component-vn';
+export const DEFAULT_EXAMPLE: Example = 'vn-menu';
 
 export const isExample = (s: string): s is Example =>
   (EXAMPLES as readonly string[]).includes(s);
 
 export const exampleMap: Record<Example, ComponentType> = {
+  'vn-menu': vnMenu,
   'component-vn': componentVn,
   'hscene-azusa_HA1_21': hazusa_HA1_21,
   'hscene-azusa_HA2_22': hazusa_HA2_22,

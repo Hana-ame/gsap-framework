@@ -40,7 +40,7 @@ export const azusa_HF2_60: VnScript = {
   "text": "今日もまた町一つ消してきたのだった。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF3-1"
  },
  {
@@ -74,7 +74,7 @@ export const azusa_HF2_60: VnScript = {
   "text": "私はクライシス様のために存在しているのですから"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF3-2"
  },
  {
@@ -123,7 +123,7 @@ export const azusa_HF2_60: VnScript = {
   "text": "うっ…出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HF3-3"
  },
  {
@@ -138,7 +138,11 @@ export const azusa_HF2_60: VnScript = {
   "text": "ドピュドピュドピューーー\nクライシスの精液が勢いよく放たれる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF3-4"
+ },
+ {
+  "type": "cg",
   "key": "HF3-4"
  },
  {
@@ -152,7 +156,11 @@ export const azusa_HF2_60: VnScript = {
   "text": "いつも通り良かったぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HF3-5"
+ },
+ {
+  "type": "cg",
   "key": "HF3-5"
  },
  {

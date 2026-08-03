@@ -39,7 +39,7 @@ export const isekai_HB12_26: VnScript = {
   "text": "セイレア教は世界を支配した。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB12-1"
  },
  {
@@ -53,7 +53,7 @@ export const isekai_HB12_26: VnScript = {
   "text": "そこには教皇のペニスに奉仕する二人の女性がいた。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB12-2"
  },
  {
@@ -67,7 +67,11 @@ export const isekai_HB12_26: VnScript = {
   "text": "そうです、全て教皇様のお力です"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB12-3"
+ },
+ {
+  "type": "cg",
   "key": "HB12-3"
  },
  {
@@ -91,7 +95,7 @@ export const isekai_HB12_26: VnScript = {
   "text": "素晴らしい忠誠心です！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB12-3"
  },
  {
@@ -100,7 +104,7 @@ export const isekai_HB12_26: VnScript = {
   "text": "ではたくさんかけてあげますからね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB12-4"
  },
  {
@@ -115,7 +119,11 @@ export const isekai_HB12_26: VnScript = {
   "text": "教皇は二人の顔に精液をかける。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HB12-5"
+ },
+ {
+  "type": "cg",
   "key": "HB12-5"
  },
  {
@@ -134,7 +142,7 @@ export const isekai_HB12_26: VnScript = {
   "text": "これからも私のために働いてもらいますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB12-6"
  },
  {

@@ -54,7 +54,7 @@ export const isekai_HD31_52: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-1"
  },
  {
@@ -78,7 +78,11 @@ export const isekai_HD31_52: VnScript = {
   "text": "ダメ拘束がきつくて抜け出せない…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD31-2"
+ },
+ {
+  "type": "cg",
   "key": "HD31-2"
  },
  {
@@ -97,7 +101,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "記憶の消去…？いやああああ離して！！消さないで！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-3"
  },
  {
@@ -116,7 +120,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "(ダメ、忘れないようにしないと！\n 私の記憶消えないように思い出し続けないと！！)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-4"
  },
  {
@@ -140,7 +144,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "(私の名前は･･････)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-5"
  },
  {
@@ -159,7 +163,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "(私って…誰…？)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-6"
  },
  {
@@ -168,7 +172,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "記憶消去完了\n感情の制御に移ります"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-7"
  },
  {
@@ -232,7 +236,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "『マシナ国に忠誠を』"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-8"
  },
  {
@@ -256,7 +260,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "(私はマシナ国のために戦うだけの存在…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-9"
  },
  {
@@ -265,7 +269,11 @@ export const isekai_HD31_52: VnScript = {
   "text": "ブレインウォッシュ完了\n拘束を解除します"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HD31-10"
+ },
+ {
+  "type": "cg",
   "key": "HD31-10"
  },
  {
@@ -274,7 +282,7 @@ export const isekai_HD31_52: VnScript = {
   "text": "まず洗脳装置が外される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HD31-11"
  },
  {

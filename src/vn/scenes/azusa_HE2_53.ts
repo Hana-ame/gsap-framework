@@ -98,7 +98,7 @@ export const azusa_HE2_53: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-1"
  },
  {
@@ -142,7 +142,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "果たしてどうかな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-2"
  },
  {
@@ -166,7 +166,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "どうだ気持ち良いだろ？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-3"
  },
  {
@@ -200,7 +200,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "そうか、せいぜい耐えることだな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-4"
  },
  {
@@ -239,7 +239,11 @@ export const azusa_HE2_53: VnScript = {
   "text": "ほらっ早くイっちまえよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE2-5"
+ },
+ {
+  "type": "cg",
   "key": "HE2-5"
  },
  {
@@ -253,7 +257,11 @@ export const azusa_HE2_53: VnScript = {
   "text": "ああっ今洗脳は止めてぇ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE2-6"
+ },
+ {
+  "type": "cg",
   "key": "HE2-6"
  },
  {
@@ -292,7 +300,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "ああああああああああ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-7"
  },
  {
@@ -307,7 +315,11 @@ export const azusa_HE2_53: VnScript = {
   "text": "ビクンビクン"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE2-8"
+ },
+ {
+  "type": "cg",
   "key": "HE2-8"
  },
  {
@@ -321,7 +333,11 @@ export const azusa_HE2_53: VnScript = {
   "text": "ああ…だめぇ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE2-9"
+ },
+ {
+  "type": "cg",
   "key": "HE2-9"
  },
  {
@@ -345,7 +361,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "正野…様…に服従…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-10"
  },
  {
@@ -364,7 +380,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "ならば何度も洗脳を重ねるだけだ！\n二度と敵対できないよう徹底的に洗脳してやるからな！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-11"
  },
  {
@@ -413,7 +429,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "ああっ、ダメっ、またイク…イッちゃう…イッちゃうううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-12"
  },
  {
@@ -433,7 +449,11 @@ export const azusa_HE2_53: VnScript = {
   "text": "あひゃあ…正野様…正野様ぁ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE2-13"
+ },
+ {
+  "type": "cg",
   "key": "HE2-13"
  },
  {
@@ -447,7 +467,11 @@ export const azusa_HE2_53: VnScript = {
   "text": "(私は正野様に絶対服従…正野様の言うことだけ聞くだけの存在…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HE2-14"
+ },
+ {
+  "type": "cg",
   "key": "HE2-14"
  },
  {
@@ -456,7 +480,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "(だから正野様は敵じゃない…？)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-15"
  },
  {
@@ -475,7 +499,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "そんな自分消してしまえばい"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-16"
  },
  {
@@ -524,7 +548,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "そこまで言われた仕方ないな、\nじゃあ消してやるからな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-17"
  },
  {
@@ -563,7 +587,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "俺も出るっ…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-18"
  },
  {
@@ -584,7 +608,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "ドピュドピュドピューーーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-19"
  },
  {
@@ -598,7 +622,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "(ああ…消える…\n 私の中から何か大事なものが消えてく感じがする…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-20"
  },
  {
@@ -607,7 +631,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "(でもそれで良い…これでやっと正野様のものになれるのだから…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-21"
  },
  {
@@ -632,7 +656,7 @@ export const azusa_HE2_53: VnScript = {
   "text": "俺の理想の学園の一員として過ごしてもらうぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HE2-22"
  },
  {

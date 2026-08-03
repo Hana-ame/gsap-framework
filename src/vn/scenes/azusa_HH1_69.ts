@@ -38,7 +38,11 @@ export const azusa_HH1_69: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH1-1"
+ },
+ {
+  "type": "cg",
   "key": "HH1-1"
  },
  {
@@ -167,7 +171,11 @@ export const azusa_HH1_69: VnScript = {
   "text": "あなたは洗脳装置にかけられたのですか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH1-2"
+ },
+ {
+  "type": "cg",
   "key": "HH1-2"
  },
  {
@@ -241,7 +249,11 @@ export const azusa_HH1_69: VnScript = {
   "text": "『あなた』ではなく『教祖様』と呼んでください"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH1-3"
+ },
+ {
+  "type": "cg",
   "key": "HH1-3"
  },
  {
@@ -305,7 +317,11 @@ export const azusa_HH1_69: VnScript = {
   "text": "(何度も催眠をかけてじっくりと堕としてあげましょう)"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH1-4"
+ },
+ {
+  "type": "cg",
   "key": "HH1-4"
  },
  {
@@ -549,7 +565,7 @@ export const azusa_HH1_69: VnScript = {
   "text": "今日のところはこれぐらいにしておきましょうか\n手を叩くと意識が一気に覚醒しますよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH1-5"
  },
  {
@@ -558,7 +574,11 @@ export const azusa_HH1_69: VnScript = {
   "text": "あれ…？私少しぼーっとしてましたか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH1-6"
+ },
+ {
+  "type": "cg",
   "key": "HH1-6"
  },
  {
@@ -592,7 +612,7 @@ export const azusa_HH1_69: VnScript = {
   "text": "そう言い教祖を見るアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH1-7"
  },
  {

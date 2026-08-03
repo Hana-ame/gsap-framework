@@ -38,7 +38,7 @@ export const isekai_HC12_35: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-1"
  },
  {
@@ -57,7 +57,7 @@ export const isekai_HC12_35: VnScript = {
   "text": "では入れますね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-2"
  },
  {
@@ -92,7 +92,7 @@ export const isekai_HC12_35: VnScript = {
   "text": "それは良かったよ、じゃあ動こうか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-3"
  },
  {
@@ -111,7 +111,7 @@ export const isekai_HC12_35: VnScript = {
   "text": "僕の女になれてどんな気分だい？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-4"
  },
  {
@@ -140,7 +140,7 @@ export const isekai_HC12_35: VnScript = {
   "text": "わかったよ\nほらこれでどうだい"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-5"
  },
  {
@@ -179,7 +179,7 @@ export const isekai_HC12_35: VnScript = {
   "text": "ああっ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-6"
  },
  {
@@ -200,7 +200,7 @@ export const isekai_HC12_35: VnScript = {
   "text": "ドピュドピュッ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC12-7"
  },
  {

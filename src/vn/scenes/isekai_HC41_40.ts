@@ -26,7 +26,7 @@ export const isekai_HC41_40: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC41-1"
  },
  {
@@ -65,7 +65,11 @@ export const isekai_HC41_40: VnScript = {
   "text": "それはこの世界の女神であったセイレアも例外ではない。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC41-2"
+ },
+ {
+  "type": "cg",
   "key": "HC41-2"
  },
  {
@@ -149,7 +153,7 @@ export const isekai_HC41_40: VnScript = {
   "text": "そろそろ出そうですよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC41-3"
  },
  {
@@ -164,7 +168,11 @@ export const isekai_HC41_40: VnScript = {
   "text": "ドピュッ！ビュルルルー！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC41-4"
+ },
+ {
+  "type": "cg",
   "key": "HC41-4"
  },
  {

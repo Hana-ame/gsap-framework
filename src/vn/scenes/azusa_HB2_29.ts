@@ -42,7 +42,7 @@ export const azusa_HB2_29: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-1"
  },
  {
@@ -66,7 +66,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "遠慮しないで\n君なら歓迎するよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-2"
  },
  {
@@ -100,7 +100,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "おっ、もう抵抗しないんだ、じゃあお望み通り出してあげるよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-3"
  },
  {
@@ -115,7 +115,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "ドピュッ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-4"
  },
  {
@@ -129,7 +129,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "(でもこの味忘れられない…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-5"
  },
  {
@@ -143,7 +143,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "少量しか出なかったことに不満を抱くアズサ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-6"
  },
  {
@@ -172,7 +172,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "あ･･･ああ出るっ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-7"
  },
  {
@@ -187,7 +187,7 @@ export const azusa_HB2_29: VnScript = {
   "text": "ドピュドピュー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB2-8"
  },
  {

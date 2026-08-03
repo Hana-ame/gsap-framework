@@ -51,7 +51,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "茶羅井は自室にセイレアを連れて行きベッドへ寝かせる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-1"
  },
  {
@@ -95,7 +95,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "ありがとうございます茶羅井様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-2"
  },
  {
@@ -119,7 +119,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "だが、悪くない\nこれから俺がいっぱい使ってほぐしてやるからな！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-3"
  },
  {
@@ -158,7 +158,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "じゃあその記念すべき最初のセックスを始めるぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-4"
  },
  {
@@ -187,7 +187,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "(人間はなぜセックスを頻繁にするのだろうと思っていましたが、\n こんなに良いものだったのですね…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-5"
  },
  {
@@ -206,7 +206,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "言われなくてもそのつもりだ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-6"
  },
  {
@@ -230,7 +230,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "魅了で無理やり好きにさせられているのに感謝してくれるのだな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-7"
  },
  {
@@ -284,7 +284,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "出るっ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-8"
  },
  {
@@ -299,7 +299,7 @@ export const isekai_HB21_27: VnScript = {
   "text": "セイレアの中に大量の精液を放出する茶羅井。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB21-9"
  },
  {

@@ -66,7 +66,7 @@ export const azusa_HG1_63: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-1"
  },
  {
@@ -105,7 +105,11 @@ export const azusa_HG1_63: VnScript = {
   "text": "じゃあ、試してみるぞ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HG1-2"
+ },
+ {
+  "type": "cg",
   "key": "HG1-2"
  },
  {
@@ -124,7 +128,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "まずはここに入れないとな"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-3"
  },
  {
@@ -158,7 +162,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "そうかい、じゃあこれならどうだ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-4"
  },
  {
@@ -177,7 +181,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "あ、痛かったかな、ごめんごめん\nほらこれでどうだい？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-5"
  },
  {
@@ -211,7 +215,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "いや…やめて…そんなことしないで…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-6"
  },
  {
@@ -235,7 +239,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "うるさいなあ…口も塞いでやるか"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-7"
  },
  {
@@ -249,7 +253,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "口にもスライムが挿入される。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-8"
  },
  {
@@ -273,7 +277,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "『洗脳で世界を支配する\n　暗井とはその目的で意気投合』"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-9"
  },
  {
@@ -327,7 +331,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "さあ出すぞ！これで君は俺になるのだ！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-10"
  },
  {
@@ -342,7 +346,11 @@ export const azusa_HG1_63: VnScript = {
   "text": "ドピュドピューーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HG1-11"
+ },
+ {
+  "type": "cg",
   "key": "HG1-11"
  },
  {
@@ -351,7 +359,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "さあ俺よ！目覚めるのだ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-12"
  },
  {
@@ -390,7 +398,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "ええ、人々を洗脳して支配する、素晴らしい考えね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-13"
  },
  {
@@ -414,7 +422,7 @@ export const azusa_HG1_63: VnScript = {
   "text": "頼んだぞ、エンペラパール"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG1-14"
  },
  {

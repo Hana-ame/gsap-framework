@@ -23,7 +23,7 @@ export const azusa_HG2_64: VnScript = {
   "text": "「きゃーーー」\n「助けてくれーーー」"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HG2-1"
  },
  {
@@ -53,7 +53,11 @@ export const azusa_HG2_64: VnScript = {
   "text": "魔法で毒沼の施設へ送られる男性。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HG2-2"
+ },
+ {
+  "type": "cg",
   "key": "HG2-2"
  },
  {

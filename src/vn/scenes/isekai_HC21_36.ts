@@ -38,7 +38,7 @@ export const isekai_HC21_36: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC21-1"
  },
  {
@@ -57,7 +57,11 @@ export const isekai_HC21_36: VnScript = {
   "text": "教皇様が喜んでくれるのでしたら短くして良かったです"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HC21-2"
+ },
+ {
+  "type": "cg",
   "key": "HC21-2"
  },
  {
@@ -81,7 +85,7 @@ export const isekai_HC21_36: VnScript = {
   "text": "はい、来てください教皇様"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC21-3"
  },
  {
@@ -110,7 +114,7 @@ export const isekai_HC21_36: VnScript = {
   "text": "はい、ずっとこうしていたいぐらいです"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC21-4"
  },
  {
@@ -139,7 +143,7 @@ export const isekai_HC21_36: VnScript = {
   "text": "いいでしょう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC21-5"
  },
  {
@@ -173,7 +177,7 @@ export const isekai_HC21_36: VnScript = {
   "text": "ああ出ますっ！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC21-6"
  },
  {
@@ -194,7 +198,7 @@ export const isekai_HC21_36: VnScript = {
   "text": "教皇は詩保の中に射精した。同時に詩保も絶頂する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HC21-7"
  },
  {

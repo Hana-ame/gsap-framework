@@ -18,7 +18,7 @@ export const iru_HB_33: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-7"
  },
  {
@@ -27,7 +27,7 @@ export const iru_HB_33: VnScript = {
   "text": "んああああああチパイスキー様ぁ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HB1-8"
  },
  {

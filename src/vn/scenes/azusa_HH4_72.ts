@@ -51,7 +51,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "そう言いベッドへと移動する二人。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-1"
  },
  {
@@ -60,7 +60,11 @@ export const azusa_HH4_72: VnScript = {
   "text": "さあどうぞ教祖様\n教祖様のものになった私のおマンコにおチンポ入れてください"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH4-2"
+ },
+ {
+  "type": "cg",
   "key": "HH4-2"
  },
  {
@@ -99,7 +103,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "そうですか、それは嬉しいことを言ってくれますね\n暗示で誘導したかいがありました"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-3"
  },
  {
@@ -113,7 +117,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "ええ、私を好きなりやすいよう暗示で誘導していたのですよ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-4"
  },
  {
@@ -167,7 +171,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "そういうことです"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-5"
  },
  {
@@ -181,7 +185,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "安心して良いですよ\nその気持ちは本物ですから"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-6"
  },
  {
@@ -220,7 +224,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "他の信者とは違う…本当に私を愛してくれている…\nこんな存在他にはいない…アズサさん…本当に愛してますよ！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-7"
  },
  {
@@ -249,7 +253,7 @@ export const azusa_HH4_72: VnScript = {
   "text": "ああ出るっ"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HH4-8"
  },
  {
@@ -270,7 +274,11 @@ export const azusa_HH4_72: VnScript = {
   "text": "ドピュドピュドピューーーー\n教祖の射精と同時にアズサも絶頂する。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HH4-9"
+ },
+ {
+  "type": "cg",
   "key": "HH4-9"
  },
  {

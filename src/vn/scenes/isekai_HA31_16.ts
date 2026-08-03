@@ -114,7 +114,7 @@ export const isekai_HA31_16: VnScript = {
   ]
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-1"
  },
  {
@@ -123,7 +123,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "ああああ小茂田様あああああやっと私を消してもらえるううううう"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-2"
  },
  {
@@ -147,7 +147,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "詩保の装置の電気が強くなる。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-3"
  },
  {
@@ -161,7 +161,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "詩保！詩保おおおおお"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-4"
  },
  {
@@ -170,7 +170,11 @@ export const isekai_HA31_16: VnScript = {
   "text": "はあはあ"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA31-5"
+ },
+ {
+  "type": "cg",
   "key": "HA31-5"
  },
  {
@@ -194,7 +198,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "でゅふふ、良かったね詩保ちゃん、いや詩保"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-6"
  },
  {
@@ -208,7 +212,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "とーっても幸せな気持ちになれますよー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-7"
  },
  {
@@ -217,7 +221,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "いやああああ、私は絶対小茂田のものになんかならない！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-8"
  },
  {
@@ -241,7 +245,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "小茂田様が私の中に入って来るのおおおおおお\nやめてーーー！！！出て行ってーーーーー"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-9"
  },
  {
@@ -260,7 +264,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "(小茂田様って呼ぶのは普通のこと…だよね……)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-10"
  },
  {
@@ -294,7 +298,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "(あれ？言われてみれば･･･\n どうして小茂田様に洗脳されるの嫌なんだろう…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-12"
  },
  {
@@ -313,7 +317,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "小茂田様に洗脳されるのって凄く気持ち良いですよね\nそうは思いませんか？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-13"
  },
  {
@@ -327,7 +331,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "そう…かも…"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-15"
  },
  {
@@ -351,7 +355,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "おっ、一気に洗脳が進んだね\n詩保の声は効果絶大みたいだね"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-14"
  },
  {
@@ -370,7 +374,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "わかりました"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-15"
  },
  {
@@ -404,7 +408,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "(小茂田様って…見た目が悪くて…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-16"
  },
  {
@@ -423,7 +427,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "(でも性格はキモそうで…)"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-16"
  },
  {
@@ -432,7 +436,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "小茂田様は性格も優しくて素敵な人"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-18"
  },
  {
@@ -456,7 +460,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "ん？なんだって？"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-19"
  },
  {
@@ -465,7 +469,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "小茂田様に忠誠を誓います！！！"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-20"
  },
  {
@@ -480,7 +484,7 @@ export const isekai_HA31_16: VnScript = {
   "effect": "flash"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-21"
  },
  {
@@ -489,7 +493,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "宣言と同時に電気が流れ、絶頂する有理紗。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA31-22"
  },
  {
@@ -498,7 +502,11 @@ export const isekai_HA31_16: VnScript = {
   "text": "これで有理紗は僕への忠誠心が完全に固定されたね"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA31-23"
+ },
+ {
+  "type": "cg",
   "key": "HA31-23"
  },
  {
@@ -512,7 +520,11 @@ export const isekai_HA31_16: VnScript = {
   "text": "さて、二人とも僕に洗脳されてどんな気分だい？"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA31-24"
+ },
+ {
+  "type": "cg",
   "key": "HA31-24"
  },
  {
@@ -541,7 +553,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "有理紗と詩保は立ち上がり小茂田の前に並ぶ。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA32-1"
  },
  {
@@ -555,7 +567,11 @@ export const isekai_HA31_16: VnScript = {
   "text": "もちろんわかるよね？"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA32-2"
+ },
+ {
+  "type": "cg",
   "key": "HA32-2"
  },
  {
@@ -569,7 +585,11 @@ export const isekai_HA31_16: VnScript = {
   "text": "そう言いスカートをたくし上げパンツを見せる詩保。"
  },
  {
-  "type": "bg",
+  "type": "cg",
+  "key": "HA32-3"
+ },
+ {
+  "type": "cg",
   "key": "HA32-3"
  },
  {
@@ -598,7 +618,7 @@ export const isekai_HA31_16: VnScript = {
   "text": "二人の美少女がパンツを見せている光景に興奮を隠せなかった。"
  },
  {
-  "type": "bg",
+  "type": "cg",
   "key": "HA32-4"
  },
  {
