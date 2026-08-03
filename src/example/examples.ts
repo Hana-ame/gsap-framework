@@ -680,7 +680,7 @@ export const EXAMPLES = [
   'component-vn',
 ] as const;
 export type Example = (typeof EXAMPLES)[number];
-export const DEFAULT_EXAMPLE: Example = 'screen-size';
+export const DEFAULT_EXAMPLE: Example = 'component-vn';
 
 export const isExample = (s: string): s is Example =>
   (EXAMPLES as readonly string[]).includes(s);

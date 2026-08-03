@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createElement, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { DEFAULT_EXAMPLE, type Example } from '../examples';
 
 const useHashExample = (await import('../useHashExample')).useHashExample;
 
-function Harness({ onResult }: { onResult: (v: string | null) => void }) {
+function Harness({ onResult }: { onResult: (v: Example) => void }) {
   const ex = useHashExample();
   useEffect(() => { onResult(ex); }, [ex, onResult]);
   return null;
@@ -27,10 +28,10 @@ describe('useHashExample', () => {
     window.location.hash = '';
   });
 
-  async function render(): Promise<string | null> {
+  async function render(): Promise<Example> {
     const { act } = await import('react');
-    let resolve: (v: string | null) => void;
-    const promise = new Promise<string | null>(r => { resolve = r; });
+    let resolve: (v: Example) => void;
+    const promise = new Promise<Example>(r => { resolve = r; });
     await act(async () => {
       root = createRoot(container);
       root.render(createElement(Harness, {
@@ -40,26 +41,26 @@ describe('useHashExample', () => {
     return promise;
   }
 
-  it('returns null when no hash', async () => {
+  it('falls back to DEFAULT_EXAMPLE when no hash', async () => {
     const val = await render();
-    expect(val).toBeNull();
+    expect(val).toBe(DEFAULT_EXAMPLE);
   });
 
   it('returns the example when hash matches', async () => {
-    window.location.hash = '#single';
+    window.location.hash = '#component-vn';
     const val = await render();
-    expect(val).toBe('single');
+    expect(val).toBe('component-vn');
   });
 
-  it('returns null for unknown hash', async () => {
+  it('falls back to DEFAULT_EXAMPLE for unknown hash', async () => {
     window.location.hash = '#nonexistent';
     const val = await render();
-    expect(val).toBeNull();
+    expect(val).toBe(DEFAULT_EXAMPLE);
   });
 
-  it('returns null for empty hash after #', async () => {
+  it('falls back to DEFAULT_EXAMPLE for empty hash after #', async () => {
     window.location.hash = '#';
     const val = await render();
-    expect(val).toBeNull();
+    expect(val).toBe(DEFAULT_EXAMPLE);
   });
 });
