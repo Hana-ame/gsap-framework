@@ -5,6 +5,7 @@ import { VnAudioEngine } from './audio';
 import { evalCond } from './vars';
 import { injectVnStyles } from './styles';
 import { prefetchScene, clearWarmLayer } from './prefetch';
+import { standKeyframe, transitionKeyframe } from './effects';
 import { loadGame, saveGame } from './save';
 import type { VnSaveData } from './save';
 import { getSettings, updateSettings } from './settings';
@@ -46,6 +47,10 @@ interface VnLayer {
 interface VnStand {
   key: string;
   pos: 'left' | 'center' | 'right';
+  /** 进出场动画名（作用于该立绘 img）。 */
+  anim: string;
+  /** 动画时长 ms。 */
+  fadeMs: number;
 }
 
 interface VnUiState {
@@ -138,6 +143,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
     return () => clearTimeout(t);
   }, [flash]);
 
+  /** 全屏转场（transition 指令：播动画 → 自动继续下一行）。 */
+  const [transition, setTransition] = useState<{ key: string; effect: string; color: string; dur: number } | null>(null);
+
   // 注入运行时关键帧样式
   useEffect(() => {
     injectVnStyles();
@@ -175,13 +183,21 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   );
 
   /** 设置/替换某位置的立绘。 */
-  const setStand = useCallback((pos: VnStand['pos'], key: string) => {
-    setUi((prev) => {
-      const rest = prev.stands.filter((s) => s.pos !== pos);
-      rest.push({ key, pos });
-      return { ...prev, stands: rest };
-    });
-    setStandHidden(false);
+  const setStand = useCallback(
+    (pos: VnStand['pos'], key: string, effect?: string, fadeMs?: number) => {
+      setUi((prev) => {
+        const rest = prev.stands.filter((s) => s.pos !== pos);
+        rest.push({ key, pos, anim: effect ?? 'vn-fade-in', fadeMs: fadeMs ?? 350 });
+        return { ...prev, stands: rest };
+      });
+      setStandHidden(false);
+    },
+    [],
+  );
+
+  /** 隐藏某位置的立绘。 */
+  const hideStand = useCallback((pos: VnStand['pos']) => {
+    setUi((prev) => ({ ...prev, stands: prev.stands.filter((s) => s.pos !== pos) }));
   }, []);
 
   /** 解析 label → 行号。 */
@@ -437,6 +453,34 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           break;
         }
 
+        case 'stand': {
+          if (line.action === 'hide') {
+            hideStand(line.pos ?? 'left');
+            runLine(idx + 1);
+            break;
+          }
+          if (line.key) {
+            loader.load(line.key);
+            const effect = line.effect ?? 'fade';
+            const anim = standKeyframe(effect);
+            setStand(line.pos ?? 'left', line.key, anim, line.fadeMs ?? 350);
+          }
+          runLine(idx + 1);
+          break;
+        }
+
+        case 'transition': {
+          const effect = line.effect ?? 'fade';
+          const dur = line.fadeMs ?? 450;
+          const key = `trans-${idx}`;
+          setTransition({ key, effect, color: line.color ?? '#000', dur });
+          setTimeout(() => {
+            setTransition(null);
+            runLine(idx + 1);
+          }, dur + 30);
+          break;
+        }
+
         case 'end': {
           clearWarmLayer();
           if (scriptKey) markSceneSeen(scriptKey);
@@ -451,7 +495,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         }
       }
     },
-    [loader, audio, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand, writeVars, scriptKey],
+    [loader, audio, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand, hideStand, writeVars, scriptKey],
   );
 
   /** 跳转目标解析：#hash / URL 走 navigate；label 优先命中同场景行；其余按场景名导航。 */
@@ -576,7 +620,12 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         text: data.text,
         shown: data.shown,
         layers: data.layers,
-        stands: data.stands,
+        stands: (data.stands ?? []).map((s) => ({
+          key: s.key,
+          pos: s.pos,
+          anim: 'vn-fade-in',
+          fadeMs: 300,
+        })),
         choices: data.choices,
         menu: prev.menu,
       }));
@@ -782,7 +831,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                 : { left: '2%' };
           return (
             <img
-              key={s.pos}
+              key={`${s.pos}-${s.key}`}
               src={url}
               alt=""
               onClick={(e) => {
@@ -798,7 +847,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                 objectPosition: 'bottom center',
                 cursor: 'pointer',
                 zIndex: 24,
-                animation: 'vn-fade-in 300ms ease both',
+                animation: `${s.anim} ${s.fadeMs}ms ease both`,
                 ...posStyle,
               }}
             />
@@ -1127,6 +1176,21 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             zIndex: 100,
             pointerEvents: 'none',
             animation: 'vn-flash 260ms ease-out both',
+          }}
+        />
+      )}
+
+      {/* 全屏转场（transition 指令）：盖住画面播过场动画，动画结束自动继续 */}
+      {transition && (
+        <div
+          key={transition.key}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: transition.color,
+            zIndex: 95,
+            pointerEvents: 'none',
+            animation: `${transitionKeyframe(transition.effect)} ${transition.dur}ms ease-in-out both`,
           }}
         />
       )}

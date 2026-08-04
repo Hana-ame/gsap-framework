@@ -228,6 +228,42 @@ export interface VnMenu {
   items: VnMenuItem[];
 }
 
+/** 立绘进出场动画类型。 */
+export type VnStandEffect = 'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'zoom';
+
+/** 立绘指令：显隐/替换立绘，带进出场动画（对齐 WebGAL 立绘演出）。 */
+export interface VnStand {
+  type: 'stand';
+  /** 资源 key（preload 声明）或完整 URL。action==='hide' 时缺省。 */
+  key?: string;
+  /** 位置（默认 left）。 */
+  pos?: 'left' | 'center' | 'right';
+  /** show=显示/替换（默认）；hide=移出该位置立绘。 */
+  action?: 'show' | 'hide';
+  /** 进出场动画（默认 fade）。 */
+  effect?: VnStandEffect;
+  /** 动画时长 ms（默认 350）。 */
+  fadeMs?: number;
+}
+
+/** 全屏转场效果类型。 */
+export type VnTransitionEffect =
+  | 'fade'
+  | 'wipe-left' | 'wipe-right' | 'wipe-up' | 'wipe-down'
+  | 'circle'
+  | 'slide-left' | 'slide-right' | 'slide-up' | 'slide-down'
+  | 'zoom';
+
+/** 转场指令：全屏过场动画（盖住画面，播完继续下一行）。对齐 WebGAL 转场演出。 */
+export interface VnTransition {
+  type: 'transition';
+  effect?: VnTransitionEffect;
+  /** 动画时长 ms（默认 450）。 */
+  fadeMs?: number;
+  /** 转场遮罩颜色（默认黑）。 */
+  color?: string;
+}
+
 export type VnLine =
   | VnPreload
   | VnSay
@@ -240,6 +276,8 @@ export type VnLine =
   | VnHook
   | VnAudio
   | VnMenu
+  | VnStand
+  | VnTransition
   | VnEnd;
 
 /** UI 布局/样式声明（可选）。缺省用框架默认。 */

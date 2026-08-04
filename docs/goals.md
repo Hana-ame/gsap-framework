@@ -11,10 +11,10 @@
 
 `src/vn` 当前已具备「单场景播放器」的全部原子能力：
 
-- 指令集：`preload`(wait:true/false) / `say`(bg/cg/stand/standPos/fadeMs/effect) / `wait`(挂起等点击) / `bg`(cover) / `cg`(contain) / `choice`(to/set/showWhen) / `jump`(label/#hash/URL/场景名, if) / `label` / `end`(goto)
+- 指令集：`preload`(wait:true/false) / `say`(bg/cg/stand/standPos/fadeMs/effect) / `wait`(挂起等点击) / `bg`(cover) / `cg`(contain) / `choice`(to/set/showWhen) / `jump`(label/#hash/URL/场景名, if) / `label` / `hook` / `audio` / `menu`(title/list/grid) / `stand`(进出场) / `transition`(全屏转场) / `end`(goto)
 - 图层：bg cover 占满 / cg contain 看全；index/zIndex 叠加
-- 变量：`choice.set` 写、`showWhen` / `jump.if` / `choice.showWhen` 读；安全表达式解析（不 eval）
-- 效果：`fadeMs` 淡入、`shake` 震屏、`flash` 白闪（一次性 keyed + 自动清除，不残留）
+- 变量：`choice.set` 写、`showWhen` / `jump.if` / `choice.showWhen` 读；安全表达式解析（不 eval）；全局跨场景变量（localStorage）合并进条件求值
+- 效果：`fadeMs` 淡入、`shake` 震屏、`flash` 白闪（一次性 keyed + 自动清除，不残留）、`stand` 进出场（fade/slide/zoom）、`transition` 全屏转场（fade/wipe/circle/slide/zoom）
 - 加载：切图等 `onload` 再推进（避免黑屏）；`preload.wait` 双模式
 - 消费方：`src/example/hscene/*.tsx` 懒加载组件 + `vn-menu` 封面卡片 + `examples.ts` 全 React.lazy
 
@@ -30,7 +30,7 @@
 | 图层/立绘/对话框/打字机 | ✅ | ✅ 已有 | ✅ 已有 |
 | 选项 / 分支跳转 | `choose` | `choice`+`jump` **已实现** | ✅ 已有 |
 | 变量与条件 | `setVar`+`-when` | `set`+`showWhen`+`if` | ✅ 已有 |
-| 无内置演出（flash/shake/video 等） | 全套 | 仅 flash/shake/fade | 中（后续补演出） |
+| 无内置演出（flash/shake/video 等） | 全套 | flash/shake/fade + `stand` 进出场 + `transition` 转场（video 未做） | 中（已补演出） |
 | **存档系统** | IndexedDB 分键 | ✗ 无 | **高（第 1）** |
 | **音频**（BGM/SFX/语音） | ✅ | ✗ 无（**先天缺陷：DV 场景全靠字幕无音频**） | **高（第 1）** |
 | **回放/回溯**（历史记录） | Backlog | ✗ 无 | **高（第 2）** |
@@ -187,6 +187,7 @@ export interface VnMenu {
   - **自动/跳过/设置**：顶栏按钮 + 键盘快捷键；auto 延迟推进、skip 快进（越过 wait 不越 choice/menu）；设置面板调节音量/打字机速度/自动延迟，persist localStorage（§1 第 3 优先）。
   - **标题界面落成**：`#vn-title` 数据驱动 scenario（`menu layout:'title'` + bg 背景 + 半透明底），`DEFAULT_EXAMPLE` 改为 `vn-title`；menu 条目 id 支持 label 优先解析（`resolveJump`，与 jump 同语义）（§1 第 4 优先）。
   - **全局跨场景状态**：`src/vn/global-state.ts`（localStorage 持久化 + `useSyncExternalStore` 订阅），`showWhen`/`jump.if` 求值合并全局变量；场景 `end` 自动 `markSceneSeen` → 回想解锁；`#vn-recall` 数据驱动回想 + `VnHandle.getGlobalVar/setGlobalVar/markSeen`（§1 第 4 优先）。
+  - **演出扩充**：`stand` 指令（立绘进出场动画：fade/slide/zoom，show/hide）与 `transition` 指令（全屏转场：fade/wipe/circle/slide/zoom，播完自动继续），`src/vn/effects.ts` 统一 keyframe 映射（§1 中优先）。
 - 场景形态：支持动态 **js / json / ts**，函数是 js/ts 场景的合法一等公民（§3.2）。
-- 待办：**演出扩充（转场/立绘动作/音效编排等）**（按 §1 优先级）。
-- 下一里程碑：标题 + 全局状态已落成（回想解锁走通），演出扩充未做。
+- 待办：**远期**（编辑器/插件生态，§1 低优先）→ 主路线图各优先项已全部落成。
+- 下一里程碑：全部中/高优先项完成，`src/vn` 能力面对齐 WebGAL 主能力面。
