@@ -36,80 +36,80 @@ export const iru_T21_39: VnScript = {
  {
   "type": "say",
   "speaker": "男性",
-   "text": "那我就不客气了"
-  },
-  {
-   "type": "cg",
-   "key": "T21-1"
-  },
-  {
-   "type": "say",
-   "speaker": "",
-   "text": "伊露的胸部被触碰着。"
-  },
-  {
-   "type": "say",
-   "speaker": "伊露",
-   "text": "唔…"
-  },
-  {
-   "type": "say",
-   "speaker": "伊露",
-   "text": "（是因为能靠胸部高潮的药物的影响还残留着吗…好有感觉…）"
-  },
-  {
-   "type": "cg",
-   "key": "T21-2"
-  },
-  {
-   "type": "say",
-   "speaker": "男性",
-   "text": "好棒的胸呢\n你也很享受，那就好"
-  },
-  {
-   "type": "say",
-   "speaker": "伊露",
-   "text": "唔啊…"
-  },
-  {
-   "type": "say",
-   "speaker": "伊露",
-   "text": "（明明不是奇派斯基大人，却这么有感觉…）"
-  },
-  {
-   "type": "say",
-   "speaker": "男性",
-   "text": "啊啊，摸起来真舒服"
-  },
-  {
-   "type": "say",
-   "speaker": "伊露",
-   "text": "（糟了…要去了…）"
-  },
-  {
-   "type": "cg",
-   "key": "T21-3"
-  },
-  {
-   "type": "say",
-   "speaker": "",
-   "text": "",
-   "effect": "flash"
-  },
-  {
-   "type": "say",
-   "speaker": "",
-   "text": "痉挛般颤抖\n伊露到达了高潮。"
-  },
-  {
-   "type": "cg",
-   "key": "T21-4"
-  },
-  {
-   "type": "say",
-   "speaker": "男性",
-   "text": "啊，高潮了吗\n是我的摸法太舒服了吗\\FH[OFF]"
-  },
+  "text": "那我就不客气了"
+ },
+ {
+  "type": "cg",
+  "key": "T21-1"
+ },
+ {
+  "type": "say",
+  "speaker": "",
+  "text": "说着，伊露的胸部被抚摸起来。"
+ },
+ {
+  "type": "say",
+  "speaker": "伊露",
+  "text": "唔…"
+ },
+ {
+  "type": "say",
+  "speaker": "伊露",
+  "text": "（难道是那能靠胸部高潮的药，药效还残留着…竟然这么有感觉…）"
+ },
+ {
+  "type": "cg",
+  "key": "T21-2"
+ },
+ {
+  "type": "say",
+  "speaker": "男性",
+  "text": "好棒的胸啊\n你看起来也很享受，那就好"
+ },
+ {
+  "type": "say",
+  "speaker": "伊露",
+  "text": "唔啊…"
+ },
+ {
+  "type": "say",
+  "speaker": "伊露",
+  "text": "（明明不是奇派斯基大人，我却这么有感觉…）"
+ },
+ {
+  "type": "say",
+  "speaker": "男性",
+  "text": "啊啊，手感真不错"
+ },
+ {
+  "type": "say",
+  "speaker": "伊露",
+  "text": "（糟了…要去了…）"
+ },
+ {
+  "type": "cg",
+  "key": "T21-3"
+ },
+ {
+  "type": "say",
+  "speaker": "",
+  "text": "",
+  "effect": "flash"
+ },
+ {
+  "type": "say",
+  "speaker": "",
+  "text": "身体痉挛般地一阵颤动\n伊露到达了高潮。"
+ },
+ {
+  "type": "cg",
+  "key": "T21-4"
+ },
+ {
+  "type": "say",
+  "speaker": "男性",
+  "text": "啊，这么快就高潮了？\n是我摸得太舒服了吗\\FH[OFF]"
+ },
  {
   "type": "end",
   "goto": "#vn-menu"
