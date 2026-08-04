@@ -18,7 +18,7 @@
 - 加载：切图等 `onload` 再推进（避免黑屏）；`preload.wait` 双模式
 - 消费方：`src/example/hscene/*.tsx` 懒加载组件 + `vn-menu` 封面卡片 + `examples.ts` 全 React.lazy
 
-**与 WebGAL 对比覆盖度：约 80–85%**。存档 / 音频 / 回放 / 快进·自动·设置 / 标题界面 / 跨场景状态 / 演出（stand+transition）均已完成；剩余差距集中在编辑器/插件生态（低优先，远期）与个别演出项（video 未做）。
+**与 WebGAL 对比覆盖度：约 90%**。存档 / 音频 / 回放 / 快进·自动·设置 / 标题界面 / 跨场景状态 / 演出（stand+transition+video）均已完成；剩余差距仅编辑器/插件生态（低优先，远期）。
 
 ---
 
