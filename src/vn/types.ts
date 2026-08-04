@@ -143,7 +143,6 @@ export interface VnScript {
     strictLoad?: boolean;
     fontFamily?: string;
     textSize?: number;
-    boxHeight?: number;
     /** 打字机每字间隔 ms（默认 30）。0=瞬间显示全文。 */
     typeSpeed?: number;
     /** UI 布局/样式声明。 */
