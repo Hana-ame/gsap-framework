@@ -88,7 +88,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 - `bg`/`cg`/`say` 的 `fadeMs`：切图淡入时长 ms（0=无动画，默认 0）。背景仍 cover、CG 仍 contain。
 - `say.effect` / `wait.effect`：`shake` 抖动画面、`flash` 白屏闪（瞬时，动画结束自动清除）。
 - **切图等待**：`bg`/`cg` 行不会立即推进——若目标图尚未加载完成，会停在当前画面，等 `onload` 后再继续（不显示 loading 遮罩；遮罩只在真实 preload 等待 `loaded < total` 时出现）。避免"切到一张未就绪的 CG 时短暂黑屏"。
-- 对话框 / 选项层自动淡入上浮（250ms）。
+- 对话框 / 选项层淡入上浮由 `meta.ui.dialog.animate` / `meta.ui.choice.animate` 开启（默认关闭，避免每次换行都跳动画）。
 - 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示）。
 
 ## 指令集
