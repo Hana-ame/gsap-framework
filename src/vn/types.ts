@@ -146,8 +146,6 @@ export interface VnScript {
     boxHeight?: number;
     /** 打字机每字间隔 ms（默认 30）。0=瞬间显示全文。 */
     typeSpeed?: number;
-    /** 默认图片显示模式：cg=看全(contain)，bg=占满(cover)。 */
-    bgMode?: 'cg' | 'bg';
     /** UI 布局/样式声明。 */
     ui?: VnUiStyle;
   };

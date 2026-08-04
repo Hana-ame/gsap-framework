@@ -16,7 +16,7 @@ import type { VnScript } from '../types';
 
 export const demo: VnScript = {
   meta: {
-    strictLoad: true, bgMode: 'cg', fontFamily: '"Noto Serif SC", serif', textSize: 22,
+    strictLoad: true, fontFamily: '"Noto Serif SC", serif', textSize: 22,
     ui: {
       dialog: { left: '4%', right: '4%', bottom: 24, bg: 'rgba(10,10,30,0.85)', color: '#fff', textSize: 22 },
       choice: { align: 'center', itemBg: 'rgba(20,20,40,0.9)', fontSize: 18 },
