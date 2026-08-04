@@ -99,7 +99,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | `say` | 对话。`speaker` 空串=旁白。`bg`/`cg` 附带切对应图层；`stand`/`standPos` 带立绘；`fadeMs` 淡入；`effect`（`shake`/`flash`） |
 | `wait` | 显式挂起：停在当前画面，等点击（advance）才继续，不自动推进。可带 `effect`（如 `{ type: 'wait', effect: 'flash' }` 白闪+定格） |
 | `bg` | 背景层，cover 占满全屏。`fadeMs` 淡入 |
-| `cg` | CG 层，contain 看全（16:9 框内）。`fadeMs` 淡入 |
+| `cg` | CG 层，contain 看全（默认直接全屏 contain，无包裹框；设 `meta.ui.cgBox` 可套指定宽高比框）。`fadeMs` 淡入 |
 | `choice` | 选项。`options[].to` 跳 label；`set` 写变量；`showWhen` 条件显示 |
 | `jump` | 跳转：label 名 / `#hash` 路由 / `https://` 开网页 / 场景名加载。`if` 条件满足才跳 |
 | `label` | 跳转标签 |
