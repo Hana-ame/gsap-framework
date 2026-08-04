@@ -7,6 +7,7 @@ import { injectVnStyles } from './styles';
 import { prefetchScene, clearWarmLayer } from './prefetch';
 import { loadGame, saveGame } from './save';
 import type { VnSaveData } from './save';
+import { getSettings, updateSettings } from './settings';
 
 export interface VnPlayerProps {
   script: VnScript;
@@ -19,8 +20,16 @@ export interface VnPlayerProps {
   onMenuPick?: (id: string) => void;
 }
 
+/** 回放（Backlog）一条记录。 */
+export interface VnBacklogEntry {
+  /** 行号（点击回溯跳回该行）。 */
+  lineIndex: number;
+  speaker: string;
+  text: string;
+}
+
 /** 播放器内部状态。 */
-type VnPhase = 'loading' | 'typing' | 'idle' | 'choice' | 'menu' | 'done';
+type VnPhase = 'loading' | 'typing' | 'idle' | 'choice' | 'menu' | 'backlog' | 'done';
 
 /** 一个显示图层。 */
 interface VnLayer {
@@ -60,6 +69,8 @@ interface VnUiState {
   }>;
   /** 菜单指令数据（phase==='menu' 时渲染）。 */
   menu: { layout: 'list' | 'grid' | 'title'; items: Array<{ id: string; title: string; cover?: string; group?: string; showWhen?: string }> } | null;
+  /** 回放（Backlog）已读台词。 */
+  backlog: VnBacklogEntry[];
 }
 
 const EMPTY_UI: VnUiState = {
@@ -73,6 +84,7 @@ const EMPTY_UI: VnUiState = {
   loadingProgress: { loaded: 0, total: 0 },
   choices: [],
   menu: null,
+  backlog: [],
 };
 
 export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: VnPlayerProps) {
@@ -83,6 +95,16 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   uiRef.current = ui;
 
   const [ended, setEnded] = useState(false);
+
+  /** 播放器设置（音量/打字机速度/自动/跳过），持久化到 localStorage。 */
+  const [settings, setSettings] = useState(getSettings);
+
+  /** 设置面板开关。 */
+  const [showSettings, setShowSettings] = useState(false);
+
+  /** 最新设置 ref：runLine/回调读到最新音量。 */
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
 
   /** 剧本变量（choice.set 写入，showWhen / jump.if 读取）。ref 让 runLine 读到最新。 */
   const [vars, setVars] = useState<Record<string, VnValue>>({});
@@ -267,7 +289,12 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         }
 
         case 'wait': {
-          // 显式挂起：停在当前画面，等点击（advance）才继续，不自动推进
+          // 显式挂起：停在当前画面，等点击（advance）才继续，不自动推进。
+          // skip 模式直接跳过（不影响 choice/menu 这类交互点）。
+          if (settingsRef.current.skip) {
+            runLine(idx + 1);
+            break;
+          }
           setUi((prev) => ({ ...prev, lineIndex: idx, phase: 'idle' }));
           if (line.effect === 'shake') setShaking(true);
           if (line.effect === 'flash') setFlash(idx);
@@ -294,6 +321,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             speaker: line.speaker ?? '',
             text: line.text,
             shown: 0,
+            backlog: line.text
+              ? [...prev.backlog, { lineIndex: idx, speaker: line.speaker ?? '', text: line.text }]
+              : prev.backlog,
           }));
           if (line.effect === 'shake') setShaking(true);
           if (line.effect === 'flash') setFlash(idx);
@@ -344,10 +374,12 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           } else {
             const channel = line.channel ?? (line.loop ? 'bgm' : 'sfx');
             if (channel === 'bgm') audioActiveRef.current.bgm = line.key;
+            const base = line.volume ?? 1;
+            const vol = base * (settingsRef.current.volume[channel] ?? 1);
             audio.play(line.key, url, {
               channel,
               loop: line.loop,
-              volume: line.volume,
+              volume: vol,
             });
           }
           runLine(idx + 1);
@@ -424,14 +456,14 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   useEffect(() => {
     if (ui.phase !== 'typing') return;
     const total = Array.from(ui.text).length;
-    const typeSpeed = script.meta?.typeSpeed ?? 30;
+    const typeSpeed = script.meta?.typeSpeed ?? settings.typeSpeed;
     if (ui.shown >= total) {
       // 显示完整，等点击
       setUi((prev) => (prev.phase === 'typing' ? { ...prev, phase: 'idle' } : prev));
       return;
     }
-    if (typeSpeed <= 0) {
-      // 0 = 瞬间显示全文
+    if (typeSpeed <= 0 || settings.skip) {
+      // 0 = 瞬间显示全文；skip 模式直接跳过打字
       setUi((prev) => ({ ...prev, shown: total }));
       return;
     }
@@ -439,7 +471,14 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
       setUi((prev) => ({ ...prev, shown: prev.shown + 1 }));
     }, typeSpeed);
     return () => clearTimeout(t);
-  }, [ui.phase, ui.shown, ui.text, script.meta?.typeSpeed]);
+  }, [ui.phase, ui.shown, ui.text, settings.typeSpeed, settings.skip, script.meta?.typeSpeed]);
+
+  /** 自动播放：行完整显示后（idle）延迟 autoDelay 自动推进；skip 模式不等待。 */
+  useEffect(() => {
+    if (!settings.auto || ui.phase !== 'idle') return;
+    const t = setTimeout(() => runLine(ui.lineIndex + 1), settings.autoDelay);
+    return () => clearTimeout(t);
+  }, [settings.auto, settings.autoDelay, ui.phase, ui.lineIndex, runLine]);
 
   const advance = useCallback(() => {
     if (ui.phase === 'typing') {
@@ -546,7 +585,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         const url = loader.get(key)?.url ?? key;
         const channel = opts?.channel ?? (opts?.loop ? 'bgm' : 'sfx');
         if (channel === 'bgm') audioActiveRef.current.bgm = key;
-        audio.play(key, url, opts);
+        const base = opts?.volume ?? 1;
+        const vol = base * (settingsRef.current.volume[channel] ?? 1);
+        audio.play(key, url, { ...opts, volume: vol });
       },
       stopAudio: (channel) => {
         if (!channel || channel === 'bgm') audioActiveRef.current.bgm = null;
@@ -562,22 +603,42 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         if (goto) navigate(goto);
       },
       clearPrefetch: () => clearWarmLayer(),
+      showBacklog: () => setUi((prev) => (prev.phase === 'backlog' ? prev : { ...prev, phase: 'backlog' })),
+      closeBacklog: () =>
+        setUi((prev) => (prev.phase === 'backlog' ? { ...prev, phase: 'idle' } : prev)),
+      openSettings: () => setShowSettings(true),
+      closeSettings: () => setShowSettings(false),
+      toggleAuto: () => setSettings((s) => updateSettings({ auto: !s.auto })),
+      toggleSkip: () => setSettings((s) => updateSettings({ skip: !s.skip })),
+      setSetting: (patch) => setSettings(updateSettings(patch)),
     }),
     [loader, audio, labelMap, runLine, navigate, writeVars, doSave, doLoad, onEnd],
   );
   vnHandleRef.current = vnHandle;
 
-  // 键盘推进
+  // 键盘推进 / 回放 / 设置快捷键
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
+      if (showSettings) return;
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
         e.preventDefault();
-        advance();
+        if (ui.phase === 'backlog') {
+          setUi((prev) => (prev.phase === 'backlog' ? { ...prev, phase: 'idle' } : prev));
+        } else {
+          advance();
+        }
+      } else if (e.key === 'Backspace' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (ui.phase === 'backlog') {
+          setUi((prev) => (prev.phase === 'backlog' ? { ...prev, phase: 'idle' } : prev));
+        } else if (ui.backlog.length > 0) {
+          setUi((prev) => ({ ...prev, phase: 'backlog' }));
+        }
       }
     };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
-  }, [advance]);
+  }, [advance, ui.phase, ui.backlog.length, showSettings]);
 
   if (ended) return null;
 
@@ -1003,6 +1064,181 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           }}
         />
       )}
+
+      {/* 顶栏控制：回放 / 自动 / 跳过 / 设置 */}
+      {ui.phase === 'typing' || ui.phase === 'idle' ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: dialog.top ?? 16,
+            right: 24,
+            display: 'flex',
+            gap: 8,
+            zIndex: 60,
+          }}
+        >
+          {[
+            { label: '回放', onClick: () => setUi((p) => (p.phase === 'backlog' ? p : { ...p, phase: 'backlog' })) },
+            { label: settings.auto ? '自动●' : '自动○', onClick: () => setSettings((s) => updateSettings({ auto: !s.auto })) },
+            { label: settings.skip ? '跳过●' : '跳过○', onClick: () => setSettings((s) => updateSettings({ skip: !s.skip })) },
+            { label: '设置', onClick: () => setShowSettings(true) },
+          ].map((b) => (
+            <button
+              key={b.label}
+              onClick={(e) => {
+                e.stopPropagation();
+                b.onClick();
+              }}
+              style={{
+                padding: '6px 12px',
+                fontSize: 13,
+                background: 'rgba(10,10,30,0.7)',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: 6,
+                cursor: 'pointer',
+              }}
+            >
+              {b.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {/* 回放（Backlog）面板 */}
+      {ui.phase === 'backlog' ? (
+        <div
+          onClick={() => setUi((p) => ({ ...p, phase: 'idle' }))}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(5,5,15,0.92)',
+            zIndex: 80,
+            overflowY: 'auto',
+            padding: '24px 5%',
+            cursor: 'pointer',
+          }}
+        >
+          <div style={{ color: '#9ab8ff', fontSize: 13, marginBottom: 12 }}>历史 / 点击关闭 · 点击某条回溯</div>
+          {ui.backlog.length === 0 ? (
+            <div style={{ color: '#667', fontSize: 16, padding: 20 }}>暂无历史</div>
+          ) : (
+            [...ui.backlog].reverse().map((e, i) => (
+              <div
+                key={`${e.lineIndex}-${i}`}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  setUi((p) => ({ ...p, phase: 'idle', lineIndex: e.lineIndex }));
+                  runLine(e.lineIndex);
+                }}
+                style={{
+                  padding: '10px 12px',
+                  marginBottom: 8,
+                  borderRadius: 8,
+                  background: 'rgba(255,255,255,0.04)',
+                  cursor: 'pointer',
+                  border: '1px solid transparent',
+                }}
+              >
+                {e.speaker && <div style={{ color: '#88ccff', fontWeight: 'bold', fontSize: 14, marginBottom: 4 }}>{e.speaker}</div>}
+                <div style={{ color: '#ddd', fontSize: 16, lineHeight: 1.6 }}>{e.text}</div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : null}
+
+      {/* 设置面板 */}
+      {showSettings ? (
+        <div
+          onClick={() => setShowSettings(false)}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(5,5,15,0.92)',
+            zIndex: 90,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: 'min(460px, 92vw)',
+              background: '#13122a',
+              border: '1px solid #3a4a7a',
+              borderRadius: 14,
+              padding: 24,
+              color: '#fff',
+            }}
+          >
+            <div style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 18 }}>设置</div>
+            {(
+              [
+                { label: 'BGM 音量', ch: 'bgm' as const },
+                { label: '音效音量', ch: 'sfx' as const },
+                { label: '语音音量', ch: 'voice' as const },
+              ] as const
+            ).map((row) => (
+              <div key={row.ch} style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 13, color: '#9a9ac0', marginBottom: 6 }}>{row.label}</div>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={settings.volume[row.ch]}
+                  onChange={(e) =>
+                    setSettings((s) => updateSettings({ volume: { ...s.volume, [row.ch]: Number(e.target.value) } }))
+                  }
+                  style={{ width: '100%' }}
+                />
+              </div>
+            ))}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 13, color: '#9a9ac0', marginBottom: 6 }}>文字速度（{settings.typeSpeed}ms/字）</div>
+              <input
+                type="range"
+                min={0}
+                max={120}
+                step={5}
+                value={settings.typeSpeed}
+                onChange={(e) => setSettings((s) => updateSettings({ typeSpeed: Number(e.target.value) }))}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: 13, color: '#9a9ac0', marginBottom: 6 }}>自动播放延迟（{settings.autoDelay}ms）</div>
+              <input
+                type="range"
+                min={300}
+                max={5000}
+                step={100}
+                value={settings.autoDelay}
+                onChange={(e) => setSettings((s) => updateSettings({ autoDelay: Number(e.target.value) }))}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <button
+                onClick={() => setShowSettings(false)}
+                style={{
+                  padding: '8px 20px',
+                  background: '#2a2a4a',
+                  color: '#fff',
+                  border: '1px solid #4a5a8a',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                }}
+              >
+                确定
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

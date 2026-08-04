@@ -133,6 +133,34 @@ export interface VnHandle {
   end(goto?: string): void;
   /** 手动清理预加载栏（隐藏 img DOM），释放内存。 */
   clearPrefetch(): void;
+  /** 打开回放（Backlog）面板（无历史时无操作）。 */
+  showBacklog(): void;
+  /** 关闭回放面板。 */
+  closeBacklog(): void;
+  /** 打开设置面板。 */
+  openSettings(): void;
+  /** 关闭设置面板。 */
+  closeSettings(): void;
+  /** 切换自动播放。 */
+  toggleAuto(): void;
+  /** 切换跳过模式。 */
+  toggleSkip(): void;
+  /** 更新设置（音量/打字机速度/自动延迟等），persist 到 localStorage。 */
+  setSetting(patch: Partial<VnSettings>): void;
+}
+
+/** 播放器设置（localStorage 持久化）。 */
+export interface VnSettings {
+  /** 各频道音量 0..1。 */
+  volume: { bgm: number; sfx: number; voice: number };
+  /** 打字机每字间隔 ms（0=瞬间）。 */
+  typeSpeed: number;
+  /** 自动播放：每行结束后到自动推进的延迟 ms。 */
+  autoDelay: number;
+  /** 自动播放开关。 */
+  auto: boolean;
+  /** 跳过模式（快进：直接补全打字、跳过 wait）。 */
+  skip: boolean;
 }
 
 /** 异步钩子指令：执行一次异步逻辑 —— 内嵌函数（js/ts 场景）或声明式 fetch（json 场景），可写回变量。 */
