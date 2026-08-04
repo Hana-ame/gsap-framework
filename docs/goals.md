@@ -18,7 +18,7 @@
 - 加载：切图等 `onload` 再推进（避免黑屏）；`preload.wait` 双模式
 - 消费方：`src/example/hscene/*.tsx` 懒加载组件 + `vn-menu` 封面卡片 + `examples.ts` 全 React.lazy
 
-**与 WebGAL 对比覆盖度：约 30–35%**。单场景播放能力已齐，差距全在「游戏性外壳」：存档、音频、回放、快进/自动、设置、标题界面、完整状态机。
+**与 WebGAL 对比覆盖度：约 80–85%**。存档 / 音频 / 回放 / 快进·自动·设置 / 标题界面 / 跨场景状态 / 演出（stand+transition）均已完成；剩余差距集中在编辑器/插件生态（低优先，远期）与个别演出项（video 未做）。
 
 ---
 
@@ -31,12 +31,12 @@
 | 选项 / 分支跳转 | `choose` | `choice`+`jump` **已实现** | ✅ 已有 |
 | 变量与条件 | `setVar`+`-when` | `set`+`showWhen`+`if` | ✅ 已有 |
 | 无内置演出（flash/shake/video 等） | 全套 | flash/shake/fade + `stand` 进出场 + `transition` 转场（video 未做） | 中（已补演出） |
-| **存档系统** | IndexedDB 分键 | ✗ 无 | **高（第 1）** |
-| **音频**（BGM/SFX/语音） | ✅ | ✗ 无（**先天缺陷：DV 场景全靠字幕无音频**） | **高（第 1）** |
-| **回放/回溯**（历史记录） | Backlog | ✗ 无 | **高（第 2）** |
-| **自动/跳过/设置** | ✅ | ✗ 无 | **高（第 3）** |
-| 标题界面 | ✅ | 无（菜单=场景列表） | 中（第 4） |
-| 跨场景状态/全局变量 | `userData` | ✗ 每场景独立 hash | 中（第 4） |
+| **存档系统** | IndexedDB 分键 | `save.ts` 分键 save/load/list/delete + VnHandle 快存读档 | **高（已完成）** |
+| **音频**（BGM/SFX/语音） | ✅ | `audio` 指令 + `VnAudioEngine` 三频道 | **高（已完成）** |
+| **回放/回溯**（历史记录） | Backlog | Backlog 面板（点击回溯）+ Backspace/↑ | **高（已完成）** |
+| **自动/跳过/设置** | ✅ | 顶栏 + 快捷键 + 设置面板（音量/速度/延迟） | **高（已完成）** |
+| 标题界面 | ✅ | `menu layout:'title'` scenario（`#vn-title` 默认入口） | 中（已完成） |
+| 跨场景状态/全局变量 | `userData` | `global-state.ts` localStorage + seen 解锁 | 中（已完成） |
 | 编辑器 / 插件生态 | Terre / 插件 | ✗ | 低（远期） |
 
 **建议实施序：存档 → 音频 → 回放 → 自动/跳过/设置 → 标题/全局状态 → 演出扩充。**
