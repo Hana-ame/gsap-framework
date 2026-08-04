@@ -117,7 +117,7 @@ export const iru_HA1_25: VnScript = {
  {
   "type": "say",
   "speaker": "",
-   "text": "身体痉挛般地颤动"
+   "text": "身体不住地发颤"
  },
  {
   "type": "cg",

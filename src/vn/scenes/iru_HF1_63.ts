@@ -196,7 +196,7 @@ export const iru_HF1_63: VnScript = {
   {
    "type": "say",
    "speaker": "",
-   "text": "身体痉挛般地一阵颤动\n伊露也到达了高潮。"
+   "text": "身体一阵痉挛\n伊露也到达了高潮。"
   },
   {
    "type": "cg",

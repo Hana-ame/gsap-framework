@@ -424,7 +424,7 @@ export const azusa_HH2_70: VnScript = {
  {
   "type": "say",
   "speaker": "",
-   "text": "噗——嘶…身体痉挛般地颤动…"
+   "text": "噗——嘶…身体阵阵发颤…"
  },
  {
   "type": "cg",

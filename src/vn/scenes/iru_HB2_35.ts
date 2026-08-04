@@ -136,7 +136,7 @@ export const iru_HB2_35: VnScript = {
  {
   "type": "say",
   "speaker": "",
-   "text": "噗嗤——，身体痉挛般地颤动"
+   "text": "噗嗤——，身体猛地哆嗦"
  },
  {
   "type": "cg",

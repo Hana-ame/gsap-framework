@@ -320,7 +320,7 @@ export const iru_HE1_60: VnScript = {
  {
   "type": "say",
   "speaker": "",
-   "text": "身体痉挛般地一阵颤动\n伊露的身体做出了仿佛高潮的反应。"
+   "text": "身体一阵痉挛\n伊露的身体做出了仿佛高潮的反应。"
  },
  {
   "type": "cg",

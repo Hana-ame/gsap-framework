@@ -99,7 +99,7 @@ export const iru_T22_40: VnScript = {
   {
    "type": "say",
    "speaker": "",
-   "text": "身体痉挛般地一阵颤动\n伊露到达了高潮。"
+   "text": "全身止不住地痉挛\n伊露到达了高潮。"
   },
   {
    "type": "cg",
