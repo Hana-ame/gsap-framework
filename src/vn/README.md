@@ -45,6 +45,7 @@ ui: {
   dialog: { left, right, top, bottom, align, bg, color, textSize, radius, minHeight, padding },
   choice: { align, itemBg, itemColor, fontSize, gap },
   cgBox:  { aspect, maxWidth },
+  title:  'Hana Story',        // 标题界面标题文本（menu layout='title'）
 }
 ```
 
@@ -112,7 +113,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | `label` | 跳转标签 |
 | `hook` | 异步钩子。js/ts 场景可内嵌 `run: (vn) => ...` 直接操作播放器（VnHandle：读写变量/跳转/音频/存读档/闪屏/抖动/结束）；json 场景走声明式 `url`/`method`/`body` fetch。`set` 写回变量；`wait:true` 等完成再继续，缺省 fire-and-forget |
 | `audio` | 播放/停止音频。`key`（preload 声明或 URL）+ `channel`（`bgm` 循环 / `sfx` / `voice`）+ `loop`/`volume`；`action:'stop'` 停止 |
-| `menu` | 数据驱动界面（标题 / 回想 / 场景菜单）。`layout: 'title'|'list'|'grid'` + `items[]`（`id` 复用 jump 语义、`title`、`cover`、`group`、`showWhen` 条件显示）。条目点击走 navigate |
+| `menu` | 数据驱动界面（标题 / 回想 / 场景菜单）。`layout: 'title'|'list'|'grid'` + `items[]`（`id` 复用 jump 语义：label / `#hash` / URL / 场景名、`title`、`cover`、`group`、`showWhen` 条件显示）。条目点击走 navigate；`title` 布局半透明底（不遮背景层）+ 居中标题（`meta.ui.title` / `meta.title`） |
 | `end` | 结束。`goto` 可跳 `#hash` / URL / 场景名。结束时自动清理预加载栏 |
 
 ## VnHandle（hook.run 操作句柄）
@@ -169,7 +170,8 @@ vn.setSetting({ typeSpeed: 20 });      // 更新设置（音量/速度/延迟）
 ## 消费方
 
 - `src/example/hscene/*.tsx`：每个场景一个懒加载组件，渲染 `VnPlayer` + 对应 scenario。
-- `src/example/vn-menu/`：默认入口，HS 列表按游戏分组，卡片式展示。每张卡片 = **封面图（该场景第一个 preload 的 CG）+ 标题**，点击切 `#hscenekey`。封面元数据在 `scene-covers.ts`（被菜单懒加载 chunk 引用，不进主 bundle）。
+- `src/example/title/`：标题界面（数据驱动 scenario，`menu layout:'title'`），`DEFAULT_EXAMPLE = 'vn-title'`。
+- `src/example/vn-menu/`：HS 列表（硬编码组件，反例，见 `docs/goals.md` §4），每张卡片 = **封面图（该场景第一个 preload 的 CG）+ 标题**，点击切 `#hscenekey`。封面元数据在 `scene-covers.ts`（被菜单懒加载 chunk 引用，不进主 bundle）。
 - `src/example/examples.ts`：全组件 React.lazy 分离，主 bundle 保持小体积。
 
 ## 维护提示

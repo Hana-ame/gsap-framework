@@ -208,7 +208,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
     window.location.hash = id;
   }, []);
 
-  /** 写剧本变量：同步更新 ref（choice.set 后紧跟的 jump.if / showWhen 能立刻读到新值）。 */
+    /** 写剧本变量：同步更新 ref（choice.set 后紧跟的 jump.if / showWhen 能立刻读到新值）。 */
   const writeVars = useCallback((patch: Record<string, VnValue>) => {
     setVars((prev) => ({ ...prev, ...patch }));
     varsRef.current = { ...varsRef.current, ...patch };
@@ -353,6 +353,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           }
           const target = labelMap.get(line.to);
           if (target != null) {
+            setUi((prev) => ({ ...prev, phase: 'idle' }));
             runLine(target);
           } else {
             // 非 label：可能是 #hash / URL / 场景名
@@ -443,6 +444,20 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
     [loader, audio, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand, writeVars],
   );
 
+  /** 跳转目标解析：#hash / URL 走 navigate；label 优先命中同场景行；其余按场景名导航。 */
+  const resolveJump = useCallback(
+    (target: string) => {
+      const hit = labelMap.get(target);
+      if (hit != null) {
+        setUi((prev) => ({ ...prev, phase: 'idle' }));
+        runLine(hit);
+        return;
+      }
+      navigate(target);
+    },
+    [labelMap, navigate, runLine],
+  );
+
   // 启动
   useEffect(() => {
     runLine(0);
@@ -499,16 +514,10 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   const pickChoice = useCallback(
     (to: string, set?: Record<string, VnValue>) => {
       if (set) writeVars(set);
-      const target = labelMap.get(to);
-      if (target != null) {
-        setUi((prev) => ({ ...prev, phase: 'idle' }));
-        runLine(target);
-      } else {
-        // 非 label：可能是 #hash / URL / 场景名（与 jump 语义一致）
-        navigate(to);
-      }
+      // 与 jump 语义一致：label 优先，否则 #hash / URL / 场景名
+      resolveJump(to);
     },
-    [labelMap, runLine, navigate, writeVars],
+    [resolveJump, writeVars],
   );
 
   /** 正在播放的音频（存档记录 bgm）。 */
@@ -576,11 +585,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
     () => ({
       getVar: (name) => varsRef.current[name],
       setVar: (patch) => writeVars(patch),
-      jump: (target) => {
-        const hit = labelMap.get(target);
-        if (hit != null) runLine(hit);
-        else navigate(target);
-      },
+      jump: (target) => resolveJump(target),
       playAudio: (key, opts) => {
         const url = loader.get(key)?.url ?? key;
         const channel = opts?.channel ?? (opts?.loop ? 'bgm' : 'sfx');
@@ -612,7 +617,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
       toggleSkip: () => setSettings((s) => updateSettings({ skip: !s.skip })),
       setSetting: (patch) => setSettings(updateSettings(patch)),
     }),
-    [loader, audio, labelMap, runLine, navigate, writeVars, doSave, doLoad, onEnd],
+    [loader, audio, resolveJump, navigate, writeVars, doSave, doLoad, onEnd],
   );
   vnHandleRef.current = vnHandle;
 
@@ -861,7 +866,8 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             alignItems: 'center',
             justifyContent: 'center',
             padding: '40px 24px',
-            background: 'rgba(5,5,15,0.75)',
+            background:
+              ui.menu.layout === 'title' ? 'rgba(5,5,15,0.35)' : 'rgba(5,5,15,0.75)',
             color: '#fff',
             zIndex: 20,
           }}
@@ -916,7 +922,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                             onClick={(e) => {
                               e.stopPropagation();
                               if (onMenuPick) onMenuPick(m.id);
-                              else navigate(m.id);
+                              else resolveJump(m.id);
                             }}
                             style={{
                               padding: 0,
@@ -958,8 +964,53 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                         ))}
                       </div>
                     </div>
-                  ));
+                  )                  );
                 })()
+              : ui.menu.layout === 'title'
+                ? (() => {
+                    const visible = ui.menu.items.filter((m) =>
+                      m.showWhen ? evalCond(m.showWhen, vars) : true,
+                    );
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
+                        <div
+                          style={{
+                            fontSize: 44,
+                            fontWeight: 'bold',
+                            letterSpacing: 6,
+                            color: '#fff',
+                            textShadow: '0 2px 16px rgba(0,0,0,0.7)',
+                            marginBottom: 28,
+                          }}
+                        >
+                          {script.meta?.ui?.title ?? script.meta?.title ?? 'Hana'}
+                        </div>
+                        {visible.map((m) => (
+                          <button
+                            key={m.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onMenuPick) onMenuPick(m.id);
+                              else resolveJump(m.id);
+                            }}
+                            style={{
+                              padding: '14px 44px',
+                              fontSize: 18,
+                              letterSpacing: 2,
+                              background: 'rgba(20,20,40,0.75)',
+                              color: '#fff',
+                              border: '1px solid rgba(255,255,255,0.35)',
+                              borderRadius: 8,
+                              cursor: 'pointer',
+                              minWidth: 220,
+                            }}
+                          >
+                            {m.title}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()
               : (
                 <div
                   style={{
@@ -977,7 +1028,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                         onClick={(e) => {
                           e.stopPropagation();
                           if (onMenuPick) onMenuPick(m.id);
-                          else navigate(m.id);
+                          else resolveJump(m.id);
                         }}
                         style={{
                           padding: '14px 28px',

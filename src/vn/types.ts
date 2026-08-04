@@ -259,6 +259,8 @@ export interface VnUiStyle {
     aspect?: number;       // 宽高比，默认 16/9
     maxWidth?: string;     // 如 'calc(100vh * 16 / 9)'，默认同
   };
+  /** 标题界面标题文本（menu layout='title' 显示；缺省回退 meta.title / 'Hana'）。 */
+  title?: string;
 }
 
 /** 剧本：meta（可选全局配置）+ lines。 */
@@ -270,6 +272,8 @@ export interface VnScript {
     textSize?: number;
     /** 打字机每字间隔 ms（默认 30）。0=瞬间显示全文。 */
     typeSpeed?: number;
+    /** 标题界面标题文本（缺省走 ui.title）。 */
+    title?: string;
     /** UI 布局/样式声明。 */
     ui?: VnUiStyle;
   };
