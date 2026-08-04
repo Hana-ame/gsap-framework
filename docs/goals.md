@@ -169,7 +169,7 @@ export interface VnMenu {
 - 标题界面 = 一个 `layout:'title'` 的 menu scenario，背景图/转场都用 `bg`/`cg`/`fadeMs` 表达。
 - 条目 id 指向场景时，复用 §2.2 的「跳转前 preload」：`menu` 渲染时可悬停/可视区预取目标场景资源。
 
-> 注意：现有 `src/example/vn-menu/` **没有用 scenario 实现**——`VnMenuDisplay.tsx` 是硬编码 React 组件（直接读 `scene-groups.ts`/`scene-covers.ts` 常量数据渲染卡片），纯 UI 代码、界面不可编排。它是反例，**不要参考其实现**；目标是把它的能力（分组 / 封面卡片 / 解锁）下沉为通用 `menu` 指令 + 场景数据。
+> 注意：现有 `src/example/vn-menu/` **已按本原则重构**——不再用硬编码 React 组件，改为 `menu layout:'grid'` scenario（分组 `group` / 封面 `cover` 全数据驱动），原 `VnMenuDisplay.tsx` 只剩一个 VnPlayer 壳。
 
 ---
 
@@ -188,6 +188,7 @@ export interface VnMenu {
   - **标题界面落成**：`#vn-title` 数据驱动 scenario（`menu layout:'title'` + bg 背景 + 半透明底），`DEFAULT_EXAMPLE` 改为 `vn-title`；menu 条目 id 支持 label 优先解析（`resolveJump`，与 jump 同语义）（§1 第 4 优先）。
   - **全局跨场景状态**：`src/vn/global-state.ts`（localStorage 持久化 + `useSyncExternalStore` 订阅），`showWhen`/`jump.if` 求值合并全局变量；场景 `end` 自动 `markSceneSeen` → 回想解锁；`#vn-recall` 数据驱动回想 + `VnHandle.getGlobalVar/setGlobalVar/markSeen`（§1 第 4 优先）。
   - **演出扩充**：`stand` 指令（立绘进出场动画：fade/slide/zoom，show/hide）与 `transition` 指令（全屏转场：fade/wipe/circle/slide/zoom，播完自动继续），`src/vn/effects.ts` 统一 keyframe 映射（§1 中优先）。
+  - **`vn-menu` 下沉**：HS 回想列表由硬编码 React 改为数据驱动 `menu layout:'grid'` scenario（§4 反例清除）。
 - 场景形态：支持动态 **js / json / ts**，函数是 js/ts 场景的合法一等公民（§3.2）。
 - 待办：**远期**（编辑器/插件生态，§1 低优先）→ 主路线图各优先项已全部落成。
 - 下一里程碑：全部中/高优先项完成，`src/vn` 能力面对齐 WebGAL 主能力面。

@@ -194,7 +194,7 @@ vn.markSeen('iru_HA1_25');             // 标记场景已通关（回想解锁�
 - `src/example/hscene/*.tsx`：每个场景一个懒加载组件，渲染 `VnPlayer` + 对应 scenario。
 - `src/example/title/`：标题界面（数据驱动 scenario，`menu layout:'title'`），`DEFAULT_EXAMPLE = 'vn-title'`。
 - `src/example/recall/`：回想（数据驱动 scenario，`menu layout:'list'` + `showWhen` 全局解锁），入口在标题菜单。
-- `src/example/vn-menu/`：HS 列表（硬编码组件，反例，见 `docs/goals.md` §4），每张卡片 = **封面图（该场景第一个 preload 的 CG）+ 标题**，点击切 `#hscenekey`。封面元数据在 `scene-covers.ts`（被菜单懒加载 chunk 引用，不进主 bundle）。
+- `src/example/vn-menu/`：HS 回想列表（数据驱动 `menu layout:'grid'` scenario，分组/封面来自 `scene-groups.ts`/`scene-covers.ts`），点击切 `#hscene-<key>`。封面元数据被该懒加载 chunk 引用，不进主 bundle。
 - `src/example/examples.ts`：全组件 React.lazy 分离，主 bundle 保持小体积。
 
 ## 维护提示
