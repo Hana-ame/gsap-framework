@@ -1,10 +1,10 @@
 # src/vn — 剧本驱动 VN 播放器框架
 
-解耦旧 `src/avd` 的轻量视觉小说引擎。剧本（scenario）= 纯 TS 数据，资源 URL 内联，按剧本加载。
+解耦旧 `src/avd` 的轻量视觉小说引擎。剧本（scenario）支持**动态 js / json / ts** 三种形态，资源 URL 内联，按剧本加载。
 
 ## 设计目标
 
-- **剧本驱动**：scenario 是 TS 文件（`export const X: VnScript`），含 meta（配置）+ lines（指令序列）。不做 txt/json 运行时解析（简单场景除外）。
+- **剧本驱动**：scenario 支持**动态 js / json / ts** 三种形态，均表达 `VnScript` 约定（meta + lines）。js/ts 模块（`export const X: VnScript`）可直接内嵌函数（如 `hook.run`）；json 走纯声明式字段（可远程下发 / 动态生成）。
 - **框架只提供组件，不含场景逻辑**：VnPlayer 提供原子能力（图层渲染/对话框/打字机/选项/加载遮罩/跳转），场景数据决定画什么、在哪层。
 - **按剧本加载资源**：资源 URL 内联在 `preload` 指令，只加载当前剧本声明的内容，不一次性全量。
 - **外链 CG**：图片用 `ex.moonchan.xyz` 外链，DOM `<img>` 无 CORS 限制。
@@ -101,9 +101,40 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | `bg` | 背景层，cover 占满全屏。`fadeMs` 淡入 |
 | `cg` | CG 层，contain 看全（默认直接全屏 contain，无包裹框；设 `meta.ui.cgBox` 可套指定宽高比框）。`fadeMs` 淡入 |
 | `choice` | 选项。`options[].to` 跳 label；`set` 写变量；`showWhen` 条件显示 |
-| `jump` | 跳转：label 名 / `#hash` 路由 / `https://` 开网页 / 场景名加载。`if` 条件满足才跳 |
+| `jump` | 跳转：label 名 / `#hash` 路由 / `https://` 开网页 / 场景名加载。`if` 条件满足才跳。跳场景名前自动预取目标脚本 + 资源（见「预加载栏」） |
 | `label` | 跳转标签 |
-| `end` | 结束。`goto` 可跳 `#hash` / URL / 场景名 |
+| `hook` | 异步钩子。js/ts 场景可内嵌 `run: (vn) => ...` 直接操作播放器（VnHandle：读写变量/跳转/音频/存读档/闪屏/抖动/结束）；json 场景走声明式 `url`/`method`/`body` fetch。`set` 写回变量；`wait:true` 等完成再继续，缺省 fire-and-forget |
+| `audio` | 播放/停止音频。`key`（preload 声明或 URL）+ `channel`（`bgm` 循环 / `sfx` / `voice`）+ `loop`/`volume`；`action:'stop'` 停止 |
+| `menu` | 数据驱动界面（标题 / 回想 / 场景菜单）。`layout: 'title'|'list'|'grid'` + `items[]`（`id` 复用 jump 语义、`title`、`cover`、`group`、`showWhen` 条件显示）。条目点击走 navigate |
+| `end` | 结束。`goto` 可跳 `#hash` / URL / 场景名。结束时自动清理预加载栏 |
+
+## VnHandle（hook.run 操作句柄）
+
+`hook.run` 收到 `VnHandle`，可直接对 VN 对象操作：
+
+```ts
+vn.getVar('flag');                     // 读变量
+vn.setVar({ flag: 'a' });              // 写变量
+vn.jump('sceneName');                  // 跳 label / #hash / URL / 场景名
+vn.playAudio('bgm1', { channel: 'bgm', loop: true });  // 播放预加载音频
+vn.stopAudio('bgm');                   // 停指定频道（缺省全部）
+vn.flash(); vn.shake();                // 特效
+vn.save(1); vn.load(1);                // 快存/读档（IndexedDB）
+vn.end('#vn-menu');                    // 结束（可回菜单）
+vn.clearPrefetch();                    // 手动清理预加载栏
+```
+
+## 存档系统
+
+- IndexedDB 分键存储（每槽位一个 key），对齐 WebGAL 分键方案。
+- 存档 = 播放器状态快照（行号 / 变量 / 图层 / 立绘 / 台词 / 音频 bgm），不依赖剧本函数，js/json/ts 场景均可。
+- API：`saveGame` / `loadGame` / `listSaves` / `deleteSave` / `resetSaveDb`。
+- 跨场景读档：`load(slot)` 检测 `scriptKey` 不一致时导航到对应场景（由应用层在新场景挂载后恢复）。
+
+## 预加载栏
+
+- 跳转场景名前自动预取：应用层 `registerSceneScript(key, loader)` 注册场景加载器，播放器 `prefetchScene(key)` 拉取脚本（React.lazy chunk）并按其 `preload` 声明在**不可见 DOM 层**生成 `<img>` 预热，切换时无感。
+- 清理：`end` 自动清理；`clearWarmLayer()` 手动清理；`setWarmLayerCountdown(N)` 设置经历 N 次场景变化后自动清理（0=不自动）。
 
 ## 图层
 

@@ -1,16 +1,26 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { VnLine, VnScript, VnValue } from './types';
+import type { VnLine, VnScript, VnValue, VnHandle } from './types';
 import { VnAssetLoader } from './loader';
+import { VnAudioEngine } from './audio';
 import { evalCond } from './vars';
 import { injectVnStyles } from './styles';
+import { prefetchScene, clearWarmLayer } from './prefetch';
+import { loadGame, saveGame } from './save';
+import type { VnSaveData } from './save';
 
 export interface VnPlayerProps {
   script: VnScript;
   onEnd?: () => void;
+  /** 本场景 key（存档记录 + 读档校验；跨场景读档由应用层据此导航）。 */
+  scriptKey?: string;
+  /** 菜单渲染插槽：非菜单指令场景（如对话框/选项）由应用层自行覆盖。 */
+  renderMenu?: (items: Array<{ id: string; title: string; cover?: string; showWhen?: string }>) => React.ReactNode;
+  /** 菜单条目点击跳转（缺省走 navigate）。 */
+  onMenuPick?: (id: string) => void;
 }
 
 /** 播放器内部状态。 */
-type VnPhase = 'loading' | 'typing' | 'idle' | 'choice' | 'done';
+type VnPhase = 'loading' | 'typing' | 'idle' | 'choice' | 'menu' | 'done';
 
 /** 一个显示图层。 */
 interface VnLayer {
@@ -48,6 +58,8 @@ interface VnUiState {
     /** 满足才显示。 */
     showWhen?: string;
   }>;
+  /** 菜单指令数据（phase==='menu' 时渲染）。 */
+  menu: { layout: 'list' | 'grid' | 'title'; items: Array<{ id: string; title: string; cover?: string; group?: string; showWhen?: string }> } | null;
 }
 
 const EMPTY_UI: VnUiState = {
@@ -60,10 +72,12 @@ const EMPTY_UI: VnUiState = {
   stands: [],
   loadingProgress: { loaded: 0, total: 0 },
   choices: [],
+  menu: null,
 };
 
-export function VnPlayer({ script, onEnd }: VnPlayerProps) {
+export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: VnPlayerProps) {
   const loaderRef = useRef<VnAssetLoader | null>(null);
+  const audioRef = useRef<VnAudioEngine | null>(null);
   const [ui, setUi] = useState<VnUiState>(EMPTY_UI);
   const uiRef = useRef(ui);
   uiRef.current = ui;
@@ -104,6 +118,15 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     loaderRef.current = new VnAssetLoader();
   }
   const loader = loaderRef.current;
+
+  // 初始化 audio engine
+  if (!audioRef.current) {
+    audioRef.current = new VnAudioEngine();
+  }
+  const audio = audioRef.current;
+
+  /** VnHandle 引用：runLine 的 hook 分支读取最新句柄（保存跨渲染稳定）。 */
+  const vnHandleRef = useRef<VnHandle | null>(null);
 
   const strictLoad = script.meta?.strictLoad ?? true;
 
@@ -147,7 +170,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     }
   }, [script.lines, loader]);
 
-  /** 跳转目标处理：#hash → 改 hash 路由；http(s) → 打开网页；否则 → 场景名（自动加载）。 */
+  /** 跳转目标处理：#hash → 改 hash 路由；http(s) → 打开网页；否则 → 场景名（预取后自动加载）。 */
   const navigate = useCallback((target: string) => {
     if (target.startsWith('#')) {
       window.location.hash = target.slice(1);
@@ -157,9 +180,16 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
       window.open(target, '_blank', 'noopener');
       return;
     }
-    // 场景名：切到对应 hash（由 examples 注册的 hscene-<name>）
+    // 场景名：先预取目标场景脚本 + 资源（对齐 WebGAL 一层子场景预加载），再切 hash
     const id = `hscene-${target}`;
+    prefetchScene(target);
     window.location.hash = id;
+  }, []);
+
+  /** 写剧本变量：同步更新 ref（choice.set 后紧跟的 jump.if / showWhen 能立刻读到新值）。 */
+  const writeVars = useCallback((patch: Record<string, VnValue>) => {
+    setVars((prev) => ({ ...prev, ...patch }));
+    varsRef.current = { ...varsRef.current, ...patch };
   }, []);
 
   /** 真正渲染一条行。 */
@@ -306,7 +336,67 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
           break;
         }
 
+        case 'audio': {
+          const url = loader.get(line.key)?.url ?? line.key;
+          if (line.action === 'stop') {
+            if (!line.channel || line.channel === 'bgm') audioActiveRef.current.bgm = null;
+            audio.stop(line.channel);
+          } else {
+            const channel = line.channel ?? (line.loop ? 'bgm' : 'sfx');
+            if (channel === 'bgm') audioActiveRef.current.bgm = line.key;
+            audio.play(line.key, url, {
+              channel,
+              loop: line.loop,
+              volume: line.volume,
+            });
+          }
+          runLine(idx + 1);
+          break;
+        }
+
+        case 'hook': {
+          // js/ts 场景：函数内嵌（一等公民）；json 场景：声明式 fetch。两者都支持 set 写回。
+          const finish = () => {
+            if (line.set) writeVars(line.set);
+            runLine(idx + 1);
+          };
+          const fail = (err: unknown) => {
+            console.error('[vn] hook failed:', line.key ?? '', err);
+            finish();
+          };
+          const work = async () => {
+            if (line.run) {
+              await line.run(vnHandleRef.current);
+            } else if (line.url) {
+              await fetch(line.url, {
+                method: line.method ?? 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                body: line.body ? JSON.stringify(line.body) : undefined,
+              });
+            }
+          };
+          if (line.wait) {
+            work().then(finish, fail);
+          } else {
+            // fire-and-forget：不阻塞流程，失败静默
+            work().then(() => undefined, () => undefined);
+            runLine(idx + 1);
+          }
+          break;
+        }
+
+        case 'menu': {
+          setUi((prev) => ({
+            ...prev,
+            lineIndex: idx,
+            phase: 'menu',
+            menu: { layout: line.layout, items: line.items },
+          }));
+          break;
+        }
+
         case 'end': {
+          clearWarmLayer();
           setEnded(true);
           onEnd?.();
           if (line.goto) navigate(line.goto);
@@ -318,7 +408,7 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
         }
       }
     },
-    [loader, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand],
+    [loader, audio, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand, writeVars],
   );
 
   // 启动
@@ -367,12 +457,6 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     }
   }, [ui, runLine]);
 
-  /** 写剧本变量：同步更新 ref（choice.set 后紧跟的 jump.if / showWhen 能立刻读到新值）。 */
-  const writeVars = useCallback((patch: Record<string, VnValue>) => {
-    setVars((prev) => ({ ...prev, ...patch }));
-    varsRef.current = { ...varsRef.current, ...patch };
-  }, []);
-
   const pickChoice = useCallback(
     (to: string, set?: Record<string, VnValue>) => {
       if (set) writeVars(set);
@@ -387,6 +471,101 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
     },
     [labelMap, runLine, navigate, writeVars],
   );
+
+  /** 正在播放的音频（存档记录 bgm）。 */
+  const audioActiveRef = useRef<{ bgm: string | null }>({ bgm: null });
+
+  /** 快存当前状态。 */
+  const doSave = useCallback(
+    async (slot: number) => {
+      const u = uiRef.current;
+      const data: VnSaveData = {
+        slot,
+        scriptKey: scriptKey ?? '',
+        lineIndex: u.lineIndex,
+        vars: { ...varsRef.current },
+        layers: u.layers.map((l) => ({ ...l })),
+        stands: u.stands.map((s) => ({ ...s })),
+        speaker: u.speaker,
+        text: u.text,
+        shown: u.shown,
+        phase: u.phase === 'typing' || u.phase === 'idle' || u.phase === 'choice' ? u.phase : 'idle',
+        choices: u.choices.map((c) => ({ ...c })),
+        audio: { bgm: audioActiveRef.current.bgm },
+        savedAt: Date.now(),
+      };
+      await saveGame(data);
+    },
+    [scriptKey],
+  );
+
+  /** 读档恢复。跨场景时导航到对应场景（由应用层在新场景挂载后恢复）。 */
+  const doLoad = useCallback(
+    async (slot: number) => {
+      const data = await loadGame(slot);
+      if (!data) return;
+      if (data.scriptKey && scriptKey && data.scriptKey !== scriptKey) {
+        navigate(`hscene-${data.scriptKey}`);
+        return;
+      }
+      setVars(data.vars);
+      varsRef.current = data.vars;
+      setUi((prev) => ({
+        ...prev,
+        lineIndex: data.lineIndex,
+        phase: data.phase,
+        speaker: data.speaker,
+        text: data.text,
+        shown: data.shown,
+        layers: data.layers,
+        stands: data.stands,
+        choices: data.choices,
+        menu: prev.menu,
+      }));
+      if (data.audio.bgm) {
+        const url = loader.get(data.audio.bgm)?.url ?? data.audio.bgm;
+        audioActiveRef.current.bgm = data.audio.bgm;
+        audio.play(data.audio.bgm, url, { channel: 'bgm', loop: true });
+      }
+      runLine(data.lineIndex);
+    },
+    [scriptKey, loader, audio, navigate, runLine],
+  );
+
+  /** 构建 VnHandle：hook.run 收到它，可直接对 VN 对象操作。 */
+  const vnHandle: VnHandle = useMemo(
+    () => ({
+      getVar: (name) => varsRef.current[name],
+      setVar: (patch) => writeVars(patch),
+      jump: (target) => {
+        const hit = labelMap.get(target);
+        if (hit != null) runLine(hit);
+        else navigate(target);
+      },
+      playAudio: (key, opts) => {
+        const url = loader.get(key)?.url ?? key;
+        const channel = opts?.channel ?? (opts?.loop ? 'bgm' : 'sfx');
+        if (channel === 'bgm') audioActiveRef.current.bgm = key;
+        audio.play(key, url, opts);
+      },
+      stopAudio: (channel) => {
+        if (!channel || channel === 'bgm') audioActiveRef.current.bgm = null;
+        audio.stop(channel);
+      },
+      flash: () => setFlash(Date.now()),
+      shake: () => setShaking(true),
+      save: (slot) => doSave(slot),
+      load: (slot) => doLoad(slot),
+      end: (goto) => {
+        setEnded(true);
+        onEnd?.();
+        if (goto) navigate(goto);
+      },
+      clearPrefetch: () => clearWarmLayer(),
+    }),
+    [loader, audio, labelMap, runLine, navigate, writeVars, doSave, doLoad, onEnd],
+  );
+  vnHandleRef.current = vnHandle;
 
   // 键盘推进
   useEffect(() => {
@@ -605,6 +784,155 @@ export function VnPlayer({ script, onEnd }: VnPlayerProps) {
                 {c.text}
               </button>
             ))}
+        </div>
+      )}
+
+      {/* 菜单层：数据驱动（标题 / 回想列表 / 场景网格）。条目即数据，点击走 navigate。 */}
+      {ui.phase === 'menu' && ui.menu && (
+        <div
+          key={`menu-${ui.lineIndex}`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '40px 24px',
+            background: 'rgba(5,5,15,0.75)',
+            color: '#fff',
+            zIndex: 20,
+          }}
+        >
+          {renderMenu
+            ? renderMenu(
+                ui.menu.items
+                  .filter((m) => (m.showWhen ? evalCond(m.showWhen, vars) : true))
+                  .map((m) => ({
+                    id: m.id,
+                    title: m.title,
+                    cover: m.cover,
+                    showWhen: m.showWhen,
+                  })),
+              )
+            : ui.menu.layout === 'grid'
+              ? (() => {
+                  const visible = ui.menu.items.filter((m) =>
+                    m.showWhen ? evalCond(m.showWhen, vars) : true,
+                  );
+                  const groups = new Map<string, typeof visible>();
+                  for (const it of visible) {
+                    const g = it.group ?? '';
+                    if (!groups.has(g)) groups.set(g, []);
+                    groups.get(g)!.push(it);
+                  }
+                  return [...groups.entries()].map(([g, its]) => (
+                    <div key={g || '__ungrouped'} style={{ maxWidth: 960, width: '100%', margin: '0 auto 32px' }}>
+                      {g && (
+                        <div
+                          style={{
+                            fontSize: 20,
+                            color: '#ffd78a',
+                            borderBottom: '1px solid #3a4a7a',
+                            paddingBottom: 8,
+                            marginBottom: 16,
+                          }}
+                        >
+                          {g}
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                          gap: 12,
+                        }}
+                      >
+                        {its.map((m) => (
+                          <button
+                            key={m.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onMenuPick) onMenuPick(m.id);
+                              else navigate(m.id);
+                            }}
+                            style={{
+                              padding: 0,
+                              background: 'rgba(26,26,58,0.9)',
+                              border: '1px solid #2a2a4a',
+                              borderRadius: 8,
+                              color: '#fff',
+                              cursor: 'pointer',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            {m.cover && (
+                              <img
+                                src={m.cover}
+                                alt=""
+                                loading="lazy"
+                                style={{
+                                  width: '100%',
+                                  aspectRatio: '3 / 4',
+                                  objectFit: 'cover',
+                                  display: 'block',
+                                  background: '#111',
+                                }}
+                              />
+                            )}
+                            <div
+                              style={{
+                                padding: '8px 10px',
+                                fontSize: 12,
+                                textAlign: 'center',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {m.title}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ));
+                })()
+              : (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 14,
+                    width: 'min(420px, 90vw)',
+                  }}
+                >
+                  {ui.menu.items
+                    .filter((m) => (m.showWhen ? evalCond(m.showWhen, vars) : true))
+                    .map((m) => (
+                      <button
+                        key={m.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onMenuPick) onMenuPick(m.id);
+                          else navigate(m.id);
+                        }}
+                        style={{
+                          padding: '14px 28px',
+                          fontSize: 18,
+                          background: 'rgba(20,20,40,0.9)',
+                          color: '#fff',
+                          border: '1px solid #3a4a7a',
+                          borderRadius: 8,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {m.title}
+                      </button>
+                    ))}
+                </div>
+              )}
         </div>
       )}
 

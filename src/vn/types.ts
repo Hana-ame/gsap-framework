@@ -109,7 +109,104 @@ export interface VnEnd {
   goto?: string;
 }
 
-export type VnLine = VnPreload | VnSay | VnBg | VnCg | VnChoice | VnJump | VnLabel | VnWait | VnEnd;
+/** 播放器操作句柄 —— 传给 hook.run 回调，可对 VN 对象进行读写/跳转/音频/存读档。 */
+export interface VnHandle {
+  /** 读剧本变量。 */
+  getVar(name: string): VnValue | undefined;
+  /** 写剧本变量（同步更新 ref，紧跟的 showWhen / jump.if 立即可读）。 */
+  setVar(patch: Record<string, VnValue>): void;
+  /** 跳转：label / #hash / URL / 场景名（复用 jump 语义）。 */
+  jump(target: string): void;
+  /** 播放预加载的音频资源（channel 缺省按资源类型推断）。 */
+  playAudio(key: string, opts?: VnAudioOptions): void;
+  /** 停止指定频道（缺省全部）。 */
+  stopAudio(channel?: VnAudioChannel): void;
+  /** 白屏闪一下。 */
+  flash(): void;
+  /** 画面抖动一下。 */
+  shake(): void;
+  /** 快存到指定槽位。 */
+  save(slot: number): Promise<void>;
+  /** 从指定槽位读档（当前剧本需一致）。 */
+  load(slot: number): Promise<void>;
+  /** 结束（可回菜单）。 */
+  end(goto?: string): void;
+  /** 手动清理预加载栏（隐藏 img DOM），释放内存。 */
+  clearPrefetch(): void;
+}
+
+/** 异步钩子指令：执行一次异步逻辑 —— 内嵌函数（js/ts 场景）或声明式 fetch（json 场景），可写回变量。 */
+export interface VnHook {
+  type: 'hook';
+  /** 事件名/埋点 key（成就/统计标识）。 */
+  key?: string;
+  /** JS 回调：scenario 的一部分，接收 VnHandle 直接操作播放器；async 时被 wait 等待。 */
+  run?: (vn: VnHandle) => void | Promise<void>;
+  /** 声明式 fetch 模式（json 场景 / 不想用函数时）。 */
+  url?: string;
+  method?: 'GET' | 'POST';
+  body?: Record<string, unknown>;
+  /** 完成后写回变量。 */
+  set?: Record<string, VnValue>;
+  /** true=等 hook 完成再继续下一行；false/缺省=fire-and-forget 立即继续。 */
+  wait?: boolean;
+}
+
+/** 音频频道：bgm 背景音乐（循环）/ sfx 音效 / voice 角色语音。 */
+export type VnAudioChannel = 'bgm' | 'sfx' | 'voice';
+
+export interface VnAudioOptions {
+  channel?: VnAudioChannel;
+  loop?: boolean;
+  volume?: number;
+  /** 播放/停止；缺省 play。 */
+  action?: 'play' | 'stop';
+}
+
+/** 音频指令：播放/停止按剧本加载的音频资源。 */
+export interface VnAudio {
+  type: 'audio';
+  /** 资源 key（preload 声明）或完整 URL。 */
+  key: string;
+  channel?: VnAudioChannel;
+  loop?: boolean;
+  volume?: number;
+  /** 缺省 play。 */
+  action?: 'play' | 'stop';
+}
+
+/** 菜单条目：点击跳转目标（复用 jump 语义）+ 展示元数据 + 条件显示。 */
+export interface VnMenuItem {
+  /** 目标：场景名 / #hash / label / URL（复用 jump/to 语义）。 */
+  id: string;
+  title: string;
+  cover?: string;
+  group?: string;
+  /** 条件显示（如回想解锁 `$seen_xxx`）。 */
+  showWhen?: string;
+}
+
+/** 菜单指令：数据驱动的界面（标题 / 回想列表 / 场景网格），条目即数据。 */
+export interface VnMenu {
+  type: 'menu';
+  /** 布局：title 标题按钮 / list 回想列表 / grid 场景卡片。 */
+  layout: 'list' | 'grid' | 'title';
+  items: VnMenuItem[];
+}
+
+export type VnLine =
+  | VnPreload
+  | VnSay
+  | VnBg
+  | VnCg
+  | VnChoice
+  | VnJump
+  | VnLabel
+  | VnWait
+  | VnHook
+  | VnAudio
+  | VnMenu
+  | VnEnd;
 
 /** UI 布局/样式声明（可选）。缺省用框架默认。 */
 export interface VnUiStyle {
