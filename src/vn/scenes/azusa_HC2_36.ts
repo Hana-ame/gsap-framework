@@ -187,7 +187,7 @@ export const azusa_HC2_36: VnScript = {
   {
    "type": "say",
    "speaker": "",
-   "text": "痉挛般颤抖"
+   "text": "身体痉挛般地颤动"
   },
   {
    "type": "say",
@@ -495,7 +495,7 @@ export const azusa_HC2_36: VnScript = {
   {
    "type": "say",
    "speaker": "",
-   "text": "滋———痉挛般颤抖"
+   "text": "滋——，身体痉挛般地颤动"
   },
   {
    "type": "say",

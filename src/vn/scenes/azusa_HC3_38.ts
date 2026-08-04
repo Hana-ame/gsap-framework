@@ -143,7 +143,7 @@ export const azusa_HC3_38: VnScript = {
   {
    "type": "say",
    "speaker": "",
-   "text": "滋———痉挛般颤抖"
+   "text": "滋——，身体痉挛般地颤动"
   },
   {
    "type": "cg",

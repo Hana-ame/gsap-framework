@@ -86,7 +86,7 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "痉挛般颤抖\n伊露到达了高潮。"
+   "text": "身体痉挛般地一阵颤动\n伊露到达了高潮。"
  },
  {
   "type": "cg",
@@ -186,7 +186,7 @@ export const iru_HB1_34: VnScript = {
  {
   "type": "say",
   "speaker": "",
-  "text": "噗嗤——，痉挛般颤抖"
+   "text": "噗嗤——，身体痉挛般地颤动"
  },
  {
   "type": "cg",

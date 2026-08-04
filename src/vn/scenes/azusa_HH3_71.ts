@@ -207,7 +207,7 @@ export const azusa_HH3_71: VnScript = {
   {
    "type": "say",
    "speaker": "",
-   "text": "痉挛般颤抖\n感受到教主的精液，梓到达了高潮。"
+   "text": "身体痉挛般地一阵颤动\n感受到教主的精液，梓到达了高潮。"
   },
  {
   "type": "cg",
