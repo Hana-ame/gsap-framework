@@ -119,7 +119,7 @@ export const azusa_HE2_53: VnScript = {
   {
    "type": "say",
    "speaker": "正野",
-   "text": "尤其是绝顶的瞬间，是洗脑最深的时刻\n接下来就用快感把你洗脑掉"
+   "text": "尤其是高潮的瞬间，是洗脑最深的时刻\n接下来就用快感把你洗脑掉"
   },
   {
    "type": "say",

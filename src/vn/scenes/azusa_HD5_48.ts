@@ -60,7 +60,7 @@ export const azusa_HD5_48: VnScript = {
   {
    "type": "say",
    "speaker": "梓",
-   "text": "谢谢主仁"
+   "text": "谢谢糊糊…"
   },
   {
    "type": "say",

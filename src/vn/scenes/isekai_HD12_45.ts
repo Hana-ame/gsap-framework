@@ -225,7 +225,7 @@ export const isekai_HD12_45: VnScript = {
   {
    "type": "say",
    "speaker": "山贼",
-   "text": "也帮我的撸一撸"
+   "text": "也帮我撸一撸"
   },
   {
    "type": "say",
