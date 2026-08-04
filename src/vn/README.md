@@ -56,6 +56,12 @@ ui: {
 - **写入**：`choice` 选项 `set` 选中后写入 vars（如 `{ flag: 'a' }`）。
 - **条件**：`showWhen`（选项满足才显示）、`jump.if`（满足才跳转，不满足跳过继续下一行）。
 
+条件求值视图 = **全局变量 ⊕ 本地 vars**（本地覆盖同名全局）。全局变量（`src/vn/global-state.ts`，localStorage 持久化，跨场景共享）用于通关解锁回想、成就/统计：
+
+- `markSceneSeen(key)`：场景 `end` 时自动调用（带 `scriptKey` 的 VnPlayer），写入 `seen_<key> = true`。
+- 回想条目解锁：`showWhen: "$seen_iru_HA1_25"`（结合 `evalCond`，全局字段以 `$` 前缀直接引用）。
+- 脚本侧：`vn.getGlobalVar` / `vn.setGlobalVar` / `vn.markSeen`。
+
 条件表达式语法（不 eval，安全解析）：
 
 ```
@@ -134,6 +140,9 @@ vn.showBacklog(); vn.closeBacklog();   // 打开/关闭回放面板
 vn.openSettings(); vn.closeSettings(); // 打开/关闭设置面板
 vn.toggleAuto(); vn.toggleSkip();      // 切换自动播放 / 跳过
 vn.setSetting({ typeSpeed: 20 });      // 更新设置（音量/速度/延迟），persist
+vn.getGlobalVar('stars');              // 读全局跨场景变量
+vn.setGlobalVar({ stars: 5 });         // 写全局跨场景变量（成就/解锁），persist
+vn.markSeen('iru_HA1_25');             // 标记场景已通关（回想解锁）
 ```
 
 ## 存档系统
@@ -167,10 +176,20 @@ vn.setSetting({ typeSpeed: 20 });      // 更新设置（音量/速度/延迟）
 - `preload.wait:true`（或 meta `strictLoad:true`）：等全部加载完成才继续播放，期间显示 loading 进度。
 - `preload.wait:false`：不等待立即继续，图片后台加载、准备好后显示。
 
+## 全局跨场景状态（localStorage 持久化）
+
+对齐 WebGAL `userData` 的跨场景共享变量域（`src/vn/global-state.ts`）：
+
+- 读写：`setGlobalVars(patch)` / `getGlobalVars()`；订阅：`subscribeGlobalVars`（VnPlayer 内部用 `useSyncExternalStore` 合并进 `showWhen` / `jump.if` 求值）。
+- 解锁：场景 `end` 自动 `markSceneSeen(scriptKey)` → 回想条目 `showWhen: "$seen_<key>"`。
+- API：`markSceneSeen` / `isSceneSeen` / `resetGlobalVars` / `getGlobalVersion`。
+- VnHandle：`getGlobalVar` / `setGlobalVar` / `markSeen`。
+
 ## 消费方
 
 - `src/example/hscene/*.tsx`：每个场景一个懒加载组件，渲染 `VnPlayer` + 对应 scenario。
 - `src/example/title/`：标题界面（数据驱动 scenario，`menu layout:'title'`），`DEFAULT_EXAMPLE = 'vn-title'`。
+- `src/example/recall/`：回想（数据驱动 scenario，`menu layout:'list'` + `showWhen` 全局解锁），入口在标题菜单。
 - `src/example/vn-menu/`：HS 列表（硬编码组件，反例，见 `docs/goals.md` §4），每张卡片 = **封面图（该场景第一个 preload 的 CG）+ 标题**，点击切 `#hscenekey`。封面元数据在 `scene-covers.ts`（被菜单懒加载 chunk 引用，不进主 bundle）。
 - `src/example/examples.ts`：全组件 React.lazy 分离，主 bundle 保持小体积。
 

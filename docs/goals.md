@@ -186,6 +186,7 @@ export interface VnMenu {
   - **回放（Backlog）**：`say` 台词并入历史，Backspace/上箭头打开，点击回溯到对应行（§1 第 2 优先）。
   - **自动/跳过/设置**：顶栏按钮 + 键盘快捷键；auto 延迟推进、skip 快进（越过 wait 不越 choice/menu）；设置面板调节音量/打字机速度/自动延迟，persist localStorage（§1 第 3 优先）。
   - **标题界面落成**：`#vn-title` 数据驱动 scenario（`menu layout:'title'` + bg 背景 + 半透明底），`DEFAULT_EXAMPLE` 改为 `vn-title`；menu 条目 id 支持 label 优先解析（`resolveJump`，与 jump 同语义）（§1 第 4 优先）。
+  - **全局跨场景状态**：`src/vn/global-state.ts`（localStorage 持久化 + `useSyncExternalStore` 订阅），`showWhen`/`jump.if` 求值合并全局变量；场景 `end` 自动 `markSceneSeen` → 回想解锁；`#vn-recall` 数据驱动回想 + `VnHandle.getGlobalVar/setGlobalVar/markSeen`（§1 第 4 优先）。
 - 场景形态：支持动态 **js / json / ts**，函数是 js/ts 场景的合法一等公民（§3.2）。
-- 待办：**演出扩充（转场/立绘动作/音效编排等）→ 全局跨场景状态（通关解锁回想）**（按 §1 优先级）。
-- 下一里程碑：标题界面已落成，演出扩充未做。
+- 待办：**演出扩充（转场/立绘动作/音效编排等）**（按 §1 优先级）。
+- 下一里程碑：标题 + 全局状态已落成（回想解锁走通），演出扩充未做。

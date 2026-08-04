@@ -31,13 +31,18 @@ const titleScript: VnScript = {
       layout: 'title',
       items: [
         { id: '#vn-menu', title: '开始游戏' },
+        { id: '#vn-recall', title: '回想' },
         { id: 'settings', title: '设置' },
       ],
     },
     { type: 'label', name: 'settings' },
     { type: 'hook', run: (vn) => vn.openSettings() },
     { type: 'wait' },
-    { type: 'menu', layout: 'title', items: [{ id: '#vn-menu', title: '开始游戏' }, { id: 'settings', title: '设置' }] },
+    { type: 'menu', layout: 'title', items: [
+      { id: '#vn-menu', title: '开始游戏' },
+      { id: '#vn-recall', title: '回想' },
+      { id: 'settings', title: '设置' },
+    ] },
     { type: 'end' },
   ],
 };

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { VnLine, VnScript, VnValue, VnHandle } from './types';
 import { VnAssetLoader } from './loader';
 import { VnAudioEngine } from './audio';
@@ -8,6 +8,7 @@ import { prefetchScene, clearWarmLayer } from './prefetch';
 import { loadGame, saveGame } from './save';
 import type { VnSaveData } from './save';
 import { getSettings, updateSettings } from './settings';
+import { getGlobalVars, setGlobalVars, subscribeGlobalVars, markSceneSeen } from './global-state';
 
 export interface VnPlayerProps {
   script: VnScript;
@@ -110,6 +111,13 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   const [vars, setVars] = useState<Record<string, VnValue>>({});
   const varsRef = useRef(vars);
   varsRef.current = vars;
+
+  /** 全局跨场景变量（localStorage 持久化，跨场景共享；本地 vars 覆盖同名字段）。 */
+  const globalVars = useSyncExternalStore(subscribeGlobalVars, getGlobalVars);
+  /** 条件求值用合并视图：{ ...全局, ...本地 }。 */
+  const allVars = useMemo(() => ({ ...globalVars, ...vars }), [globalVars, vars]);
+  const allVarsRef = useRef(allVars);
+  allVarsRef.current = allVars;
 
   /** 立绘层是否隐藏（点击立绘切换）。 */
   const [standHidden, setStandHidden] = useState(false);
@@ -218,6 +226,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   const runLine = useCallback((idx: number) => {
       const line = script.lines[idx];
       if (!line) {
+        if (scriptKey) markSceneSeen(scriptKey);
         setEnded(true);
         onEnd?.();
         return;
@@ -346,7 +355,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         }
 
         case 'jump': {
-          if (line.if && !evalCond(line.if, varsRef.current)) {
+          if (line.if && !evalCond(line.if, allVarsRef.current)) {
             // 条件不满足：跳过，继续下一行
             runLine(idx + 1);
             break;
@@ -430,6 +439,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
 
         case 'end': {
           clearWarmLayer();
+          if (scriptKey) markSceneSeen(scriptKey);
           setEnded(true);
           onEnd?.();
           if (line.goto) navigate(line.goto);
@@ -441,7 +451,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         }
       }
     },
-    [loader, audio, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand, writeVars],
+    [loader, audio, labelMap, script.lines, strictLoad, onEnd, navigate, setLayer, setStand, writeVars, scriptKey],
   );
 
   /** 跳转目标解析：#hash / URL 走 navigate；label 优先命中同场景行；其余按场景名导航。 */
@@ -603,6 +613,8 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
       save: (slot) => doSave(slot),
       load: (slot) => doLoad(slot),
       end: (goto) => {
+        clearWarmLayer();
+        if (scriptKey) markSceneSeen(scriptKey);
         setEnded(true);
         onEnd?.();
         if (goto) navigate(goto);
@@ -616,8 +628,11 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
       toggleAuto: () => setSettings((s) => updateSettings({ auto: !s.auto })),
       toggleSkip: () => setSettings((s) => updateSettings({ skip: !s.skip })),
       setSetting: (patch) => setSettings(updateSettings(patch)),
+      getGlobalVar: (name) => getGlobalVars()[name],
+      setGlobalVar: (patch) => setGlobalVars(patch),
+      markSeen: (sceneKey) => markSceneSeen(sceneKey),
     }),
-    [loader, audio, resolveJump, navigate, writeVars, doSave, doLoad, onEnd],
+    [loader, audio, resolveJump, navigate, writeVars, doSave, doLoad, onEnd, scriptKey],
   );
   vnHandleRef.current = vnHandle;
 
@@ -829,7 +844,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           }}
         >
           {ui.choices
-            .filter((c) => (c.showWhen ? evalCond(c.showWhen, vars) : true))
+            .filter((c) => (c.showWhen ? evalCond(c.showWhen, allVars) : true))
             .map((c) => (
               <button
                 key={c.to}
@@ -875,7 +890,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           {renderMenu
             ? renderMenu(
                 ui.menu.items
-                  .filter((m) => (m.showWhen ? evalCond(m.showWhen, vars) : true))
+                  .filter((m) => (m.showWhen ? evalCond(m.showWhen, allVars) : true))
                   .map((m) => ({
                     id: m.id,
                     title: m.title,
@@ -886,7 +901,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             : ui.menu.layout === 'grid'
               ? (() => {
                   const visible = ui.menu.items.filter((m) =>
-                    m.showWhen ? evalCond(m.showWhen, vars) : true,
+                    m.showWhen ? evalCond(m.showWhen, allVars) : true,
                   );
                   const groups = new Map<string, typeof visible>();
                   for (const it of visible) {
@@ -969,7 +984,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
               : ui.menu.layout === 'title'
                 ? (() => {
                     const visible = ui.menu.items.filter((m) =>
-                      m.showWhen ? evalCond(m.showWhen, vars) : true,
+                      m.showWhen ? evalCond(m.showWhen, allVars) : true,
                     );
                     return (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
@@ -1021,7 +1036,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                   }}
                 >
                   {ui.menu.items
-                    .filter((m) => (m.showWhen ? evalCond(m.showWhen, vars) : true))
+                    .filter((m) => (m.showWhen ? evalCond(m.showWhen, allVars) : true))
                     .map((m) => (
                       <button
                         key={m.id}

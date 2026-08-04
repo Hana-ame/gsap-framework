@@ -147,6 +147,12 @@ export interface VnHandle {
   toggleSkip(): void;
   /** 更新设置（音量/打字机速度/自动延迟等），persist 到 localStorage。 */
   setSetting(patch: Partial<VnSettings>): void;
+  /** 读全局跨场景变量（跨场景共享，persist）。 */
+  getGlobalVar(name: string): VnValue | undefined;
+  /** 写全局跨场景变量（跨场景共享，persist；成就/统计/解锁用）。 */
+  setGlobalVar(patch: Record<string, VnValue>): void;
+  /** 标记场景已通关（解锁回想等）。 */
+  markSeen(sceneKey: string): void;
 }
 
 /** 播放器设置（localStorage 持久化）。 */
