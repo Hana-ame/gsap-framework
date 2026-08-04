@@ -85,7 +85,7 @@ export const isekai_HA21_14: VnScript = {
   {
    "type": "say",
    "speaker": "小茂田",
-   "text": "嘿嘻嘻，诗保酱，欢迎来到马希纳国"
+   "text": "呼呼，诗保酱，欢迎来到马希纳国"
   },
   {
    "type": "say",

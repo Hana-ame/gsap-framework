@@ -148,7 +148,7 @@ export const isekai_HA41_19: VnScript = {
   {
    "type": "say",
    "speaker": "小茂田",
-   "text": "嘿嘻嘻当然！一起做很多色色的事吧"
+   "text": "呼呼，当然！一起做很多色色的事吧"
   },
   {
    "type": "say",

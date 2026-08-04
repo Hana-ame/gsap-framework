@@ -195,7 +195,7 @@ export const isekai_HA31_16: VnScript = {
   {
    "type": "say",
    "speaker": "小茂田",
-   "text": "嘿嘻嘻，太好了呢诗保酱，不，诗保"
+   "text": "呼呼，太好了呢诗保酱，不，诗保"
   },
   {
    "type": "cg",
