@@ -182,7 +182,9 @@ export interface VnMenu {
   - `menu` 指令：数据驱动界面（title/list/grid），标题/回想/场景菜单统一走 scenario（§4）。
   - 跳转前 preload：`prefetchScene` + 不可见 DOM 预加载栏（隐藏 `<img>` 预热），`end` 自动清理 + 手动 `clearWarmLayer` + countdown 清理。
   - 存档系统：IndexedDB 分键 save/load/list/delete + `resetSaveDb`；`VnHandle.save/load` 快存读档（§1 第 1 优先）。
-  - VnHandle：`getVar/setVar/jump/playAudio/stopAudio/flash/shake/save/load/end/clearPrefetch`。
+  - VnHandle：`getVar/setVar/jump/playAudio/stopAudio/flash/shake/save/load/end/clearPrefetch/showBacklog/closeBacklog/openSettings/closeSettings/toggleAuto/toggleSkip/setSetting`。
+  - **回放（Backlog）**：`say` 台词并入历史，Backspace/上箭头打开，点击回溯到对应行（§1 第 2 优先）。
+  - **自动/跳过/设置**：顶栏按钮 + 键盘快捷键；auto 延迟推进、skip 快进（越过 wait 不越 choice/menu）；设置面板调节音量/打字机速度/自动延迟，persist localStorage（§1 第 3 优先）。
 - 场景形态：支持动态 **js / json / ts**，函数是 js/ts 场景的合法一等公民（§3.2）。
-- 待办：**回放（Backlog）→ 自动/跳过/设置 → 标题界面落成 → 演出扩充**（按 §1 优先级）。
-- 下一里程碑：音频已就绪，回放与自动/跳过/设置未做。
+- 待办：**标题界面落成（数据驱动 menu scenario）→ 演出扩充**（按 §1 优先级）。
+- 下一里程碑：回放 / 自动 / 跳过 / 设置已就绪，标题界面未落成。

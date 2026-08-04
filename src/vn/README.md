@@ -89,7 +89,14 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 - `say.effect` / `wait.effect`：`shake` 抖动画面、`flash` 白屏闪（瞬时，动画结束自动清除）。
 - **切图等待**：`bg`/`cg` 行不会立即推进——若目标图尚未加载完成，会停在当前画面，等 `onload` 后再继续（不显示 loading 遮罩；遮罩只在真实 preload 等待 `loaded < total` 时出现）。避免"切到一张未就绪的 CG 时短暂黑屏"。
 - 对话框 / 选项层淡入上浮由 `meta.ui.dialog.animate` / `meta.ui.choice.animate` 开启（默认关闭，避免每次换行都跳动画）。
-- 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示）。
+- 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示），可被设置面板 / `meta.typeSpeed` 覆盖。
+
+## 播放控制：回放 / 自动 / 跳过 / 设置
+
+- **回放（Backlog）**：`say` 每次显示台词会并入历史，按 Backspace / 上箭头（或顶栏「回放」）打开历史面板；点击某条回溯到对应行、Enter / 下箭头关闭。`vn.showBacklog()` / `vn.closeBacklog()` 可控。
+- **自动播放**：顶栏「自动」或 `vn.toggleAuto()` 开启，每行完整显示后延迟 `autoDelay` ms 自动推进。
+- **跳过**：顶栏「跳过」或 `vn.toggleSkip()` 开启，快进：瞬间补全打字、跳过 `wait`（但不越过 `choice` / `menu` 交互点）。
+- **设置面板**：顶栏「设置」或 `vn.openSettings()`，调节 BGM/SFX/Voice 音量、打字机速度、自动延迟，persist 到 localStorage（`getSettings`/`updateSettings`）。`vn.setSetting(patch)` 编程式修改。
 
 ## 指令集
 
@@ -122,6 +129,10 @@ vn.flash(); vn.shake();                // 特效
 vn.save(1); vn.load(1);                // 快存/读档（IndexedDB）
 vn.end('#vn-menu');                    // 结束（可回菜单）
 vn.clearPrefetch();                    // 手动清理预加载栏
+vn.showBacklog(); vn.closeBacklog();   // 打开/关闭回放面板
+vn.openSettings(); vn.closeSettings(); // 打开/关闭设置面板
+vn.toggleAuto(); vn.toggleSkip();      // 切换自动播放 / 跳过
+vn.setSetting({ typeSpeed: 20 });      // 更新设置（音量/速度/延迟），persist
 ```
 
 ## 存档系统
