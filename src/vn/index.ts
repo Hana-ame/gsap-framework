@@ -17,12 +17,12 @@ export {
 import type {
   VnLine, VnPreload, VnSay, VnBg, VnCg, VnChoice, VnChoiceOption, VnJump, VnLabel, VnWait,
   VnHook, VnAudio, VnAudioChannel, VnAudioOptions, VnMenu, VnMenuItem, VnHandle,
-  VnStand, VnStandEffect, VnTransition, VnTransitionEffect,
+  VnStand, VnStandEffect, VnTransition, VnTransitionEffect, VnVideo,
   VnEnd, VnScript, VnAsset, VnUiStyle, VnValue,
 } from './types';
 export type {
   VnLine, VnPreload, VnSay, VnBg, VnCg, VnChoice, VnChoiceOption, VnJump, VnLabel, VnWait,
   VnHook, VnAudio, VnAudioChannel, VnAudioOptions, VnMenu, VnMenuItem, VnHandle,
-  VnStand, VnStandEffect, VnTransition, VnTransitionEffect,
+  VnStand, VnStandEffect, VnTransition, VnTransitionEffect, VnVideo,
   VnEnd, VnScript, VnAsset, VnUiStyle, VnValue,
 } from './types';

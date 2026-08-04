@@ -77,6 +77,8 @@ interface VnUiState {
   menu: { layout: 'list' | 'grid' | 'title'; items: Array<{ id: string; title: string; cover?: string; group?: string; showWhen?: string }> } | null;
   /** 回放（Backlog）已读台词。 */
   backlog: VnBacklogEntry[];
+  /** 视频演出层（video 指令：全屏视频，停播时清空）。 */
+  video: { key: string; url: string; loop: boolean; volume: number; fit: 'contain' | 'cover'; muted: boolean } | null;
 }
 
 const EMPTY_UI: VnUiState = {
@@ -91,6 +93,7 @@ const EMPTY_UI: VnUiState = {
   choices: [],
   menu: null,
   backlog: [],
+  video: null,
 };
 
 export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: VnPlayerProps) {
@@ -104,6 +107,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   const mountedRef = useRef(true);
   /** 未清理的转场定时器（卸载时统一清）。 */
   const transitionTimersRef = useRef<number[]>([]);
+
+  /** video 播完回调（wait=true 时 onEnded 触发推进；key 校验防串台）。 */
+  const videoEndRef = useRef<{ key: string; done: () => void } | null>(null);
 
   const [ended, setEnded] = useState(false);
 
@@ -488,6 +494,34 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           break;
         }
 
+        case 'video': {
+          if (line.action === 'stop') {
+            setUi((prev) => ({ ...prev, video: null }));
+            runLine(idx + 1);
+            break;
+          }
+          const url = loader.get(line.key)?.url ?? line.key;
+          const loop = line.loop ?? false;
+          setUi((prev) => ({
+            ...prev,
+            video: {
+              key: line.key,
+              url,
+              loop,
+              volume: line.volume ?? 1,
+              fit: line.fit ?? 'contain',
+              muted: line.muted ?? false,
+            },
+          }));
+          // wait=true（默认）：视频播完（onEnded）才继续；loop 或 wait=false 立即继续
+          if (!loop && (line.wait ?? true)) {
+            videoEndRef.current = { key: line.key, done: () => runLine(idx + 1) };
+          } else {
+            runLine(idx + 1);
+          }
+          break;
+        }
+
         case 'end': {
           clearWarmLayer();
           if (scriptKey) markSceneSeen(scriptKey);
@@ -604,6 +638,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         phase: u.phase === 'typing' || u.phase === 'idle' || u.phase === 'choice' ? u.phase : 'idle',
         choices: u.choices.map((c) => ({ ...c })),
         audio: { bgm: audioActiveRef.current.bgm },
+        video: u.video,
         savedAt: Date.now(),
       };
       await saveGame(data);
@@ -638,6 +673,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
         })),
         choices: data.choices,
         menu: prev.menu,
+        video: data.video ?? null,
       }));
       if (data.audio.bgm) {
         const url = loader.get(data.audio.bgm)?.url ?? data.audio.bgm;
@@ -827,6 +863,36 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             );
           })}
       </div>
+
+      {/* 视频演出层：全屏视频（video 指令）。wait=true 且非 loop 时播完自动推进下一行 */}
+      {ui.video && (
+        <video
+          key={`video-${ui.video.key}`}
+          src={ui.video.url}
+          autoPlay
+          loop={ui.video.loop}
+          muted={ui.video.muted}
+          ref={(el) => {
+            if (el && !el.muted) el.volume = ui.video!.volume;
+          }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: ui.video.fit,
+            background: '#000',
+            zIndex: 25,
+          }}
+          onEnded={() => {
+            const w = videoEndRef.current;
+            if (w && w.key === ui.video.key) {
+              videoEndRef.current = null;
+              w.done();
+            }
+          }}
+        />
+      )}
 
       {/* 立绘层：半身像底部对齐，点击整幅立绘切换显示/隐藏 */}
       {!standHidden &&

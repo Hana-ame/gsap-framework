@@ -25,6 +25,8 @@ export interface VnSaveData {
   choices: Array<{ text: string; to: string; set?: Record<string, VnValue>; showWhen?: string }>;
   /** 音频：bgm key + 正在播放的一次性音效 key 列表（含频道）。 */
   audio: { bgm?: string; oneshot?: Array<{ key: string; channel: 'sfx' | 'voice' }> };
+  /** 视频演出层（可选，无视频时缺省）。 */
+  video?: { key: string; url: string; loop: boolean; volume: number; fit: 'contain' | 'cover'; muted: boolean } | null;
   savedAt: number;
 }
 

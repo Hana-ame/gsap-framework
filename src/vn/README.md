@@ -96,6 +96,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 - `say.effect` / `wait.effect`：`shake` 抖动画面、`flash` 白屏闪（瞬时，动画结束自动清除）。
 - **立绘进出场**（`stand` 指令）：`effect` 支持 `fade` / `slide-up` / `slide-down` / `slide-left` / `slide-right` / `zoom`，`fadeMs` 时长；`say.stand` 默认 fade。
 - **全屏转场**（`transition` 指令）：`effect` 支持 `fade` / `wipe-left`/`wipe-right`/`wipe-up`/`wipe-down` / `circle` / `slide-*` / `zoom`，`fadeMs` 时长（默认 450）+ `color` 遮罩色（默认黑）；动画盖住画面播完自动继续下一行，可用于章节转场。
+- **视频演出**（`video` 指令）：全屏 `<video>` 层（默认 contain 看全），`loop` 循环 / `wait` 播完自动推进（onEnded） / `muted` / `volume`；`action:'stop'` 停播清层。
 - **切图等待**：`bg`/`cg` 行不会立即推进——若目标图尚未加载完成，会停在当前画面，等 `onload` 后再继续（不显示 loading 遮罩；遮罩只在真实 preload 等待 `loaded < total` 时出现）。避免"切到一张未就绪的 CG 时短暂黑屏"。
 - 对话框 / 选项层淡入上浮由 `meta.ui.dialog.animate` / `meta.ui.choice.animate` 开启（默认关闭，避免每次换行都跳动画）。
 - 打字机速度由 `meta.typeSpeed` 控制（每字 ms，默认 30；0=瞬间显示），可被设置面板 / `meta.typeSpeed` 覆盖。
@@ -124,6 +125,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | `menu` | 数据驱动界面（标题 / 回想 / 场景菜单）。`layout: 'title'|'list'|'grid'` + `items[]`（`id` 复用 jump 语义：label / `#hash` / URL / 场景名、`title`、`cover`、`group`、`showWhen` 条件显示）。条目点击走 navigate；`title` 布局半透明底（不遮背景层）+ 居中标题（`meta.ui.title` / `meta.title`） |
 | `stand` | 立绘进出场演出。`key`（preload 或 URL）+ `pos`（`left`/`center`/`right`）+ `action`（`show`/`hide`）+ `effect`（`fade`/`slide-up`/`slide-down`/`slide-left`/`slide-right`/`zoom`）+ `fadeMs` 时长。`hide` 移出该位置立绘 |
 | `transition` | 全屏转场演出。`effect`（`fade`/`wipe-*`/`circle`/`slide-*`/`zoom`）+ `fadeMs` 时长（默认 450）+ `color` 遮罩色。播完自动继续下一行 |
+| `video` | 全屏视频演出。`key`（preload 或 URL）+ `loop`（循环，默认 false）+ `volume`/`muted` + `fit`（`contain`/`cover`，默认 contain）+ `wait`（播完自动继续，默认 true；loop 时忽略）+ `action:'stop'` 停播 |
 | `end` | 结束。`goto` 可跳 `#hash` / URL / 场景名。结束时自动清理预加载栏 |
 
 ## VnHandle（hook.run 操作句柄）

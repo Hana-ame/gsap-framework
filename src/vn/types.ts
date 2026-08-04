@@ -264,6 +264,25 @@ export interface VnTransition {
   color?: string;
 }
 
+/** 视频演出指令：全屏播放视频（对齐 WebGAL video 演出）。 */
+export interface VnVideo {
+  type: 'video';
+  /** 资源 key（preload 声明）或完整 URL。 */
+  key: string;
+  /** 播放/停止；缺省 play。 */
+  action?: 'play' | 'stop';
+  /** 循环（默认 false）。 */
+  loop?: boolean;
+  /** 音量 0..1（默认 1）。 */
+  volume?: number;
+  /** contain 看全 / cover 占满（默认 contain，对齐 cg 语义）。 */
+  fit?: 'contain' | 'cover';
+  /** 播完是否自动继续下一行（默认 true）；loop 时忽略。 */
+  wait?: boolean;
+  /** 音轨静音（纯画面，默认 false）。 */
+  muted?: boolean;
+}
+
 export type VnLine =
   | VnPreload
   | VnSay
@@ -278,6 +297,7 @@ export type VnLine =
   | VnMenu
   | VnStand
   | VnTransition
+  | VnVideo
   | VnEnd;
 
 /** UI 布局/样式声明（可选）。缺省用框架默认。 */

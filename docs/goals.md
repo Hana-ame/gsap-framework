@@ -30,7 +30,7 @@
 | 图层/立绘/对话框/打字机 | ✅ | ✅ 已有 | ✅ 已有 |
 | 选项 / 分支跳转 | `choose` | `choice`+`jump` **已实现** | ✅ 已有 |
 | 变量与条件 | `setVar`+`-when` | `set`+`showWhen`+`if` | ✅ 已有 |
-| 无内置演出（flash/shake/video 等） | 全套 | flash/shake/fade + `stand` 进出场 + `transition` 转场（video 未做） | 中（已补演出） |
+| 无内置演出（flash/shake/video 等） | 全套 | flash/shake/fade + `stand` 进出场 + `transition` 转场 + `video` 全屏视频 | 中（已完成） |
 | **存档系统** | IndexedDB 分键 | `save.ts` 分键 save/load/list/delete + VnHandle 快存读档 | **高（已完成）** |
 | **音频**（BGM/SFX/语音） | ✅ | `audio` 指令 + `VnAudioEngine` 三频道 | **高（已完成）** |
 | **回放/回溯**（历史记录） | Backlog | Backlog 面板（点击回溯）+ Backspace/↑ | **高（已完成）** |
@@ -187,7 +187,7 @@ export interface VnMenu {
   - **自动/跳过/设置**：顶栏按钮 + 键盘快捷键；auto 延迟推进、skip 快进（越过 wait 不越 choice/menu）；设置面板调节音量/打字机速度/自动延迟，persist localStorage（§1 第 3 优先）。
   - **标题界面落成**：`#vn-title` 数据驱动 scenario（`menu layout:'title'` + bg 背景 + 半透明底），`DEFAULT_EXAMPLE` 改为 `vn-title`；menu 条目 id 支持 label 优先解析（`resolveJump`，与 jump 同语义）（§1 第 4 优先）。
   - **全局跨场景状态**：`src/vn/global-state.ts`（localStorage 持久化 + `useSyncExternalStore` 订阅），`showWhen`/`jump.if` 求值合并全局变量；场景 `end` 自动 `markSceneSeen` → 回想解锁；`#vn-recall` 数据驱动回想 + `VnHandle.getGlobalVar/setGlobalVar/markSeen`（§1 第 4 优先）。
-  - **演出扩充**：`stand` 指令（立绘进出场动画：fade/slide/zoom，show/hide）与 `transition` 指令（全屏转场：fade/wipe/circle/slide/zoom，播完自动继续），`src/vn/effects.ts` 统一 keyframe 映射（§1 中优先）。
+  - **演出扩充**：`stand` 指令（立绘进出场动画：fade/slide/zoom，show/hide）与 `transition` 指令（全屏转场：fade/wipe/circle/slide/zoom，播完自动继续），`src/vn/effects.ts` 统一 keyframe 映射；`video` 指令（全屏视频演出：loop/wait/muted/fit，播完 onEnded 自动推进）（§1 中优先）。
   - **`vn-menu` 下沉**：HS 回想列表由硬编码 React 改为数据驱动 `menu layout:'grid'` scenario（§4 反例清除）。
 - 场景形态：支持动态 **js / json / ts**，函数是 js/ts 场景的合法一等公民（§3.2）。
 - 待办：**远期**（编辑器/插件生态，§1 低优先）→ 主路线图各优先项已全部落成。
