@@ -100,6 +100,11 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   const uiRef = useRef(ui);
   uiRef.current = ui;
 
+  /** 组件是否仍挂载（异步回调/定时器守卫，防卸载后 setState）。 */
+  const mountedRef = useRef(true);
+  /** 未清理的转场定时器（卸载时统一清）。 */
+  const transitionTimersRef = useRef<number[]>([]);
+
   const [ended, setEnded] = useState(false);
 
   /** 播放器设置（音量/打字机速度/自动/跳过），持久化到 localStorage。 */
@@ -474,10 +479,12 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           const dur = line.fadeMs ?? 450;
           const key = `trans-${idx}`;
           setTransition({ key, effect, color: line.color ?? '#000', dur });
-          setTimeout(() => {
+          const t = setTimeout(() => {
+            if (!mountedRef.current) return;
             setTransition(null);
             runLine(idx + 1);
           }, dur + 30);
+          transitionTimersRef.current.push(t);
           break;
         }
 
@@ -515,7 +522,10 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   // 启动
   useEffect(() => {
     runLine(0);
+    const timers = transitionTimersRef.current;
     return () => {
+      mountedRef.current = false;
+      timers.forEach(clearTimeout);
       loader.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
