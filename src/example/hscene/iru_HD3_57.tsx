@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { iru_HD3_57 } from '../../vn/scenes/iru_HD3_57';
+import { iru_HD3_57 } from '../../vn/scenes/iru/iru_HD3_57';
 
 export default function iru_HD3_57Scene() {
   return (

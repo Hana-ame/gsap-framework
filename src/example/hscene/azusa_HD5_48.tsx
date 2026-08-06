@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { azusa_HD5_48 } from '../../vn/scenes/azusa_HD5_48';
+import { azusa_HD5_48 } from '../../vn/scenes/azusa/azusa_HD5_48';
 
 export default function azusa_HD5_48Scene() {
   return (

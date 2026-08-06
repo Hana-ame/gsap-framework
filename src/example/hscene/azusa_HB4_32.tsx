@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { azusa_HB4_32 } from '../../vn/scenes/azusa_HB4_32';
+import { azusa_HB4_32 } from '../../vn/scenes/azusa/azusa_HB4_32';
 
 export default function azusa_HB4_32Scene() {
   return (

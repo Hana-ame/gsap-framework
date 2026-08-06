@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { iru_HE2_61 } from '../../vn/scenes/iru_HE2_61';
+import { iru_HE2_61 } from '../../vn/scenes/iru/iru_HE2_61';
 
 export default function iru_HE2_61Scene() {
   return (

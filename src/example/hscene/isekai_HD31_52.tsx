@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { isekai_HD31_52 } from '../../vn/scenes/isekai_HD31_52';
+import { isekai_HD31_52 } from '../../vn/scenes/isekai/isekai_HD31_52';
 
 export default function isekai_HD31_52Scene() {
   return (

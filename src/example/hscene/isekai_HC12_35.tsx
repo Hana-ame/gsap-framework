@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { isekai_HC12_35 } from '../../vn/scenes/isekai_HC12_35';
+import { isekai_HC12_35 } from '../../vn/scenes/isekai/isekai_HC12_35';
 
 export default function isekai_HC12_35Scene() {
   return (

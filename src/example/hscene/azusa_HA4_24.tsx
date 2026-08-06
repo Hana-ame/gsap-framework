@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { azusa_HA4_24 } from '../../vn/scenes/azusa_HA4_24';
+import { azusa_HA4_24 } from '../../vn/scenes/azusa/azusa_HA4_24';
 
 export default function azusa_HA4_24Scene() {
   return (

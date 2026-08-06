@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { azusa_HG2_64 } from '../../vn/scenes/azusa_HG2_64';
+import { azusa_HG2_64 } from '../../vn/scenes/azusa/azusa_HG2_64';
 
 export default function azusa_HG2_64Scene() {
   return (

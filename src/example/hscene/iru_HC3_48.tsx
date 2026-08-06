@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { iru_HC3_48 } from '../../vn/scenes/iru_HC3_48';
+import { iru_HC3_48 } from '../../vn/scenes/iru/iru_HC3_48';
 
 export default function iru_HC3_48Scene() {
   return (

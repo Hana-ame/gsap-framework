@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { iru_T22_40 } from '../../vn/scenes/iru_T22_40';
+import { iru_T22_40 } from '../../vn/scenes/iru/iru_T22_40';
 
 export default function iru_T22_40Scene() {
   return (

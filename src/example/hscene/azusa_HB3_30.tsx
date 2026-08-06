@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { azusa_HB3_30 } from '../../vn/scenes/azusa_HB3_30';
+import { azusa_HB3_30 } from '../../vn/scenes/azusa/azusa_HB3_30';
 
 export default function azusa_HB3_30Scene() {
   return (

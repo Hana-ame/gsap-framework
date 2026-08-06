@@ -1,5 +1,5 @@
 import { VnPlayer } from '../../vn';
-import { iru_HB1_34 } from '../../vn/scenes/iru_HB1_34';
+import { iru_HB1_34 } from '../../vn/scenes/iru/iru_HB1_34';
 
 export default function iru_HB1_34Scene() {
   return (
