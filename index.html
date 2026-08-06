@@ -13,9 +13,14 @@
     <title>subcanvas — VN</title>
     <script>
       (function () {
-        // 仅新 VN 框架 hash：#vn-menu / #component-vn 或 #hscene-*
+        // 仅新 VN 框架 hash：#vn-menu / #component-vn，或 #hscene-*，或 vn-title/vn-recall
         var h = window.location.hash;
-        var ok = h === '#vn-menu' || h === '#component-vn' || (h && h.indexOf('#hscene-') === 0);
+        var ok =
+          h === '#vn-menu' ||
+          h === '#component-vn' ||
+          h === '#vn-title' ||
+          h === '#vn-recall' ||
+          (h && h.indexOf('#hscene-') === 0);
         if (h && h !== '#' && !ok) {
           window.location.replace('#vn-menu');
         }

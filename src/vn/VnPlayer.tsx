@@ -111,6 +111,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
   /** video 播完回调（wait=true 时 onEnded 触发推进；key 校验防串台）。 */
   const videoEndRef = useRef<{ key: string; done: () => void } | null>(null);
 
+  /** 回放面板容器（打开时滚到底，最新在底部）。 */
+  const backlogRef = useRef<HTMLDivElement | null>(null);
+
   const [ended, setEnded] = useState(false);
 
   /** 播放器设置（音量/打字机速度/自动/跳过），持久化到 localStorage。 */
@@ -755,6 +758,13 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
     return () => window.removeEventListener('keydown', h);
   }, [advance, ui.phase, ui.backlog.length, showSettings]);
 
+  // 打开回放时滚动到底部（最新在底部）
+  useEffect(() => {
+    if (ui.phase === 'backlog' && backlogRef.current) {
+      backlogRef.current.scrollTop = backlogRef.current.scrollHeight;
+    }
+  }, [ui.phase, ui.backlog.length]);
+
   if (ended) return null;
 
   const uiStyle = script.meta?.ui;
@@ -1004,7 +1014,6 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
             padding: '40px 24px',
             background:
               ui.menu.layout === 'title' ? 'rgba(5,5,15,0.35)' : 'rgba(5,5,15,0.75)',
@@ -1012,6 +1021,15 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             zIndex: 20,
           }}
         >
+          <div
+            style={{
+              margin: 'auto',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
           {renderMenu
             ? renderMenu(
                 ui.menu.items
@@ -1185,6 +1203,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                     ))}
                 </div>
               )}
+          </div>
         </div>
       )}
 
@@ -1199,7 +1218,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             top: dialog.top,
             bottom: dialog.bottom ?? 24,
             padding: dialog.padding ?? '20px 28px',
-            background: dialog.bg ?? 'rgba(10,10,30,0.85)',
+            background: dialog.bgImg
+              ? `url(${dialog.bgImg}) center / cover no-repeat, ${dialog.bg ?? 'rgba(10,10,30,0.85)'}`
+              : (dialog.bg ?? 'rgba(10,10,30,0.85)'),
             borderRadius: dialog.radius ?? 12,
             border: '1px solid rgba(255,255,255,0.15)',
             minHeight: dialog.minHeight ?? 120,
@@ -1313,8 +1334,9 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
 
       {/* 回放（Backlog）面板 */}
       {ui.phase === 'backlog' ? (
-        <div
-          onClick={() => setUi((p) => ({ ...p, phase: 'idle' }))}
+          <div
+            ref={backlogRef}
+            onClick={() => setUi((p) => ({ ...p, phase: 'idle' }))}
           style={{
             position: 'absolute',
             inset: 0,
@@ -1329,7 +1351,7 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
           {ui.backlog.length === 0 ? (
             <div style={{ color: '#667', fontSize: 16, padding: 20 }}>暂无历史</div>
           ) : (
-            [...ui.backlog].reverse().map((e, i) => (
+            ui.backlog.map((e, i) => (
               <div
                 key={`${e.lineIndex}-${i}`}
                 onClick={(ev) => {

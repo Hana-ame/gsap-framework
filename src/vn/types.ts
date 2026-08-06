@@ -307,6 +307,8 @@ export interface VnUiStyle {
     left?: string | number; right?: string | number; top?: string | number; bottom?: string | number;
     align?: 'left' | 'center' | 'right';
     bg?: string; color?: string; textSize?: number; radius?: number;
+    /** 背景贴图 URL（铺在 bg 之上，cover 占满；缺省无）。 */
+    bgImg?: string;
     minHeight?: number; padding?: string;
     /** 换台词时淡入上浮动画（默认 false）。 */
     animate?: boolean;
