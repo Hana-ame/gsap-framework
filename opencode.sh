@@ -1,2 +1,0 @@
-opencode -s ses_0347c5926ffeTSj9SH62KfjFTb
-opencode -s ses_03d4e7d98ffeuLcttHSGb15o2l
