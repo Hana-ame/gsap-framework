@@ -23,5 +23,7 @@
 ## Git 约定
 
 - 交互 git 用内联身份：`git -c user.name=lumin -c user.email=luminovoez@gmail.com ...`
+- **每个有意义的进展必须新建 commit**（`type(scope): 描述`），不得攒着一次性提交
+- **push 由用户决定：agent 绝对不可以自行 push**。有 push 需求/进展时只提交 commit，然后明确问用户是否 push
 - `main` 提交前必须 `npm run lint` 绿；CI 处理 typecheck/build
 - 结构改动（framework/components/example）先声明归属，不跨越 `index.ts` 直连
