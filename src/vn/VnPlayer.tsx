@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import type { VnLine, VnScript, VnValue, VnHandle } from './types';
+import type { VnLine, VnScript, VnValue, VnHandle, VnButtons, VnButton } from './types';
 import { VnAssetLoader } from './loader';
 import { VnAudioEngine } from './audio';
 import { evalCond } from './vars';
@@ -75,6 +75,8 @@ interface VnUiState {
   }>;
   /** 菜单指令数据（phase==='menu' 时渲染）。 */
   menu: { layout: 'list' | 'grid' | 'title'; items: Array<{ id: string; title: string; cover?: string; group?: string; showWhen?: string }> } | null;
+  /** 自定义按钮层（buttons 指令，非阻塞覆盖层）。 */
+  buttons: VnButtons | null;
   /** 回放（Backlog）已读台词。 */
   backlog: VnBacklogEntry[];
   /** 视频演出层（video 指令：全屏视频，停播时清空）。 */
@@ -92,6 +94,7 @@ const EMPTY_UI: VnUiState = {
   loadingProgress: { loaded: 0, total: 0 },
   choices: [],
   menu: null,
+  buttons: null,
   backlog: [],
   video: null,
 };
@@ -464,6 +467,13 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
             phase: 'menu',
             menu: { layout: line.layout, items: line.items },
           }));
+          break;
+        }
+
+        case 'buttons': {
+          // 非阻塞覆盖层：显示后立即继续下一行；空数组 = 清除。
+          setUi((prev) => ({ ...prev, lineIndex: idx, buttons: line.buttons.length ? line : null }));
+          runLine(idx + 1);
           break;
         }
 
@@ -1000,6 +1010,83 @@ export function VnPlayer({ script, onEnd, scriptKey, renderMenu, onMenuPick }: V
                 {c.text}
               </button>
             ))}
+        </div>
+      )}
+
+      {/* 自定义按钮层（buttons 指令）：非阻塞覆盖层。 */}
+      {ui.buttons && (
+        <div
+          onClick={() => {
+            if (ui.buttons?.dismissible) setUi((prev) => ({ ...prev, buttons: null }));
+          }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: ui.buttons.dismissible ? 'auto' : 'none',
+            zIndex: 40,
+          }}
+        >
+          {(() => {
+            const btns = ui.buttons;
+            const posStyle: React.CSSProperties =
+              btns.position === 'center' ? { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }
+              : btns.position === 'top' ? { left: '50%', top: 20, transform: 'translateX(-50%)' }
+              : btns.position === 'left' ? { left: 20, top: '50%', transform: 'translateY(-50%)' }
+              : btns.position === 'right' ? { right: 20, top: '50%', transform: 'translateY(-50%)' }
+              : btns.position === 'top-left' ? { left: 20, top: 20 }
+              : btns.position === 'top-right' ? { right: 20, top: 20 }
+              : btns.position === 'bottom-left' ? { left: 20, bottom: 36 }
+              : btns.position === 'bottom-right' ? { right: 20, bottom: 36 }
+              : { left: '50%', bottom: 36, transform: 'translateX(-50%)' };
+            const layoutStyle: React.CSSProperties =
+              btns.layout === 'row' ? { flexDirection: 'row' }
+              : btns.layout === 'grid' ? { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', maxWidth: 'min(520px, 88vw)' }
+              : { flexDirection: 'column' };
+            return (
+              <div
+                style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  gap: 10,
+                  ...posStyle,
+                  ...layoutStyle,
+                  pointerEvents: 'auto',
+                }}
+              >
+                {btns.buttons
+                  .filter((b) => (b.showWhen ? evalCond(b.showWhen, allVars) : true))
+                  .map((b, i) => (
+                    <button
+                      key={`${b.label}-${i}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const a = b.action;
+                        if (a.type === 'jump') {
+                          resolveJump(a.to);
+                        } else if (a.type === 'set') {
+                          writeVars(a.set);
+                          setUi((prev) => ({ ...prev, buttons: null }));
+                        } else if (a.type === 'href') {
+                          window.open(a.url, '_blank', 'noopener');
+                        }
+                      }}
+                      style={{
+                        padding: '10px 22px',
+                        fontSize: b.style?.fontSize ?? 16,
+                        background: b.style?.bg ?? 'rgba(20,20,40,0.92)',
+                        color: b.style?.color ?? '#fff',
+                        border: '1px solid #3a4a7a',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
+              </div>
+            );
+          })()}
         </div>
       )}
 

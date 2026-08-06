@@ -123,6 +123,7 @@ $flag == 'x' || $cnt == 2     // 或（优先级最低，可用整体括号）
 | `hook` | 异步钩子。js/ts 场景可内嵌 `run: (vn) => ...` 直接操作播放器（VnHandle：读写变量/跳转/音频/存读档/闪屏/抖动/结束）；json 场景走声明式 `url`/`method`/`body` fetch。`set` 写回变量；`wait:true` 等完成再继续，缺省 fire-and-forget |
 | `audio` | 播放/停止音频。`key`（preload 声明或 URL）+ `channel`（`bgm` 循环 / `sfx` / `voice`）+ `loop`/`volume`；`action:'stop'` 停止 |
 | `menu` | 数据驱动界面（标题 / 回想 / 场景菜单）。`layout: 'title'|'list'|'grid'` + `items[]`（`id` 复用 jump 语义：label / `#hash` / URL / 场景名、`title`、`cover`、`group`、`showWhen` 条件显示）。条目点击走 navigate；`title` 布局半透明底（不遮背景层）+ 居中标题（`meta.ui.title` / `meta.title`） |
+| `buttons` | 场景内自定义按钮层（非阻塞，不暂停剧情）。`buttons[]`（`label` + `action`：`{type:'jump',to}` 跳转 / `{type:'set',set}` 写变量并关闭本层 / `{type:'href',url}` 开链接；`showWhen` 条件、`style` 覆盖样式）+ `layout`（`column`/`row`/`grid`）+ `position`（`center`/`top`/`bottom`/`left`/`right`/`top-left`/`top-right`/`bottom-left`/`bottom-right`）+ `dismissible`（点击空白关闭）。`buttons: []` 清除按钮层 |
 | `stand` | 立绘进出场演出。`key`（preload 或 URL）+ `pos`（`left`/`center`/`right`）+ `action`（`show`/`hide`）+ `effect`（`fade`/`slide-up`/`slide-down`/`slide-left`/`slide-right`/`zoom`）+ `fadeMs` 时长。`hide` 移出该位置立绘 |
 | `transition` | 全屏转场演出。`effect`（`fade`/`wipe-*`/`circle`/`slide-*`/`zoom`）+ `fadeMs` 时长（默认 450）+ `color` 遮罩色。播完自动继续下一行 |
 | `video` | 全屏视频演出。`key`（preload 或 URL）+ `loop`（循环，默认 false）+ `volume`/`muted` + `fit`（`contain`/`cover`，默认 contain）+ `wait`（播完自动继续，默认 true；loop 时忽略）+ `action:'stop'` 停播 |

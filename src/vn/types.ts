@@ -228,6 +228,39 @@ export interface VnMenu {
   items: VnMenuItem[];
 }
 
+/** 自定义按钮的点击动作。 */
+export type VnButtonAction =
+  /** 跳转：label / #hash / https URL / 场景名（复用 jump 语义）。 */
+  | { type: 'jump'; to: string }
+  /** 写剧本变量并关闭本层。 */
+  | { type: 'set'; set: Record<string, VnValue> }
+  /** 新窗口打开链接（本层保持打开）。 */
+  | { type: 'href'; url: string };
+
+/** 自定义按钮：场景内创建的交互按钮，可配动作/条件/样式。 */
+export interface VnButton {
+  label: string;
+  action: VnButtonAction;
+  /** 条件显示（缺省始终显示）。 */
+  showWhen?: string;
+  /** 覆盖默认样式。 */
+  style?: { bg?: string; color?: string; fontSize?: number };
+}
+
+/** 按钮指令：在场景上叠加一层自定义按钮（非阻塞，不暂停剧情推进）。buttons 为空数组 = 清除按钮层。 */
+export interface VnButtons {
+  type: 'buttons';
+  buttons: VnButton[];
+  /** 布局：column 竖排（默认）/ row 横排 / grid 网格。 */
+  layout?: 'column' | 'row' | 'grid';
+  /** 锚点（默认 'bottom'）。 */
+  position?:
+    | 'center' | 'top' | 'bottom' | 'left' | 'right'
+    | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  /** 点击空白处关闭本层（默认 false）。 */
+  dismissible?: boolean;
+}
+
 /** 立绘进出场动画类型。 */
 export type VnStandEffect = 'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'zoom';
 
@@ -295,6 +328,7 @@ export type VnLine =
   | VnHook
   | VnAudio
   | VnMenu
+  | VnButtons
   | VnStand
   | VnTransition
   | VnVideo
