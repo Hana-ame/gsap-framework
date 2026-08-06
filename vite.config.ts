@@ -22,6 +22,7 @@ export default defineConfig({
   },
   plugins: [react()],
   server: {
+    host: '0.0.0.0',
     allowedHosts: ['wsl-5173.moonchan.xyz', '.moonchan.xyz'],
   },
   build: {
